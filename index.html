@@ -264,6 +264,97 @@ label.f input:focus,label.f textarea:focus,.ta:focus{border-color:var(--accent);
 .fx i{position:absolute;width:8px;height:12px;border-radius:2px;animation:burst 1.5s cubic-bezier(.15,.7,.3,1) forwards}
 @keyframes burst{from{transform:translate(0,0) rotate(0);opacity:1}to{transform:translate(var(--dx),calc(var(--dy) + 200px)) rotate(var(--rot));opacity:0}}
 
+/* timeline */
+.btn[aria-pressed="true"]{border-color:var(--accent);color:var(--accent)}
+.tl-view{display:flex;flex-direction:column;height:100%;min-height:0}
+.tl-view .main-head{position:static}
+.tl-bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:8px 16px;border-bottom:1px solid var(--line);background:var(--bg)}
+.tl-q{border:1px solid var(--line);background:var(--paper);border-radius:8px;padding:5px 9px;font-size:13px;width:170px;min-width:0}
+.tl-q:focus{border-color:var(--accent);outline:none}
+.tl-lchips{display:flex;flex-wrap:wrap;gap:6px}
+.lchip{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:var(--paper);border-radius:999px;padding:3px 10px;font-size:12.5px}
+.lchip i{width:8px;height:8px;border-radius:3px;background:var(--lc)}
+.lchip.off{opacity:.55;text-decoration:line-through}
+.tl-help{flex:1 1 220px;text-align:right;font-size:12px;color:var(--muted)}
+.tl-body{flex:1;min-height:0;display:flex;position:relative}
+.tl-scroll{flex:1;min-width:0;overflow:auto;position:relative;overscroll-behavior:contain}
+.tl-canvas{position:relative;min-height:100%}
+.tl-axis{position:sticky;top:0;z-index:5;display:flex;height:48px;background:var(--panel);border-bottom:1px solid var(--line)}
+.tl-corner{position:sticky;left:0;z-index:6;flex:none;width:var(--lw);background:var(--panel);border-right:1px solid var(--line);display:flex;align-items:flex-end;padding:0 10px 6px 14px;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.tl-ticks{position:relative;flex:none;height:48px}
+.tl-tick{position:absolute;bottom:0;height:22px;padding:3px 0 0 6px;border-left:1px solid var(--line);font-family:var(--f-mono);font-size:11px;color:var(--muted);white-space:nowrap}
+.tl-mk{position:absolute;top:5px;height:20px;max-width:240px;border:0;border-left:3px solid var(--c);border-radius:0 6px 6px 0;padding:0 8px;font-size:11.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:left;background:color-mix(in srgb,var(--c) 22%,var(--panel));color:var(--ink)}
+.tl-bands{position:absolute;top:48px;bottom:0;left:var(--lw);right:0;pointer-events:none;overflow:hidden}
+.tl-band{position:absolute;top:0;bottom:0;background:color-mix(in srgb,var(--c) 9%,transparent);border-left:1px dashed color-mix(in srgb,var(--c) 55%,transparent);border-right:1px dashed color-mix(in srgb,var(--c) 55%,transparent)}
+.tl-band.line{width:0;background:none;border-right:0;border-left:2px dashed var(--c)}
+.tl-lane{display:flex;border-bottom:1px solid var(--line)}
+.tl-lane.drop .tl-track{background-color:color-mix(in srgb,var(--lc) 10%,transparent)}
+.tl-lab{position:sticky;left:0;z-index:3;flex:none;width:var(--lw);background:var(--panel);border-right:1px solid var(--line);box-shadow:inset 4px 0 0 var(--lc);padding:10px 8px 10px 14px;display:flex;align-items:flex-start;justify-content:space-between;gap:6px;font-size:13px;font-weight:600}
+.tl-ln{min-width:0;overflow-wrap:anywhere}
+.tl-track{position:relative;flex:none}
+.tl-track.grid{background-image:linear-gradient(90deg,var(--line) 1px,transparent 1px);background-size:var(--px) 100%}
+.tl-foot{position:sticky;left:0;width:var(--lw);padding:10px 8px 24px 10px}
+.tl-card{position:absolute;display:flex;flex-direction:column;gap:2px;padding:7px 12px 6px 13px;border-radius:8px;background:color-mix(in srgb,var(--c) 13%,var(--paper));border:1px solid color-mix(in srgb,var(--c) 40%,var(--line));box-shadow:0 1px 2px rgba(23,32,45,.08);overflow:hidden;cursor:grab;user-select:none;-webkit-user-select:none;color:var(--ink);font-size:12.5px;line-height:1.35}
+.tl-card::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--c)}
+.tl-card:hover{box-shadow:var(--shadow)}
+.tl-card.s-outline{background:var(--paper);border:1.5px solid var(--c)}
+.tl-card.s-dashed{background:var(--paper);border:1.5px dashed var(--c)}
+.tl-card.s-dashed::before{display:none}
+.tl-card.s-solid{background:var(--c);border-color:var(--c);color:var(--ci)}
+.tl-card.s-solid::before{display:none}
+.s-solid .tc-w{color:inherit;opacity:.8} .s-solid .ent{color:inherit} .s-solid .tc-span{background:var(--ci);opacity:.6}
+.tl-card.sel{outline:2px solid var(--accent);outline-offset:2px;z-index:2}
+.tl-card.dim{opacity:.2}
+.tl-card.drag{z-index:20;box-shadow:0 12px 32px rgba(0,0,0,.25);cursor:grabbing;opacity:.95}
+.tc-span{position:absolute;left:0;top:0;height:4px;background:var(--c);border-radius:0 2px 2px 0}
+.tc-h{display:flex;gap:6px;align-items:baseline;min-width:0}
+.tc-ic{flex:none;font-size:14px}
+.tc-t{font-family:var(--f-prose);font-weight:650;font-size:13.5px;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.d-tall .tc-t{white-space:normal;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2}
+.tc-w{font-family:var(--f-mono);font-size:10.5px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tc-b{overflow:hidden;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow-wrap:anywhere}
+.d-tall .tc-b{-webkit-line-clamp:5}
+.tc-sc{margin-top:auto;align-self:flex-start;display:inline-flex;align-items:center;gap:4px;max-width:100%;border:1px solid color-mix(in srgb,var(--c) 40%,var(--line));background:var(--paper);color:var(--ink);border-radius:999px;padding:1px 8px;font-size:11px;white-space:nowrap;overflow:hidden}
+.tc-sc span{overflow:hidden;text-overflow:ellipsis}
+.tc-rs{position:absolute;top:0;right:0;bottom:0;width:10px;cursor:ew-resize;touch-action:none}
+.tc-rs::after{content:"";position:absolute;right:3px;top:50%;height:16px;margin-top:-8px;width:3px;border-radius:2px;background:var(--c);opacity:0}
+.tl-card:hover .tc-rs::after,.tl-card.sel .tc-rs::after{opacity:.7}
+.tc-grip{position:absolute;top:3px;right:10px;color:var(--muted);opacity:0;touch-action:none;cursor:grab;padding:2px;line-height:0}
+.tl-card:hover .tc-grip{opacity:.7}
+@media (hover:none){.tc-grip{opacity:.85;padding:5px;top:0;right:8px}}
+.tl-side{flex:none;width:340px;border-left:1px solid var(--line);background:var(--panel);overflow:auto;padding:0 16px 28px}
+.ts-head{display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:2;background:var(--panel);padding:12px 0 6px}
+.ts-head h3{margin:0;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.tl-side h4{margin:22px 0 2px;font-size:13px}
+.tl-side label.f{margin-top:10px}
+.tl-side label.f input,.tl-side label.f textarea{background:var(--paper)}
+.tl-side label.f textarea{font-size:14px;min-height:60px;overflow:auto}
+.tl-side input[type=range]{padding:0;border:0;accent-color:var(--accent)}
+.tl-side .two{margin-top:0}
+.sws{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.sw{position:relative;width:24px;height:24px;border-radius:50%;border:2px solid var(--panel);box-shadow:0 0 0 1px var(--line);background:var(--c);padding:0;overflow:hidden;cursor:pointer;flex:none}
+.sw.on{box-shadow:0 0 0 2px var(--ink)}
+.sw.lanec{background:repeating-linear-gradient(45deg,var(--c) 0 4px,var(--paper) 4px 8px)}
+.sw.cust{background:conic-gradient(#e5484d,#f5a623,#46a758,#0090ff,#8e4ec6,#e5484d)}
+.sw.cust input{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;border:0;padding:0}
+.lrow .sw{width:18px;height:18px}
+.seg{display:inline-flex;flex-wrap:wrap;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.seg button{border:0;background:var(--paper);padding:5px 10px;font-size:12.5px}
+.seg button+button{border-left:1px solid var(--line)}
+.seg button.on{background:var(--accent);color:var(--accent-ink)}
+.ck{display:flex;align-items:center;gap:8px;font-size:13px;margin-top:10px}
+.ts-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
+.ts-col{display:flex;flex-direction:column;align-items:flex-start;gap:8px;margin-top:8px}
+.lrow{border:1px solid var(--line);background:var(--paper);border-radius:10px;padding:8px;margin-top:8px;display:grid;gap:6px}
+.lrow .r1{display:flex;gap:2px;align-items:center}
+.lrow .nm{flex:1;min-width:0;border:1px solid var(--line);border-radius:6px;padding:4px 8px;background:var(--bg)}
+.lrow .nm:focus{border-color:var(--accent);outline:none}
+.lrow .ibtn{width:26px;height:26px}
+.lrow .ibtn.on{color:var(--danger);width:auto;padding:0 6px;font-size:11px;font-weight:600}
+.lrow label.f{margin-top:0}
+.lrow label.f input{background:var(--bg);padding:4px 8px}
+@media (max-width:760px){.tl-side{position:absolute;inset:0;width:auto;z-index:8;border-left:0}.tl-help{display:none}}
+
 /* tab layout */
 @media (max-width:1079px){
   :root{--tabh:58px}
@@ -336,7 +427,9 @@ const ICO={plus:'M12 5v14M5 12h14',down:'M6 9l6 6 6-6',right:'M9 6l6 6-6 6',up:'
   trash:'M5 7h14M10 7V5h4v2M7 7l1 12h8l1-12',edit:'M4 20h4L19 9l-4-4L4 16v4z',dots:'M5 12h.01M12 12h.01M19 12h.01',
   card:'M4 6h7v6H4zM13 6h7v6h-7zM4 14h7v4H4zM13 14h7v4h-7z',book:'M5 5h6a2 2 0 012 2v12a2 2 0 00-2-2H5zM19 5h-6a2 2 0 00-2 2v12a2 2 0 012-2h6z',
   pen:'M4 20l1-4L16 5l3 3L8 19l-4 1z',focus:'M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5',link:'M10 14a4 4 0 005.7 0l3-3a4 4 0 00-5.7-5.7l-1 1M14 10a4 4 0 00-5.7 0l-3 3a4 4 0 005.7 5.7l1-1',
-  spark:'M12 3l2 6 6 2-6 2-2 6-2-6-6-2 6-2z',x:'M6 6l12 12M18 6L6 18'};
+  spark:'M12 3l2 6 6 2-6 2-2 6-2-6-6-2 6-2z',x:'M6 6l12 12M18 6L6 18',
+  time:'M3 12h18M7 12V7M12 12v5M17 12V7',sliders:'M4 7h9M17 7h3M4 17h3M11 17h9M15 5v4M9 15v4',minus:'M5 12h14',
+  grip:'M9 6h.01M15 6h.01M9 12h.01M15 12h.01M9 18h.01M15 18h.01',copy:'M8 8h11v11H8zM5 16V5h11',fit:'M4 12h16M4 12l4-4M4 12l4 4M20 12l-4-4M20 12l-4 4'};
 const ico=(n,s)=>'<svg class="ico" width="'+(s||16)+'" height="'+(s||16)+'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="'+ICO[n]+'"/></svg>';
 
 const TYPES={
@@ -350,9 +443,10 @@ const STAGES=[{n:'Blot',at:0},{n:'Inkling',at:1000},{n:'Scribe',at:10000},{n:'Ba
 const stageOf=t=>{let i=0;STAGES.forEach((s,j)=>{if(t>=s.at)i=j});return i};
 
 /* ---------- state ---------- */
-let S=null;          // {meta, sc:{id:{text,synopsis,notes}}, en:{id:{fields}}}
+let S=null;          // {meta, sc:{id:{text,synopsis,notes}}, en:{id:{fields}}, tl:{id:timeline}}
 let linker=null;
-const ui={view:null,hist:[],cork:'all',rename:null,confirm:null,menu:false,tab:'write',focus:false,openSec:{char:true,place:true,thing:true},say:'',sayAt:0,mood:'',touched:false,sel:'',focusName:false,fs:18};
+const ui={view:null,hist:[],cork:'all',rename:null,confirm:null,menu:false,tab:'write',focus:false,openSec:{tl:true,char:true,place:true,thing:true},say:'',sayAt:0,mood:'',touched:false,sel:'',focusName:false,fs:18,
+  tlFor:null,tlSel:null,tlSide:null,tlSideKey:'',tlQ:'',tlEnt:'',tlR:null,tlDragged:false};
 const P={db:null,base:null,keys:new Set(),dirty:new Set(),gone:new Set(),timer:null,busy:false,again:false,fails:0};
 
 /* ---------- sample + blank projects ---------- */
@@ -384,7 +478,20 @@ function sampleProject(){
     [ids.quay]:{fields:{kind:'Fishing port and ferry landing',feel:'Tar, wet rope, fog that arrives before the tide.',past:'Founded by salt traders. Three lighthouses, two of them dark.'}},
     [ids.gull]:{fields:{kind:'Tavern with four rooms upstairs',feel:'Low beams, one fireplace, lantern glass in every window.',who:'Pilots, porters, and anyone waiting for a ship.'}},
     [ids.comp]:{fields:{look:'Brass, thumb-sized, chipped at the hinge.',origin:'Unknown. Crane will not say.',power:'The needle ignores north and settles on one person.'}}};
-  return {meta,sc,en};
+  meta.tls=[{id:'t_main',name:'Story timeline'}];
+  const L={i:'l_ilsa',t:'l_tobias',w:'l_world'};
+  const k=(id,o)=>Object.assign({id,len:0,body:'',when:'',icon:'',color:'',style:'tint',scene:''},o);
+  const tl={t_main:{axis:{start:0,step:1,px:190,fmt:'Day {n}',names:'',cycle:1,snap:.5},cardW:200,density:'normal',showWhen:true,showMarks:true,grid:true,
+    lanes:[{id:L.i,name:'Ilsa',color:'char'},{id:L.t,name:'Tobias',color:'thing'},{id:L.w,name:'The world',color:'place'}],
+    cards:{
+      k_wren:k('k_wren',{lane:L.w,at:0,title:'The Wren sails from Marrow Quay',body:'Ilsa\'s brother is aboard. The ship never reaches port.',when:'Ten years earlier',icon:'⚓',style:'dashed'}),
+      k_arrive:k('k_arrive',{lane:L.i,at:1,title:'Arrival at Marrow Quay',body:'Ilsa arrives in fog and heads for the Gull.',scene:ids.s1}),
+      k_ledger:k('k_ledger',{lane:L.t,at:1.5,title:'The Crane ledger',body:'Tobias Crane hands Ilsa the brass compass.',scene:ids.s2}),
+      k_fog:k('k_fog',{lane:L.w,at:1,len:4,title:'Fog season',body:'No ship leaves Marrow Quay.',color:'muted'}),
+      k_lamps:k('k_lamps',{lane:L.w,at:2,title:'Lanterns light late',body:'Something is off with the tide.',scene:ids.s3}),
+      k_follow:k('k_follow',{lane:L.i,at:4,title:'Ilsa follows the compass',body:'Not written yet.',icon:'?',style:'dashed'})},
+    marks:[{id:'m_one',label:'Act I',at:1,len:3,color:'accent'},{id:'m_two',label:'Act II',at:4,len:4,color:'char'}]}};
+  return {meta,sc,en,tl};
 }
 function blankProject(){
   const c=uid('c_'),s=uid('s_');
@@ -405,7 +512,48 @@ function normalize(o){
   });
   Object.keys(meta.ents).forEach(id=>{const e=meta.ents[id]; e.id=id; e.aliases=Array.isArray(e.aliases)?e.aliases:[]; e.tag=e.tag||''; if(!TYPES[e.type]) e.type='thing'; en[id]=en[id]||{}; en[id].fields=en[id].fields||{};});
   if(!meta.chapters.length){const b=blankProject(); meta.chapters=b.meta.chapters; meta.scenes=Object.assign(meta.scenes,b.meta.scenes); Object.assign(sc,b.sc);}
-  return {meta,sc,en};
+  const tl=o.tl&&typeof o.tl==='object'?o.tl:{};
+  if(!Array.isArray(meta.tls)){ meta.tls=[]; if(!Object.keys(tl).length){ const id=uid('t_'); meta.tls.push({id,name:'Story timeline'}); tl[id]=newTl(); } }
+  meta.tls=meta.tls.filter(x=>x&&x.id).map(x=>({id:String(x.id),name:String(x.name||'Timeline')}));
+  Object.keys(tl).forEach(id=>{ if(!meta.tls.some(x=>x.id===id)) meta.tls.push({id,name:'Timeline'}); });
+  const tlo={}; meta.tls.forEach(x=>{ tlo[x.id]=normTl(tl[x.id]); });
+  return {meta,sc,en,tl:tlo};
+}
+
+/* ---------- timeline data ---------- */
+const TL_COLORS=[['accent','Blue'],['char','Rose'],['place','Green'],['thing','Amber'],['pet','Teal'],['danger','Red'],['muted','Slate']];
+const TL_DENS={compact:46,normal:112,tall:176};
+const TL_STYLES=[['tint','Tinted'],['outline','Outline'],['dashed','Dashed'],['solid','Solid']];
+const TL_SNAPS=[[0,'Free'],[1,'Whole units'],[.5,'Halves'],[.25,'Quarters'],[.1,'Tenths']];
+const TL_PRESETS=[['Day {n}','','Days'],['Week {n}','','Weeks'],['Year {n}','','Years'],['Chapter {n}','','Chapters'],['Act {n}','','Acts'],['{n}:00','','Hours of a day'],
+  ['{name} {cycle}','Jan, Feb, Mar, Apr, May, Jun, Jul, Aug, Sep, Oct, Nov, Dec','Months and years'],['{name}, year {cycle}','Spring, Summer, Autumn, Winter','Seasons and years'],
+  ['{name}, week {cycle}','Mon, Tue, Wed, Thu, Fri, Sat, Sun','Weekdays'],['{n}','','Plain numbers']];
+const hexOk=c=>/^#[0-9a-f]{6}$/i.test(c||'');
+const colOk=c=>hexOk(c)||TL_COLORS.some(x=>x[0]===c);
+const cssCol=c=>hexOk(c)?c:'var(--'+(colOk(c)?c:'accent')+')';
+function inkOn(c){ if(!hexOk(c)) return 'var(--paper)'; const n=parseInt(c.slice(1),16); return ((n>>16&255)*299+(n>>8&255)*587+(n&255)*114)/1000>150?'#17202D':'#FFFFFF'; }
+const num=(v,d)=>{ v=parseFloat(v); return isFinite(v)?v:d; };
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+const nfmt=v=>String(Math.round(v*100)/100);
+function newTl(){
+  const l=(name,color)=>({id:uid('l_'),name,color,hide:false});
+  return {axis:{start:1,step:1,px:170,fmt:'Day {n}',names:'',cycle:1,snap:1},cardW:190,density:'normal',showWhen:true,showMarks:true,grid:true,
+    lanes:[l('Main plot','accent'),l('Subplot','char'),l('World','place')],cards:{},marks:[]};
+}
+function normTl(t){
+  t=t&&typeof t==='object'?t:{}; const a=t.axis||{};
+  t.axis={start:num(a.start,1),step:num(a.step,1)>0?num(a.step,1):1,px:clamp(num(a.px,170),40,600),fmt:typeof a.fmt==='string'&&a.fmt.trim()?a.fmt:'{n}',
+    names:typeof a.names==='string'?a.names:'',cycle:num(a.cycle,1),snap:TL_SNAPS.some(s=>s[0]===num(a.snap,1))?num(a.snap,1):1};
+  t.cardW=clamp(num(t.cardW,190),110,400); t.density=TL_DENS[t.density]?t.density:'normal';
+  t.showWhen=t.showWhen!==false; t.showMarks=t.showMarks!==false; t.grid=t.grid!==false;
+  t.lanes=(Array.isArray(t.lanes)?t.lanes:[]).filter(l=>l&&l.id).map(l=>({id:String(l.id),name:String(l.name==null?'Lane':l.name),color:colOk(l.color)?l.color:'accent',hide:!!l.hide}));
+  if(!t.lanes.length) t.lanes=newTl().lanes.slice(0,1);
+  const cards=t.cards&&typeof t.cards==='object'?t.cards:{}; t.cards={};
+  Object.keys(cards).forEach(id=>{ const c=cards[id]; if(!c||typeof c!=='object') return;
+    t.cards[id]={id,lane:t.lanes.some(l=>l.id===c.lane)?c.lane:t.lanes[0].id,at:num(c.at,0),len:Math.max(0,num(c.len,0)),title:String(c.title||''),body:String(c.body||''),
+      when:String(c.when||''),icon:String(c.icon||'').slice(0,4),color:colOk(c.color)?c.color:'',style:TL_STYLES.some(s=>s[0]===c.style)?c.style:'tint',scene:c.scene?String(c.scene):''}; });
+  t.marks=(Array.isArray(t.marks)?t.marks:[]).filter(m=>m&&m.id).map(m=>({id:String(m.id),label:String(m.label||''),at:num(m.at,0),len:Math.max(0,num(m.len,0)),color:colOk(m.color)?m.color:'muted'}));
+  return t;
 }
 
 /* ---------- linking names ---------- */
@@ -503,10 +651,11 @@ function docData(k){
   if(k==='meta') return S.meta;
   if(k.startsWith('sc_')){ const id=k.slice(3); return S.sc[id]||null; }
   if(k.startsWith('en_')){ const id=k.slice(3); return S.en[id]||null; }
+  if(k.startsWith('tl_')){ const id=k.slice(3); return S.tl[id]||null; }
   return null;
 }
 function mirrorLocal(){
-  try{ const s=JSON.stringify({meta:S.meta,sc:S.sc,en:S.en}); if(s.length<4500000) localStorage.setItem('inkling:project',s); }catch(e){}
+  try{ const s=JSON.stringify({meta:S.meta,sc:S.sc,en:S.en,tl:S.tl}); if(s.length<4500000) localStorage.setItem('inkling:project',s); }catch(e){}
 }
 async function flush(){
   if(P.busy){ P.again=true; return; }
@@ -528,7 +677,7 @@ async function flush(){
     if(P.again){ P.again=false; schedule(200); }
   }
 }
-function allKeys(st){ return new Set(['meta'].concat(Object.keys(st.sc).map(k=>'sc_'+k),Object.keys(st.en).map(k=>'en_'+k))); }
+function allKeys(st){ return new Set(['meta'].concat(Object.keys(st.sc).map(k=>'sc_'+k),Object.keys(st.en).map(k=>'en_'+k),Object.keys(st.tl||{}).map(k=>'tl_'+k))); }
 function markAllDirty(){
   const nk=allKeys(S);
   P.keys.forEach(k=>{ if(!nk.has(k)) P.gone.add(k); });
@@ -545,8 +694,8 @@ async function connectDb(local){
     const snap=await db.collection(P.base).get();
     const docs={}; snap.docs.forEach(d=>{docs[d.id]=d.data(); P.keys.add(d.id);});
     if(docs.meta){
-      const o={meta:docs.meta,sc:{},en:{}};
-      Object.keys(docs).forEach(k=>{ if(k.startsWith('sc_')) o.sc[k.slice(3)]=docs[k]; else if(k.startsWith('en_')) o.en[k.slice(3)]=docs[k]; });
+      const o={meta:docs.meta,sc:{},en:{},tl:{}};
+      Object.keys(docs).forEach(k=>{ if(k.startsWith('sc_')) o.sc[k.slice(3)]=docs[k]; else if(k.startsWith('en_')) o.en[k.slice(3)]=docs[k]; else if(k.startsWith('tl_')) o.tl[k.slice(3)]=docs[k]; });
       const remote=normalize(o);
       if(ui.touched||(local&&S.meta.saved>remote.meta.saved)){ markAllDirty(); }
       else{
@@ -571,8 +720,8 @@ function streak(){
 function curMood(){ const w=todayWords(), g=S.meta.goal; if(w>=g) return 'party'; if(w>=g*.5) return 'hype'; if(w>0) return 'happy'; return 'sleepy'; }
 function orderedScenes(){ const out=[]; S.meta.chapters.forEach(c=>c.scenes.forEach(id=>out.push({id,ch:c}))); return out; }
 function firstView(){ const s=orderedScenes()[0]; return s?{k:'scene',id:s.id}:{k:'cork'}; }
-function viewValid(v){ if(!v) return false; if(v.k==='scene') return !!S.meta.scenes[v.id]; if(v.k==='ent') return !!S.meta.ents[v.id]; return v.k==='cork'; }
-function viewName(v){ if(v.k==='scene') return S.meta.scenes[v.id].title; if(v.k==='ent') return S.meta.ents[v.id].name; return 'Corkboard'; }
+function viewValid(v){ if(!v) return false; if(v.k==='scene') return !!S.meta.scenes[v.id]; if(v.k==='ent') return !!S.meta.ents[v.id]; if(v.k==='tl') return !!(S.tl[v.id]&&S.meta.tls.some(x=>x.id===v.id)); return v.k==='cork'; }
+function viewName(v){ if(v.k==='scene') return S.meta.scenes[v.id].title; if(v.k==='ent') return S.meta.ents[v.id].name; if(v.k==='tl') return S.meta.tls.find(x=>x.id===v.id).name; return 'Corkboard'; }
 
 /* ---------- pet ---------- */
 function petSVG(m,stage){
@@ -753,6 +902,17 @@ function delEntity(id){
   if(!viewValid(ui.view)) ui.view=firstView(); ui.hist=ui.hist.filter(viewValid);
   renderAll();
 }
+function addTimeline(src){
+  const id=uid('t_'), from=src&&S.meta.tls.find(x=>x.id===src);
+  S.tl[id]=from?normTl(JSON.parse(JSON.stringify(S.tl[src]))):newTl();
+  S.meta.tls.push({id,name:from?from.name+' (copy)':'Timeline '+(S.meta.tls.length+1)});
+  ui.openSec.tl=true; ui.confirm=null; dirty('meta','tl_'+id); go({k:'tl',id});
+}
+function delTimeline(id){
+  S.meta.tls=S.meta.tls.filter(x=>x.id!==id); delete S.tl[id]; P.gone.add('tl_'+id); P.dirty.delete('tl_'+id); dirty('meta');
+  if(!viewValid(ui.view)) ui.view=firstView(); ui.hist=ui.hist.filter(viewValid);
+  renderAll();
+}
 function confirmDo(key,fn,rerender){
   if(ui.confirm===key){ ui.confirm=null; fn(); return; }
   ui.confirm=key; rerender();
@@ -786,6 +946,14 @@ function renderBinder(){
     if(c.open&&!c.scenes.length) h+='<div class="empty-s">No scenes yet.</div>';
   });
   h+='<div class="ch-row" style="margin-top:20px"></div>';
+  h+='<div class="bsec"><button class="lbl" data-a="sec" data-t="tl" aria-expanded="'+(ui.openSec.tl?'true':'false')+'">'+ico(ui.openSec.tl?'down':'right',14)+'<span>Timelines</span><span class="n">'+m.tls.length+'</span></button><button class="ibtn" data-a="addtl" aria-label="Add timeline">'+ico('plus',14)+'</button></div>';
+  if(ui.openSec.tl){
+    m.tls.forEach(x=>{
+      const on=cur.k==='tl'&&cur.id===x.id, n=Object.keys(S.tl[x.id].cards).length;
+      h+='<div class="e-row'+(on?' on':'')+'"><button class="e-btn" data-a="open-tl" data-id="'+x.id+'">'+ico('time',14)+'<span class="t">'+esc(x.name)+'</span><span class="wc">'+n+'</span></button><span class="acts"><button class="ibtn'+(cf==='tl'+x.id?' on':'')+'" data-a="deltl" data-id="'+x.id+'" aria-label="Delete timeline">'+(cf==='tl'+x.id?'Delete?':ico('trash',14))+'</button></span></div>';
+    });
+    if(!m.tls.length) h+='<div class="empty-s">No timelines yet. Press + to start one.</div>';
+  }
   TYPE_ORDER.forEach(t=>{
     const list=Object.values(m.ents).filter(e=>e.type===t).sort((a,b)=>a.name.localeCompare(b.name));
     h+='<div class="bsec"><button class="lbl" data-a="sec" data-t="'+t+'" aria-expanded="'+(ui.openSec[t]?'true':'false')+'">'+ico(ui.openSec[t]?'down':'right',14)+'<span>'+TYPES[t].plural+'</span><span class="n">'+list.length+'</span></button><button class="ibtn" data-a="adde" data-t="'+t+'" aria-label="Add '+TYPES[t].label.toLowerCase()+'">'+ico('plus',14)+'</button></div>';
@@ -826,6 +994,9 @@ function bindBinder(){
     else if(a==='sec'){ ui.openSec[b.dataset.t]=!ui.openSec[b.dataset.t]; renderBinder(); }
     else if(a==='adde'){ const t=b.dataset.t; ui.openSec[t]=true; const nid=addEntity(t,'New '+TYPES[t].label.toLowerCase()); ui.focusName=true; go({k:'ent',id:nid}); }
     else if(a==='open-e') go({k:'ent',id});
+    else if(a==='open-tl') go({k:'tl',id});
+    else if(a==='addtl') addTimeline();
+    else if(a==='deltl') confirmDo('tl'+id,()=>delTimeline(id),rr);
   });
 }
 
@@ -835,7 +1006,7 @@ function renderMain(){
   if(!viewValid(v)){ ui.view=firstView(); return renderMain(); }
   const key=v.k+':'+(v.id||''), reset=key!==ui.lastKey; ui.lastKey=key;
   const keep=el.scrollTop;
-  if(v.k==='ent') renderEnt(el,v); else if(v.k==='cork') renderCork(el); else renderScene(el,v);
+  if(v.k==='ent') renderEnt(el,v); else if(v.k==='cork') renderCork(el); else if(v.k==='tl') renderTl(el,v); else renderScene(el,v);
   el.scrollTop=reset?0:keep;
 }
 function renderScene(el,v){
@@ -916,6 +1087,13 @@ function mentionsOf(e){
   return out;
 }
 const ag=el=>{ el.style.height='auto'; el.style.height=(el.scrollHeight+2)+'px'; };
+function tlMentionsHtml(e){
+  const re=makeRe([e.name].concat(e.aliases||[])), out=[]; if(!re) return '';
+  S.meta.tls.forEach(x=>{ const t=S.tl[x.id]; Object.values(t.cards).sort((p,q)=>p.at-q.at).forEach(c=>{ re.lastIndex=0; if(re.test(c.title+'\n'+c.body)) out.push({x,t,c}); }); });
+  if(!out.length) return '';
+  return '<section class="appears"><h3>On timelines</h3><p class="sub">'+out.length+' card'+(out.length===1?'':'s')+' mention this name.</p>'
+    +out.map(o=>'<button class="ap" data-tl="'+o.x.id+'" data-card="'+o.c.id+'"><b><span>'+esc((o.c.icon?o.c.icon+' ':'')+(o.c.title||'Untitled card'))+'</span><span class="mono muted">'+esc(tlWhen(o.t,o.c))+'</span></b><span class="muted" style="font-size:12px">'+esc(o.x.name)+'</span>'+(o.c.body?'<span class="sn">'+esc(o.c.body.slice(0,160))+(o.c.body.length>160?'…':'')+'</span>':'')+'</button>').join('')+'</section>';
+}
 function renderEnt(el,v){
   const m=S.meta, e=m.ents[v.id], body=S.en[v.id], T=TYPES[e.type];
   const ap=mentionsOf(e);
@@ -933,7 +1111,7 @@ function renderEnt(el,v){
         const sn=(s>0?'…':'')+esc(x.text.slice(s,f.i).replace(/\s+/g,' '))+'<mark>'+esc(x.text.slice(f.i,f.i+f.l))+'</mark>'+esc(x.text.slice(f.i+f.l,en).replace(/\s+/g,' '))+(en<x.text.length?'…':'');
         return '<button class="ap" data-sc="'+x.id+'"><b><span>'+esc(m.scenes[x.id].title)+'</span><span class="mono muted">'+x.n+'×</span></b><span class="muted" style="font-size:12px">'+esc(x.ch.title)+'</span><span class="sn">'+sn+'</span></button>'; }).join('')
       :'<p class="sub">Not mentioned yet. Write this name in a scene and it will link here automatically.</p>')
-    +'</section></article>';
+    +'</section>'+tlMentionsHtml(e)+'</article>';
   el.querySelectorAll('textarea').forEach(t=>{
     ag(t);
     t.addEventListener('input',()=>{ ag(t); body.fields[t.dataset.k]=t.value; dirty('en_'+v.id); });
@@ -944,7 +1122,8 @@ function renderEnt(el,v){
   $('#entAl',el).addEventListener('input',ev=>{ e.aliases=[...new Set(ev.target.value.split(/[,;]/).map(s=>s.trim()).filter(Boolean))]; dirty('meta'); linker=buildLinker(); });
   $('#entTag',el).addEventListener('input',ev=>{ e.tag=ev.target.value; dirty('meta'); });
   $('#entType',el).addEventListener('change',ev=>{ e.type=ev.target.value; dirty('meta'); renderBinder(); renderEnt(el,v); });
-  el.querySelectorAll('.ap').forEach(b=>b.addEventListener('click',()=>go({k:'scene',id:b.dataset.sc,flash:v.id})));
+  el.querySelectorAll('.ap[data-sc]').forEach(b=>b.addEventListener('click',()=>go({k:'scene',id:b.dataset.sc,flash:v.id})));
+  el.querySelectorAll('.ap[data-card]').forEach(b=>b.addEventListener('click',()=>{ go({k:'tl',id:b.dataset.tl}); tlOpenCard(b.dataset.card,true); }));
   if(ui.focusName){ ui.focusName=false; nm.focus(); nm.select(); }
 }
 
@@ -971,6 +1150,354 @@ function renderCork(el){
     if(a==='open') go({k:'scene',id}); else if(a==='mvup') moveScene(id,-1); else if(a==='mvdn') moveScene(id,1);
     else if(a==='addsc'){ addScene(ui.cork==='all'?null:ui.cork,false); }
   };
+}
+
+/* ---------- main: timeline ---------- */
+const TOUCH=!!(window.matchMedia&&matchMedia('(hover: none)').matches);
+const AXH=48;
+const lw=()=>window.innerWidth<600?108:156;
+let D=null;   // card being dragged or resized
+const curTl=()=>ui.view&&ui.view.k==='tl'?S.tl[ui.view.id]:null;
+const tlKey=()=>'tl_'+ui.view.id;
+const tlNames=t=>t.axis.names.split(/[,\n]/).map(s=>s.trim()).filter(Boolean);
+function tlLabel(t,v){
+  const a=t.axis, idx=Math.floor((v-a.start)/a.step+1e-9), names=tlNames(t), L=names.length;
+  return a.fmt.replace(/\{(n|i|name|cycle)\}/g,(m,k)=>k==='n'?nfmt(v):k==='i'?String(idx+1):k==='name'?(L?names[((idx%L)+L)%L]:''):nfmt((L?Math.floor(idx/L):idx)+a.cycle));
+}
+const tlSpan=(t,at,len)=>tlLabel(t,at)+(len?' – '+tlLabel(t,at+len):'');
+const tlWhen=(t,c)=>c.when||tlSpan(t,c.at,c.len);
+function tlSnap(t,v){ const a=t.axis, u=a.step*(a.snap||0); return +(u?a.start+Math.round((v-a.start)/u)*u:v).toFixed(4); }
+function tlRange(t,vw){
+  const a=t.axis; let lo=a.start, hi=a.start+a.step*6;
+  Object.values(t.cards).forEach(c=>{ lo=Math.min(lo,c.at); hi=Math.max(hi,c.at+c.len); });
+  if(t.showMarks) t.marks.forEach(m=>{ lo=Math.min(lo,m.at); hi=Math.max(hi,m.at+m.len); });
+  const from=a.start+Math.floor((lo-a.start)/a.step)*a.step;
+  const n=Math.min(4000,Math.max(Math.ceil((hi-from)/a.step)+Math.ceil(t.cardW/a.px)+2,Math.ceil(vw/a.px)+1));
+  return {from,n,w:n*a.px};
+}
+function tlLayout(t,R){
+  const a=t.axis, out={}, ends={};
+  t.lanes.forEach(l=>{ out[l.id]={rows:1,items:[]}; ends[l.id]=[]; });
+  Object.values(t.cards).sort((p,q)=>p.at-q.at||q.len-p.len).forEach(c=>{
+    const L=out[c.lane]; if(!L) return;
+    const x=(c.at-R.from)/a.step*a.px, sw=c.len/a.step*a.px, w=Math.max(t.cardW,sw), e=ends[c.lane];
+    let r=0; while(r<e.length&&e[r]>x-8) r++;
+    e[r]=x+w; L.rows=Math.max(L.rows,r+1); L.items.push({c,x,w,sw,r});
+  });
+  return out;
+}
+function tlCardHtml(t,it,l,H,hit){
+  const c=it.c, col=c.color||l.color, big=t.density!=='compact', scn=c.scene&&S.meta.scenes[c.scene], when=tlWhen(t,c);
+  return '<div class="tl-card s-'+c.style+' d-'+t.density+(hit?'':' dim')+(ui.tlSel===c.id?' sel':'')+'" tabindex="0" role="button" data-card="'+c.id+'" title="'+esc(when)+'" aria-label="'+esc((c.title||'Untitled card')+', '+when)+'" style="left:'+it.x+'px;top:'+(it.r*H+8)+'px;width:'+it.w+'px;height:'+(H-8)+'px;--c:'+cssCol(col)+';--ci:'+inkOn(col)+'">'
+    +(c.len?'<i class="tc-span" style="width:'+Math.max(4,it.sw)+'px"></i>':'')
+    +'<div class="tc-h">'+(c.icon?'<span class="tc-ic">'+esc(c.icon)+'</span>':'')+'<span class="tc-t">'+renderText(c.title||'Untitled card')+'</span></div>'
+    +(big&&t.showWhen?'<div class="tc-w">'+esc(when)+'</div>':'')
+    +(big&&c.body?'<div class="tc-b">'+renderText(c.body)+'</div>':'')
+    +(big&&scn?'<button class="tc-sc" data-tl="opensc" data-id="'+c.scene+'" title="Open this scene">'+ico('pen',12)+'<span>'+esc(scn.title)+'</span></button>':'')
+    +'<span class="tc-rs" data-rs="1" title="Drag to change how long this lasts"></span><span class="tc-grip" data-grip="1" title="Drag to move">'+ico('grip',14)+'</span></div>';
+}
+function drawTl(){
+  const sc=$('#tlScroll'), t=curTl(); if(!sc||!t) return;
+  const a=t.axis, H=TL_DENS[t.density], W=lw(), R=tlRange(t,sc.clientWidth-W), lay=tlLayout(t,R);
+  const q=ui.tlQ.trim().toLowerCase(), fe=ui.tlEnt&&S.meta.ents[ui.tlEnt], fre=fe?makeRe([fe.name].concat(fe.aliases||[])):null;
+  const hit=c=>{ if(q&&!(c.title+'\n'+c.body+'\n'+c.when).toLowerCase().includes(q)) return false; if(fre){ fre.lastIndex=0; if(!fre.test(c.title+'\n'+c.body)) return false; } return true; };
+  const est=Math.max(tlLabel(t,R.from).length,tlLabel(t,R.from+a.step*(R.n-1)).length)*6.8+14, every=Math.max(1,Math.ceil(est/a.px));
+  let ticks=''; for(let k=0;k<R.n;k+=every) ticks+='<span class="tl-tick" style="left:'+(k*a.px)+'px">'+esc(tlLabel(t,R.from+k*a.step))+'</span>';
+  let mk='',bands='';
+  if(t.showMarks) t.marks.forEach(m=>{
+    const x=(m.at-R.from)/a.step*a.px, w=m.len/a.step*a.px, st='left:'+x+'px;--c:'+cssCol(m.color);
+    mk+='<button class="tl-mk" data-tl="mark" data-id="'+m.id+'" style="'+st+(m.len?';width:'+Math.max(18,w)+'px;max-width:none':'')+'" title="'+esc((m.label||'Marker')+' · '+tlSpan(t,m.at,m.len))+'">'+esc(m.label||'Marker')+'</button>';
+    bands+='<i class="tl-band'+(m.len?'':' line')+'" style="'+st+(m.len?';width:'+w+'px':'')+'"></i>';
+  });
+  let lanes='';
+  t.lanes.forEach(l=>{
+    if(l.hide) return; const L=lay[l.id];
+    lanes+='<div class="tl-lane" data-lane="'+l.id+'" style="--lc:'+cssCol(l.color)+'"><div class="tl-lab"><span class="tl-ln">'+esc(l.name||'Lane')+'</span><span class="mono muted">'+L.items.length+'</span></div>'
+      +'<div class="tl-track'+(t.grid?' grid':'')+'" data-track="'+l.id+'" style="width:'+R.w+'px;height:'+(L.rows*H+8)+'px">'+L.items.map(it=>tlCardHtml(t,it,l,H,hit(it.c))).join('')+'</div></div>';
+  });
+  if(!lanes) lanes='<p class="muted" style="position:sticky;left:0;padding:16px;margin:0;max-width:100vw">Every lane is hidden. Turn one back on in the bar above.</p>';
+  const kl=sc.scrollLeft, kt=sc.scrollTop;
+  sc.innerHTML='<div class="tl-canvas" style="width:'+(W+R.w)+'px;--lw:'+W+'px;--px:'+a.px+'px">'
+    +'<div class="tl-axis"><div class="tl-corner">Lanes</div><div class="tl-ticks" style="width:'+R.w+'px">'+mk+ticks+'</div></div>'
+    +'<div class="tl-bands">'+bands+'</div>'+lanes
+    +'<div class="tl-foot"><button class="btn sm" data-tl="addlane">'+ico('plus',14)+'<span>Lane</span></button></div></div>';
+  sc.scrollLeft=kl; sc.scrollTop=kt; ui.tlR=R;
+}
+function drawLaneChips(){
+  const b=$('#tlLanes'), t=curTl(); if(!b||!t) return;
+  b.innerHTML=t.lanes.map(l=>'<button class="lchip'+(l.hide?' off':'')+'" data-tl="lanevis" data-id="'+l.id+'" aria-pressed="'+(!l.hide)+'" style="--lc:'+cssCol(l.color)+'" title="Show or hide this lane"><i></i>'+esc(l.name||'Lane')+'</button>').join('');
+}
+function swatches(cur,kind,id,laneCol){
+  let h='<div class="sws">';
+  if(laneCol!=null) h+='<button class="sw lanec'+(cur===''?' on':'')+'" data-tl="'+kind+'" data-id="'+id+'" data-c="" style="--c:'+cssCol(laneCol)+'" title="Same as its lane" aria-label="Same as its lane"></button>';
+  TL_COLORS.forEach(c=>{ h+='<button class="sw'+(cur===c[0]?' on':'')+'" data-tl="'+kind+'" data-id="'+id+'" data-c="'+c[0]+'" style="--c:var(--'+c[0]+')" title="'+c[1]+'" aria-label="'+c[1]+'"></button>'; });
+  return h+'<label class="sw cust'+(hexOk(cur)?' on':'')+'" title="Pick any colour"'+(hexOk(cur)?' style="background:'+cur+'"':'')+'><input type="color" data-hex="'+kind+'" data-id="'+id+'" value="'+(hexOk(cur)?cur:'#7a5cff')+'" aria-label="Pick any colour"></label></div>';
+}
+function tsNames(c){
+  const box=$('#tsNames'); if(!box) return; const seen=[];
+  findLinks(c.title+'\n'+c.body).forEach(l=>{ if(!seen.includes(l.id)) seen.push(l.id); });
+  box.innerHTML=seen.length?seen.map(id=>{const e=S.meta.ents[id]; return '<button class="cl t-'+e.type+'" data-ent="'+id+'"><i class="pip"></i><span class="nm">'+esc(e.name)+'</span></button>';}).join(''):'<span class="muted" style="font-size:12.5px">Write a character, place or thing name in the title or notes to link it.</span>';
+}
+function sideCard(t,c){
+  const l=t.lanes.find(x=>x.id===c.lane)||t.lanes[0], cf=ui.confirm, scn=c.scene&&S.meta.scenes[c.scene];
+  const scOpts='<option value="">None</option>'+S.meta.chapters.map(ch=>'<optgroup label="'+esc(ch.title)+'">'+ch.scenes.map(id=>'<option value="'+id+'"'+(c.scene===id?' selected':'')+'>'+esc(S.meta.scenes[id].title)+'</option>').join('')+'</optgroup>').join('');
+  return '<div class="ts-head"><h3>Card</h3><button class="ibtn" data-tl="close" aria-label="Close panel">'+ico('x')+'</button></div>'
+    +'<label class="f">Title<input data-cf="title" value="'+esc(c.title)+'" maxlength="120" placeholder="What happens?"></label>'
+    +'<div class="two"><label class="f">Icon or emoji<input data-cf="icon" value="'+esc(c.icon)+'" maxlength="4" placeholder="⚔"></label><label class="f">Lane<select data-cf="lane">'+t.lanes.map(x=>'<option value="'+x.id+'"'+(x.id===c.lane?' selected':'')+'>'+esc(x.name||'Lane')+'</option>').join('')+'</select></label></div>'
+    +'<div class="two"><label class="f">Starts at<input type="number" step="any" data-cf="at" value="'+c.at+'"></label><label class="f">Lasts<input type="number" step="any" min="0" data-cf="len" value="'+c.len+'"></label></div>'
+    +'<p class="fine">On the scale: <b id="tsWhen">'+esc(tlSpan(t,c.at,c.len))+'</b>. A length of 0 is a single moment.</p>'
+    +'<label class="f">Custom time label<input data-cf="when" value="'+esc(c.when)+'" maxlength="80" placeholder="Optional, e.g. The night of the fire"></label>'
+    +'<span class="sec-l">Colour</span>'+swatches(c.color,'ccol',c.id,l.color)
+    +'<span class="sec-l">Style</span><div class="seg" role="group" aria-label="Card style">'+TL_STYLES.map(s=>'<button data-tl="cstyle" data-s="'+s[0]+'" aria-pressed="'+(c.style===s[0])+'"'+(c.style===s[0]?' class="on"':'')+'>'+s[1]+'</button>').join('')+'</div>'
+    +'<label class="f">Notes<textarea data-cf="body" rows="5" placeholder="Details, beats, reminders. Names with pages link automatically.">'+esc(c.body)+'</textarea></label>'
+    +'<span class="sec-l">Names on this card</span><div class="chiplinks" id="tsNames"></div>'
+    +'<label class="f">Linked scene<select data-cf="scene">'+scOpts+'</select></label>'
+    +'<div class="ts-row">'+(scn?'<button class="btn sm" data-tl="opensc" data-id="'+c.scene+'">'+ico('pen',14)+'<span>Open scene</span></button>':'')
+    +'<button class="btn sm" data-tl="dupcard">'+ico('copy',14)+'<span>Duplicate</span></button>'
+    +'<button class="btn sm danger" data-tl="delcard">'+ico('trash',14)+'<span>'+(cf==='k'+c.id?'Click again to delete':'Delete')+'</span></button></div>';
+}
+function sideSet(t){
+  const a=t.axis, cf=ui.confirm, tid=ui.view.id;
+  let h='<div class="ts-head"><h3>Customize timeline</h3><button class="ibtn" data-tl="close" aria-label="Close panel">'+ico('x')+'</button></div>';
+  h+='<h4>Time scale</h4><label class="f">Start from a preset<select data-sf="preset"><option value="">Choose…</option>'+TL_PRESETS.map((p,i)=>'<option value="'+i+'">'+p[2]+'</option>').join('')+'</select></label>'
+    +'<label class="f">Tick label<input data-sf="fmt" value="'+esc(a.fmt)+'" maxlength="60"></label>'
+    +'<p class="fine"><span class="mono">{n}</span> is the time value, <span class="mono">{name}</span> the next name in your list, <span class="mono">{cycle}</span> how many times the list has come round, <span class="mono">{i}</span> the column number. Try <span class="mono">{name}, year {cycle}</span>.</p>'
+    +'<label class="f">Names to cycle through<textarea data-sf="names" rows="2" placeholder="Months, seasons, festivals… separated by commas">'+esc(a.names)+'</textarea></label>'
+    +'<div class="two"><label class="f">First {cycle}<input type="number" step="any" data-sf="cycle" value="'+a.cycle+'"></label><label class="f">Scale starts at<input type="number" step="any" data-sf="start" value="'+a.start+'"></label></div>'
+    +'<div class="two"><label class="f">Units per column<input type="number" step="any" min="0" data-sf="step" value="'+a.step+'"></label><label class="f">Snap cards to<select data-sf="snap">'+TL_SNAPS.map(s=>'<option value="'+s[0]+'"'+(a.snap===s[0]?' selected':'')+'>'+s[1]+'</option>').join('')+'</select></label></div>'
+    +'<label class="f">Zoom<input type="range" min="40" max="600" step="10" data-sf="px" value="'+a.px+'"></label>';
+  h+='<h4>Cards</h4><label class="f">Card width<input type="range" min="110" max="400" step="10" data-sf="cardW" value="'+t.cardW+'"></label>'
+    +'<label class="f">Card height<select data-sf="density">'+[['compact','Compact (title only)'],['normal','Normal'],['tall','Tall (more notes)']].map(d=>'<option value="'+d[0]+'"'+(t.density===d[0]?' selected':'')+'>'+d[1]+'</option>').join('')+'</select></label>'
+    +[['showWhen','Show the time on each card'],['grid','Show grid lines'],['showMarks','Show eras and markers']].map(o=>'<label class="ck"><input type="checkbox" data-sf="'+o[0]+'"'+(t[o[0]]?' checked':'')+'>'+o[1]+'</label>').join('');
+  h+='<h4>Lanes</h4><p class="fine">One per character, plotline, place, or whatever you like. Cards take their lane\'s colour unless you pick another.</p>';
+  t.lanes.forEach((l,i)=>{
+    h+='<div class="lrow"><div class="r1"><input class="nm" data-lf="name" data-id="'+l.id+'" value="'+esc(l.name)+'" maxlength="40" aria-label="Lane name">'
+      +(i>0?'<button class="ibtn" data-tl="lup" data-id="'+l.id+'" aria-label="Move lane up">'+ico('up',14)+'</button>':'')
+      +(i<t.lanes.length-1?'<button class="ibtn" data-tl="ldn" data-id="'+l.id+'" aria-label="Move lane down">'+ico('down',14)+'</button>':'')
+      +(t.lanes.length>1?'<button class="ibtn'+(cf==='ln'+l.id?' on':'')+'" data-tl="dellane" data-id="'+l.id+'" aria-label="Delete lane">'+(cf==='ln'+l.id?'Delete it and its cards?':ico('trash',14))+'</button>':'')
+      +'</div>'+swatches(l.color,'lcol',l.id)+'</div>';
+  });
+  h+='<button class="btn sm" data-tl="addlane" style="margin-top:8px">'+ico('plus',14)+'<span>Lane</span></button>';
+  h+='<h4>Eras and markers</h4><p class="fine">Length 0 draws a line through every lane. Give a marker a length to shade a band, like an act, a war or a season.</p>';
+  t.marks.forEach(m=>{
+    h+='<div class="lrow" id="mk_'+m.id+'"><div class="r1"><input class="nm" data-mf="label" data-id="'+m.id+'" value="'+esc(m.label)+'" maxlength="40" placeholder="Label" aria-label="Marker label">'
+      +'<button class="ibtn'+(cf==='mk'+m.id?' on':'')+'" data-tl="delmark" data-id="'+m.id+'" aria-label="Delete marker">'+(cf==='mk'+m.id?'Delete?':ico('trash',14))+'</button></div>'
+      +'<div class="two"><label class="f">At<input type="number" step="any" data-mf="at" data-id="'+m.id+'" value="'+m.at+'"></label><label class="f">Length<input type="number" step="any" min="0" data-mf="len" data-id="'+m.id+'" value="'+m.len+'"></label></div>'
+      +swatches(m.color,'mcol',m.id)+'</div>';
+  });
+  h+='<button class="btn sm" data-tl="addmark" style="margin-top:8px">'+ico('plus',14)+'<span>Marker</span></button>';
+  h+='<h4>Tools</h4><div class="ts-col"><button class="btn sm" data-tl="fromsc">'+ico('card',14)+'<span>Add a card for every scene</span></button>'
+    +'<button class="btn sm" data-tl="duptl">'+ico('copy',14)+'<span>Duplicate this timeline</span></button>'
+    +'<button class="btn sm danger" data-tl="deltl">'+ico('trash',14)+'<span>'+(cf==='tl'+tid?'Click again to delete this timeline':'Delete this timeline')+'</span></button></div>';
+  return h;
+}
+function drawSide(){
+  const box=$('#tlSide'), t=curTl(); if(!box||!t) return;
+  if(ui.tlSide&&ui.tlSide.k==='card'&&!t.cards[ui.tlSide.id]) ui.tlSide=null;
+  const s=ui.tlSide, sb=$('#tlv [data-tl="settings"]'); if(sb) sb.setAttribute('aria-pressed',s&&s.k==='set'?'true':'false');
+  if(!s){ box.hidden=true; box.innerHTML=''; ui.tlSideKey=''; return; }
+  const key=s.k+(s.id||''), keep=key===ui.tlSideKey?box.scrollTop:0; ui.tlSideKey=key;
+  box.hidden=false;
+  if(s.k==='card'){ box.innerHTML=sideCard(t,t.cards[s.id]); tsNames(t.cards[s.id]); } else box.innerHTML=sideSet(t);
+  box.scrollTop=keep;
+}
+function tlCenter(t){ const sc=$('#tlScroll'), R=ui.tlR; return R.from+(sc.scrollLeft+(sc.clientWidth-lw())/2)/t.axis.px*t.axis.step; }
+function tlRefocus(id){ const el=$('#tlScroll [data-card="'+id+'"]'); if(el){ el.focus({preventScroll:true}); el.scrollIntoView({block:'nearest',inline:'nearest'}); } }
+function tlOpenCard(id,focus){ ui.tlSel=id; ui.tlSide={k:'card',id}; ui.confirm=null; drawSide(); drawTl(); if(focus) tlRefocus(id); }
+function tlNewCard(lane,at){
+  const t=curTl(), vis=t.lanes.filter(l=>!l.hide); if(!vis.length){ toast('Turn on a lane first.',{plain:true}); return; }
+  if(lane==null) lane=vis[0].id;
+  if(at==null) at=tlCenter(t)-t.cardW/2/t.axis.px*t.axis.step;
+  const id=uid('k_'); t.cards[id]={id,lane,at:tlSnap(t,at),len:0,title:'',body:'',when:'',icon:'',color:'',style:'tint',scene:''};
+  dirty(tlKey()); renderBinder(); tlOpenCard(id); tlRefocus(id);
+  const ti=$('#tlSide [data-cf="title"]'); if(ti) ti.focus();
+}
+function tlZoom(f){
+  const t=curTl(), a=t.axis, sc=$('#tlScroll'), mid=tlCenter(t);
+  a.px=clamp(Math.round(a.px*f),40,600); dirty(tlKey()); drawTl();
+  sc.scrollLeft=(mid-ui.tlR.from)/a.step*a.px-(sc.clientWidth-lw())/2;
+  const z=$('#tlSide [data-sf="px"]'); if(z) z.value=a.px;
+}
+function tlFit(){
+  const t=curTl(), a=t.axis, sc=$('#tlScroll'), vis=new Set(t.lanes.filter(l=>!l.hide).map(l=>l.id));
+  const cs=Object.values(t.cards).filter(c=>vis.has(c.lane)); if(!cs.length) return;
+  const lo=Math.min(...cs.map(c=>c.at)), hi=Math.max(...cs.map(c=>c.at+c.len)), span=(hi-lo)/a.step;
+  if(span>0) a.px=clamp(Math.floor((sc.clientWidth-lw()-t.cardW-32)/span),40,600);
+  dirty(tlKey()); drawTl(); sc.scrollLeft=(lo-ui.tlR.from)/a.step*a.px-16;
+  const z=$('#tlSide [data-sf="px"]'); if(z) z.value=a.px;
+}
+function tlCardField(t,x){
+  const c=ui.tlSide&&t.cards[ui.tlSide.id]; if(!c) return; const k=x.dataset.cf;
+  if(k==='at'||k==='len'){ if(x.value===''||!isFinite(+x.value)) return; c[k]=k==='len'?Math.max(0,+x.value):+x.value; }
+  else if(k==='lane'){ if(!t.lanes.some(l=>l.id===x.value)) return; c.lane=x.value; }
+  else c[k]=x.value;
+  dirty(tlKey()); drawTl();
+  const w=$('#tsWhen'); if(w) w.textContent=tlSpan(t,c.at,c.len);
+  if(k==='title'||k==='body') tsNames(c);
+}
+function tlSetField(t,x){
+  const k=x.dataset.sf, a=t.axis, v=x.type==='checkbox'?x.checked:x.value;
+  if(k==='preset'){ const p=TL_PRESETS[+v]; if(!v||!p) return; a.fmt=p[0]; a.names=p[1]; dirty(tlKey()); drawTl(); drawSide(); return; }
+  if(k==='fmt') a.fmt=v.trim()?v:'{n}';
+  else if(k==='names') a.names=v;
+  else if(k==='cycle'||k==='start'||k==='step'||k==='px'){ const n=+v; if(v===''||!isFinite(n)||(k==='step'&&n<=0)) return; a[k]=k==='px'?clamp(n,40,600):n; }
+  else if(k==='snap') a.snap=+v;
+  else if(k==='cardW') t.cardW=clamp(+v,110,400);
+  else if(k==='density') t.density=TL_DENS[v]?v:'normal';
+  else t[k]=!!v;
+  dirty(tlKey()); drawTl();
+}
+function tlColor(t,kind,id,val,full){
+  const o=kind==='ccol'?t.cards[id]:(kind==='lcol'?t.lanes:t.marks).find(x=>x.id===id); if(!o) return;
+  if(val===''?kind!=='ccol':!colOk(val)) return;
+  o.color=val; dirty(tlKey()); drawTl(); if(kind==='lcol') drawLaneChips(); if(full) drawSide();
+}
+function tlAction(act,b){
+  const t=curTl(), a=t.axis, id=b.dataset.id, side=()=>{ drawSide(); };
+  if(act==='addcard') tlNewCard();
+  else if(act==='zin') tlZoom(1.25);
+  else if(act==='zout') tlZoom(.8);
+  else if(act==='fit') tlFit();
+  else if(act==='settings'){ ui.tlSide=ui.tlSide&&ui.tlSide.k==='set'?null:{k:'set'}; ui.confirm=null; drawSide(); drawTl(); }
+  else if(act==='close'){ ui.tlSide=null; ui.tlSel=null; ui.confirm=null; drawSide(); drawTl(); }
+  else if(act==='opensc') go({k:'scene',id});
+  else if(act==='lanevis'){ const l=t.lanes.find(x=>x.id===id); l.hide=!l.hide; dirty(tlKey()); drawLaneChips(); drawTl(); }
+  else if(act==='ccol'||act==='lcol'||act==='mcol') tlColor(t,act,id,b.dataset.c,true);
+  else if(act==='cstyle'){ const c=t.cards[ui.tlSide.id]; c.style=b.dataset.s; dirty(tlKey()); drawTl(); drawSide(); }
+  else if(act==='dupcard'){ const c=t.cards[ui.tlSide.id], nid=uid('k_'); t.cards[nid]=Object.assign({},c,{id:nid}); dirty(tlKey()); renderBinder(); tlOpenCard(nid,true); toast('Card duplicated. It sits just below the original.',{plain:true}); }
+  else if(act==='delcard'){ const cid=ui.tlSide.id; confirmDo('k'+cid,()=>{ delete t.cards[cid]; ui.tlSide=null; ui.tlSel=null; dirty(tlKey()); renderBinder(); drawSide(); drawTl(); },side); }
+  else if(act==='addlane'){
+    const nid=uid('l_'); t.lanes.push({id:nid,name:'Lane '+(t.lanes.length+1),color:TL_COLORS[t.lanes.length%TL_COLORS.length][0],hide:false});
+    dirty(tlKey()); drawLaneChips(); if(!ui.tlSide||ui.tlSide.k!=='set') ui.tlSide={k:'set'}; drawSide(); drawTl();
+    const n=$('#tlSide [data-lf="name"][data-id="'+nid+'"]'); if(n){ n.focus(); n.select(); }
+  }
+  else if(act==='lup'||act==='ldn'){ const i=t.lanes.findIndex(x=>x.id===id), j=i+(act==='lup'?-1:1); if(i<0||j<0||j>=t.lanes.length) return; const x=t.lanes[i]; t.lanes[i]=t.lanes[j]; t.lanes[j]=x; dirty(tlKey()); drawLaneChips(); drawSide(); drawTl(); }
+  else if(act==='dellane') confirmDo('ln'+id,()=>{ if(t.lanes.length<2) return; t.lanes=t.lanes.filter(x=>x.id!==id); Object.keys(t.cards).forEach(k=>{ if(t.cards[k].lane===id) delete t.cards[k]; }); dirty(tlKey()); renderBinder(); drawLaneChips(); drawSide(); drawTl(); },side);
+  else if(act==='mark'||act==='addmark'){
+    let mid=id;
+    if(act==='addmark'){ mid=uid('m_'); t.marks.push({id:mid,label:'New marker',at:tlSnap(t,tlCenter(t)),len:0,color:'muted'}); t.showMarks=true; dirty(tlKey()); }
+    ui.tlSide={k:'set'}; ui.confirm=null; drawSide(); drawTl();
+    const r=$('#mk_'+mid); if(r){ r.scrollIntoView({block:'center'}); const i=$('input',r); i.focus(); i.select(); }
+  }
+  else if(act==='delmark') confirmDo('mk'+id,()=>{ t.marks=t.marks.filter(x=>x.id!==id); dirty(tlKey()); drawSide(); drawTl(); },side);
+  else if(act==='fromsc'){
+    const have=new Set(Object.values(t.cards).map(c=>c.scene).filter(Boolean)), lane=(t.lanes.find(l=>!l.hide)||t.lanes[0]).id, cs=Object.values(t.cards);
+    let at=cs.length?tlSnap(t,Math.max(...cs.map(c=>c.at+c.len))+a.step):a.start, n=0;
+    orderedScenes().forEach(o=>{ if(have.has(o.id)) return; const id2=uid('k_'); t.cards[id2]={id:id2,lane,at,len:0,title:S.meta.scenes[o.id].title,body:S.sc[o.id].synopsis,when:'',icon:'',color:'',style:'tint',scene:o.id}; at=+(at+a.step).toFixed(4); n++; });
+    if(n){ dirty(tlKey()); renderBinder(); drawTl(); }
+    toast(n?'Added '+n+' scene card'+(n===1?'':'s')+'. Drag them to where they happen.':'Every scene already has a card on this timeline.',{plain:true});
+  }
+  else if(act==='duptl') addTimeline(ui.view.id);
+  else if(act==='deltl'){ const tid=ui.view.id; confirmDo('tl'+tid,()=>delTimeline(tid),side); }
+}
+function tlMove(e){
+  const t=curTl(), sc=$('#tlScroll'); if(!D) return; if(!t||!sc){ D=null; return; }
+  const a=t.axis, r=sc.getBoundingClientRect();
+  if(e.clientX>r.right-36) sc.scrollLeft+=14; else if(e.clientX<r.left+lw()+36) sc.scrollLeft-=14;
+  if(e.clientY>r.bottom-30) sc.scrollTop+=10; else if(e.clientY<r.top+AXH+30) sc.scrollTop-=10;
+  const dx=e.clientX-D.x0+sc.scrollLeft-D.sl, dy=e.clientY-D.y0+sc.scrollTop-D.st;
+  if(!D.moved){ if(Math.abs(dx)<4&&Math.abs(dy)<4) return; D.moved=true; D.el.classList.add('drag'); }
+  const du=dx/a.px*a.step, lbl=$('.tc-w',D.el);
+  if(D.rs){
+    D.nlen=Math.max(0,+(tlSnap(t,D.at+D.len+du)-D.at).toFixed(4));
+    const sw=D.nlen/a.step*a.px; D.el.style.width=Math.max(t.cardW,sw)+'px';
+    let sp=$('.tc-span',D.el); if(!sp){ sp=document.createElement('i'); sp.className='tc-span'; D.el.prepend(sp); }
+    sp.style.width=Math.max(4,sw)+'px'; sp.hidden=!D.nlen;
+    if(lbl) lbl.textContent=tlWhen(t,{when:D.c.when,at:D.at,len:D.nlen});
+  } else {
+    D.nat=tlSnap(t,D.at+du);
+    let lane=D.lane, best=1e9;
+    sc.querySelectorAll('.tl-track').forEach(tr=>{ const b=tr.getBoundingClientRect(), d=e.clientY<b.top?b.top-e.clientY:e.clientY>b.bottom?e.clientY-b.bottom:0; if(d<best){ best=d; lane=tr.dataset.track; } });
+    D.nlane=lane;
+    sc.querySelectorAll('.tl-lane').forEach(l=>l.classList.toggle('drop',l.dataset.lane===lane&&lane!==D.lane));
+    D.el.style.transform='translate('+((D.nat-D.at)/a.step*a.px)+'px,'+dy+'px)';
+    if(lbl) lbl.textContent=tlWhen(t,{when:D.c.when,at:D.nat,len:D.len});
+  }
+}
+function tlUp(e){
+  window.removeEventListener('pointermove',tlMove); window.removeEventListener('pointerup',tlUp); window.removeEventListener('pointercancel',tlUp);
+  const d=D; D=null; if(!d||!d.moved) return;
+  ui.tlDragged=true; setTimeout(()=>{ ui.tlDragged=false; },0);
+  if(e.type!=='pointercancel'&&curTl()){
+    const c=d.c;
+    if(d.rs){ if(d.nlen!=null) c.len=d.nlen; } else { if(d.nat!=null) c.at=d.nat; if(d.nlane) c.lane=d.nlane; }
+    dirty(tlKey()); ui.tlSel=c.id;
+    if(ui.tlSide&&ui.tlSide.k==='card'&&ui.tlSide.id===c.id) drawSide();
+  }
+  drawTl();
+}
+function bindTl(tv){
+  tv.addEventListener('click',e=>{
+    if(ui.tlDragged){ ui.tlDragged=false; return; }
+    const en=e.target.closest('.tl-card .ent'); if(en){ go({k:'ent',id:en.dataset.ent}); return; }
+    const b=e.target.closest('[data-tl]'); if(b){ tlAction(b.dataset.tl,b); return; }
+    const card=e.target.closest('.tl-card'); if(card) tlOpenCard(card.dataset.card,true);
+  });
+  tv.addEventListener('dblclick',e=>{
+    const tr=e.target.closest('.tl-track'); if(!tr||e.target.closest('.tl-card')) return;
+    const t=curTl(); tlNewCard(tr.dataset.track,ui.tlR.from+(e.clientX-tr.getBoundingClientRect().left)/t.axis.px*t.axis.step);
+  });
+  tv.addEventListener('pointerdown',e=>{
+    const card=e.target.closest('.tl-card'); if(!card||e.button!==0||e.target.closest('.tc-sc')) return;
+    const rs=!!e.target.closest('[data-rs]'), grip=!!e.target.closest('[data-grip]');
+    if(e.pointerType==='touch'&&!rs&&!grip) return;   // on touch, drag by the handle so the board still scrolls
+    const t=curTl(), c=t.cards[card.dataset.card], sc=$('#tlScroll'); if(!c) return;
+    if(e.pointerType!=='mouse'||rs||grip) e.preventDefault();
+    D={c,el:card,rs,x0:e.clientX,y0:e.clientY,sl:sc.scrollLeft,st:sc.scrollTop,moved:false,at:c.at,len:c.len,lane:c.lane};
+    window.addEventListener('pointermove',tlMove); window.addEventListener('pointerup',tlUp); window.addEventListener('pointercancel',tlUp);
+  });
+  tv.addEventListener('keydown',e=>{
+    const card=e.target.classList&&e.target.classList.contains('tl-card')?e.target:null; if(!card) return;
+    const t=curTl(), c=t.cards[card.dataset.card]; if(!c) return;
+    if(e.key==='Enter'||e.key===' '){ e.preventDefault(); tlOpenCard(c.id,true); return; }
+    const vis=t.lanes.filter(l=>!l.hide), li=vis.findIndex(l=>l.id===c.lane), u=e.shiftKey?t.axis.step:t.axis.step*(t.axis.snap||.1);
+    if(e.key==='ArrowLeft') c.at=+(c.at-u).toFixed(4);
+    else if(e.key==='ArrowRight') c.at=+(c.at+u).toFixed(4);
+    else if(e.key==='ArrowUp'&&li>0) c.lane=vis[li-1].id;
+    else if(e.key==='ArrowDown'&&li>=0&&li<vis.length-1) c.lane=vis[li+1].id;
+    else return;
+    e.preventDefault(); dirty(tlKey()); ui.tlSel=c.id; drawTl(); tlRefocus(c.id);
+    if(ui.tlSide&&ui.tlSide.k==='card'&&ui.tlSide.id===c.id) drawSide();
+  });
+  tv.addEventListener('wheel',e=>{ if(!e.ctrlKey||!e.target.closest('#tlScroll')) return; e.preventDefault(); tlZoom(e.deltaY<0?1.1:1/1.1); },{passive:false});
+  tv.addEventListener('input',e=>{
+    const x=e.target, t=curTl(); if(!t||x.tagName==='SELECT'||x.type==='checkbox') return;
+    if(x.id==='tlName'){ S.meta.tls.find(y=>y.id===ui.view.id).name=x.value||'Timeline'; dirty('meta'); renderBinder(); }
+    else if(x.id==='tlQ'){ ui.tlQ=x.value; drawTl(); }
+    else if(x.dataset.cf) tlCardField(t,x);
+    else if(x.dataset.sf) tlSetField(t,x);
+    else if(x.dataset.lf){ const l=t.lanes.find(y=>y.id===x.dataset.id); if(l){ l.name=x.value; dirty(tlKey()); drawTl(); drawLaneChips(); } }
+    else if(x.dataset.mf){
+      const m=t.marks.find(y=>y.id===x.dataset.id), k=x.dataset.mf; if(!m) return;
+      if(k==='label') m.label=x.value; else { if(x.value===''||!isFinite(+x.value)) return; m[k]=k==='len'?Math.max(0,+x.value):+x.value; }
+      dirty(tlKey()); drawTl();
+    }
+    else if(x.dataset.hex){ x.parentNode.style.background=x.value; tlColor(t,x.dataset.hex,x.dataset.id,x.value,false); }
+  });
+  tv.addEventListener('change',e=>{
+    const x=e.target, t=curTl(); if(!t) return;
+    if(x.id==='tlEnt'){ ui.tlEnt=x.value; drawTl(); }
+    else if(x.dataset.cf&&x.tagName==='SELECT'){ tlCardField(t,x); drawSide(); }
+    else if(x.dataset.sf&&(x.tagName==='SELECT'||x.type==='checkbox')) tlSetField(t,x);
+    else if(x.dataset.hex) drawSide();
+  });
+}
+function renderTl(el,v){
+  const name=S.meta.tls.find(x=>x.id===v.id).name;
+  if(ui.tlFor!==v.id){ ui.tlFor=v.id; ui.tlSel=null; ui.tlSide=null; ui.tlQ=''; ui.tlEnt=''; }
+  if(ui.tlEnt&&!S.meta.ents[ui.tlEnt]) ui.tlEnt='';
+  const entOpts='<option value="">All cards</option>'+TYPE_ORDER.map(ty=>{ const list=Object.values(S.meta.ents).filter(e=>e.type===ty).sort((p,q)=>p.name.localeCompare(q.name)); return list.length?'<optgroup label="'+TYPES[ty].plural+'">'+list.map(e=>'<option value="'+e.id+'"'+(ui.tlEnt===e.id?' selected':'')+'>'+esc(e.name)+'</option>').join('')+'</optgroup>':''; }).join('');
+  el.innerHTML='<div class="tl-view" id="tlv"><div class="main-head">'+backBtn()
+    +'<input id="tlName" class="title-in" value="'+esc(name)+'" maxlength="80" aria-label="Timeline name">'
+    +'<div class="tools"><button class="btn pri" data-tl="addcard">'+ico('plus')+'<span>Card</span></button>'
+    +'<button class="ibtn" data-tl="zout" aria-label="Zoom out" title="Zoom out (Ctrl + scroll)">'+ico('minus')+'</button><button class="ibtn" data-tl="zin" aria-label="Zoom in" title="Zoom in (Ctrl + scroll)">'+ico('plus')+'</button>'
+    +'<button class="btn" data-tl="fit" title="Fit every card on screen">'+ico('fit')+'<span>Fit</span></button>'
+    +'<button class="btn" data-tl="settings" aria-pressed="false">'+ico('sliders')+'<span>Customize</span></button></div></div>'
+    +'<div class="tl-bar"><input id="tlQ" class="tl-q" type="search" placeholder="Search cards" aria-label="Search cards" value="'+esc(ui.tlQ)+'">'
+    +'<select id="tlEnt" aria-label="Only show cards that mention">'+entOpts+'</select><span class="tl-lchips" id="tlLanes"></span>'
+    +'<span class="tl-help">'+(TOUCH?'Drag a card by its handle, or its right edge to change length. Tap a card to edit it.':'Drag cards to move them, or their right edge to change length. Double-click a lane to add a card. Arrow keys nudge the selected card.')+'</span></div>'
+    +'<div class="tl-body"><div class="tl-scroll" id="tlScroll"></div><aside class="tl-side" id="tlSide" aria-label="Card and timeline settings" hidden></aside></div></div>';
+  drawLaneChips(); drawSide(); drawTl(); bindTl($('#tlv',el));
 }
 
 /* ---------- inspector ---------- */
@@ -1028,7 +1555,7 @@ function bindMenu(){
   $('#menu').addEventListener('click',e=>{
     const b=e.target.closest('[data-m]'); if(!b) return; const a=b.dataset.m;
     if(a==='md'){ closeMenu(); saveFile(slug(S.meta.title)+'.md',manuscriptMd()); }
-    else if(a==='json'){ closeMenu(); saveFile(slug(S.meta.title)+'-backup.json',JSON.stringify({app:'inkling',v:1,meta:S.meta,sc:S.sc,en:S.en},null,1)); }
+    else if(a==='json'){ closeMenu(); saveFile(slug(S.meta.title)+'-backup.json',JSON.stringify({app:'inkling',v:1,meta:S.meta,sc:S.sc,en:S.en,tl:S.tl},null,1)); }
     else if(a==='restore'){ closeMenu(); $('#fileIn').value=''; $('#fileIn').click(); }
     else if(a==='sample') confirmDo('m-sample',()=>{ closeMenu(); replaceProject(normalize(sampleProject()),true); },renderMenu);
     else if(a==='blank') confirmDo('m-blank',()=>{ closeMenu(); replaceProject(normalize(blankProject()),true); },renderMenu);
@@ -1068,10 +1595,12 @@ function init(){
     if(ed.contains(s.anchorNode)&&ed.contains(s.focusNode)){ const t=s.toString(); if(t.trim()) ui.sel=t; else if(s.isCollapsed) ui.sel=''; }
   });
   document.addEventListener('click',e=>{
-    if(ui.menu&&!e.target.closest('#menu')&&!e.target.closest('#menuBtn')) closeMenu();
+    const path=e.composedPath();   // the menu re-renders on click, so e.target may already be detached
+    if(ui.menu&&!path.includes($('#menu'))&&!path.includes($('#menuBtn'))) closeMenu();
     const pop=$('#mkPop'); if(pop&&!pop.hidden&&!e.target.closest('.mk-wrap')) pop.hidden=true;
   });
-  document.addEventListener('keydown',e=>{ if(e.key==='Escape'){ if(ui.menu) closeMenu(); else if(ui.focus){ ui.focus=false; syncTab(); renderMain(); } } });
+  document.addEventListener('keydown',e=>{ if(e.key==='Escape'){ if(ui.menu) closeMenu(); else if(ui.view.k==='tl'&&ui.tlSide){ ui.tlSide=null; ui.confirm=null; drawSide(); drawTl(); } else if(ui.focus){ ui.focus=false; syncTab(); renderMain(); } } });
+  let rz; window.addEventListener('resize',()=>{ clearTimeout(rz); rz=setTimeout(()=>{ if(ui.view&&ui.view.k==='tl') drawTl(); },150); });
   document.addEventListener('visibilitychange',()=>{ if(document.hidden&&P.dirty.size) flush(); });
   window.addEventListener('pagehide',()=>{ if(P.dirty.size) mirrorLocal(); });
   setInterval(()=>{ if(!document.hidden&&Date.now()-ui.sayAt>40000) say(line(curMood())); },15000);
