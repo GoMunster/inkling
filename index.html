@@ -123,6 +123,13 @@ button{cursor:pointer}
 .e-row{margin-left:8px}
 .pip{width:9px;height:9px;border-radius:3px;background:currentColor;flex:none}
 .empty-s{color:var(--muted);font-size:12px;padding:2px 14px 6px 36px}
+.bsec .ibtn{width:26px;height:26px}
+.bsec [data-a="relabel"]{opacity:0}
+.bsec:hover [data-a="relabel"],.bsec [data-a="relabel"]:focus-visible{opacity:1}
+@media (hover:none){.bsec [data-a="relabel"]{opacity:1}}
+.relabel{margin:4px 4px 10px 8px;padding:10px;border:1px solid var(--line);border-radius:10px;background:var(--paper);display:grid;gap:8px}
+.relabel label.f input{padding:5px 8px;background:var(--bg)}
+.relabel .row{display:flex;gap:6px;flex-wrap:wrap}
 
 /* main */
 .main-head{position:sticky;top:0;z-index:5;display:flex;align-items:center;gap:10px;padding:10px 16px;background:var(--bg);border-bottom:1px solid var(--line);flex-wrap:wrap;min-width:0}
@@ -171,6 +178,19 @@ label.f input:focus,label.f textarea:focus,.ta:focus{border-color:var(--accent);
 /* corkboard */
 .cork{padding:8px 16px 40px;background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);background-size:28px 28px;background-position:-1px -1px;min-height:100%}
 .cork-ch{font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin:22px 0 10px}
+.ch-notes{background:var(--paper);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:8px;box-shadow:var(--shadow);margin:0 0 18px;max-width:900px}
+.chn-head{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:6px 12px 6px 6px}
+.ch-notes:not(.shut) .chn-head{border-bottom:1px solid var(--line)}
+.chn-tog{display:flex;align-items:center;gap:6px;border:0;background:transparent;font-size:12px;letter-spacing:.08em;text-transform:uppercase;font-weight:600;color:var(--muted);padding:4px 6px;border-radius:6px}
+.chn-tog:hover{color:var(--ink)}
+.chn-head .mono{font-size:11px}
+.chn-ta{display:block;width:100%;border:0;background:transparent;resize:none;padding:12px 16px;font-family:var(--f-prose);font-size:15px;line-height:1.65;min-height:110px;overflow:hidden}
+.chn-ta:focus{outline:none;background:color-mix(in srgb,var(--accent) 4%,transparent)}
+#chNames{padding:0 16px 12px}
+#chNames:empty{display:none}
+.chn-peek{display:flex;align-items:flex-start;gap:8px;width:100%;max-width:900px;margin:-4px 0 12px;border:1px dashed var(--line);background:color-mix(in srgb,var(--paper) 70%,transparent);border-radius:8px;padding:8px 12px;text-align:left;color:var(--muted);font-family:var(--f-prose);font-size:13.5px;line-height:1.5}
+.chn-peek:hover{border-color:var(--accent);color:var(--ink)}
+.chn-peek .ico{margin-top:3px}
 .cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:14px}
 .card{background:var(--paper);border:1px solid var(--line);border-radius:4px;box-shadow:var(--shadow);display:flex;flex-direction:column;min-width:0}
 .card header{display:flex;align-items:flex-start;gap:8px;justify-content:space-between;padding:10px 12px 6px;border-bottom:2px solid var(--accent-soft)}
@@ -282,7 +302,13 @@ label.f input:focus,label.f textarea:focus,.ta:focus{border-color:var(--accent);
 .tl-axis{position:sticky;top:0;z-index:5;display:flex;height:48px;background:var(--panel);border-bottom:1px solid var(--line)}
 .tl-corner{position:sticky;left:0;z-index:6;flex:none;width:var(--lw);background:var(--panel);border-right:1px solid var(--line);display:flex;align-items:flex-end;padding:0 10px 6px 14px;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600}
 .tl-ticks{position:relative;flex:none;height:48px}
-.tl-tick{position:absolute;bottom:0;height:22px;padding:3px 0 0 6px;border-left:1px solid var(--line);font-family:var(--f-mono);font-size:11px;color:var(--muted);white-space:nowrap}
+.tl-corner{font:inherit;border:0;border-right:1px solid var(--line);text-align:left;cursor:text;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tl-corner:hover,.tl-tick:hover{color:var(--accent)}
+.tl-tick{position:absolute;bottom:0;height:22px;padding:3px 6px 0 6px;border:0;border-left:1px solid var(--line);background:transparent;font-family:var(--f-mono);font-size:11px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:left;cursor:text}
+.tl-tick.own{font-family:var(--f-ui);font-weight:600;color:var(--ink)}
+.ts-m .tl-tick{font-size:12.5px;height:24px} .ts-l .tl-tick{font-size:14.5px;height:26px;padding-top:2px}
+.tl-head-in{position:absolute;bottom:2px;z-index:3;width:180px;height:24px;border:1px solid var(--accent);border-radius:6px;background:var(--paper);padding:0 6px;font-size:12px}
+.tl-head-in.corner{position:sticky;left:4px;bottom:auto;align-self:flex-end;margin:0 0 4px;width:calc(var(--lw) - 8px);flex:none;z-index:7}
 .tl-mk{position:absolute;top:5px;height:20px;max-width:240px;border:0;border-left:3px solid var(--c);border-radius:0 6px 6px 0;padding:0 8px;font-size:11.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:left;background:color-mix(in srgb,var(--c) 22%,var(--panel));color:var(--ink)}
 .tl-bands{position:absolute;top:48px;bottom:0;left:var(--lw);right:0;pointer-events:none;overflow:hidden}
 .tl-band{position:absolute;top:0;bottom:0;background:color-mix(in srgb,var(--c) 9%,transparent);border-left:1px dashed color-mix(in srgb,var(--c) 55%,transparent);border-right:1px dashed color-mix(in srgb,var(--c) 55%,transparent)}
@@ -438,15 +464,18 @@ const TYPES={
   thing:{label:'Thing',plural:'Things',fields:[['look','Description'],['origin','Origin'],['power','Why it matters'],['holder','Who has it'],['notes','Notes']]}
 };
 const TYPE_ORDER=['char','place','thing'];
+const SEC_DEF={tl:['Timelines','Timeline'],char:['Characters','Character'],place:['Places','Place'],thing:['Things','Thing']};
+const LP=t=>((S&&S.meta.labels[t])||{}).p||SEC_DEF[t][0];   // section title, user-renamable
+const LS=t=>((S&&S.meta.labels[t])||{}).s||SEC_DEF[t][1];   // one item of that section
 const STATUS={draft:'Draft',revised:'Revised',final:'Final'};
 const STAGES=[{n:'Blot',at:0},{n:'Inkling',at:1000},{n:'Scribe',at:10000},{n:'Bard',at:30000},{n:'Laureate',at:60000}];
 const stageOf=t=>{let i=0;STAGES.forEach((s,j)=>{if(t>=s.at)i=j});return i};
 
 /* ---------- state ---------- */
-let S=null;          // {meta, sc:{id:{text,synopsis,notes}}, en:{id:{fields}}, tl:{id:timeline}}
+let S=null;          // {meta, sc:{id:{text,synopsis,notes}}, en:{id:{fields}}, tl:{id:timeline}, ch:{id:{notes}}}
 let linker=null;
 const ui={view:null,hist:[],cork:'all',rename:null,confirm:null,menu:false,tab:'write',focus:false,openSec:{tl:true,char:true,place:true,thing:true},say:'',sayAt:0,mood:'',touched:false,sel:'',focusName:false,fs:18,
-  tlFor:null,tlSel:null,tlSide:null,tlSideKey:'',tlQ:'',tlEnt:'',tlR:null,tlDragged:false};
+  relabel:null,tlFor:null,tlSel:null,tlSide:null,tlSideKey:'',tlQ:'',tlEnt:'',tlR:null,tlDragged:false};
 const P={db:null,base:null,keys:new Set(),dirty:new Set(),gone:new Set(),timer:null,busy:false,again:false,fails:0};
 
 /* ---------- sample + blank projects ---------- */
@@ -479,6 +508,7 @@ function sampleProject(){
     [ids.gull]:{fields:{kind:'Tavern with four rooms upstairs',feel:'Low beams, one fireplace, lantern glass in every window.',who:'Pilots, porters, and anyone waiting for a ship.'}},
     [ids.comp]:{fields:{look:'Brass, thumb-sized, chipped at the hinge.',origin:'Unknown. Crane will not say.',power:'The needle ignores north and settles on one person.'}}};
   meta.tls=[{id:'t_main',name:'Story timeline'}];
+  const ch={[ids.c1]:{notes:'Goal: get Ilsa to Marrow Quay and put the brass compass in her hand.\nKeep Tobias Crane friendly but evasive. The reader should trust him a little less than Ilsa does.'},[ids.c2]:{notes:''}};
   const L={i:'l_ilsa',t:'l_tobias',w:'l_world'};
   const k=(id,o)=>Object.assign({id,len:0,body:'',when:'',icon:'',color:'',style:'tint',scene:''},o);
   const tl={t_main:{axis:{start:0,step:1,px:190,fmt:'Day {n}',names:'',cycle:1,snap:.5},cardW:200,density:'normal',showWhen:true,showMarks:true,grid:true,
@@ -491,7 +521,7 @@ function sampleProject(){
       k_lamps:k('k_lamps',{lane:L.w,at:2,title:'Lanterns light late',body:'Something is off with the tide.',scene:ids.s3}),
       k_follow:k('k_follow',{lane:L.i,at:4,title:'Ilsa follows the compass',body:'Not written yet.',icon:'?',style:'dashed'})},
     marks:[{id:'m_one',label:'Act I',at:1,len:3,color:'accent'},{id:'m_two',label:'Act II',at:4,len:4,color:'char'}]}};
-  return {meta,sc,en,tl};
+  return {meta,sc,en,tl,ch};
 }
 function blankProject(){
   const c=uid('c_'),s=uid('s_');
@@ -504,6 +534,8 @@ function normalize(o){
   meta.chapters=Array.isArray(meta.chapters)?meta.chapters:[]; meta.scenes=meta.scenes||{}; meta.ents=meta.ents||{};
   meta.pet=meta.pet||{name:'Inky',total:0}; meta.pet.name=meta.pet.name||'Inky'; meta.pet.total=+meta.pet.total||0;
   meta.days=meta.days||{}; meta.saved=+meta.saved||0;
+  const lb=meta.labels&&typeof meta.labels==='object'?meta.labels:{}; meta.labels={};
+  Object.keys(SEC_DEF).forEach(k=>{ const x=lb[k]||{}, p=String(x.p||'').trim().slice(0,40), q=String(x.s||'').trim().slice(0,40); if(p||q) meta.labels[k]={p,s:q}; });
   const sc=o.sc||{}, en=o.en||{};
   meta.chapters.forEach(c=>{
     c.scenes=(c.scenes||[]).filter(id=>meta.scenes[id]);
@@ -517,7 +549,9 @@ function normalize(o){
   meta.tls=meta.tls.filter(x=>x&&x.id).map(x=>({id:String(x.id),name:String(x.name||'Timeline')}));
   Object.keys(tl).forEach(id=>{ if(!meta.tls.some(x=>x.id===id)) meta.tls.push({id,name:'Timeline'}); });
   const tlo={}; meta.tls.forEach(x=>{ tlo[x.id]=normTl(tl[x.id]); });
-  return {meta,sc,en,tl:tlo};
+  const chi=o.ch&&typeof o.ch==='object'?o.ch:{}, cho={};
+  meta.chapters.forEach(c=>{ cho[c.id]={notes:String((chi[c.id]||{}).notes||'')}; });
+  return {meta,sc,en,tl:tlo,ch:cho};
 }
 
 /* ---------- timeline data ---------- */
@@ -552,6 +586,9 @@ function normTl(t){
   Object.keys(cards).forEach(id=>{ const c=cards[id]; if(!c||typeof c!=='object') return;
     t.cards[id]={id,lane:t.lanes.some(l=>l.id===c.lane)?c.lane:t.lanes[0].id,at:num(c.at,0),len:Math.max(0,num(c.len,0)),title:String(c.title||''),body:String(c.body||''),
       when:String(c.when||''),icon:String(c.icon||'').slice(0,4),color:colOk(c.color)?c.color:'',style:TL_STYLES.some(s=>s[0]===c.style)?c.style:'tint',scene:c.scene?String(c.scene):''}; });
+  const tk=t.ticks&&typeof t.ticks==='object'?t.ticks:{}; t.ticks={};
+  Object.keys(tk).forEach(k=>{ const v=String(tk[k]==null?'':tk[k]).slice(0,60); if(/^-?\d+$/.test(k)&&v.trim()) t.ticks[k]=v; });
+  t.corner=typeof t.corner==='string'?t.corner.slice(0,30):'Lanes'; t.tickSize=['s','m','l'].includes(t.tickSize)?t.tickSize:'s';
   t.marks=(Array.isArray(t.marks)?t.marks:[]).filter(m=>m&&m.id).map(m=>({id:String(m.id),label:String(m.label||''),at:num(m.at,0),len:Math.max(0,num(m.len,0)),color:colOk(m.color)?m.color:'muted'}));
   return t;
 }
@@ -580,7 +617,7 @@ function renderText(text){
   let h='',i=0;
   findLinks(text).forEach(l=>{
     const e=S.meta.ents[l.id]; if(!e) return;
-    h+=esc(text.slice(i,l.s))+'<span class="ent t-'+e.type+'" data-ent="'+l.id+'" title="'+esc(e.name+' · '+TYPES[e.type].label+' page')+'">'+esc(text.slice(l.s,l.e))+'</span>';
+    h+=esc(text.slice(i,l.s))+'<span class="ent t-'+e.type+'" data-ent="'+l.id+'" title="'+esc(e.name+' · '+LS(e.type)+' page')+'">'+esc(text.slice(l.s,l.e))+'</span>';
     i=l.e;
   });
   return h+esc(text.slice(i));
@@ -652,10 +689,11 @@ function docData(k){
   if(k.startsWith('sc_')){ const id=k.slice(3); return S.sc[id]||null; }
   if(k.startsWith('en_')){ const id=k.slice(3); return S.en[id]||null; }
   if(k.startsWith('tl_')){ const id=k.slice(3); return S.tl[id]||null; }
+  if(k.startsWith('ch_')){ const id=k.slice(3); return S.ch[id]||null; }
   return null;
 }
 function mirrorLocal(){
-  try{ const s=JSON.stringify({meta:S.meta,sc:S.sc,en:S.en,tl:S.tl}); if(s.length<4500000) localStorage.setItem('inkling:project',s); }catch(e){}
+  try{ const s=JSON.stringify({meta:S.meta,sc:S.sc,en:S.en,tl:S.tl,ch:S.ch}); if(s.length<4500000) localStorage.setItem('inkling:project',s); }catch(e){}
 }
 async function flush(){
   if(P.busy){ P.again=true; return; }
@@ -677,7 +715,7 @@ async function flush(){
     if(P.again){ P.again=false; schedule(200); }
   }
 }
-function allKeys(st){ return new Set(['meta'].concat(Object.keys(st.sc).map(k=>'sc_'+k),Object.keys(st.en).map(k=>'en_'+k),Object.keys(st.tl||{}).map(k=>'tl_'+k))); }
+function allKeys(st){ return new Set(['meta'].concat(Object.keys(st.sc).map(k=>'sc_'+k),Object.keys(st.en).map(k=>'en_'+k),Object.keys(st.tl||{}).map(k=>'tl_'+k),Object.keys(st.ch||{}).map(k=>'ch_'+k))); }
 function markAllDirty(){
   const nk=allKeys(S);
   P.keys.forEach(k=>{ if(!nk.has(k)) P.gone.add(k); });
@@ -694,8 +732,8 @@ async function connectDb(local){
     const snap=await db.collection(P.base).get();
     const docs={}; snap.docs.forEach(d=>{docs[d.id]=d.data(); P.keys.add(d.id);});
     if(docs.meta){
-      const o={meta:docs.meta,sc:{},en:{},tl:{}};
-      Object.keys(docs).forEach(k=>{ if(k.startsWith('sc_')) o.sc[k.slice(3)]=docs[k]; else if(k.startsWith('en_')) o.en[k.slice(3)]=docs[k]; else if(k.startsWith('tl_')) o.tl[k.slice(3)]=docs[k]; });
+      const o={meta:docs.meta,sc:{},en:{},tl:{},ch:{}};
+      Object.keys(docs).forEach(k=>{ if(k.startsWith('sc_')) o.sc[k.slice(3)]=docs[k]; else if(k.startsWith('en_')) o.en[k.slice(3)]=docs[k]; else if(k.startsWith('tl_')) o.tl[k.slice(3)]=docs[k]; else if(k.startsWith('ch_')) o.ch[k.slice(3)]=docs[k]; });
       const remote=normalize(o);
       if(ui.touched||(local&&S.meta.saved>remote.meta.saved)){ markAllDirty(); }
       else{
@@ -866,7 +904,7 @@ function addScene(chId,thenOpen){
   if(thenOpen){ go({k:'scene',id}); const ed=$('#ed'); if(ed) ed.focus(); } else { renderBinder(); renderMain(); }
 }
 function addChapter(){
-  const m=S.meta, id=uid('c_'); m.chapters.push({id,title:'Chapter '+(m.chapters.length+1),open:true,scenes:[]});
+  const m=S.meta, id=uid('c_'); m.chapters.push({id,title:'Chapter '+(m.chapters.length+1),open:true,scenes:[]}); S.ch[id]={notes:''};
   dirty('meta'); addScene(id,true);
 }
 function moveScene(id,dir){
@@ -889,6 +927,7 @@ function delScene(id){
 function delChapter(id){
   const m=S.meta, c=m.chapters.find(x=>x.id===id); if(!c) return;
   c.scenes.forEach(s=>{delete m.scenes[s]; delete S.sc[s]; P.gone.add('sc_'+s); P.dirty.delete('sc_'+s);});
+  delete S.ch[id]; P.gone.add('ch_'+id); P.dirty.delete('ch_'+id);
   m.chapters=m.chapters.filter(x=>x.id!==id); dirty('meta');
   if(!viewValid(ui.view)) ui.view=firstView(); ui.hist=ui.hist.filter(viewValid);
   renderAll();
@@ -905,7 +944,7 @@ function delEntity(id){
 function addTimeline(src){
   const id=uid('t_'), from=src&&S.meta.tls.find(x=>x.id===src);
   S.tl[id]=from?normTl(JSON.parse(JSON.stringify(S.tl[src]))):newTl();
-  S.meta.tls.push({id,name:from?from.name+' (copy)':'Timeline '+(S.meta.tls.length+1)});
+  S.meta.tls.push({id,name:from?from.name+' (copy)':LS('tl')+' '+(S.meta.tls.length+1)});
   ui.openSec.tl=true; ui.confirm=null; dirty('meta','tl_'+id); go({k:'tl',id});
 }
 function delTimeline(id){
@@ -927,6 +966,20 @@ function replaceProject(np,keep){
 }
 
 /* ---------- binder ---------- */
+function relabelForm(t){
+  if(ui.relabel!==t) return '';
+  return '<div class="relabel"><label class="f">Section title<input id="rlP" value="'+esc(LP(t))+'" maxlength="40" placeholder="'+esc(SEC_DEF[t][0])+'"></label>'
+    +'<label class="f">One item is called a<input id="rlS" value="'+esc(LS(t))+'" maxlength="40" placeholder="'+esc(SEC_DEF[t][1])+'"></label>'
+    +'<div class="row"><button class="btn sm pri" data-a="rl-save">Done</button><button class="btn sm" data-a="rl-reset">Reset to '+esc(SEC_DEF[t][0])+'</button></div></div>';
+}
+function saveRelabel(ok){
+  const t=ui.relabel; if(!t) return; ui.relabel=null;
+  if(!ok){ renderBinder(); return; }
+  const p=$('#rlP').value.trim().slice(0,40), q=$('#rlS').value.trim().slice(0,40);
+  S.meta.labels[t]={p:p===SEC_DEF[t][0]?'':p,s:q===SEC_DEF[t][1]?'':q};
+  if(!S.meta.labels[t].p&&!S.meta.labels[t].s) delete S.meta.labels[t];
+  dirty('meta'); renderAll();
+}
 function renderBinder(){
   const m=S.meta, cur=ui.view, el=$('#binder'), cf=ui.confirm;
   let h='<div class="pane-head"><h2>Binder</h2><div class="row"><button class="btn sm" data-a="cork-all">'+ico('card',14)+'<span>Corkboard</span></button><button class="btn sm" data-a="addch">'+ico('plus',14)+'<span>Chapter</span></button></div></div><div class="tree">';
@@ -946,7 +999,7 @@ function renderBinder(){
     if(c.open&&!c.scenes.length) h+='<div class="empty-s">No scenes yet.</div>';
   });
   h+='<div class="ch-row" style="margin-top:20px"></div>';
-  h+='<div class="bsec"><button class="lbl" data-a="sec" data-t="tl" aria-expanded="'+(ui.openSec.tl?'true':'false')+'">'+ico(ui.openSec.tl?'down':'right',14)+'<span>Timelines</span><span class="n">'+m.tls.length+'</span></button><button class="ibtn" data-a="addtl" aria-label="Add timeline">'+ico('plus',14)+'</button></div>';
+  h+='<div class="bsec"><button class="lbl" data-a="sec" data-t="tl" aria-expanded="'+(ui.openSec.tl?'true':'false')+'">'+ico(ui.openSec.tl?'down':'right',14)+'<span>'+esc(LP('tl'))+'</span><span class="n">'+m.tls.length+'</span></button><button class="ibtn" data-a="relabel" data-t="tl" aria-label="Rename this section" title="Rename this section">'+ico('edit',14)+'</button><button class="ibtn" data-a="addtl" aria-label="Add '+esc(LS('tl').toLowerCase())+'">'+ico('plus',14)+'</button></div>'+relabelForm('tl');
   if(ui.openSec.tl){
     m.tls.forEach(x=>{
       const on=cur.k==='tl'&&cur.id===x.id, n=Object.keys(S.tl[x.id].cards).length;
@@ -956,16 +1009,17 @@ function renderBinder(){
   }
   TYPE_ORDER.forEach(t=>{
     const list=Object.values(m.ents).filter(e=>e.type===t).sort((a,b)=>a.name.localeCompare(b.name));
-    h+='<div class="bsec"><button class="lbl" data-a="sec" data-t="'+t+'" aria-expanded="'+(ui.openSec[t]?'true':'false')+'">'+ico(ui.openSec[t]?'down':'right',14)+'<span>'+TYPES[t].plural+'</span><span class="n">'+list.length+'</span></button><button class="ibtn" data-a="adde" data-t="'+t+'" aria-label="Add '+TYPES[t].label.toLowerCase()+'">'+ico('plus',14)+'</button></div>';
+    h+='<div class="bsec"><button class="lbl" data-a="sec" data-t="'+t+'" aria-expanded="'+(ui.openSec[t]?'true':'false')+'">'+ico(ui.openSec[t]?'down':'right',14)+'<span>'+esc(LP(t))+'</span><span class="n">'+list.length+'</span></button><button class="ibtn" data-a="relabel" data-t="'+t+'" aria-label="Rename this section" title="Rename this section">'+ico('edit',14)+'</button><button class="ibtn" data-a="adde" data-t="'+t+'" aria-label="Add '+esc(LS(t).toLowerCase())+'">'+ico('plus',14)+'</button></div>'+relabelForm(t);
     if(ui.openSec[t]){
       list.forEach(e=>{
         const on=cur.k==='ent'&&cur.id===e.id;
-        h+='<div class="e-row'+(on?' on':'')+'"><button class="e-btn" data-a="open-e" data-id="'+e.id+'" title="'+esc(e.tag||TYPES[t].label+' page')+'"><i class="pip t-'+t+'"></i><span class="t">'+esc(e.name||'Untitled')+'</span></button><span class="acts"><button class="ibtn'+(cf==='en'+e.id?' on':'')+'" data-a="dele" data-id="'+e.id+'" aria-label="Delete page">'+(cf==='en'+e.id?'Delete?':ico('trash',14))+'</button></span></div>';
+        h+='<div class="e-row'+(on?' on':'')+'"><button class="e-btn" data-a="open-e" data-id="'+e.id+'" title="'+esc(e.tag||LS(t)+' page')+'"><i class="pip t-'+t+'"></i><span class="t">'+esc(e.name||'Untitled')+'</span></button><span class="acts"><button class="ibtn'+(cf==='en'+e.id?' on':'')+'" data-a="dele" data-id="'+e.id+'" aria-label="Delete page">'+(cf==='en'+e.id?'Delete?':ico('trash',14))+'</button></span></div>';
       });
       if(!list.length) h+='<div class="empty-s">None yet. Press + or select a name in your text.</div>';
     }
   });
   el.innerHTML=h+'</div>';
+  el.querySelectorAll('#rlP,#rlS').forEach(i=>i.addEventListener('keydown',e=>{ if(e.key==='Enter') saveRelabel(true); else if(e.key==='Escape'){ e.stopPropagation(); saveRelabel(false); } }));
   const rn=$('#rn',el);
   if(rn){
     rn.focus(); rn.select();
@@ -992,9 +1046,12 @@ function bindBinder(){
     else if(a==='delsc') confirmDo('sc'+id,()=>delScene(id),rr);
     else if(a==='dele') confirmDo('en'+id,()=>delEntity(id),rr);
     else if(a==='sec'){ ui.openSec[b.dataset.t]=!ui.openSec[b.dataset.t]; renderBinder(); }
-    else if(a==='adde'){ const t=b.dataset.t; ui.openSec[t]=true; const nid=addEntity(t,'New '+TYPES[t].label.toLowerCase()); ui.focusName=true; go({k:'ent',id:nid}); }
+    else if(a==='adde'){ const t=b.dataset.t; ui.openSec[t]=true; const nid=addEntity(t,'New '+LS(t).toLowerCase()); ui.focusName=true; go({k:'ent',id:nid}); }
     else if(a==='open-e') go({k:'ent',id});
     else if(a==='open-tl') go({k:'tl',id});
+    else if(a==='relabel'){ ui.relabel=ui.relabel===b.dataset.t?null:b.dataset.t; renderBinder(); const i=$('#rlP'); if(i){ i.focus(); i.select(); } }
+    else if(a==='rl-save') saveRelabel(true);
+    else if(a==='rl-reset'){ delete S.meta.labels[ui.relabel]; dirty('meta'); ui.relabel=null; renderAll(); }
     else if(a==='addtl') addTimeline();
     else if(a==='deltl') confirmDo('tl'+id,()=>delTimeline(id),rr);
   });
@@ -1047,7 +1104,7 @@ function renderScene(el,v){
     if(!pop.hidden){ pop.hidden=true; return; }
     const txt=ui.sel;
     if(!txt){ toast('Select a name in your text first, then choose Link selection.',{plain:true}); return; }
-    pop.innerHTML='<div class="pt">Make a page for “'+esc(txt.slice(0,40))+'” as</div>'+TYPE_ORDER.map(t=>'<button data-t="'+t+'"><i class="pip t-'+t+'"></i><span>'+TYPES[t].label+'</span></button>').join('');
+    pop.innerHTML='<div class="pt">Make a page for “'+esc(txt.slice(0,40))+'” as</div>'+TYPE_ORDER.map(t=>'<button data-t="'+t+'"><i class="pip t-'+t+'"></i><span>'+esc(LS(t))+'</span></button>').join('');
     pop.hidden=false;
   });
   $('#mkPop').addEventListener('click',e=>{
@@ -1056,7 +1113,7 @@ function renderScene(el,v){
     const exist=Object.values(S.meta.ents).find(x=>x.name===name||(x.aliases||[]).includes(name));
     if(exist){ toast(name+' already has a page.',{plain:true}); relinkEditor(true); return; }
     addEntity(b.dataset.t,name); renderBinder(); relinkEditor(true);
-    toast('Linked '+name+' as a '+TYPES[b.dataset.t].label.toLowerCase()+'. Click it to open its page.',{plain:true});
+    toast('Linked '+name+' as a '+LS(b.dataset.t).toLowerCase()+'. Click it to open its page.',{plain:true});
   });
   updateSceneChips();
 }
@@ -1098,9 +1155,9 @@ function renderEnt(el,v){
   const m=S.meta, e=m.ents[v.id], body=S.en[v.id], T=TYPES[e.type];
   const ap=mentionsOf(e);
   el.innerHTML='<div class="main-head">'+backBtn()+'<h1 class="mh-title">Development page</h1>'
-    +'<label class="muted" style="display:flex;align-items:center;gap:6px;font-size:12px">Type <select id="entType" aria-label="Page type">'+TYPE_ORDER.map(t=>'<option value="'+t+'"'+(e.type===t?' selected':'')+'>'+TYPES[t].label+'</option>').join('')+'</select></label></div>'
+    +'<label class="muted" style="display:flex;align-items:center;gap:6px;font-size:12px">Type <select id="entType" aria-label="Page type">'+TYPE_ORDER.map(t=>'<option value="'+t+'"'+(e.type===t?' selected':'')+'>'+esc(LS(t))+'</option>').join('')+'</select></label></div>'
     +'<article class="sheet ent-page">'
-    +'<span class="badge t-'+e.type+'"><i class="pip"></i>'+T.label+'</span>'
+    +'<span class="badge t-'+e.type+'"><i class="pip"></i>'+esc(LS(e.type))+'</span>'
     +'<input id="entName" class="ent-name" value="'+esc(e.name)+'" maxlength="70" aria-label="Name" placeholder="Name">'
     +'<div class="meta-row"><label class="f">Also called (separate with commas)<input id="entAl" value="'+esc((e.aliases||[]).join(', '))+'" placeholder="Nicknames, titles, short forms"></label>'
     +'<label class="f">One-line summary<input id="entTag" value="'+esc(e.tag||'')+'" maxlength="140" placeholder="Who or what is this, in one line?"></label></div>'
@@ -1132,8 +1189,14 @@ function renderCork(el){
   const m=S.meta; if(ui.cork!=='all'&&!m.chapters.find(c=>c.id===ui.cork)) ui.cork='all';
   const chs=ui.cork==='all'?m.chapters:m.chapters.filter(c=>c.id===ui.cork);
   let h='<div class="main-head">'+backBtn()+'<h1 class="mh-title">Corkboard</h1><select id="corkSel" aria-label="Show chapter"><option value="all">All chapters</option>'+m.chapters.map(c=>'<option value="'+c.id+'"'+(ui.cork===c.id?' selected':'')+'>'+esc(c.title)+'</option>').join('')+'</select><button class="btn" data-ca="addsc">'+ico('plus')+'<span>Scene</span></button></div><div class="cork">';
+  const one=ui.cork!=='all';
   chs.forEach(c=>{
-    h+='<h2 class="cork-ch">'+esc(c.title)+'</h2><div class="cards">';
+    const nt=(S.ch[c.id]||{}).notes||'';
+    h+='<h2 class="cork-ch">'+esc(c.title)+'</h2>';
+    if(one) h+='<section class="ch-notes'+(ui.chNotesHide?' shut':'')+'"><div class="chn-head"><button class="chn-tog" data-ca="chntog" aria-expanded="'+(!ui.chNotesHide)+'">'+ico(ui.chNotesHide?'right':'down',14)+'<span>Chapter notes</span></button><span class="muted mono" id="chnWc">'+fmt(wc(nt))+' words</span></div>'
+      +(ui.chNotesHide?'':'<textarea class="chn-ta" id="chNotes" data-id="'+c.id+'" aria-label="Notes for '+esc(c.title)+'" placeholder="Goals for this chapter, threads to pick up, research, what has to change by the end…">'+esc(nt)+'</textarea><div class="chiplinks" id="chNames"></div>')+'</section>';
+    else if(nt.trim()) h+='<button class="chn-peek" data-ca="chopen" data-id="'+c.id+'" title="Open this chapter and its notes">'+ico('edit',12)+'<span>'+esc(nt.trim().replace(/\s+/g,' ').slice(0,220))+(nt.trim().length>220?'…':'')+'</span></button>';
+    h+='<div class="cards">';
     c.scenes.forEach(id=>{
       const s=m.scenes[id], d=S.sc[id];
       h+='<article class="card"><header><button class="card-t" data-ca="open" data-id="'+id+'">'+esc(s.title)+'</button><span class="st st-'+s.status+'">'+STATUS[s.status]+'</span></header><textarea class="syn" data-id="'+id+'" rows="4" aria-label="Synopsis for '+esc(s.title)+'" placeholder="Synopsis: what happens in this scene?">'+esc(d.synopsis)+'</textarea><footer><span class="mono">'+fmt(s.words)+' words</span><span class="acts on"><button class="ibtn" data-ca="mvup" data-id="'+id+'" aria-label="Move earlier">'+ico('back',14)+'</button><button class="ibtn" data-ca="mvdn" data-id="'+id+'" aria-label="Move later">'+ico('right',14)+'</button></span></footer></article>';
@@ -1145,10 +1208,19 @@ function renderCork(el){
   el.innerHTML=h+'</div>';
   el.querySelectorAll('.syn').forEach(t=>{ ag(t); t.addEventListener('input',()=>{ ag(t); S.sc[t.dataset.id].synopsis=t.value; dirty('sc_'+t.dataset.id); }); });
   $('#corkSel',el).addEventListener('change',ev=>{ ui.cork=ev.target.value; renderCork(el); });
+  const cn=$('#chNotes',el);
+  if(cn){
+    const names=()=>{ const box=$('#chNames',el); if(!box) return; const seen=[]; findLinks(cn.value).forEach(l=>{ if(!seen.includes(l.id)) seen.push(l.id); });
+      box.innerHTML=seen.map(id=>{const e=S.meta.ents[id]; return '<button class="cl t-'+e.type+'" data-ent="'+id+'"><i class="pip"></i><span class="nm">'+esc(e.name)+'</span></button>';}).join(''); };
+    ag(cn); names();
+    cn.addEventListener('input',()=>{ ag(cn); S.ch[cn.dataset.id].notes=cn.value; dirty('ch_'+cn.dataset.id); $('#chnWc',el).textContent=fmt(wc(cn.value))+' words'; clearTimeout(ui.cnt); ui.cnt=setTimeout(names,400); });
+  }
   el.onclick=ev=>{
     const b=ev.target.closest('[data-ca]'); if(!b) return; const a=b.dataset.ca,id=b.dataset.id;
     if(a==='open') go({k:'scene',id}); else if(a==='mvup') moveScene(id,-1); else if(a==='mvdn') moveScene(id,1);
     else if(a==='addsc'){ addScene(ui.cork==='all'?null:ui.cork,false); }
+    else if(a==='chntog'){ ui.chNotesHide=!ui.chNotesHide; renderCork(el); if(!ui.chNotesHide){ const t=$('#chNotes',el); if(t) t.focus(); } }
+    else if(a==='chopen'){ ui.cork=id; renderCork(el); renderBinder(); }
   };
 }
 
@@ -1160,8 +1232,10 @@ let D=null;   // card being dragged or resized
 const curTl=()=>ui.view&&ui.view.k==='tl'?S.tl[ui.view.id]:null;
 const tlKey=()=>'tl_'+ui.view.id;
 const tlNames=t=>t.axis.names.split(/[,\n]/).map(s=>s.trim()).filter(Boolean);
-function tlLabel(t,v){
-  const a=t.axis, idx=Math.floor((v-a.start)/a.step+1e-9), names=tlNames(t), L=names.length;
+const tlIdx=(t,v)=>Math.floor((v-t.axis.start)/t.axis.step+1e-9);
+function tlLabel(t,v,auto){
+  const a=t.axis, idx=tlIdx(t,v), names=tlNames(t), L=names.length;
+  if(!auto&&t.ticks[idx]) return t.ticks[idx];
   return a.fmt.replace(/\{(n|i|name|cycle)\}/g,(m,k)=>k==='n'?nfmt(v):k==='i'?String(idx+1):k==='name'?(L?names[((idx%L)+L)%L]:''):nfmt((L?Math.floor(idx/L):idx)+a.cycle));
 }
 const tlSpan=(t,at,len)=>tlLabel(t,at)+(len?' – '+tlLabel(t,at+len):'');
@@ -1201,8 +1275,13 @@ function drawTl(){
   const a=t.axis, H=TL_DENS[t.density], W=lw(), R=tlRange(t,sc.clientWidth-W), lay=tlLayout(t,R);
   const q=ui.tlQ.trim().toLowerCase(), fe=ui.tlEnt&&S.meta.ents[ui.tlEnt], fre=fe?makeRe([fe.name].concat(fe.aliases||[])):null;
   const hit=c=>{ if(q&&!(c.title+'\n'+c.body+'\n'+c.when).toLowerCase().includes(q)) return false; if(fre){ fre.lastIndex=0; if(!fre.test(c.title+'\n'+c.body)) return false; } return true; };
-  const est=Math.max(tlLabel(t,R.from).length,tlLabel(t,R.from+a.step*(R.n-1)).length)*6.8+14, every=Math.max(1,Math.ceil(est/a.px));
-  let ticks=''; for(let k=0;k<R.n;k+=every) ticks+='<span class="tl-tick" style="left:'+(k*a.px)+'px">'+esc(tlLabel(t,R.from+k*a.step))+'</span>';
+  const cw={s:6.8,m:8,l:9.6}[t.tickSize], est=Math.max(tlLabel(t,R.from,true).length,tlLabel(t,R.from+a.step*(R.n-1),true).length)*cw+14, every=Math.max(1,Math.ceil(est/a.px));
+  let ticks='';
+  for(let k=0;k<R.n;k++){
+    const v=R.from+k*a.step, i=tlIdx(t,v), own=t.ticks[i]!=null; if(k%every&&!own) continue;
+    let room=1; while(room<every*4&&k+room<R.n&&!t.ticks[i+room]&&(k+room)%every) room++;
+    ticks+='<button class="tl-tick'+(own?' own':'')+'" data-tl="tick" data-i="'+i+'" style="left:'+(k*a.px)+'px;max-width:'+Math.max(a.px,room*a.px)+'px" title="'+esc(own?'Renamed from '+tlLabel(t,v,true)+'. Click to edit.':'Click to rename this column')+'">'+esc(tlLabel(t,v))+'</button>';
+  }
   let mk='',bands='';
   if(t.showMarks) t.marks.forEach(m=>{
     const x=(m.at-R.from)/a.step*a.px, w=m.len/a.step*a.px, st='left:'+x+'px;--c:'+cssCol(m.color);
@@ -1218,7 +1297,7 @@ function drawTl(){
   if(!lanes) lanes='<p class="muted" style="position:sticky;left:0;padding:16px;margin:0;max-width:100vw">Every lane is hidden. Turn one back on in the bar above.</p>';
   const kl=sc.scrollLeft, kt=sc.scrollTop;
   sc.innerHTML='<div class="tl-canvas" style="width:'+(W+R.w)+'px;--lw:'+W+'px;--px:'+a.px+'px">'
-    +'<div class="tl-axis"><div class="tl-corner">Lanes</div><div class="tl-ticks" style="width:'+R.w+'px">'+mk+ticks+'</div></div>'
+    +'<div class="tl-axis ts-'+t.tickSize+'"><button class="tl-corner" data-tl="corner" title="Click to rename">'+esc(t.corner)+'</button><div class="tl-ticks" style="width:'+R.w+'px">'+mk+ticks+'</div></div>'
     +'<div class="tl-bands">'+bands+'</div>'+lanes
     +'<div class="tl-foot"><button class="btn sm" data-tl="addlane">'+ico('plus',14)+'<span>Lane</span></button></div></div>';
   sc.scrollLeft=kl; sc.scrollTop=kt; ui.tlR=R;
@@ -1236,7 +1315,7 @@ function swatches(cur,kind,id,laneCol){
 function tsNames(c){
   const box=$('#tsNames'); if(!box) return; const seen=[];
   findLinks(c.title+'\n'+c.body).forEach(l=>{ if(!seen.includes(l.id)) seen.push(l.id); });
-  box.innerHTML=seen.length?seen.map(id=>{const e=S.meta.ents[id]; return '<button class="cl t-'+e.type+'" data-ent="'+id+'"><i class="pip"></i><span class="nm">'+esc(e.name)+'</span></button>';}).join(''):'<span class="muted" style="font-size:12.5px">Write a character, place or thing name in the title or notes to link it.</span>';
+  box.innerHTML=seen.length?seen.map(id=>{const e=S.meta.ents[id]; return '<button class="cl t-'+e.type+'" data-ent="'+id+'"><i class="pip"></i><span class="nm">'+esc(e.name)+'</span></button>';}).join(''):'<span class="muted" style="font-size:12.5px">Write the name of any story page in the title or notes to link it.</span>';
 }
 function sideCard(t,c){
   const l=t.lanes.find(x=>x.id===c.lane)||t.lanes[0], cf=ui.confirm, scn=c.scene&&S.meta.scenes[c.scene];
@@ -1266,6 +1345,11 @@ function sideSet(t){
     +'<div class="two"><label class="f">First {cycle}<input type="number" step="any" data-sf="cycle" value="'+a.cycle+'"></label><label class="f">Scale starts at<input type="number" step="any" data-sf="start" value="'+a.start+'"></label></div>'
     +'<div class="two"><label class="f">Units per column<input type="number" step="any" min="0" data-sf="step" value="'+a.step+'"></label><label class="f">Snap cards to<select data-sf="snap">'+TL_SNAPS.map(s=>'<option value="'+s[0]+'"'+(a.snap===s[0]?' selected':'')+'>'+s[1]+'</option>').join('')+'</select></label></div>'
     +'<label class="f">Zoom<input type="range" min="40" max="600" step="10" data-sf="px" value="'+a.px+'"></label>';
+  const nt=Object.keys(t.ticks).length;
+  h+='<h4>Header row</h4><p class="fine">Click any label in the header row to rename that column, like <i>The Siege</i> instead of <i>Day 4</i>. Cards in that column show the new name too. Clear a label to go back to the scale. Renamed columns stay tied to their position, so changing the start or units per column moves them.</p>'
+    +'<label class="f">Title above the lane names<input data-sf="corner" value="'+esc(t.corner)+'" maxlength="30" placeholder="Lanes"></label>'
+    +'<label class="f">Header label size<select data-sf="tickSize">'+[['s','Small'],['m','Medium'],['l','Large']].map(o=>'<option value="'+o[0]+'"'+(t.tickSize===o[0]?' selected':'')+'>'+o[1]+'</option>').join('')+'</select></label>'
+    +'<p class="fine">'+(nt?nt+' renamed column'+(nt===1?'':'s')+'. <button class="btn sm" data-tl="resetticks">Reset all column labels</button>':'No renamed columns yet.')+'</p>';
   h+='<h4>Cards</h4><label class="f">Card width<input type="range" min="110" max="400" step="10" data-sf="cardW" value="'+t.cardW+'"></label>'
     +'<label class="f">Card height<select data-sf="density">'+[['compact','Compact (title only)'],['normal','Normal'],['tall','Tall (more notes)']].map(d=>'<option value="'+d[0]+'"'+(t.density===d[0]?' selected':'')+'>'+d[1]+'</option>').join('')+'</select></label>'
     +[['showWhen','Show the time on each card'],['grid','Show grid lines'],['showMarks','Show eras and markers']].map(o=>'<label class="ck"><input type="checkbox" data-sf="'+o[0]+'"'+(t[o[0]]?' checked':'')+'>'+o[1]+'</label>').join('');
@@ -1342,6 +1426,8 @@ function tlSetField(t,x){
   else if(k==='names') a.names=v;
   else if(k==='cycle'||k==='start'||k==='step'||k==='px'){ const n=+v; if(v===''||!isFinite(n)||(k==='step'&&n<=0)) return; a[k]=k==='px'?clamp(n,40,600):n; }
   else if(k==='snap') a.snap=+v;
+  else if(k==='corner') t.corner=v.slice(0,30);
+  else if(k==='tickSize') t.tickSize=['s','m','l'].includes(v)?v:'s';
   else if(k==='cardW') t.cardW=clamp(+v,110,400);
   else if(k==='density') t.density=TL_DENS[v]?v:'normal';
   else t[k]=!!v;
@@ -1354,7 +1440,9 @@ function tlColor(t,kind,id,val,full){
 }
 function tlAction(act,b){
   const t=curTl(), a=t.axis, id=b.dataset.id, side=()=>{ drawSide(); };
-  if(act==='addcard') tlNewCard();
+  if(act==='tick'||act==='corner') tlEditHead(b);
+  else if(act==='resetticks'){ t.ticks={}; dirty(tlKey()); drawTl(); drawSide(); }
+  else if(act==='addcard') tlNewCard();
   else if(act==='zin') tlZoom(1.25);
   else if(act==='zout') tlZoom(.8);
   else if(act==='fit') tlFit();
@@ -1389,6 +1477,23 @@ function tlAction(act,b){
   }
   else if(act==='duptl') addTimeline(ui.view.id);
   else if(act==='deltl'){ const tid=ui.view.id; confirmDo('tl'+tid,()=>delTimeline(tid),side); }
+}
+function tlEditHead(b){
+  const t=curTl(), corner=b.dataset.tl==='corner', i=b.dataset.i, auto=corner?'Lanes':tlLabel(t,t.axis.start+i*t.axis.step,true);
+  const inp=document.createElement('input');
+  inp.className='tl-head-in'+(corner?' corner':''); inp.maxLength=corner?30:60; inp.placeholder=auto;
+  inp.value=corner?t.corner:(t.ticks[i]||auto); inp.setAttribute('aria-label',corner?'Lane column title':'Column label');
+  if(!corner) inp.style.left=b.style.left;
+  b.replaceWith(inp); inp.focus(); inp.select();
+  let done=false;
+  const fin=ok=>{ if(done) return; done=true;
+    if(ok){ const v=inp.value.trim();
+      if(corner) t.corner=inp.value.slice(0,30);
+      else if(!v||v===auto) delete t.ticks[i]; else t.ticks[i]=v;
+      dirty(tlKey()); if(ui.tlSide&&ui.tlSide.k==='set') drawSide(); }
+    drawTl(); };
+  inp.addEventListener('keydown',e=>{ if(e.key==='Enter'){ e.preventDefault(); fin(true); } else if(e.key==='Escape'){ e.stopPropagation(); fin(false); } });
+  inp.addEventListener('blur',()=>fin(true));
 }
 function tlMove(e){
   const t=curTl(), sc=$('#tlScroll'); if(!D) return; if(!t||!sc){ D=null; return; }
@@ -1486,7 +1591,7 @@ function renderTl(el,v){
   const name=S.meta.tls.find(x=>x.id===v.id).name;
   if(ui.tlFor!==v.id){ ui.tlFor=v.id; ui.tlSel=null; ui.tlSide=null; ui.tlQ=''; ui.tlEnt=''; }
   if(ui.tlEnt&&!S.meta.ents[ui.tlEnt]) ui.tlEnt='';
-  const entOpts='<option value="">All cards</option>'+TYPE_ORDER.map(ty=>{ const list=Object.values(S.meta.ents).filter(e=>e.type===ty).sort((p,q)=>p.name.localeCompare(q.name)); return list.length?'<optgroup label="'+TYPES[ty].plural+'">'+list.map(e=>'<option value="'+e.id+'"'+(ui.tlEnt===e.id?' selected':'')+'>'+esc(e.name)+'</option>').join('')+'</optgroup>':''; }).join('');
+  const entOpts='<option value="">All cards</option>'+TYPE_ORDER.map(ty=>{ const list=Object.values(S.meta.ents).filter(e=>e.type===ty).sort((p,q)=>p.name.localeCompare(q.name)); return list.length?'<optgroup label="'+esc(LP(ty))+'">'+list.map(e=>'<option value="'+e.id+'"'+(ui.tlEnt===e.id?' selected':'')+'>'+esc(e.name)+'</option>').join('')+'</optgroup>':''; }).join('');
   el.innerHTML='<div class="tl-view" id="tlv"><div class="main-head">'+backBtn()
     +'<input id="tlName" class="title-in" value="'+esc(name)+'" maxlength="80" aria-label="Timeline name">'
     +'<div class="tools"><button class="btn pri" data-tl="addcard">'+ico('plus')+'<span>Card</span></button>'
@@ -1555,7 +1660,7 @@ function bindMenu(){
   $('#menu').addEventListener('click',e=>{
     const b=e.target.closest('[data-m]'); if(!b) return; const a=b.dataset.m;
     if(a==='md'){ closeMenu(); saveFile(slug(S.meta.title)+'.md',manuscriptMd()); }
-    else if(a==='json'){ closeMenu(); saveFile(slug(S.meta.title)+'-backup.json',JSON.stringify({app:'inkling',v:1,meta:S.meta,sc:S.sc,en:S.en,tl:S.tl},null,1)); }
+    else if(a==='json'){ closeMenu(); saveFile(slug(S.meta.title)+'-backup.json',JSON.stringify({app:'inkling',v:1,meta:S.meta,sc:S.sc,en:S.en,tl:S.tl,ch:S.ch},null,1)); }
     else if(a==='restore'){ closeMenu(); $('#fileIn').value=''; $('#fileIn').click(); }
     else if(a==='sample') confirmDo('m-sample',()=>{ closeMenu(); replaceProject(normalize(sampleProject()),true); },renderMenu);
     else if(a==='blank') confirmDo('m-blank',()=>{ closeMenu(); replaceProject(normalize(blankProject()),true); },renderMenu);
