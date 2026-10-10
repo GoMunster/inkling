@@ -316,7 +316,11 @@ label.f input:focus,label.f textarea:focus,.ta:focus{border-color:var(--accent);
 .tl-lane{display:flex;border-bottom:1px solid var(--line)}
 .tl-lane.drop .tl-track{background-color:color-mix(in srgb,var(--lc) 10%,transparent)}
 .tl-lab{position:sticky;left:0;z-index:3;flex:none;width:var(--lw);background:var(--panel);border-right:1px solid var(--line);box-shadow:inset 4px 0 0 var(--lc);padding:10px 8px 10px 14px;display:flex;align-items:flex-start;justify-content:space-between;gap:6px;font-size:13px;font-weight:600}
-.tl-ln{min-width:0;overflow-wrap:anywhere}
+.tl-lt{display:flex;flex-direction:column;gap:2px;min-width:0}
+.tl-ln{min-width:0;overflow-wrap:anywhere;border:0;background:transparent;padding:0;text-align:left;font-weight:600;cursor:text;border-bottom:1px dashed transparent}
+.tl-ln:hover{border-bottom-color:var(--muted)}
+.tl-lt small{font-size:11px;font-weight:500;color:var(--muted);overflow-wrap:anywhere}
+.tl-lane-in{width:100%;min-width:0;border:1px solid var(--accent);border-radius:6px;padding:3px 6px;background:var(--paper);font-weight:600;font-size:13px}
 .tl-track{position:relative;flex:none}
 .tl-track.grid{background-image:linear-gradient(90deg,var(--line) 1px,transparent 1px);background-size:var(--px) 100%}
 .tl-foot{position:sticky;left:0;width:var(--lw);padding:10px 8px 24px 10px}
@@ -375,11 +379,97 @@ label.f input:focus,label.f textarea:focus,.ta:focus{border-color:var(--accent);
 .lrow .r1{display:flex;gap:2px;align-items:center}
 .lrow .nm{flex:1;min-width:0;border:1px solid var(--line);border-radius:6px;padding:4px 8px;background:var(--bg)}
 .lrow .nm:focus{border-color:var(--accent);outline:none}
+.lrow .nm.sub{font-size:12px;padding:3px 8px}
 .lrow .ibtn{width:26px;height:26px}
 .lrow .ibtn.on{color:var(--danger);width:auto;padding:0 6px;font-size:11px;font-weight:600}
 .lrow label.f{margin-top:0}
 .lrow label.f input{background:var(--bg);padding:4px 8px}
 @media (max-width:760px){.tl-side{position:absolute;inset:0;width:auto;z-index:8;border-left:0}.tl-help{display:none}}
+
+/* binder extras */
+.bav{width:18px;height:18px;border-radius:50%;object-fit:cover;flex:none;box-shadow:0 0 0 1.5px currentColor}
+.nt-add{display:flex;gap:6px;flex-wrap:wrap;margin:2px 4px 6px 30px}
+.kind{display:inline-grid;place-items:center;color:var(--muted)}
+
+/* story page picture */
+.ent-top{display:grid;grid-template-columns:var(--pw) minmax(0,1fr);gap:28px;align-items:start;margin-bottom:8px}
+.ent-top.pz-s{--pw:150px} .ent-top.pz-m{--pw:220px}
+.ent-top.pz-l{grid-template-columns:minmax(0,1fr);gap:16px}
+.ent-id{min-width:0}
+.ent-id .ent-name{margin-top:6px}
+.ent-fig{margin:0;min-width:0;display:flex;flex-direction:column;gap:8px}
+.ent-img{position:relative;width:100%;border-radius:10px;overflow:hidden;background:var(--panel2);border:1px solid var(--line);cursor:zoom-in;aspect-ratio:4/5}
+.sh-square .ent-img{aspect-ratio:1/1} .sh-wide .ent-img{aspect-ratio:16/10} .sh-natural .ent-img{aspect-ratio:auto}
+.pz-l .ent-img{aspect-ratio:21/8;max-height:380px} .pz-l.sh-portrait .ent-img,.pz-l.sh-square .ent-img{aspect-ratio:16/7}
+.pz-l.sh-natural .ent-img{aspect-ratio:auto;max-height:none}
+.ent-img img{display:block;width:100%;height:100%;object-fit:cover}
+.fit-contain .ent-img img{object-fit:contain}
+.sh-natural .ent-img img{height:auto}
+.ent-img.empty{cursor:pointer;border:1.5px dashed var(--line);background:var(--bg);aspect-ratio:4/5}
+.sh-square .ent-img.empty{aspect-ratio:1/1} .sh-wide .ent-img.empty,.sh-natural .ent-img.empty{aspect-ratio:16/10} .pz-l .ent-img.empty{aspect-ratio:21/6}
+.ent-img.empty:hover,.ent-top.drop .ent-img{border-color:var(--accent);color:var(--accent)}
+.ent-img .ph{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:12px;text-align:center;color:var(--muted)}
+.ent-img .ph b{font-size:13px;color:var(--ink)} .ent-img .ph small{font-size:11.5px;line-height:1.35}
+.pz-s .ent-img .ph small{display:none}
+.ent-img .busy{position:absolute;inset:0;display:grid;place-items:center;background:color-mix(in srgb,var(--paper) 75%,transparent);font-size:13px;font-weight:600}
+.ent-cap{border:0;border-bottom:1px solid transparent;background:transparent;font-size:12.5px;color:var(--muted);padding:2px 0;font-style:italic;min-width:0}
+.ent-cap:hover{border-bottom-color:var(--line)} .ent-cap:focus{outline:none;border-bottom-color:var(--accent);color:var(--ink)}
+.ent-imgbar{display:flex;gap:6px;flex-wrap:wrap}
+.ent-imgopts{display:flex;flex-direction:column;align-items:flex-start;gap:2px;padding:8px 10px 10px;border:1px solid var(--line);border-radius:10px;background:var(--bg)}
+.ent-imgopts .sec-l{margin:6px 0 4px}
+.lightbox{position:fixed;inset:0;z-index:60;background:rgba(8,12,18,.86);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:24px;cursor:zoom-out}
+.lightbox img{max-width:100%;max-height:calc(100% - 60px);object-fit:contain;border-radius:6px;box-shadow:0 20px 60px rgba(0,0,0,.5)}
+.lightbox p{margin:0;color:#E6EBF3;font-style:italic;font-size:14px;text-align:center}
+.lightbox .ibtn{position:absolute;top:14px;right:14px;color:#E6EBF3}
+.lightbox .ibtn:hover{background:rgba(255,255,255,.12);color:#fff}
+@media (max-width:640px){.ent-top,.ent-top.pz-s,.ent-top.pz-m{grid-template-columns:minmax(0,1fr)}.ent-top.pz-s .ent-fig{max-width:180px}.ent-top.pz-m .ent-fig{max-width:260px}}
+
+/* notes and brainstorm boards */
+.nt-sheet{padding:40px 56px}
+.nt-ta{display:block;width:100%;min-height:55vh;border:0;background:transparent;resize:none;font-family:var(--f-prose);font-size:var(--fs);line-height:1.75;overflow:hidden;color:var(--ink)}
+.nt-ta:focus{outline:none}
+#ntNames{margin-top:16px} #ntNames:empty{display:none}
+.nt-board{padding:16px 16px 40px}
+.nt-quick{display:flex;gap:8px;max-width:720px;margin:0 0 18px}
+.nt-quick input{flex:1;min-width:0;border:1px solid var(--line);background:var(--paper);border-radius:10px;padding:10px 14px;font-size:15px;box-shadow:var(--shadow)}
+.nt-quick input:focus{outline:none;border-color:var(--accent)}
+.ideas{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:14px;align-items:start}
+.idea{background:color-mix(in srgb,var(--c) 16%,var(--paper));border:1px solid color-mix(in srgb,var(--c) 35%,var(--line));border-top:5px solid var(--c);border-radius:6px;box-shadow:var(--shadow);display:flex;flex-direction:column;min-width:0}
+.idea textarea{border:0;background:transparent;resize:none;padding:10px 12px 4px;font-family:var(--f-prose);font-size:15px;line-height:1.5;min-height:84px;overflow:hidden;color:var(--ink)}
+.idea textarea:focus{outline:none}
+.idea footer{display:flex;align-items:center;justify-content:space-between;gap:4px;padding:2px 6px 6px 10px}
+.sws.mini{gap:4px} .sws.mini .sw{width:14px;height:14px;border-width:1px}
+.nt-empty{grid-column:1/-1;padding:12px 2px}
+
+/* outline */
+.ol-bar{display:flex;flex-wrap:wrap;gap:10px 14px;align-items:center;padding:8px 16px;border-bottom:1px solid var(--line);font-size:13px}
+.ol-bar label{display:flex;align-items:center;gap:6px}
+.ol-bar .ck{margin:0}
+.ol-sheet{max-width:920px;padding:24px 20px 40px 12px}
+.pane-main > .ol-sheet{width:calc(100% - 32px)}
+.ol-row{display:flex;align-items:center;gap:6px;padding:2px 4px 2px calc(var(--d) * 28px);border-radius:8px;min-width:0}
+.ol-row:hover,.ol-row:focus-within{background:var(--panel2)}
+.ol-row.lvl0{margin-top:10px}
+.ol-row.lvl0 .ol-tx{font-weight:650;font-family:var(--f-prose);font-size:16px}
+.ol-tw{flex:none;width:22px;height:26px;display:grid;place-items:center;border:0;background:transparent;color:var(--muted);padding:0}
+.ol-num{flex:none;min-width:22px;font-family:var(--f-mono);font-size:12px;color:var(--muted);text-align:right}
+.ol-row input[type=checkbox]{flex:none;accent-color:var(--ok);width:15px;height:15px;margin:0}
+.ol-tx{flex:1;min-width:0;border:0;background:transparent;padding:6px 4px;font-size:15px;color:var(--ink)}
+.ol-tx:focus{outline:none}
+.ol-row.done .ol-tx{text-decoration:line-through;color:var(--muted)}
+.ol-sc{flex:none;display:inline-flex;align-items:center;gap:4px;max-width:180px;border:1px solid var(--line);background:var(--paper);border-radius:999px;padding:1px 8px;font-size:11.5px;white-space:nowrap;overflow:hidden}
+.ol-sc span{overflow:hidden;text-overflow:ellipsis}
+.ol-acts{display:flex;flex:none;opacity:0}
+.ol-row:hover .ol-acts,.ol-row:focus-within .ol-acts{opacity:1}
+.ol-acts .ibtn{width:26px;height:26px}
+.ol-acts .ibtn.has{color:var(--accent);opacity:1}
+.ol-acts .ibtn.on{color:var(--danger);width:auto;padding:0 6px;font-size:11px;font-weight:600}
+@media (hover:none){.ol-acts{opacity:1}}
+.ol-note{display:flex;flex-direction:column;gap:6px;margin:0 0 6px calc(var(--d) * 28px + 70px);padding:4px 0 6px}
+.ol-note textarea{border:1px solid var(--line);background:var(--bg);border-radius:8px;padding:6px 10px;font-family:var(--f-prose);font-size:14px;line-height:1.55;resize:none;overflow:hidden;min-height:40px;color:var(--ink)}
+.ol-note textarea:focus{outline:none;border-color:var(--accent)}
+.ol-note select{align-self:flex-start;font-size:12px}
+@media (max-width:640px){.ol-row{padding-left:calc(var(--d) * 14px)}.ol-note{margin-left:calc(var(--d) * 14px + 40px)}.ol-acts .ibtn[data-o=up],.ol-acts .ibtn[data-o=dn]{display:none}.nt-sheet{padding:24px 18px}}
 
 /* tab layout */
 @media (max-width:1079px){
@@ -454,6 +544,8 @@ const ICO={plus:'M12 5v14M5 12h14',down:'M6 9l6 6 6-6',right:'M9 6l6 6-6 6',up:'
   card:'M4 6h7v6H4zM13 6h7v6h-7zM4 14h7v4H4zM13 14h7v4h-7z',book:'M5 5h6a2 2 0 012 2v12a2 2 0 00-2-2H5zM19 5h-6a2 2 0 00-2 2v12a2 2 0 012-2h6z',
   pen:'M4 20l1-4L16 5l3 3L8 19l-4 1z',focus:'M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5',link:'M10 14a4 4 0 005.7 0l3-3a4 4 0 00-5.7-5.7l-1 1M14 10a4 4 0 00-5.7 0l-3 3a4 4 0 005.7 5.7l1-1',
   spark:'M12 3l2 6 6 2-6 2-2 6-2-6-6-2 6-2z',x:'M6 6l12 12M18 6L6 18',
+  note:'M6 3h9l4 4v14H6zM14 3v5h5M9 13h7M9 17h5',list:'M9 6h11M9 12h11M9 18h11M4 6h.01M4 12h.01M4 18h.01',bulb:'M9 18h6M10 21h4M12 3a6 6 0 00-4 10.5c.7.7 1 1.5 1 2.5h6c0-1 .3-1.8 1-2.5A6 6 0 0012 3z',
+  image:'M4 5h16v14H4zM4 16l5-5 4 4 3-3 4 4M15 9h.01',indent:'M4 6h16M10 12h10M10 18h10M4 10l3 2-3 2',outdent:'M4 6h16M10 12h10M10 18h10M7 10l-3 2 3 2',upload:'M12 16V4M7 9l5-5 5 5M4 20h16',
   time:'M3 12h18M7 12V7M12 12v5M17 12V7',sliders:'M4 7h9M17 7h3M4 17h3M11 17h9M15 5v4M9 15v4',minus:'M5 12h14',
   grip:'M9 6h.01M15 6h.01M9 12h.01M15 12h.01M9 18h.01M15 18h.01',copy:'M8 8h11v11H8zM5 16V5h11',fit:'M4 12h16M4 12l4-4M4 12l4 4M20 12l-4-4M20 12l-4 4'};
 const ico=(n,s)=>'<svg class="ico" width="'+(s||16)+'" height="'+(s||16)+'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="'+ICO[n]+'"/></svg>';
@@ -464,7 +556,7 @@ const TYPES={
   thing:{label:'Thing',plural:'Things',fields:[['look','Description'],['origin','Origin'],['power','Why it matters'],['holder','Who has it'],['notes','Notes']]}
 };
 const TYPE_ORDER=['char','place','thing'];
-const SEC_DEF={tl:['Timelines','Timeline'],char:['Characters','Character'],place:['Places','Place'],thing:['Things','Thing']};
+const SEC_DEF={ol:['Outlines','Outline'],nt:['Notes & ideas','Note'],tl:['Timelines','Timeline'],char:['Characters','Character'],place:['Places','Place'],thing:['Things','Thing']};
 const LP=t=>((S&&S.meta.labels[t])||{}).p||SEC_DEF[t][0];   // section title, user-renamable
 const LS=t=>((S&&S.meta.labels[t])||{}).s||SEC_DEF[t][1];   // one item of that section
 const STATUS={draft:'Draft',revised:'Revised',final:'Final'};
@@ -472,10 +564,12 @@ const STAGES=[{n:'Blot',at:0},{n:'Inkling',at:1000},{n:'Scribe',at:10000},{n:'Ba
 const stageOf=t=>{let i=0;STAGES.forEach((s,j)=>{if(t>=s.at)i=j});return i};
 
 /* ---------- state ---------- */
-let S=null;          // {meta, sc:{id:{text,synopsis,notes}}, en:{id:{fields}}, tl:{id:timeline}, ch:{id:{notes}}}
+let S=null;          // {meta, sc:{id:{text,synopsis,notes}}, en:{id:{fields,pic}}, tl:{id:timeline}, ch:{id:{notes}}, nt:{id:{text,ideas}}, ol:{id:{num,showNotes,items}}}
+const DOCS=['sc','en','tl','ch','nt','ol'];   // each record of these maps is its own saved doc, '<prefix>_<id>'
+const snapshot=()=>{ const o={meta:S.meta}; DOCS.forEach(p=>{ o[p]=S[p]; }); return o; };
 let linker=null;
-const ui={view:null,hist:[],cork:'all',rename:null,confirm:null,menu:false,tab:'write',focus:false,openSec:{tl:true,char:true,place:true,thing:true},say:'',sayAt:0,mood:'',touched:false,sel:'',focusName:false,fs:18,
-  relabel:null,tlFor:null,tlSel:null,tlSide:null,tlSideKey:'',tlQ:'',tlEnt:'',tlR:null,tlDragged:false};
+const ui={view:null,hist:[],cork:'all',rename:null,confirm:null,menu:false,tab:'write',focus:false,openSec:{ol:true,nt:true,tl:true,char:true,place:true,thing:true},say:'',sayAt:0,mood:'',touched:false,sel:'',focusName:false,fs:18,
+  relabel:null,ntAdd:false,imgOpts:false,imgBusy:null,tlFor:null,tlSel:null,tlSide:null,tlSideKey:'',tlQ:'',tlEnt:'',tlR:null,tlDragged:false};
 const P={db:null,base:null,keys:new Set(),dirty:new Set(),gone:new Set(),timer:null,busy:false,again:false,fails:0};
 
 /* ---------- sample + blank projects ---------- */
@@ -521,7 +615,22 @@ function sampleProject(){
       k_lamps:k('k_lamps',{lane:L.w,at:2,title:'Lanterns light late',body:'Something is off with the tide.',scene:ids.s3}),
       k_follow:k('k_follow',{lane:L.i,at:4,title:'Ilsa follows the compass',body:'Not written yet.',icon:'?',style:'dashed'})},
     marks:[{id:'m_one',label:'Act I',at:1,len:3,color:'accent'},{id:'m_two',label:'Act II',at:4,len:4,color:'char'}]}};
-  return {meta,sc,en,tl,ch};
+  meta.nts=[{id:'n_gen',name:'General notes',kind:'page'},{id:'n_brain',name:'Brainstorming',kind:'board'}];
+  const nt={n_gen:{text:'The Wren went missing ten years ago with Ilsa\'s brother aboard.\n\nTone: foggy, quiet, a little uncanny. Lanterns that light late are the only hint of magic in the first act.',ideas:[]},
+    n_brain:{text:'',ideas:[{id:'i1',text:'What if the brass compass points at whoever is lying?',color:'thing'},{id:'i2',text:'The Wren never left. It is under the harbour.',color:'accent'},{id:'i3',text:'Tobias Crane sailed with Ilsa\'s brother once.',color:'char'}]}};
+  meta.ols=[{id:'o_main',name:'Novel outline'}];
+  const oi=(id,depth,text,o)=>Object.assign({id,depth,text,note:'',done:false,open:true,noteOpen:false,scene:''},o||{});
+  const ol={o_main:{num:'decimal',showNotes:true,items:[
+    oi('a1',0,'Act I · The Salt Road'),
+    oi('a1b',1,'Ilsa lands at Marrow Quay',{scene:ids.s1,done:true}),
+    oi('a1c',1,'Tobias hands over the brass compass',{scene:ids.s2,note:'Plant the missing ship without naming it.'}),
+    oi('a1d',1,'The lanterns light late',{scene:ids.s3}),
+    oi('a2',0,'Act II · The Dark Lighthouse'),
+    oi('a2b',1,'Ilsa follows the compass out along the breakwater'),
+    oi('a2c',1,'Midpoint: the compass swings to Tobias'),
+    oi('a3',0,'Act III · Low Tide'),
+    oi('a3b',1,'The Wren rises')]}};
+  return {meta,sc,en,tl,ch,nt,ol};
 }
 function blankProject(){
   const c=uid('c_'),s=uid('s_');
@@ -542,7 +651,7 @@ function normalize(o){
     c.scenes.forEach(id=>{ sc[id]=sc[id]||{}; sc[id].text=sc[id].text||''; sc[id].synopsis=sc[id].synopsis||''; sc[id].notes=sc[id].notes||''; meta.scenes[id].words=wc(sc[id].text); meta.scenes[id].status=STATUS[meta.scenes[id].status]?meta.scenes[id].status:'draft'; meta.scenes[id].title=meta.scenes[id].title||'Untitled scene'; });
     if(c.open==null) c.open=true;
   });
-  Object.keys(meta.ents).forEach(id=>{const e=meta.ents[id]; e.id=id; e.aliases=Array.isArray(e.aliases)?e.aliases:[]; e.tag=e.tag||''; if(!TYPES[e.type]) e.type='thing'; en[id]=en[id]||{}; en[id].fields=en[id].fields||{};});
+  Object.keys(meta.ents).forEach(id=>{const e=meta.ents[id]; e.id=id; e.aliases=Array.isArray(e.aliases)?e.aliases:[]; e.tag=e.tag||''; if(!TYPES[e.type]) e.type='thing'; en[id]=en[id]||{}; en[id].fields=en[id].fields||{}; en[id].pic=normPic(en[id].pic);});
   if(!meta.chapters.length){const b=blankProject(); meta.chapters=b.meta.chapters; meta.scenes=Object.assign(meta.scenes,b.meta.scenes); Object.assign(sc,b.sc);}
   const tl=o.tl&&typeof o.tl==='object'?o.tl:{};
   if(!Array.isArray(meta.tls)){ meta.tls=[]; if(!Object.keys(tl).length){ const id=uid('t_'); meta.tls.push({id,name:'Story timeline'}); tl[id]=newTl(); } }
@@ -551,7 +660,19 @@ function normalize(o){
   const tlo={}; meta.tls.forEach(x=>{ tlo[x.id]=normTl(tl[x.id]); });
   const chi=o.ch&&typeof o.ch==='object'?o.ch:{}, cho={};
   meta.chapters.forEach(c=>{ cho[c.id]={notes:String((chi[c.id]||{}).notes||'')}; });
-  return {meta,sc,en,tl:tlo,ch:cho};
+  const nti=o.nt&&typeof o.nt==='object'?o.nt:{}, nto={};
+  if(!Array.isArray(meta.nts)) meta.nts=[{id:uid('n_'),name:'General notes',kind:'page'},{id:uid('n_'),name:'Brainstorming',kind:'board'}];
+  meta.nts=meta.nts.filter(x=>x&&x.id).map(x=>({id:String(x.id),name:String(x.name||'Notes'),kind:x.kind==='board'?'board':'page'}));
+  meta.nts.forEach(x=>{ const d=nti[x.id]||{}; nto[x.id]={text:String(d.text||''),
+    ideas:(Array.isArray(d.ideas)?d.ideas:[]).filter(i=>i&&i.id).map(i=>({id:String(i.id),text:String(i.text||''),color:NT_COLORS.includes(i.color)?i.color:'thing'}))}; });
+  const oli=o.ol&&typeof o.ol==='object'?o.ol:{}, olo={};
+  if(!Array.isArray(meta.ols)) meta.ols=[{id:uid('o_'),name:'Novel outline'}];
+  meta.ols=meta.ols.filter(x=>x&&x.id).map(x=>({id:String(x.id),name:String(x.name||'Outline')}));
+  meta.ols.forEach(x=>{ const d=oli[x.id]||{}; let prev=-1;
+    olo[x.id]={num:OL_NUMS.some(n=>n[0]===d.num)?d.num:'decimal',showNotes:d.showNotes!==false,
+      items:(Array.isArray(d.items)?d.items:[]).filter(i=>i&&i.id).map(i=>{ const dp=Math.min(prev+1,clamp(Math.round(num(i.depth,0)),0,OL_MAX)); prev=dp;
+        return {id:String(i.id),text:String(i.text||''),note:String(i.note||''),depth:dp,done:!!i.done,open:i.open!==false,noteOpen:!!i.noteOpen,scene:i.scene&&meta.scenes[i.scene]?String(i.scene):''}; })}; });
+  return {meta,sc,en,tl:tlo,ch:cho,nt:nto,ol:olo};
 }
 
 /* ---------- timeline data ---------- */
@@ -580,7 +701,7 @@ function normTl(t){
     names:typeof a.names==='string'?a.names:'',cycle:num(a.cycle,1),snap:TL_SNAPS.some(s=>s[0]===num(a.snap,1))?num(a.snap,1):1};
   t.cardW=clamp(num(t.cardW,190),110,400); t.density=TL_DENS[t.density]?t.density:'normal';
   t.showWhen=t.showWhen!==false; t.showMarks=t.showMarks!==false; t.grid=t.grid!==false;
-  t.lanes=(Array.isArray(t.lanes)?t.lanes:[]).filter(l=>l&&l.id).map(l=>({id:String(l.id),name:String(l.name==null?'Lane':l.name),color:colOk(l.color)?l.color:'accent',hide:!!l.hide}));
+  t.lanes=(Array.isArray(t.lanes)?t.lanes:[]).filter(l=>l&&l.id).map(l=>({id:String(l.id),name:String(l.name==null?'Lane':l.name),note:String(l.note||'').slice(0,60),color:colOk(l.color)?l.color:'accent',hide:!!l.hide}));
   if(!t.lanes.length) t.lanes=newTl().lanes.slice(0,1);
   const cards=t.cards&&typeof t.cards==='object'?t.cards:{}; t.cards={};
   Object.keys(cards).forEach(id=>{ const c=cards[id]; if(!c||typeof c!=='object') return;
@@ -591,6 +712,116 @@ function normTl(t){
   t.corner=typeof t.corner==='string'?t.corner.slice(0,30):'Lanes'; t.tickSize=['s','m','l'].includes(t.tickSize)?t.tickSize:'s';
   t.marks=(Array.isArray(t.marks)?t.marks:[]).filter(m=>m&&m.id).map(m=>({id:String(m.id),label:String(m.label||''),at:num(m.at,0),len:Math.max(0,num(m.len,0)),color:colOk(m.color)?m.color:'muted'}));
   return t;
+}
+
+/* ---------- story page pictures ---------- */
+// In the Claude artifact a picture is uploaded with the `assets` capability and only its id is saved.
+// Elsewhere (a plain browser) a resized copy lives in localStorage under its own key, outside the project record.
+const PIC_SHAPES=[['','Auto'],['portrait','Portrait'],['square','Square'],['wide','Wide'],['natural','Original']];
+const PIC_SIZES=[['s','Small'],['m','Medium'],['l','Banner']];
+const PIC_DEF_SHAPE={char:'portrait',place:'wide',thing:'square'};
+function normPic(p){
+  p=p&&typeof p==='object'?p:{};
+  return {a:/^[0-9a-f]{32}$/i.test(p.a||'')?p.a:'',l:!!p.l,cap:String(p.cap||'').slice(0,200),
+    shape:PIC_SHAPES.some(x=>x[0]===p.shape)?p.shape:'',size:PIC_SIZES.some(x=>x[0]===p.size)?p.size:'m',fit:p.fit==='contain'?'contain':'cover'};
+}
+const LOCAL_PIC='inkling:img:';
+function picSrc(eid){
+  const p=S.en[eid]&&S.en[eid].pic; if(!p) return '';
+  if(p.a) return '/_blob/'+p.a;
+  if(p.l){ try{ return localStorage.getItem(LOCAL_PIC+eid)||''; }catch(e){ return ''; } }
+  return '';
+}
+async function getAssets(){ try{ return window.claude&&window.claude.use?await window.claude.use('assets'):null; }catch(e){ return null; } }
+function localImages(){ const o={}; Object.keys(S.en).forEach(id=>{ if(S.en[id].pic.l){ const d=picSrc(id); if(d) o[id]=d; } }); return o; }
+function restoreLocalImages(imgs){ if(!imgs||typeof imgs!=='object') return; Object.keys(imgs).forEach(id=>{ if(/^data:image\//.test(imgs[id])) try{ localStorage.setItem(LOCAL_PIC+id,imgs[id]); }catch(e){} }); }
+async function dropPic(eid){
+  const p=S.en[eid]&&S.en[eid].pic; if(!p) return;
+  if(p.l){ try{ localStorage.removeItem(LOCAL_PIC+eid); }catch(e){} }
+  if(p.a){ const as=await getAssets(); if(as) try{ await as.delete(p.a); }catch(e){} }
+}
+function loadImg(file){ return new Promise((ok,bad)=>{ const u=URL.createObjectURL(file), im=new Image(); im.onload=()=>{ URL.revokeObjectURL(u); ok(im); }; im.onerror=()=>{ URL.revokeObjectURL(u); bad({code:'unreadable'}); }; im.src=u; }); }
+async function shrink(file,max,q){
+  if(/gif|svg/.test(file.type)&&file.size<6e6) return file;            // keep animation and vectors as they are
+  const im=await loadImg(file), k=Math.min(1,max/Math.max(im.naturalWidth,im.naturalHeight));
+  if(k===1&&file.size<1.5e6&&/jpeg|webp|png/.test(file.type)) return file;
+  const c=document.createElement('canvas'); c.width=Math.round(im.naturalWidth*k); c.height=Math.round(im.naturalHeight*k);
+  c.getContext('2d').drawImage(im,0,0,c.width,c.height);
+  const out=await new Promise(r=>c.toBlob(r,'image/webp',q));
+  return out&&out.type==='image/webp'?out:await new Promise(r=>c.toBlob(r,'image/jpeg',q));
+}
+const toDataUrl=b=>new Promise(r=>{ const f=new FileReader(); f.onload=()=>r(f.result); f.readAsDataURL(b); });
+async function setPic(eid,file){
+  if(!file||!/^image\/(png|jpeg|gif|webp|svg\+xml|avif|bmp)$/.test(file.type)){ toast('Choose an image file: JPG, PNG, WebP or GIF.',{plain:true}); return; }
+  ui.imgBusy=eid; refreshPic();
+  const p=S.en[eid].pic, old={a:p.a,l:p.l};
+  try{
+    const as=await getAssets();
+    if(as){
+      const b=await shrink(file,2000,.88), r=await as.upload(b,{type:b.type});
+      p.a=r.id; p.l=false; if(old.l) try{ localStorage.removeItem(LOCAL_PIC+eid); }catch(e){}
+      if(old.a&&old.a!==r.id) as.delete(old.a).catch(()=>{});
+    } else {
+      const b=await shrink(file,1000,.82), url=await toDataUrl(b);
+      try{ localStorage.setItem(LOCAL_PIC+eid,url); }catch(e){ throw {code:'local_full'}; }
+      p.l=true; p.a='';
+    }
+    dirty('en_'+eid);
+  }catch(err){
+    const c=err&&err.code;
+    toast(c==='too_large'?'That image is too big. Try one under 20 MB.':c==='local_full'?'This browser is out of room for pictures. Remove one or use Inkling in Claude.':c==='quota_or_state'?'Picture storage for Inkling is full. Remove a picture you no longer need.':c==='unreadable'?'That file could not be opened as an image.':c==='rate_limited'?'Too many uploads at once. Try again in a moment.':'The picture could not be saved. Please try again.',{plain:true});
+  }
+  ui.imgBusy=null; refreshPic(); renderBinder();
+}
+async function removePic(eid){
+  await dropPic(eid); const p=S.en[eid].pic; p.a=''; p.l=false; p.cap=''; dirty('en_'+eid); refreshPic(); renderBinder();
+}
+function picHtml(e){
+  const p=S.en[e.id].pic, src=picSrc(e.id), busy=ui.imgBusy===e.id;
+  let h='<figure class="ent-fig"><div class="ent-img'+(src?'':' empty')+'" id="entImg" tabindex="0" role="button" aria-label="'+(src?'View picture full size':'Add a picture')+'">'
+    +(src?'<img src="'+esc(src)+'" alt="'+esc(p.cap||e.name)+'">':'<span class="ph">'+ico('image',28)+'<b>Add a picture</b><small>Drop an image here, paste one, or click to choose. Character art, a map, a mood board…</small></span>')
+    +(busy?'<span class="busy">Saving picture…</span>':'')+'</div>';
+  if(src) h+='<input class="ent-cap" id="entCap" value="'+esc(p.cap)+'" maxlength="200" placeholder="Caption or artist credit" aria-label="Picture caption">';
+  h+='<div class="ent-imgbar"><button class="btn sm" data-im="pick">'+ico('upload',14)+'<span>'+(src?'Replace':'Upload')+'</span></button>'
+    +(src?'<button class="btn sm'+(ui.confirm==='pic'+e.id?' danger':'')+'" data-im="rm">'+(ui.confirm==='pic'+e.id?'Remove picture?':'Remove')+'</button>':'')
+    +'<button class="btn sm" data-im="opts" aria-expanded="'+ui.imgOpts+'">'+ico('sliders',14)+'<span>Layout</span></button></div>';
+  if(ui.imgOpts){
+    const seg=(k,opts,cur)=>'<div class="seg">'+opts.map(o=>'<button data-im="set" data-k="'+k+'" data-v="'+o[0]+'"'+(cur===o[0]?' class="on"':'')+'>'+o[1]+'</button>').join('')+'</div>';
+    h+='<div class="ent-imgopts"><span class="sec-l">Shape</span>'+seg('shape',PIC_SHAPES,p.shape)+'<span class="sec-l">Size</span>'+seg('size',PIC_SIZES,p.size)+'<span class="sec-l">Fit</span>'+seg('fit',[['cover','Fill the frame'],['contain','Show it all']],p.fit)+'</div>';
+  }
+  return h+'<input type="file" id="entFile" accept="image/*" hidden></figure>';
+}
+function picClass(e){ const p=S.en[e.id].pic; return 'ent-top pz-'+p.size+' sh-'+(p.shape||PIC_DEF_SHAPE[e.type])+' fit-'+p.fit; }
+function refreshPic(){
+  const v=ui.view; if(!v||v.k!=='ent') return; const top=$('#entTop'), e=S.meta.ents[v.id]; if(!top||!e) return;
+  top.className=picClass(e); const f=$('.ent-fig',top); f.outerHTML=picHtml(e);
+}
+function bindPic(el,e){
+  const top=$('#entTop',el);
+  top.addEventListener('click',ev=>{
+    const b=ev.target.closest('[data-im]');
+    if(!b){ if(ev.target.closest('#entImg')){ const src=picSrc(e.id); if(src) lightbox(src,S.en[e.id].pic.cap); else $('#entFile',el).click(); } return; }
+    const a=b.dataset.im, p=S.en[e.id].pic;
+    if(a==='pick') $('#entFile',el).click();
+    else if(a==='rm') confirmDo('pic'+e.id,()=>removePic(e.id),refreshPic);
+    else if(a==='opts'){ ui.imgOpts=!ui.imgOpts; refreshPic(); }
+    else if(a==='set'){ p[b.dataset.k]=b.dataset.v; dirty('en_'+e.id); refreshPic(); }
+  });
+  top.addEventListener('keydown',ev=>{ if(ev.target.id==='entImg'&&(ev.key==='Enter'||ev.key===' ')){ ev.preventDefault(); ev.target.click(); } });
+  top.addEventListener('change',ev=>{ if(ev.target.id==='entFile'){ const f=ev.target.files&&ev.target.files[0]; if(f) setPic(e.id,f); } });
+  top.addEventListener('input',ev=>{ if(ev.target.id==='entCap'){ S.en[e.id].pic.cap=ev.target.value; dirty('en_'+e.id); } });
+  top.addEventListener('dragover',ev=>{ if(ev.target.closest('.ent-fig')){ ev.preventDefault(); top.classList.add('drop'); } });
+  top.addEventListener('dragleave',ev=>{ if(!top.contains(ev.relatedTarget)) top.classList.remove('drop'); });
+  top.addEventListener('drop',ev=>{ top.classList.remove('drop'); const f=ev.dataTransfer&&ev.dataTransfer.files[0]; if(f&&ev.target.closest('.ent-fig')){ ev.preventDefault(); setPic(e.id,f); } });
+  top.addEventListener('paste',ev=>{ if(!ev.target.closest('#entImg')) return; const it=[...(ev.clipboardData||{}).items||[]].find(x=>x.kind==='file'&&/^image\//.test(x.type)); if(it){ ev.preventDefault(); setPic(e.id,it.getAsFile()); } });
+}
+function lightbox(src,cap){
+  const d=document.createElement('div'); d.className='lightbox'; d.setAttribute('role','dialog'); d.setAttribute('aria-label','Picture');
+  d.innerHTML='<img src="'+esc(src)+'" alt="'+esc(cap||'')+'">'+(cap?'<p>'+esc(cap)+'</p>':'')+'<button class="ibtn" aria-label="Close">'+ico('x',20)+'</button>';
+  const close=()=>{ d.remove(); document.removeEventListener('keydown',k,true); };
+  const k=ev=>{ if(ev.key==='Escape'){ ev.stopPropagation(); close(); } };
+  d.addEventListener('click',close); document.addEventListener('keydown',k,true);
+  document.body.appendChild(d); $('button',d).focus();
 }
 
 /* ---------- linking names ---------- */
@@ -686,14 +917,11 @@ function dirty(){
 function schedule(ms){ clearTimeout(P.timer); P.timer=setTimeout(flush,ms); }
 function docData(k){
   if(k==='meta') return S.meta;
-  if(k.startsWith('sc_')){ const id=k.slice(3); return S.sc[id]||null; }
-  if(k.startsWith('en_')){ const id=k.slice(3); return S.en[id]||null; }
-  if(k.startsWith('tl_')){ const id=k.slice(3); return S.tl[id]||null; }
-  if(k.startsWith('ch_')){ const id=k.slice(3); return S.ch[id]||null; }
+  const pre=k.slice(0,2); if(k[2]==='_'&&DOCS.includes(pre)) return S[pre][k.slice(3)]||null;
   return null;
 }
 function mirrorLocal(){
-  try{ const s=JSON.stringify({meta:S.meta,sc:S.sc,en:S.en,tl:S.tl,ch:S.ch}); if(s.length<4500000) localStorage.setItem('inkling:project',s); }catch(e){}
+  try{ const s=JSON.stringify(snapshot()); if(s.length<4500000) localStorage.setItem('inkling:project',s); }catch(e){}
 }
 async function flush(){
   if(P.busy){ P.again=true; return; }
@@ -715,7 +943,7 @@ async function flush(){
     if(P.again){ P.again=false; schedule(200); }
   }
 }
-function allKeys(st){ return new Set(['meta'].concat(Object.keys(st.sc).map(k=>'sc_'+k),Object.keys(st.en).map(k=>'en_'+k),Object.keys(st.tl||{}).map(k=>'tl_'+k),Object.keys(st.ch||{}).map(k=>'ch_'+k))); }
+function allKeys(st){ return new Set(['meta'].concat(...DOCS.map(p=>Object.keys(st[p]||{}).map(k=>p+'_'+k)))); }
 function markAllDirty(){
   const nk=allKeys(S);
   P.keys.forEach(k=>{ if(!nk.has(k)) P.gone.add(k); });
@@ -732,8 +960,8 @@ async function connectDb(local){
     const snap=await db.collection(P.base).get();
     const docs={}; snap.docs.forEach(d=>{docs[d.id]=d.data(); P.keys.add(d.id);});
     if(docs.meta){
-      const o={meta:docs.meta,sc:{},en:{},tl:{},ch:{}};
-      Object.keys(docs).forEach(k=>{ if(k.startsWith('sc_')) o.sc[k.slice(3)]=docs[k]; else if(k.startsWith('en_')) o.en[k.slice(3)]=docs[k]; else if(k.startsWith('tl_')) o.tl[k.slice(3)]=docs[k]; else if(k.startsWith('ch_')) o.ch[k.slice(3)]=docs[k]; });
+      const o={meta:docs.meta}; DOCS.forEach(p=>{ o[p]={}; });
+      Object.keys(docs).forEach(k=>{ const pre=k.slice(0,2); if(k[2]==='_'&&DOCS.includes(pre)) o[pre][k.slice(3)]=docs[k]; });
       const remote=normalize(o);
       if(ui.touched||(local&&S.meta.saved>remote.meta.saved)){ markAllDirty(); }
       else{
@@ -758,8 +986,8 @@ function streak(){
 function curMood(){ const w=todayWords(), g=S.meta.goal; if(w>=g) return 'party'; if(w>=g*.5) return 'hype'; if(w>0) return 'happy'; return 'sleepy'; }
 function orderedScenes(){ const out=[]; S.meta.chapters.forEach(c=>c.scenes.forEach(id=>out.push({id,ch:c}))); return out; }
 function firstView(){ const s=orderedScenes()[0]; return s?{k:'scene',id:s.id}:{k:'cork'}; }
-function viewValid(v){ if(!v) return false; if(v.k==='scene') return !!S.meta.scenes[v.id]; if(v.k==='ent') return !!S.meta.ents[v.id]; if(v.k==='tl') return !!(S.tl[v.id]&&S.meta.tls.some(x=>x.id===v.id)); return v.k==='cork'; }
-function viewName(v){ if(v.k==='scene') return S.meta.scenes[v.id].title; if(v.k==='ent') return S.meta.ents[v.id].name; if(v.k==='tl') return S.meta.tls.find(x=>x.id===v.id).name; return 'Corkboard'; }
+function viewValid(v){ if(!v) return false; if(v.k==='scene') return !!S.meta.scenes[v.id]; if(v.k==='ent') return !!S.meta.ents[v.id]; if(v.k==='tl') return !!(S.tl[v.id]&&S.meta.tls.some(x=>x.id===v.id)); if(v.k==='nt') return !!(S.nt[v.id]&&S.meta.nts.some(x=>x.id===v.id)); if(v.k==='ol') return !!(S.ol[v.id]&&S.meta.ols.some(x=>x.id===v.id)); return v.k==='cork'; }
+function viewName(v){ if(v.k==='scene') return S.meta.scenes[v.id].title; if(v.k==='ent') return S.meta.ents[v.id].name; if(v.k==='tl') return S.meta.tls.find(x=>x.id===v.id).name; if(v.k==='nt') return S.meta.nts.find(x=>x.id===v.id).name; if(v.k==='ol') return S.meta.ols.find(x=>x.id===v.id).name; return 'Corkboard'; }
 
 /* ---------- pet ---------- */
 function petSVG(m,stage){
@@ -937,7 +1165,19 @@ function addEntity(type,name){
   dirty('meta','en_'+id); linker=buildLinker(); return id;
 }
 function delEntity(id){
+  dropPic(id);
   delete S.meta.ents[id]; delete S.en[id]; P.gone.add('en_'+id); P.dirty.delete('en_'+id); dirty('meta'); linker=buildLinker();
+  if(!viewValid(ui.view)) ui.view=firstView(); ui.hist=ui.hist.filter(viewValid);
+  renderAll();
+}
+function addDocItem(k,kind){
+  const id=uid(k==='ol'?'o_':'n_'), list=S.meta[k+'s'];
+  if(k==='ol'){ S.ol[id]={num:'decimal',showNotes:true,items:[{id:uid('i_'),text:'',note:'',depth:0,done:false,open:true,noteOpen:false,scene:''}]}; list.push({id,name:LS('ol')+' '+(list.length+1)}); }
+  else { S.nt[id]={text:'',ideas:[]}; list.push({id,name:kind==='board'?'Brainstorm '+(list.filter(x=>x.kind==='board').length+1):'Notes '+(list.filter(x=>x.kind==='page').length+1),kind}); }
+  ui.openSec[k]=true; ui.focusName=true; dirty('meta',k+'_'+id); go({k,id});
+}
+function delDocItem(k,id){
+  S.meta[k+'s']=S.meta[k+'s'].filter(x=>x.id!==id); delete S[k][id]; P.gone.add(k+'_'+id); P.dirty.delete(k+'_'+id); dirty('meta');
   if(!viewValid(ui.view)) ui.view=firstView(); ui.hist=ui.hist.filter(viewValid);
   renderAll();
 }
@@ -999,6 +1239,13 @@ function renderBinder(){
     if(c.open&&!c.scenes.length) h+='<div class="empty-s">No scenes yet.</div>';
   });
   h+='<div class="ch-row" style="margin-top:20px"></div>';
+  const secHead=(t,n,add)=>'<div class="bsec"><button class="lbl" data-a="sec" data-t="'+t+'" aria-expanded="'+(ui.openSec[t]?'true':'false')+'">'+ico(ui.openSec[t]?'down':'right',14)+'<span>'+esc(LP(t))+'</span><span class="n">'+n+'</span></button><button class="ibtn" data-a="relabel" data-t="'+t+'" aria-label="Rename this section" title="Rename this section">'+ico('edit',14)+'</button><button class="ibtn" data-a="'+add+'" aria-label="Add '+esc(LS(t).toLowerCase())+'">'+ico('plus',14)+'</button></div>'+relabelForm(t);
+  const docRow=(k,x,icon,count)=>{ const on=cur.k===k&&cur.id===x.id; return '<div class="e-row'+(on?' on':'')+'"><button class="e-btn" data-a="open-'+k+'" data-id="'+x.id+'">'+ico(icon,14)+'<span class="t">'+esc(x.name)+'</span><span class="wc">'+count+'</span></button><span class="acts"><button class="ibtn'+(cf===k+x.id?' on':'')+'" data-a="del'+k+'" data-id="'+x.id+'" aria-label="Delete">'+(cf===k+x.id?'Delete?':ico('trash',14))+'</button></span></div>'; };
+  h+=secHead('ol',m.ols.length,'addol');
+  if(ui.openSec.ol){ m.ols.forEach(x=>{ const it=S.ol[x.id].items; h+=docRow('ol',x,'list',it.filter(i=>i.done).length+'/'+it.length); }); if(!m.ols.length) h+='<div class="empty-s">No outline yet. Press + to start one.</div>'; }
+  h+=secHead('nt',m.nts.length,'addnt');
+  if(ui.ntAdd) h+='<div class="nt-add"><button class="btn sm" data-a="addnt-page">'+ico('note',14)+'<span>Notes page</span></button><button class="btn sm" data-a="addnt-board">'+ico('bulb',14)+'<span>Brainstorm board</span></button></div>';
+  if(ui.openSec.nt){ m.nts.forEach(x=>{ const d=S.nt[x.id]; h+=docRow('nt',x,x.kind==='board'?'bulb':'note',x.kind==='board'?d.ideas.length:fmt(wc(d.text))); }); if(!m.nts.length) h+='<div class="empty-s">No notes yet. Press + to add a page or a board.</div>'; }
   h+='<div class="bsec"><button class="lbl" data-a="sec" data-t="tl" aria-expanded="'+(ui.openSec.tl?'true':'false')+'">'+ico(ui.openSec.tl?'down':'right',14)+'<span>'+esc(LP('tl'))+'</span><span class="n">'+m.tls.length+'</span></button><button class="ibtn" data-a="relabel" data-t="tl" aria-label="Rename this section" title="Rename this section">'+ico('edit',14)+'</button><button class="ibtn" data-a="addtl" aria-label="Add '+esc(LS('tl').toLowerCase())+'">'+ico('plus',14)+'</button></div>'+relabelForm('tl');
   if(ui.openSec.tl){
     m.tls.forEach(x=>{
@@ -1013,7 +1260,8 @@ function renderBinder(){
     if(ui.openSec[t]){
       list.forEach(e=>{
         const on=cur.k==='ent'&&cur.id===e.id;
-        h+='<div class="e-row'+(on?' on':'')+'"><button class="e-btn" data-a="open-e" data-id="'+e.id+'" title="'+esc(e.tag||LS(t)+' page')+'"><i class="pip t-'+t+'"></i><span class="t">'+esc(e.name||'Untitled')+'</span></button><span class="acts"><button class="ibtn'+(cf==='en'+e.id?' on':'')+'" data-a="dele" data-id="'+e.id+'" aria-label="Delete page">'+(cf==='en'+e.id?'Delete?':ico('trash',14))+'</button></span></div>';
+        const ps=picSrc(e.id);
+        h+='<div class="e-row'+(on?' on':'')+'"><button class="e-btn" data-a="open-e" data-id="'+e.id+'" title="'+esc(e.tag||LS(t)+' page')+'">'+(ps?'<img class="bav t-'+t+'" src="'+esc(ps)+'" alt="">':'<i class="pip t-'+t+'"></i>')+'<span class="t">'+esc(e.name||'Untitled')+'</span></button><span class="acts"><button class="ibtn'+(cf==='en'+e.id?' on':'')+'" data-a="dele" data-id="'+e.id+'" aria-label="Delete page">'+(cf==='en'+e.id?'Delete?':ico('trash',14))+'</button></span></div>';
       });
       if(!list.length) h+='<div class="empty-s">None yet. Press + or select a name in your text.</div>';
     }
@@ -1049,6 +1297,12 @@ function bindBinder(){
     else if(a==='adde'){ const t=b.dataset.t; ui.openSec[t]=true; const nid=addEntity(t,'New '+LS(t).toLowerCase()); ui.focusName=true; go({k:'ent',id:nid}); }
     else if(a==='open-e') go({k:'ent',id});
     else if(a==='open-tl') go({k:'tl',id});
+    else if(a==='open-ol') go({k:'ol',id});
+    else if(a==='open-nt') go({k:'nt',id});
+    else if(a==='addol') addDocItem('ol');
+    else if(a==='addnt'){ ui.ntAdd=!ui.ntAdd; ui.openSec.nt=true; renderBinder(); }
+    else if(a==='addnt-page'||a==='addnt-board'){ ui.ntAdd=false; addDocItem('nt',a==='addnt-board'?'board':'page'); }
+    else if(a==='delol'||a==='delnt'){ const k=a.slice(3); confirmDo(k+id,()=>delDocItem(k,id),rr); }
     else if(a==='relabel'){ ui.relabel=ui.relabel===b.dataset.t?null:b.dataset.t; renderBinder(); const i=$('#rlP'); if(i){ i.focus(); i.select(); } }
     else if(a==='rl-save') saveRelabel(true);
     else if(a==='rl-reset'){ delete S.meta.labels[ui.relabel]; dirty('meta'); ui.relabel=null; renderAll(); }
@@ -1063,7 +1317,7 @@ function renderMain(){
   if(!viewValid(v)){ ui.view=firstView(); return renderMain(); }
   const key=v.k+':'+(v.id||''), reset=key!==ui.lastKey; ui.lastKey=key;
   const keep=el.scrollTop;
-  if(v.k==='ent') renderEnt(el,v); else if(v.k==='cork') renderCork(el); else if(v.k==='tl') renderTl(el,v); else renderScene(el,v);
+  if(v.k==='ent') renderEnt(el,v); else if(v.k==='cork') renderCork(el); else if(v.k==='tl') renderTl(el,v); else if(v.k==='nt') renderNt(el,v); else if(v.k==='ol') renderOl(el,v); else renderScene(el,v);
   el.scrollTop=reset?0:keep;
 }
 function renderScene(el,v){
@@ -1156,11 +1410,11 @@ function renderEnt(el,v){
   const ap=mentionsOf(e);
   el.innerHTML='<div class="main-head">'+backBtn()+'<h1 class="mh-title">Development page</h1>'
     +'<label class="muted" style="display:flex;align-items:center;gap:6px;font-size:12px">Type <select id="entType" aria-label="Page type">'+TYPE_ORDER.map(t=>'<option value="'+t+'"'+(e.type===t?' selected':'')+'>'+esc(LS(t))+'</option>').join('')+'</select></label></div>'
-    +'<article class="sheet ent-page">'
+    +'<article class="sheet ent-page"><div class="'+picClass(e)+'" id="entTop">'+picHtml(e)+'<div class="ent-id">'
     +'<span class="badge t-'+e.type+'"><i class="pip"></i>'+esc(LS(e.type))+'</span>'
     +'<input id="entName" class="ent-name" value="'+esc(e.name)+'" maxlength="70" aria-label="Name" placeholder="Name">'
     +'<div class="meta-row"><label class="f">Also called (separate with commas)<input id="entAl" value="'+esc((e.aliases||[]).join(', '))+'" placeholder="Nicknames, titles, short forms"></label>'
-    +'<label class="f">One-line summary<input id="entTag" value="'+esc(e.tag||'')+'" maxlength="140" placeholder="Who or what is this, in one line?"></label></div>'
+    +'<label class="f">One-line summary<input id="entTag" value="'+esc(e.tag||'')+'" maxlength="140" placeholder="Who or what is this, in one line?"></label></div></div></div>'
     +'<div class="fields">'+T.fields.map(f=>'<label class="f">'+esc(f[1])+'<textarea data-k="'+f[0]+'" rows="2">'+esc((body.fields||{})[f[0]]||'')+'</textarea></label>').join('')+'</div>'
     +'<section class="appears"><h3>Appears in</h3>'
     +(ap.length?'<p class="sub">'+ap.reduce((a,x)=>a+x.n,0)+' mention'+(ap.reduce((a,x)=>a+x.n,0)===1?'':'s')+' across '+ap.length+' scene'+(ap.length===1?'':'s')+'. Open one to jump to the name.</p>'
@@ -1173,6 +1427,7 @@ function renderEnt(el,v){
     ag(t);
     t.addEventListener('input',()=>{ ag(t); body.fields[t.dataset.k]=t.value; dirty('en_'+v.id); });
   });
+  bindPic(el,e);
   const nm=$('#entName',el);
   nm.addEventListener('input',()=>{ e.name=nm.value; dirty('meta'); linker=buildLinker(); renderBinder(); });
   nm.addEventListener('blur',()=>{ if(!nm.value.trim()){ e.name='Untitled'; nm.value='Untitled'; dirty('meta'); linker=buildLinker(); renderBinder(); } });
@@ -1222,6 +1477,165 @@ function renderCork(el){
     else if(a==='chntog'){ ui.chNotesHide=!ui.chNotesHide; renderCork(el); if(!ui.chNotesHide){ const t=$('#chNotes',el); if(t) t.focus(); } }
     else if(a==='chopen'){ ui.cork=id; renderCork(el); renderBinder(); }
   };
+}
+
+/* ---------- main: notes and brainstorm boards ---------- */
+const NT_COLORS=['thing','pet','char','accent','place','muted'];
+function namesHtml(text){
+  const seen=[]; findLinks(text).forEach(l=>{ if(!seen.includes(l.id)) seen.push(l.id); });
+  return seen.map(id=>{ const e=S.meta.ents[id]; return '<button class="cl t-'+e.type+'" data-ent="'+id+'"><i class="pip"></i><span class="nm">'+esc(e.name)+'</span></button>'; }).join('');
+}
+function renderNt(el,v){
+  const x=S.meta.nts.find(y=>y.id===v.id), d=S.nt[v.id], board=x.kind==='board';
+  el.innerHTML='<div class="main-head">'+backBtn()+'<span class="kind">'+ico(board?'bulb':'note',16)+'</span>'
+    +'<input id="ntName" class="title-in" value="'+esc(x.name)+'" maxlength="80" aria-label="Name">'
+    +(board?'<span class="mono muted" id="ntCount">'+d.ideas.length+' idea'+(d.ideas.length===1?'':'s')+'</span>':'<span class="mono muted" id="ntCount">'+fmt(wc(d.text))+' words</span>')+'</div>'
+    +(board?'<div class="nt-board"><div class="nt-quick"><input id="ntQuick" placeholder="Jot an idea and press Enter" maxlength="600" aria-label="New idea"><button class="btn pri" data-n="add">'+ico('plus')+'<span>Idea</span></button></div><div class="ideas" id="ideas"></div></div>'
+      :'<div class="sheet nt-sheet"><textarea id="ntText" class="nt-ta" placeholder="Anything goes: research, questions, scraps of dialogue, things to fix later. Names with story pages are listed below.">'+esc(d.text)+'</textarea><div class="chiplinks" id="ntNames"></div></div>');
+  const nm=$('#ntName',el);
+  nm.addEventListener('input',()=>{ x.name=nm.value||'Untitled'; dirty('meta'); renderBinder(); });
+  if(ui.focusName){ ui.focusName=false; nm.focus(); nm.select(); }
+  if(!board){
+    const ta=$('#ntText',el), names=()=>{ $('#ntNames',el).innerHTML=namesHtml(ta.value); };
+    ag(ta); names();
+    ta.addEventListener('input',()=>{ ag(ta); d.text=ta.value; dirty('nt_'+v.id); $('#ntCount',el).textContent=fmt(wc(d.text))+' words'; clearTimeout(ui.ntt); ui.ntt=setTimeout(()=>{ names(); renderBinder(); },500); });
+    return;
+  }
+  const draw=()=>{
+    const box=$('#ideas',el); if(!box) return;
+    box.innerHTML=d.ideas.map((i,k)=>'<article class="idea" data-id="'+i.id+'" style="--c:var(--'+i.color+')"><textarea data-n="text" rows="3" aria-label="Idea">'+esc(i.text)+'</textarea>'
+      +'<footer><span class="sws mini">'+NT_COLORS.map(c=>'<button class="sw'+(c===i.color?' on':'')+'" data-n="color" data-c="'+c+'" style="--c:var(--'+c+')" aria-label="Colour"></button>').join('')+'</span>'
+      +'<span class="acts on">'+(k>0?'<button class="ibtn" data-n="up" aria-label="Move earlier">'+ico('back',14)+'</button>':'')+(k<d.ideas.length-1?'<button class="ibtn" data-n="dn" aria-label="Move later">'+ico('right',14)+'</button>':'')
+      +'<button class="ibtn'+(ui.confirm==='id'+i.id?' on':'')+'" data-n="del" aria-label="Delete idea">'+(ui.confirm==='id'+i.id?'Delete?':ico('trash',14))+'</button></span></footer></article>').join('')
+      +(d.ideas.length?'':'<p class="muted nt-empty">No ideas yet. Type one above. Nothing here has to be good.</p>');
+    box.querySelectorAll('textarea').forEach(ag);
+    $('#ntCount',el).textContent=d.ideas.length+' idea'+(d.ideas.length===1?'':'s');
+  };
+  const add=()=>{ const q=$('#ntQuick',el), t=q.value.trim(); d.ideas.unshift({id:uid('i_'),text:t,color:NT_COLORS[d.ideas.length%NT_COLORS.length]}); q.value=''; dirty('nt_'+v.id); draw(); renderBinder(); if(!t){ const f=$('#ideas textarea',el); if(f) f.focus(); } else q.focus(); };
+  draw();
+  $('#ntQuick',el).addEventListener('keydown',ev=>{ if(ev.key==='Enter'){ ev.preventDefault(); add(); } });
+  el.onclick=ev=>{
+    const b=ev.target.closest('[data-n]'); if(!b||b.tagName==='TEXTAREA') return; const a=b.dataset.n;
+    if(a==='add'){ add(); return; }
+    const card=b.closest('.idea'); if(!card) return; const k=d.ideas.findIndex(i=>i.id===card.dataset.id), i=d.ideas[k];
+    if(a==='color'){ i.color=b.dataset.c; dirty('nt_'+v.id); draw(); }
+    else if(a==='up'||a==='dn'){ const j=k+(a==='up'?-1:1); d.ideas[k]=d.ideas[j]; d.ideas[j]=i; dirty('nt_'+v.id); draw(); }
+    else if(a==='del') confirmDo('id'+i.id,()=>{ d.ideas.splice(k,1); dirty('nt_'+v.id); draw(); renderBinder(); },draw);
+  };
+  $('#ideas',el).addEventListener('input',ev=>{ const t=ev.target; if(t.dataset.n!=='text') return; ag(t); d.ideas.find(i=>i.id===t.closest('.idea').dataset.id).text=t.value; dirty('nt_'+v.id); });
+}
+
+/* ---------- main: outline ---------- */
+const OL_MAX=5;
+const OL_NUMS=[['decimal','1.2.3'],['classic','I. A. 1. a.'],['bullets','Bullets'],['none','None']];
+const OL_TPL={
+  three:['Three-act structure',[[0,'Act I · Setup'],[1,'Hook / opening image','Who is the protagonist and what is their normal world?'],[1,'Inciting incident','The event that disrupts normal life.'],[1,'First plot point','The protagonist commits and the story turns.'],
+    [0,'Act II · Confrontation'],[1,'Rising action','Obstacles, allies and enemies.'],[1,'Midpoint','A reversal or revelation that raises the stakes.'],[1,'Crisis','Things fall apart; the lowest point.'],
+    [0,'Act III · Resolution'],[1,'Climax','The final confrontation.'],[1,'Resolution','The new normal.']]],
+  cat:['Save the Cat (15 beats)',[[0,'Act One'],[1,'Opening image','~1%: a snapshot of the hero\'s world before.'],[1,'Theme stated','~5%: someone hints at the lesson.'],[1,'Set-up','1–10%: the hero, their flaws and what is missing.'],[1,'Catalyst','~10%: the life-changing event.'],[1,'Debate','10–20%: should they go?'],
+    [0,'Act Two'],[1,'Break into Two','~20%: the hero chooses the new world.'],[1,'B story','~22%: a relationship that carries the theme.'],[1,'Fun and games','20–50%: the promise of the premise.'],[1,'Midpoint','~50%: false victory or false defeat.'],[1,'Bad guys close in','50–75%: pressure from outside and within.'],[1,'All is lost','~75%: the opposite of the midpoint.'],[1,'Dark night of the soul','75–80%: the hero wallows, then realises.'],
+    [0,'Act Three'],[1,'Break into Three','~80%: the solution is found.'],[1,'Finale','80–99%: the hero proves they have changed.'],[1,'Final image','~100%: the mirror of the opening image.']]],
+  hero:['Hero\'s Journey',[[0,'Departure'],[1,'Ordinary world'],[1,'Call to adventure'],[1,'Refusal of the call'],[1,'Meeting the mentor'],[1,'Crossing the threshold'],[0,'Initiation'],[1,'Tests, allies, enemies'],[1,'Approach to the inmost cave'],[1,'The ordeal'],[1,'Reward'],[0,'Return'],[1,'The road back'],[1,'Resurrection'],[1,'Return with the elixir']]],
+  seven:['Seven-point structure',[[0,'Hook','Start opposite to the resolution.'],[0,'Plot turn 1','The call that sets the story moving.'],[0,'Pinch point 1','Pressure from the antagonist.'],[0,'Midpoint','The hero moves from reacting to acting.'],[0,'Pinch point 2','Things look hopeless.'],[0,'Plot turn 2','The final piece the hero needs.'],[0,'Resolution','The climax and the change.']]],
+  romance:['Romance beats',[[0,'Setup'],[1,'Introduce the first lead'],[1,'Introduce the second lead'],[1,'Meet cute'],[1,'No way #1','Why they cannot be together.'],
+    [0,'Falling in love'],[1,'Adhesion','What forces them together.'],[1,'No way #2'],[1,'Inkling of desire'],[1,'Deepening desire'],[1,'Maybe this could work'],[1,'Midpoint of love','A first kiss, a confession, a night together.'],
+    [0,'Retreat'],[1,'Inkling of doubt'],[1,'Deepening doubt'],[1,'Retreat'],[1,'Shields up'],[1,'Break up'],
+    [0,'Fighting for love'],[1,'Dark night of the soul'],[1,'Wake up'],[1,'Grand gesture'],[1,'Whole-hearted'],[1,'Happily ever after']]]
+};
+const curOl=()=>S.ol[ui.view.id];
+const olItem=(text,depth,o)=>Object.assign({id:uid('i_'),text:text||'',note:'',depth:depth||0,done:false,open:true,noteOpen:false,scene:''},o||{});
+const olEnd=(it,i)=>{ let j=i+1; while(j<it.length&&it[j].depth>it[i].depth) j++; return j; };   // end of item i's block
+const olHasKids=(it,i)=>i+1<it.length&&it[i+1].depth>it[i].depth;
+function olVisible(it){ const out=[]; let hide=99; it.forEach((x,i)=>{ if(x.depth>hide) return; hide=99; out.push(i); if(!x.open&&olHasKids(it,i)) hide=x.depth; }); return out; }
+const ROMAN=n=>{ let r='',v=[[1000,'m'],[900,'cm'],[500,'d'],[400,'cd'],[100,'c'],[90,'xc'],[50,'l'],[40,'xl'],[10,'x'],[9,'ix'],[5,'v'],[4,'iv'],[1,'i']]; v.forEach(p=>{ while(n>=p[0]){ r+=p[1]; n-=p[0]; } }); return r; };
+function olNumbers(o){
+  const c=[], out=[];
+  o.items.forEach(x=>{ c.length=x.depth+1; c[x.depth]=(c[x.depth]||0)+1;
+    if(o.num==='decimal') out.push(c.join('.'));
+    else if(o.num==='classic'){ const n=c[x.depth], d=x.depth%5; out.push((d===0?ROMAN(n).toUpperCase():d===1?String.fromCharCode(64+((n-1)%26)+1):d===2?String(n):d===3?String.fromCharCode(96+((n-1)%26)+1):ROMAN(n))+'.'); }
+    else out.push(o.num==='bullets'?'•':''); });
+  return out;
+}
+function renderOl(el,v){
+  const x=S.meta.ols.find(y=>y.id===v.id), o=S.ol[v.id];
+  el.innerHTML='<div class="main-head">'+backBtn()+'<span class="kind">'+ico('list',16)+'</span><input id="olName" class="title-in" value="'+esc(x.name)+'" maxlength="80" aria-label="Outline name">'
+    +'<span class="mono muted" id="olProg"></span>'
+    +'<div class="tools"><button class="btn pri" data-o="add">'+ico('plus')+'<span>Item</span></button>'
+    +'<select id="olTpl" aria-label="Add a structure template"><option value="">Add a template…</option>'+Object.keys(OL_TPL).map(k=>'<option value="'+k+'">'+OL_TPL[k][0]+'</option>').join('')+'</select>'
+    +'<button class="btn" data-o="frommss" title="Add every chapter and scene to this outline">'+ico('book')+'<span>From manuscript</span></button></div></div>'
+    +'<div class="ol-bar"><label class="muted">Numbering <select id="olNum">'+OL_NUMS.map(n=>'<option value="'+n[0]+'"'+(o.num===n[0]?' selected':'')+'>'+n[1]+'</option>').join('')+'</select></label>'
+    +'<label class="ck"><input type="checkbox" id="olNotes"'+(o.showNotes?' checked':'')+'>Show notes</label>'
+    +'<button class="btn sm" data-o="expand">Expand all</button><button class="btn sm" data-o="collapse">Collapse all</button>'
+    +'<span class="tl-help">Enter adds a line, Tab and Shift+Tab indent, Alt+↑↓ moves a line with everything under it.</span></div>'
+    +'<div class="sheet ol-sheet"><div id="olList" class="ol-list"></div></div>';
+  const nm=$('#olName',el);
+  nm.addEventListener('input',()=>{ x.name=nm.value||'Outline'; dirty('meta'); renderBinder(); });
+  $('#olNum',el).addEventListener('change',ev=>{ o.num=ev.target.value; dirty('ol_'+v.id); drawOl(); });
+  $('#olNotes',el).addEventListener('change',ev=>{ o.showNotes=ev.target.checked; dirty('ol_'+v.id); drawOl(); });
+  $('#olTpl',el).addEventListener('change',ev=>{ const t=OL_TPL[ev.target.value]; ev.target.value=''; if(!t) return;
+    if(o.items.length===1&&!o.items[0].text&&!o.items[0].note) o.items=[];
+    t[1].forEach(r=>o.items.push(olItem(r[1],r[0],{note:r[2]||''}))); dirty('ol_'+v.id); drawOl(); renderBinder(); toast('Added '+t[0]+'. Rename, delete or rearrange anything.',{plain:true}); });
+  const list=$('#olList',el);
+  el.onclick=ev=>{
+    const b=ev.target.closest('[data-o]'); if(!b||b.tagName==='INPUT'||b.tagName==='TEXTAREA'||b.tagName==='SELECT') return;
+    const a=b.dataset.o, row=b.closest('[data-i]'), it=o.items, i=row?it.findIndex(y=>y.id===row.dataset.i):-1;
+    if(a==='add'){ it.push(olItem('',0)); dirty('ol_'+v.id); drawOl(it[it.length-1].id); renderBinder(); }
+    else if(a==='expand'||a==='collapse'){ it.forEach(y=>{ y.open=a==='expand'; }); dirty('ol_'+v.id); drawOl(); }
+    else if(a==='frommss'){ if(it.length===1&&!it[0].text&&!it[0].note) it.length=0; S.meta.chapters.forEach(c=>{ it.push(olItem(c.title,0)); c.scenes.forEach(id=>it.push(olItem(S.meta.scenes[id].title,1,{scene:id,note:S.sc[id].synopsis}))); }); dirty('ol_'+v.id); drawOl(); renderBinder(); toast('Added your chapters and scenes. Scene lines link back to the scene.',{plain:true}); }
+    else if(i<0) return;
+    else if(a==='tog'){ it[i].open=!it[i].open; dirty('ol_'+v.id); drawOl(); }
+    else if(a==='note'){ it[i].noteOpen=!it[i].noteOpen; dirty('ol_'+v.id); drawOl(); const t=$('[data-i="'+it[i].id+'"] + .ol-note textarea',list); if(t&&it[i].noteOpen) t.focus(); }
+    else if(a==='opensc') go({k:'scene',id:it[i].scene});
+    else if(a==='del') confirmDo('ol'+it[i].id,()=>olDelete(i),()=>drawOl());
+    else olOp(a,i);
+  };
+  list.addEventListener('input',ev=>{ const t=ev.target, row=t.closest('[data-i]'); if(!row) return; const y=o.items.find(z=>z.id===row.dataset.i); if(!y) return;
+    if(t.dataset.o==='text') y.text=t.value; else if(t.dataset.o==='notetx'){ y.note=t.value; ag(t); } else return; dirty('ol_'+v.id); });
+  list.addEventListener('change',ev=>{ const t=ev.target, row=t.closest('[data-i]'); if(!row) return; const y=o.items.find(z=>z.id===row.dataset.i); if(!y) return;
+    if(t.dataset.o==='done'){ y.done=t.checked; dirty('ol_'+v.id); drawOl(); renderBinder(); } else if(t.dataset.o==='scene'){ y.scene=t.value; dirty('ol_'+v.id); drawOl(); } });
+  list.addEventListener('keydown',ev=>{
+    const t=ev.target; if(t.dataset.o!=='text') return; const it=o.items, i=it.findIndex(z=>z.id===t.closest('[data-i]').dataset.i); if(i<0) return;
+    const vis=olVisible(it), vi=vis.indexOf(i);
+    if(ev.key==='Enter'){ ev.preventDefault(); const kid=olHasKids(it,i)&&it[i].open, n=olItem('',kid?it[i].depth+1:it[i].depth); it.splice(kid?i+1:olEnd(it,i),0,n); dirty('ol_'+v.id); drawOl(n.id); renderBinder(); }
+    else if(ev.key==='Tab'){ ev.preventDefault(); olOp(ev.shiftKey?'out':'in',i,true); }
+    else if(ev.altKey&&(ev.key==='ArrowUp'||ev.key==='ArrowDown')){ ev.preventDefault(); olOp(ev.key==='ArrowUp'?'up':'dn',i,true); }
+    else if(ev.key==='ArrowUp'&&vi>0){ ev.preventDefault(); olFocus(it[vis[vi-1]].id); }
+    else if(ev.key==='ArrowDown'&&vi<vis.length-1){ ev.preventDefault(); olFocus(it[vis[vi+1]].id); }
+    else if(ev.key==='Backspace'&&!t.value&&it.length>1&&!olHasKids(it,i)){ ev.preventDefault(); const prev=vi>0?it[vis[vi-1]].id:null; olDelete(i); if(prev) olFocus(prev,true); }
+  });
+  drawOl();
+  if(ui.focusName){ ui.focusName=false; nm.focus(); nm.select(); }
+}
+function olFocus(id,end){ const i=$('#olList [data-i="'+id+'"] .ol-tx'); if(i){ i.focus(); const n=end?i.value.length:i.selectionStart; try{ i.setSelectionRange(n,n); }catch(e){} } }
+function olDelete(i){ const o=curOl(), it=o.items, e=olEnd(it,i); for(let j=i+1;j<e;j++) it[j].depth--; it.splice(i,1); if(!it.length) it.push(olItem('',0)); dirty('ol_'+ui.view.id); drawOl(); renderBinder(); }
+function olOp(a,i,keep){
+  const o=curOl(), it=o.items, x=it[i], e=olEnd(it,i); let ok=true;
+  if(a==='in'){ if(i===0||x.depth>=it[i-1].depth+1||x.depth>=OL_MAX) ok=false; else for(let j=i;j<e;j++) it[j].depth=Math.min(OL_MAX,it[j].depth+1); }
+  else if(a==='out'){ if(x.depth===0) ok=false; else for(let j=i;j<e;j++) it[j].depth--; }
+  else if(a==='up'){ let p=i-1; while(p>=0&&it[p].depth>x.depth) p--; if(p<0||it[p].depth<x.depth) ok=false; else { const blk=it.splice(i,e-i); it.splice(p,0,...blk); } }
+  else if(a==='dn'){ if(e>=it.length||it[e].depth<x.depth) ok=false; else { const e2=olEnd(it,e), sib=it.splice(e,e2-e); it.splice(i,0,...sib); } }
+  else ok=false;
+  if(!ok) return; dirty('ol_'+ui.view.id); drawOl(keep?x.id:null);
+}
+function drawOl(focusId){
+  const list=$('#olList'), o=curOl(); if(!list||!o) return;
+  const it=o.items, nums=olNumbers(o), vis=olVisible(it), done=it.filter(y=>y.done).length, cf=ui.confirm;
+  const scOpts=sel=>'<option value="">No linked scene</option>'+S.meta.chapters.map(ch=>'<optgroup label="'+esc(ch.title)+'">'+ch.scenes.map(id=>'<option value="'+id+'"'+(sel===id?' selected':'')+'>'+esc(S.meta.scenes[id].title)+'</option>').join('')+'</optgroup>').join('');
+  list.innerHTML=vis.map(i=>{ const y=it[i], kids=olHasKids(it,i), showN=y.noteOpen||(o.showNotes&&y.note), sc=y.scene&&S.meta.scenes[y.scene];
+    return '<div class="ol-row'+(y.done?' done':'')+(y.depth===0?' lvl0':'')+'" data-i="'+y.id+'" style="--d:'+y.depth+'">'
+      +(kids?'<button class="ol-tw" data-o="tog" aria-expanded="'+y.open+'" aria-label="Show or hide what is under this line">'+ico(y.open?'down':'right',14)+'</button>':'<span class="ol-tw"></span>')
+      +(o.num==='none'?'':'<span class="ol-num">'+nums[i]+'</span>')
+      +'<input type="checkbox" data-o="done"'+(y.done?' checked':'')+' aria-label="Done">'
+      +'<input class="ol-tx" data-o="text" value="'+esc(y.text)+'" placeholder="A beat, a plot point, a question…" aria-label="Outline line">'
+      +(sc?'<button class="ol-sc" data-o="opensc" title="Open scene">'+ico('pen',12)+'<span>'+esc(sc.title)+'</span></button>':'')
+      +'<span class="ol-acts"><button class="ibtn'+(y.note||y.noteOpen?' has':'')+'" data-o="note" aria-label="Notes and linked scene" title="Notes and linked scene">'+ico('note',14)+'</button>'
+      +'<button class="ibtn" data-o="out" aria-label="Outdent" title="Outdent (Shift+Tab)">'+ico('outdent',14)+'</button><button class="ibtn" data-o="in" aria-label="Indent" title="Indent (Tab)">'+ico('indent',14)+'</button>'
+      +'<button class="ibtn" data-o="up" aria-label="Move up" title="Move up (Alt+↑)">'+ico('up',14)+'</button><button class="ibtn" data-o="dn" aria-label="Move down" title="Move down (Alt+↓)">'+ico('down',14)+'</button>'
+      +'<button class="ibtn'+(cf==='ol'+y.id?' on':'')+'" data-o="del" aria-label="Delete line">'+(cf==='ol'+y.id?'Delete?':ico('trash',14))+'</button></span></div>'
+      +(showN?'<div class="ol-note" data-i="'+y.id+'" style="--d:'+y.depth+'"><textarea data-o="notetx" rows="2" placeholder="Notes for this line">'+esc(y.note)+'</textarea>'+(y.noteOpen?'<select data-o="scene" aria-label="Linked scene">'+scOpts(y.scene)+'</select>':'')+'</div>':''); }).join('');
+  list.querySelectorAll('.ol-note textarea').forEach(ag);
+  const pg=$('#olProg'); if(pg) pg.textContent=done+' of '+it.length+' done';
+  if(focusId) olFocus(focusId);
 }
 
 /* ---------- main: timeline ---------- */
@@ -1291,7 +1705,7 @@ function drawTl(){
   let lanes='';
   t.lanes.forEach(l=>{
     if(l.hide) return; const L=lay[l.id];
-    lanes+='<div class="tl-lane" data-lane="'+l.id+'" style="--lc:'+cssCol(l.color)+'"><div class="tl-lab"><span class="tl-ln">'+esc(l.name||'Lane')+'</span><span class="mono muted">'+L.items.length+'</span></div>'
+    lanes+='<div class="tl-lane" data-lane="'+l.id+'" style="--lc:'+cssCol(l.color)+'"><div class="tl-lab"><span class="tl-lt"><button class="tl-ln" data-tl="lanename" data-id="'+l.id+'" title="Click to rename this lane">'+esc(l.name||'Lane')+'</button>'+(l.note?'<small>'+esc(l.note)+'</small>':'')+'</span><span class="mono muted">'+L.items.length+'</span></div>'
       +'<div class="tl-track'+(t.grid?' grid':'')+'" data-track="'+l.id+'" style="width:'+R.w+'px;height:'+(L.rows*H+8)+'px">'+L.items.map(it=>tlCardHtml(t,it,l,H,hit(it.c))).join('')+'</div></div>';
   });
   if(!lanes) lanes='<p class="muted" style="position:sticky;left:0;padding:16px;margin:0;max-width:100vw">Every lane is hidden. Turn one back on in the bar above.</p>';
@@ -1353,13 +1767,13 @@ function sideSet(t){
   h+='<h4>Cards</h4><label class="f">Card width<input type="range" min="110" max="400" step="10" data-sf="cardW" value="'+t.cardW+'"></label>'
     +'<label class="f">Card height<select data-sf="density">'+[['compact','Compact (title only)'],['normal','Normal'],['tall','Tall (more notes)']].map(d=>'<option value="'+d[0]+'"'+(t.density===d[0]?' selected':'')+'>'+d[1]+'</option>').join('')+'</select></label>'
     +[['showWhen','Show the time on each card'],['grid','Show grid lines'],['showMarks','Show eras and markers']].map(o=>'<label class="ck"><input type="checkbox" data-sf="'+o[0]+'"'+(t[o[0]]?' checked':'')+'>'+o[1]+'</label>').join('');
-  h+='<h4>Lanes</h4><p class="fine">One per character, plotline, place, or whatever you like. Cards take their lane\'s colour unless you pick another.</p>';
+  h+='<h4>Lanes</h4><p class="fine">Name lanes after whatever you want to track: characters, plotlines, places, a magic system, the weather. You can also click a lane\'s name on the board to rename it. Cards take their lane\'s colour unless you pick another.</p>';
   t.lanes.forEach((l,i)=>{
     h+='<div class="lrow"><div class="r1"><input class="nm" data-lf="name" data-id="'+l.id+'" value="'+esc(l.name)+'" maxlength="40" aria-label="Lane name">'
       +(i>0?'<button class="ibtn" data-tl="lup" data-id="'+l.id+'" aria-label="Move lane up">'+ico('up',14)+'</button>':'')
       +(i<t.lanes.length-1?'<button class="ibtn" data-tl="ldn" data-id="'+l.id+'" aria-label="Move lane down">'+ico('down',14)+'</button>':'')
       +(t.lanes.length>1?'<button class="ibtn'+(cf==='ln'+l.id?' on':'')+'" data-tl="dellane" data-id="'+l.id+'" aria-label="Delete lane">'+(cf==='ln'+l.id?'Delete it and its cards?':ico('trash',14))+'</button>':'')
-      +'</div>'+swatches(l.color,'lcol',l.id)+'</div>';
+      +'</div><input class="nm sub" data-lf="note" data-id="'+l.id+'" value="'+esc(l.note)+'" maxlength="60" placeholder="What it tracks (optional), e.g. POV, subplot, magic system" aria-label="What this lane tracks">'+swatches(l.color,'lcol',l.id)+'</div>';
   });
   h+='<button class="btn sm" data-tl="addlane" style="margin-top:8px">'+ico('plus',14)+'<span>Lane</span></button>';
   h+='<h4>Eras and markers</h4><p class="fine">Length 0 draws a line through every lane. Give a marker a length to shade a band, like an act, a war or a season.</p>';
@@ -1441,6 +1855,7 @@ function tlColor(t,kind,id,val,full){
 function tlAction(act,b){
   const t=curTl(), a=t.axis, id=b.dataset.id, side=()=>{ drawSide(); };
   if(act==='tick'||act==='corner') tlEditHead(b);
+  else if(act==='lanename') tlEditLane(b);
   else if(act==='resetticks'){ t.ticks={}; dirty(tlKey()); drawTl(); drawSide(); }
   else if(act==='addcard') tlNewCard();
   else if(act==='zin') tlZoom(1.25);
@@ -1456,8 +1871,9 @@ function tlAction(act,b){
   else if(act==='delcard'){ const cid=ui.tlSide.id; confirmDo('k'+cid,()=>{ delete t.cards[cid]; ui.tlSide=null; ui.tlSel=null; dirty(tlKey()); renderBinder(); drawSide(); drawTl(); },side); }
   else if(act==='addlane'){
     const nid=uid('l_'); t.lanes.push({id:nid,name:'Lane '+(t.lanes.length+1),color:TL_COLORS[t.lanes.length%TL_COLORS.length][0],hide:false});
-    dirty(tlKey()); drawLaneChips(); if(!ui.tlSide||ui.tlSide.k!=='set') ui.tlSide={k:'set'}; drawSide(); drawTl();
+    dirty(tlKey()); drawLaneChips(); drawSide(); drawTl();
     const n=$('#tlSide [data-lf="name"][data-id="'+nid+'"]'); if(n){ n.focus(); n.select(); }
+    else { const lb=$('#tlScroll [data-tl="lanename"][data-id="'+nid+'"]'); if(lb){ lb.scrollIntoView({block:'nearest'}); tlEditLane(lb); } }
   }
   else if(act==='lup'||act==='ldn'){ const i=t.lanes.findIndex(x=>x.id===id), j=i+(act==='lup'?-1:1); if(i<0||j<0||j>=t.lanes.length) return; const x=t.lanes[i]; t.lanes[i]=t.lanes[j]; t.lanes[j]=x; dirty(tlKey()); drawLaneChips(); drawSide(); drawTl(); }
   else if(act==='dellane') confirmDo('ln'+id,()=>{ if(t.lanes.length<2) return; t.lanes=t.lanes.filter(x=>x.id!==id); Object.keys(t.cards).forEach(k=>{ if(t.cards[k].lane===id) delete t.cards[k]; }); dirty(tlKey()); renderBinder(); drawLaneChips(); drawSide(); drawTl(); },side);
@@ -1477,6 +1893,15 @@ function tlAction(act,b){
   }
   else if(act==='duptl') addTimeline(ui.view.id);
   else if(act==='deltl'){ const tid=ui.view.id; confirmDo('tl'+tid,()=>delTimeline(tid),side); }
+}
+function tlEditLane(b){
+  const t=curTl(), l=t.lanes.find(x=>x.id===b.dataset.id); if(!l) return;
+  const inp=document.createElement('input'); inp.className='tl-lane-in'; inp.maxLength=40; inp.value=l.name; inp.placeholder='Lane name'; inp.setAttribute('aria-label','Lane name');
+  b.replaceWith(inp); inp.focus(); inp.select();
+  let done=false;
+  const fin=ok=>{ if(done) return; done=true; if(ok&&inp.value.trim()){ l.name=inp.value.trim(); dirty(tlKey()); drawLaneChips(); if(ui.tlSide) drawSide(); } drawTl(); };
+  inp.addEventListener('keydown',e=>{ if(e.key==='Enter'){ e.preventDefault(); fin(true); } else if(e.key==='Escape'){ e.stopPropagation(); fin(false); } });
+  inp.addEventListener('blur',()=>fin(true));
 }
 function tlEditHead(b){
   const t=curTl(), corner=b.dataset.tl==='corner', i=b.dataset.i, auto=corner?'Lanes':tlLabel(t,t.axis.start+i*t.axis.step,true);
@@ -1571,7 +1996,7 @@ function bindTl(tv){
     else if(x.id==='tlQ'){ ui.tlQ=x.value; drawTl(); }
     else if(x.dataset.cf) tlCardField(t,x);
     else if(x.dataset.sf) tlSetField(t,x);
-    else if(x.dataset.lf){ const l=t.lanes.find(y=>y.id===x.dataset.id); if(l){ l.name=x.value; dirty(tlKey()); drawTl(); drawLaneChips(); } }
+    else if(x.dataset.lf){ const l=t.lanes.find(y=>y.id===x.dataset.id); if(l){ l[x.dataset.lf==='note'?'note':'name']=x.value; dirty(tlKey()); drawTl(); drawLaneChips(); } }
     else if(x.dataset.mf){
       const m=t.marks.find(y=>y.id===x.dataset.id), k=x.dataset.mf; if(!m) return;
       if(k==='label') m.label=x.value; else { if(x.value===''||!isFinite(+x.value)) return; m[k]=k==='len'?Math.max(0,+x.value):+x.value; }
@@ -1660,7 +2085,7 @@ function bindMenu(){
   $('#menu').addEventListener('click',e=>{
     const b=e.target.closest('[data-m]'); if(!b) return; const a=b.dataset.m;
     if(a==='md'){ closeMenu(); saveFile(slug(S.meta.title)+'.md',manuscriptMd()); }
-    else if(a==='json'){ closeMenu(); saveFile(slug(S.meta.title)+'-backup.json',JSON.stringify({app:'inkling',v:1,meta:S.meta,sc:S.sc,en:S.en,tl:S.tl,ch:S.ch},null,1)); }
+    else if(a==='json'){ closeMenu(); saveFile(slug(S.meta.title)+'-backup.json',JSON.stringify(Object.assign({app:'inkling',v:1},snapshot(),{imgs:localImages()}),null,1)); }
     else if(a==='restore'){ closeMenu(); $('#fileIn').value=''; $('#fileIn').click(); }
     else if(a==='sample') confirmDo('m-sample',()=>{ closeMenu(); replaceProject(normalize(sampleProject()),true); },renderMenu);
     else if(a==='blank') confirmDo('m-blank',()=>{ closeMenu(); replaceProject(normalize(blankProject()),true); },renderMenu);
@@ -1668,7 +2093,7 @@ function bindMenu(){
   $('#fileIn').addEventListener('change',e=>{
     const f=e.target.files&&e.target.files[0]; if(!f) return;
     const r=new FileReader();
-    r.onload=()=>{ try{ const o=JSON.parse(r.result); if(!o||!o.meta||!Array.isArray(o.meta.chapters)) throw 0; replaceProject(normalize(o),false); toast('Backup restored.',{plain:true}); }catch(x){ toast('That file is not an Inkling backup.',{plain:true}); } };
+    r.onload=()=>{ try{ const o=JSON.parse(r.result); if(!o||!o.meta||!Array.isArray(o.meta.chapters)) throw 0; const np=normalize(o); restoreLocalImages(o.imgs); replaceProject(np,false); toast('Backup restored.',{plain:true}); }catch(x){ toast('That file is not an Inkling backup.',{plain:true}); } };
     r.readAsText(f);
   });
 }
