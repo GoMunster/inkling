@@ -1569,7 +1569,7 @@ function checkAch(quiet){
   if(!fresh.length) return; dirty('meta'); ui.newThings=1;
   const d=$('#denBtn'); if(d&&!d.querySelector('.dot-new')) d.insertAdjacentHTML('beforeend','<i class="dot-new" aria-label="new things"></i>');
   const nm=S.meta.pet.name;
-  if(quiet){ if(fresh.length) setTimeout(()=>say(nm+' found '+fresh.length+' new thing'+(fresh.length>1?'s':'')+' in the room. Have a look!'),1200); return; }
+  if(quiet){ const t0=ui.sayAt; setTimeout(()=>{ if(ui.sayAt===t0) say(nm+' found '+fresh.length+' new thing'+(fresh.length>1?'s':'')+' in the room. Have a look!'); },1200); return; }   // unless Inky has said something newer since
   const a=fresh[fresh.length-1], it=PET_ITEMS[a[3]];
   cheer(a[1]+'! '+nm+' earned '+(it[0]==='room'?'a '+it[1].toLowerCase()+' for the room':'a '+it[1].toLowerCase())+'.'+(fresh.length>1?' And '+(fresh.length-1)+' more.':''),true);
   const room=$('#petRoom'); if(room) room.innerHTML=roomSVG();
