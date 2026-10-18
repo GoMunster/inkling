@@ -158,7 +158,7 @@ function buildMenu() {
       ...(mac ? [] : [{ type: 'separator' }, { role: 'quit' }])
     ] },
     { role: 'editMenu' },
-    { label: 'View', submenu: [{ role: 'zoomIn' }, { role: 'zoomOut' }, { role: 'resetZoom' }, { type: 'separator' }, { role: 'togglefullscreen' }, { type: 'separator' }, { role: 'toggleDevTools', label: 'Developer tools' }] },
+    { label: 'View', submenu: [{ label: 'Writing sessions', accelerator: 'CmdOrCtrl+Shift+H', click: () => send('sessions') }, { label: 'Start or pause the focus timer', accelerator: 'CmdOrCtrl+Shift+T', click: () => send('timer') }, { type: 'separator' }, { role: 'zoomIn' }, { role: 'zoomOut' }, { role: 'resetZoom' }, { type: 'separator' }, { role: 'togglefullscreen' }, { type: 'separator' }, { role: 'toggleDevTools', label: 'Developer tools' }] },
     { role: 'windowMenu' },
     { role: 'help', submenu: [
       { label: 'Where are my projects?', click: () => shell.openPath(projectsDir()) },

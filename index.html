@@ -560,6 +560,54 @@ dl.fam{display:grid;grid-template-columns:auto 1fr;gap:6px 10px} dl.fam dt{color
 .pj-dlg code{font-family:var(--f-mono);font-size:12px;overflow-wrap:anywhere;color:var(--ink)}
 #pjBtn{flex:none}
 
+/* focus timer */
+.pomo h3{display:flex;align-items:center;justify-content:space-between}
+.pm-tools{display:flex;gap:2px} .pm-tools .ibtn{width:26px;height:26px}
+.pm-face{position:relative;width:150px;height:150px;margin:2px auto 6px}
+.pm-ring{width:150px;height:150px;display:block}
+.pm-ring circle{fill:none;stroke-width:7}
+.pm-ring .bg{stroke:var(--panel2)} .pm-ring .arc{stroke:var(--accent);stroke-linecap:round;transition:stroke-dasharray .3s linear}
+.pomo[data-ph="short"] .arc,.pomo[data-ph="long"] .arc{stroke:var(--pet)}
+.pm-txt{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.pm-txt b{font-size:34px;font-weight:500;line-height:1}
+.pm-txt span{font-size:12px;color:var(--muted);margin-top:4px;font-weight:600;letter-spacing:.04em}
+.pm-dots{display:flex;align-items:center;justify-content:center;gap:5px;flex-wrap:wrap;font-size:11.5px;color:var(--muted)}
+.pm-dots i{width:9px;height:9px;border-radius:50%;border:2px solid var(--accent)} .pm-dots i.on{background:var(--accent)}
+.pm-dots span{margin-left:4px}
+.pm-btns{display:flex;gap:6px;justify-content:center;margin-top:10px;flex-wrap:wrap}
+.pomo #pmNow{text-align:center}
+.pm-set{margin-top:10px;padding:10px;border:1px solid var(--line);border-radius:10px;background:var(--paper)}
+.pm-set .two{margin-top:0} .pm-set label.f{margin-top:6px} .pm-set label.f input{background:var(--bg)}
+.pm-log{margin:10px auto 0;display:flex}
+.pm-chip{gap:6px;padding:4px 12px;color:var(--accent)} .pm-chip.brk{color:var(--pet-deep)} .pm-chip.paused{color:var(--muted)}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .pm-chip.brk{color:var(--pet)}}
+
+/* writing sessions */
+.ss-wrap{max-width:900px;margin:0 auto;padding:16px 16px 40px}
+.ss-sub{margin:0 0 14px;font-size:13px}
+.ss-tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-bottom:18px}
+.ss-tile{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:12px 14px;display:flex;flex-direction:column;gap:2px}
+.ss-tile b{font-size:22px;font-weight:500} .ss-tile span{font-size:12px;color:var(--muted)}
+.ss-day{background:var(--paper);border:1px solid var(--line);border-radius:12px;margin-bottom:12px;overflow:hidden}
+.ss-day header{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:10px 14px;border-bottom:1px solid var(--line);background:var(--panel)}
+.ss-day h2{margin:0;font-size:14px;flex:1 1 auto} .ss-day header .muted{font-size:12.5px}
+.ss-row{display:flex;align-items:center;gap:10px 14px;flex-wrap:wrap;padding:8px 10px 8px 14px;border-top:1px solid var(--line);font-size:13px}
+.ss-row:first-of-type{border-top:0}
+.ss-time{min-width:96px}
+.ss-badge{font-size:11px;font-weight:600;border-radius:999px;padding:2px 8px;background:var(--panel2);color:var(--muted)}
+.ss-badge.ok{background:color-mix(in srgb,var(--ok) 15%,transparent);color:var(--ok)}
+.ss-dur{min-width:90px} .ss-w{font-size:14px} .ss-w span{font-weight:400;color:var(--muted);font-size:12px}
+.ss-net{font-size:12px}
+.ss-sc{display:flex;gap:4px;flex-wrap:wrap;flex:1 1 140px}
+.ss-sc .tc-sc{--c:var(--accent);margin:0}
+.ss-row .ibtn.on{color:var(--danger);width:auto;padding:0 8px;font-size:11px;font-weight:600}
+.ss-empty{background:var(--paper);border:1px dashed var(--line);border-radius:14px;padding:28px;text-align:center;display:grid;gap:10px;justify-items:center}
+.ss-empty b{font-family:var(--f-prose);font-size:18px} .ss-empty p{margin:0}
+
+/* outline: delete a section */
+.ol-del{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:2px 0 8px calc(var(--d) * 28px + 50px);padding:8px 10px;border:1px solid color-mix(in srgb,var(--danger) 40%,var(--line));border-radius:10px;background:color-mix(in srgb,var(--danger) 6%,var(--paper));font-size:13px}
+.ol-del span:first-child{font-weight:600;margin-right:4px}
+
 /* tab layout */
 @media (max-width:1079px){
   :root{--tabh:58px}
@@ -634,7 +682,7 @@ const ICO={plus:'M12 5v14M5 12h14',down:'M6 9l6 6 6-6',right:'M9 6l6 6-6 6',up:'
   pen:'M4 20l1-4L16 5l3 3L8 19l-4 1z',focus:'M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5',link:'M10 14a4 4 0 005.7 0l3-3a4 4 0 00-5.7-5.7l-1 1M14 10a4 4 0 00-5.7 0l-3 3a4 4 0 005.7 5.7l1-1',
   spark:'M12 3l2 6 6 2-6 2-2 6-2-6-6-2 6-2z',x:'M6 6l12 12M18 6L6 18',
   note:'M6 3h9l4 4v14H6zM14 3v5h5M9 13h7M9 17h5',list:'M9 6h11M9 12h11M9 18h11M4 6h.01M4 12h.01M4 18h.01',bulb:'M9 18h6M10 21h4M12 3a6 6 0 00-4 10.5c.7.7 1 1.5 1 2.5h6c0-1 .3-1.8 1-2.5A6 6 0 0012 3z',
-  image:'M4 5h16v14H4zM4 16l5-5 4 4 3-3 4 4M15 9h.01',indent:'M4 6h16M10 12h10M10 18h10M4 10l3 2-3 2',outdent:'M4 6h16M10 12h10M10 18h10M7 10l-3 2 3 2',upload:'M12 16V4M7 9l5-5 5 5M4 20h16',folder:'M3 7a2 2 0 012-2h4l2 2h8a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z',web:'M8 7a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0zM21 7a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0zM14.5 18a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0zM8 7h8M6.5 9l4.5 7M17.5 9L13 16',tree:'M9 3h6v4H9zM3 17h6v4H3zM15 17h6v4h-6zM12 7v5M6 12h12M6 12v5M18 12v5',heart:'M12 20s-7-4.5-7-10a4 4 0 017-2.6A4 4 0 0119 10c0 5.5-7 10-7 10z',
+  image:'M4 5h16v14H4zM4 16l5-5 4 4 3-3 4 4M15 9h.01',indent:'M4 6h16M10 12h10M10 18h10M4 10l3 2-3 2',outdent:'M4 6h16M10 12h10M10 18h10M7 10l-3 2 3 2',upload:'M12 16V4M7 9l5-5 5 5M4 20h16',play:'M7 5l12 7-12 7z',pause:'M8 5v14M16 5v14',stop:'M6 6h12v12H6z',skip:'M5 5l10 7-10 7zM19 5v14',timer:'M12 9v4l2.5 2M9 2h6M12 22a8 8 0 100-16 8 8 0 000 16z',folder:'M3 7a2 2 0 012-2h4l2 2h8a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z',web:'M8 7a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0zM21 7a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0zM14.5 18a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0zM8 7h8M6.5 9l4.5 7M17.5 9L13 16',tree:'M9 3h6v4H9zM3 17h6v4H3zM15 17h6v4h-6zM12 7v5M6 12h12M6 12v5M18 12v5',heart:'M12 20s-7-4.5-7-10a4 4 0 017-2.6A4 4 0 0119 10c0 5.5-7 10-7 10z',
   time:'M3 12h18M7 12V7M12 12v5M17 12V7',sliders:'M4 7h9M17 7h3M4 17h3M11 17h9M15 5v4M9 15v4',minus:'M5 12h14',
   grip:'M9 6h.01M15 6h.01M9 12h.01M15 12h.01M9 18h.01M15 18h.01',copy:'M8 8h11v11H8zM5 16V5h11',fit:'M4 12h16M4 12l4-4M4 12l4 4M20 12l-4-4M20 12l-4 4'};
 const ico=(n,s)=>'<svg class="ico" width="'+(s||16)+'" height="'+(s||16)+'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="'+ICO[n]+'"/></svg>';
@@ -656,7 +704,7 @@ const stageOf=t=>{let i=0;STAGES.forEach((s,j)=>{if(t>=s.at)i=j});return i};
 
 /* ---------- state ---------- */
 let S=null;          // {meta, sc:{id:{text,synopsis,notes}}, en:{id:{fields,pic}}, tl:{id:timeline}, ch:{id:{notes}}, nt:{id:{text,ideas}}, ol:{id:{num,showNotes,items}}}
-const DOCS=['sc','en','tl','ch','nt','ol','rm','ft'];   // each record of these maps is its own saved doc, '<prefix>_<id>'
+const DOCS=['sc','en','tl','ch','nt','ol','rm','ft','ss'];   // each record of these maps is its own saved doc, '<prefix>_<id>'
 const snapshot=st=>{ st=st||S; const o={meta:st.meta}; DOCS.forEach(p=>{ o[p]=st[p]; }); return o; };
 // The desktop app (desktop/) provides window.inklingDesktop: each project is a folder on the computer. Elsewhere it is null.
 const DESK=window.inklingDesktop||null;
@@ -737,7 +785,11 @@ function sampleProject(){
     pp('p_eli',{name:'Elias Verrin',title:'Sailor on the Wren',born:'1028',died:'?',of:'u_om'}),pp('p_ils',{ent:ids.ilsa,born:'1031',of:'u_om',color:'char'})];
   ft.unions=[{id:'u_om',a:'p_osk',b:'p_mar',kind:ft.kinds[0].id,label:'m. 1026',note:''}];
   meta.fts=[{id:'f_main',name:'The Verrins'}];
-  return {meta,sc,en,tl,ch,nt,ol,rm:{m_main:rm},ft:{f_main:ft}};
+  const day=864e5, at=(d,h,m)=>{ const x=new Date(Date.now()-d*day); x.setHours(h,m,0,0); return +x; };
+  const ss={w_s1:{start:at(2,9,5),end:at(2,9,30),planned:25,mins:25,words:412,net:398,done:true,scenes:[ids.s1]},
+    w_s2:{start:at(2,9,36),end:at(2,10,1),planned:25,mins:25,words:356,net:340,done:true,scenes:[ids.s1,ids.s2]},
+    w_s3:{start:at(1,20,10),end:at(1,20,24),planned:25,mins:14,words:180,net:122,done:false,scenes:[ids.s2]}};
+  return {meta,sc,en,tl,ch,nt,ol,rm:{m_main:rm},ft:{f_main:ft},ss};
 }
 function blankProject(){
   const c=uid('c_'),s=uid('s_');
@@ -749,7 +801,7 @@ function normalize(o){
   meta.v=1; meta.title=meta.title||'Untitled novel'; meta.goal=+meta.goal||500; meta.target=+meta.target||80000;
   meta.chapters=Array.isArray(meta.chapters)?meta.chapters:[]; meta.scenes=meta.scenes||{}; meta.ents=meta.ents||{};
   meta.pet=meta.pet||{name:'Inky',total:0}; meta.pet.name=meta.pet.name||'Inky'; meta.pet.total=+meta.pet.total||0;
-  meta.days=meta.days||{}; meta.saved=+meta.saved||0;
+  meta.days=meta.days||{}; meta.saved=+meta.saved||0; meta.pomo=normPomo(meta.pomo);
   const sx=meta.secs&&typeof meta.secs==='object'?meta.secs:{rm:false,ft:false}; meta.secs={};
   OPT_SECS.forEach(k=>{ meta.secs[k]=sx[k]===undefined?!(k==='rm'||k==='ft'):!!sx[k]; });
   const lb=meta.labels&&typeof meta.labels==='object'?meta.labels:{}; meta.labels={};
@@ -786,7 +838,11 @@ function normalize(o){
   meta.fts=(Array.isArray(meta.fts)?meta.fts:[]).filter(x=>x&&x.id).map(x=>({id:String(x.id),name:String(x.name||'Family tree')}));
   meta.rms.forEach(x=>{ rmo[x.id]=normRm(rmi[x.id],meta.ents); });
   meta.fts.forEach(x=>{ fto[x.id]=normFt(fti[x.id],meta.ents); });
-  return {meta,sc,en,tl:tlo,ch:cho,nt:nto,ol:olo,rm:rmo,ft:fto};
+  const ssi=o.ss&&typeof o.ss==='object'?o.ss:{}, sso={};
+  Object.keys(ssi).forEach(id=>{ const x=ssi[id]; if(!x||!isFinite(+x.start)) return;
+    sso[id]={start:+x.start,end:isFinite(+x.end)?+x.end:+x.start,planned:Math.max(0,Math.round(num(x.planned,25))),mins:Math.max(0,num(x.mins,0)),words:Math.max(0,Math.round(num(x.words,0))),
+      net:Math.round(num(x.net,0)),done:!!x.done,scenes:(Array.isArray(x.scenes)?x.scenes:[]).filter(y=>typeof y==='string').slice(0,60)}; });
+  return {meta,sc,en,tl:tlo,ch:cho,nt:nto,ol:olo,rm:rmo,ft:fto,ss:sso};
 }
 
 /* ---------- timeline data ---------- */
@@ -1131,8 +1187,8 @@ function streak(){
 function curMood(){ const w=todayWords(), g=S.meta.goal; if(w>=g) return 'party'; if(w>=g*.5) return 'hype'; if(w>0) return 'happy'; return 'sleepy'; }
 function orderedScenes(){ const out=[]; S.meta.chapters.forEach(c=>c.scenes.forEach(id=>out.push({id,ch:c}))); return out; }
 function firstView(){ const s=orderedScenes()[0]; return s?{k:'scene',id:s.id}:{k:'cork'}; }
-function viewValid(v){ if(!v) return false; if(v.k==='scene') return !!S.meta.scenes[v.id]; if(v.k==='ent') return !!S.meta.ents[v.id]; if(v.k==='tl') return !!(S.tl[v.id]&&S.meta.tls.some(x=>x.id===v.id)); if(v.k==='nt') return !!(S.nt[v.id]&&S.meta.nts.some(x=>x.id===v.id)); if(v.k==='ol') return !!(S.ol[v.id]&&S.meta.ols.some(x=>x.id===v.id)); if(v.k==='rm'||v.k==='ft') return !!(S[v.k][v.id]&&S.meta[v.k+'s'].some(x=>x.id===v.id)); return v.k==='cork'; }
-function viewName(v){ if(v.k==='scene') return S.meta.scenes[v.id].title; if(v.k==='ent') return S.meta.ents[v.id].name; if(v.k==='tl') return S.meta.tls.find(x=>x.id===v.id).name; if(v.k==='nt') return S.meta.nts.find(x=>x.id===v.id).name; if(v.k==='ol') return S.meta.ols.find(x=>x.id===v.id).name; if(v.k==='rm'||v.k==='ft') return S.meta[v.k+'s'].find(x=>x.id===v.id).name; return 'Corkboard'; }
+function viewValid(v){ if(!v) return false; if(v.k==='scene') return !!S.meta.scenes[v.id]; if(v.k==='ent') return !!S.meta.ents[v.id]; if(v.k==='tl') return !!(S.tl[v.id]&&S.meta.tls.some(x=>x.id===v.id)); if(v.k==='nt') return !!(S.nt[v.id]&&S.meta.nts.some(x=>x.id===v.id)); if(v.k==='ol') return !!(S.ol[v.id]&&S.meta.ols.some(x=>x.id===v.id)); if(v.k==='rm'||v.k==='ft') return !!(S[v.k][v.id]&&S.meta[v.k+'s'].some(x=>x.id===v.id)); return v.k==='cork'||v.k==='ss'; }
+function viewName(v){ if(v.k==='scene') return S.meta.scenes[v.id].title; if(v.k==='ent') return S.meta.ents[v.id].name; if(v.k==='tl') return S.meta.tls.find(x=>x.id===v.id).name; if(v.k==='nt') return S.meta.nts.find(x=>x.id===v.id).name; if(v.k==='ol') return S.meta.ols.find(x=>x.id===v.id).name; if(v.k==='rm'||v.k==='ft') return S.meta[v.k+'s'].find(x=>x.id===v.id).name; if(v.k==='ss') return 'Writing sessions'; return 'Corkboard'; }
 
 /* ---------- pet ---------- */
 function petSVG(m,stage){
@@ -1205,6 +1261,7 @@ function confetti(){
 function cheer(msg,big){ say(msg); toast(msg); bump(); if(big) confetti(); }
 function credit(delta){
   if(delta<=0||delta>600) return;      // pasted blocks do not count as writing
+  if(T.cur&&T.running&&T.phase==='focus'){ T.cur.words+=delta; pmPaint(); }
   const m=S.meta, k=todayKey(), g=Math.max(1,m.goal), before=m.days[k]||0;
   m.days[k]=before+delta; const after=m.days[k];
   const keysAll=Object.keys(m.days); if(keysAll.length>420){ keysAll.sort().slice(0,keysAll.length-400).forEach(x=>delete m.days[x]); }
@@ -1344,6 +1401,7 @@ function confirmDo(key,fn,rerender){
   clearTimeout(ui.ct); ui.ct=setTimeout(()=>{ if(ui.confirm===key){ ui.confirm=null; rerender(); } },3200);
 }
 function replaceProject(np,keep){
+  pmHalt();
   if(keep){ np.meta.pet=S.meta.pet; np.meta.days=S.meta.days; np.meta.goal=S.meta.goal; np.meta.mark=S.meta.mark; }
   const nk=allKeys(np), ok=allKeys(S); P.keys.forEach(k=>ok.add(k));
   ok.forEach(k=>{ if(!nk.has(k)) P.gone.add(k); });
@@ -1481,7 +1539,7 @@ function renderMain(){
   if(!viewValid(v)){ ui.view=firstView(); return renderMain(); }
   const key=v.k+':'+(v.id||''), reset=key!==ui.lastKey; ui.lastKey=key;
   const keep=el.scrollTop;
-  if(v.k==='ent') renderEnt(el,v); else if(v.k==='cork') renderCork(el); else if(v.k==='tl') renderTl(el,v); else if(v.k==='nt') renderNt(el,v); else if(v.k==='ol') renderOl(el,v); else if(v.k==='rm'||v.k==='ft') renderCv(el,v); else renderScene(el,v);
+  if(v.k==='ent') renderEnt(el,v); else if(v.k==='cork') renderCork(el); else if(v.k==='tl') renderTl(el,v); else if(v.k==='nt') renderNt(el,v); else if(v.k==='ol') renderOl(el,v); else if(v.k==='rm'||v.k==='ft') renderCv(el,v); else if(v.k==='ss') renderSs(el); else renderScene(el,v);
   el.scrollTop=reset?0:keep;
 }
 function renderScene(el,v){
@@ -1538,6 +1596,7 @@ function renderScene(el,v){
 function onType(id,ed){
   const text=getText(ed), sc=S.meta.scenes[id], d=S.sc[id];
   d.text=text; const w=wc(text), delta=w-sc.words; sc.words=w;
+  if(T.cur&&T.running) T.cur.scenes.add(id);
   dirty('sc_'+id,'meta');
   $('#sceneWc').textContent=fmt(w)+' words';
   const bw=document.querySelector('[data-wc="'+id+'"]'); if(bw) bw.textContent=fmt(w);
@@ -1776,7 +1835,8 @@ function renderOl(el,v){
     +'<span class="mono muted" id="olProg"></span>'
     +'<div class="tools"><button class="btn pri" data-o="add">'+ico('plus')+'<span>Item</span></button>'
     +'<select id="olTpl" aria-label="Use a structure template"><option value="">Use a template…</option>'+Object.keys(OL_TPL).map(k=>'<option value="'+k+'">'+OL_TPL[k][0]+'</option>').join('')+'</select>'
-    +'<button class="btn" data-o="frommss" title="Add every chapter and scene to this outline">'+ico('book')+'<span>From manuscript</span></button></div></div>'
+    +'<button class="btn" data-o="frommss" title="Add every chapter and scene to this outline">'+ico('book')+'<span>From manuscript</span></button>'
+    +'<button class="btn danger" data-o="delall">'+ico('trash')+'<span>Delete outline</span></button></div></div>'
     +'<div class="ol-bar"><label class="muted">Numbering <select id="olNum">'+OL_NUMS.map(n=>'<option value="'+n[0]+'"'+(o.num===n[0]?' selected':'')+'>'+n[1]+'</option>').join('')+'</select></label>'
     +'<label class="ck"><input type="checkbox" id="olNotes"'+(o.showNotes?' checked':'')+'>Show notes</label>'
     +'<button class="btn sm" data-o="undo" id="olUndo" hidden>Undo template switch</button><button class="btn sm" data-o="expand">Expand all</button><button class="btn sm" data-o="collapse">Collapse all</button>'
@@ -1795,6 +1855,7 @@ function renderOl(el,v){
     const b=ev.target.closest('[data-o]'); if(!b||b.tagName==='INPUT'||b.tagName==='TEXTAREA'||b.tagName==='SELECT') return;
     const a=b.dataset.o, row=b.closest('[data-i]'), it=o.items, i=row?it.findIndex(y=>y.id===row.dataset.i):-1;
     if(a==='add'){ it.push(olItem('',0)); dirty('ol_'+v.id); drawOl(it[it.length-1].id); renderBinder(); }
+    else if(a==='delall') confirmDo('olall'+v.id,()=>delDocItem('ol',v.id),()=>{ const db=$('[data-o="delall"] span',el); if(db) db.textContent=ui.confirm==='olall'+v.id?'Click again to delete this outline':'Delete outline'; });
     else if(a==='undo'){ if(ui.olUndo&&ui.olUndo.id===v.id){ o.items=ui.olUndo.items; ui.olUndo=null; dirty('ol_'+v.id); drawOl(); renderBinder(); olUndoBtn(); toast('Your outline is back the way it was.',{plain:true}); } }
     else if(a==='expand'||a==='collapse'){ it.forEach(y=>{ y.open=a==='expand'; }); dirty('ol_'+v.id); drawOl(); }
     else if(a==='frommss'){ if(it.length===1&&!it[0].text&&!it[0].note) it.length=0; S.meta.chapters.forEach(c=>{ it.push(olItem(c.title,0)); c.scenes.forEach(id=>it.push(olItem(S.meta.scenes[id].title,1,{scene:id,note:S.sc[id].synopsis}))); }); dirty('ol_'+v.id); drawOl(); renderBinder(); toast('Added your chapters and scenes. Scene lines link back to the scene.',{plain:true}); }
@@ -1802,7 +1863,10 @@ function renderOl(el,v){
     else if(a==='tog'){ it[i].open=!it[i].open; dirty('ol_'+v.id); drawOl(); }
     else if(a==='note'){ it[i].noteOpen=!it[i].noteOpen; dirty('ol_'+v.id); drawOl(); const t=$('[data-i="'+it[i].id+'"] + .ol-note textarea',list); if(t&&it[i].noteOpen) t.focus(); }
     else if(a==='opensc') go({k:'scene',id:it[i].scene});
-    else if(a==='del') confirmDo('ol'+it[i].id,()=>olDelete(i),()=>drawOl());
+    else if(a==='del'){ if(olHasKids(it,i)){ ui.confirm=ui.confirm==='ol'+it[i].id?null:'ol'+it[i].id; drawOl(); } else confirmDo('ol'+it[i].id,()=>olDelete(i),()=>drawOl()); }
+    else if(a==='delsec'){ ui.confirm=null; olDelete(i,true); }
+    else if(a==='delone'){ ui.confirm=null; olDelete(i); }
+    else if(a==='delno'){ ui.confirm=null; drawOl(); }
     else olOp(a,i);
   };
   list.addEventListener('input',ev=>{ const t=ev.target, row=t.closest('[data-i]'); if(!row) return; const y=o.items.find(z=>z.id===row.dataset.i); if(!y) return;
@@ -1825,7 +1889,7 @@ function renderOl(el,v){
 }
 function olUndoBtn(){ const b=$('#olUndo'); if(b) b.hidden=!(ui.olUndo&&ui.olUndo.id===ui.view.id); }
 function olFocus(id,end){ const i=$('#olList [data-i="'+id+'"] .ol-tx'); if(i){ i.focus(); const n=end?i.value.length:i.selectionStart; try{ i.setSelectionRange(n,n); }catch(e){} } }
-function olDelete(i){ const o=curOl(), it=o.items, e=olEnd(it,i); for(let j=i+1;j<e;j++) it[j].depth--; it.splice(i,1); if(!it.length) it.push(olItem('',0)); dirty('ol_'+ui.view.id); drawOl(); renderBinder(); }
+function olDelete(i,all){ const o=curOl(), it=o.items, e=olEnd(it,i); if(all) it.splice(i,e-i); else { for(let j=i+1;j<e;j++) it[j].depth--; it.splice(i,1); } if(!it.length) it.push(olItem('',0)); dirty('ol_'+ui.view.id); drawOl(); renderBinder(); }
 function olOp(a,i,keep){
   const o=curOl(), it=o.items, x=it[i], e=olEnd(it,i); let ok=true;
   if(a==='in'){ if(i===0||x.depth>=it[i-1].depth+1||x.depth>=OL_MAX) ok=false; else for(let j=i;j<e;j++) it[j].depth=Math.min(OL_MAX,it[j].depth+1); }
@@ -1849,7 +1913,8 @@ function drawOl(focusId){
       +'<span class="ol-acts"><button class="ibtn'+(y.note||y.noteOpen?' has':'')+'" data-o="note" aria-label="Notes and linked scene" title="Notes and linked scene">'+ico('note',14)+'</button>'
       +'<button class="ibtn" data-o="out" aria-label="Outdent" title="Outdent (Shift+Tab)">'+ico('outdent',14)+'</button><button class="ibtn" data-o="in" aria-label="Indent" title="Indent (Tab)">'+ico('indent',14)+'</button>'
       +'<button class="ibtn" data-o="up" aria-label="Move up" title="Move up (Alt+↑)">'+ico('up',14)+'</button><button class="ibtn" data-o="dn" aria-label="Move down" title="Move down (Alt+↓)">'+ico('down',14)+'</button>'
-      +'<button class="ibtn'+(cf==='ol'+y.id?' on':'')+'" data-o="del" aria-label="Delete line">'+(cf==='ol'+y.id?'Delete?':ico('trash',14))+'</button></span></div>'
+      +'<button class="ibtn'+(cf==='ol'+y.id?' on':'')+'" data-o="del" aria-label="'+(kids?'Delete this section':'Delete line')+'">'+(cf==='ol'+y.id&&!kids?'Delete?':ico('trash',14))+'</button></span></div>'
+      +(cf==='ol'+y.id&&kids?(n=>'<div class="ol-del" data-i="'+y.id+'" style="--d:'+y.depth+'"><span>Delete “'+esc(trunc(y.text||'this line',40))+'”?</span><button class="btn sm danger" data-o="delsec">'+ico('trash',14)+'<span>Delete it and the '+n+' line'+(n===1?'':'s')+' under it</span></button><button class="btn sm" data-o="delone">Only this line</button><button class="btn sm" data-o="delno">Cancel</button></div>')(olEnd(it,i)-i-1):'')
       +(showN?'<div class="ol-note" data-i="'+y.id+'" style="--d:'+y.depth+'"><textarea data-o="notetx" rows="2" placeholder="Notes for this line">'+esc(y.note)+'</textarea>'+(y.noteOpen?'<select data-o="scene" aria-label="Linked scene">'+scOpts(y.scene)+'</select>':'')+'</div>':''); }).join('');
   list.querySelectorAll('.ol-note textarea').forEach(ag);
   const pg=$('#olProg'); if(pg) pg.textContent=done+' of '+it.length+' done';
@@ -2686,6 +2751,135 @@ function renderTl(el,v){
   drawLaneChips(); drawSide(); drawTl(); bindTl($('#tlv',el));
 }
 
+/* ---------- focus timer (pomodoro) and writing sessions ---------- */
+// Timer state lives only in this page (T); each finished or stopped focus session is saved to S.ss with the
+// new words credited while it ran (same rules as the daily goal) and the scenes typed in.
+const T={phase:'focus',running:false,endAt:0,left:null,count:0,cur:null,tick:null};
+const PM_PHASE={focus:'Focus',short:'Short break',long:'Long break'};
+function normPomo(p){
+  p=p&&typeof p==='object'?p:{}; const n=(v,d,a,b)=>clamp(Math.round(num(v,d)),a,b);
+  return {focus:n(p.focus,25,1,180),short:n(p.short,5,1,60),long:n(p.long,15,1,120),every:n(p.every,4,1,12),goal:n(p.goal,0,0,20000),autoBreak:p.autoBreak!==false,autoFocus:!!p.autoFocus,sound:p.sound!==false};
+}
+const pmLen=ph=>S.meta.pomo[ph]*60000;
+const pmLeft=()=>T.running?Math.max(0,T.endAt-Date.now()):(T.left!=null?T.left:pmLen(T.phase));
+const mmss=ms=>{ const s=Math.ceil(ms/1000); return Math.floor(s/60)+':'+pad(s%60); };
+let AC=null;
+function pmAudio(){ try{ if(!AC&&S.meta.pomo.sound) AC=new (window.AudioContext||window.webkitAudioContext)(); if(AC&&AC.state==='suspended') AC.resume(); }catch(e){} }
+function pmChime(up){
+  if(!S.meta.pomo.sound||!AC) return;
+  try{ const t=AC.currentTime; (up?[523.25,659.25,783.99]:[659.25,523.25]).forEach((f,i)=>{ const o=AC.createOscillator(), g=AC.createGain(), s0=t+i*.18;
+    o.type='sine'; o.frequency.value=f; g.gain.setValueAtTime(0,s0); g.gain.linearRampToValueAtTime(.16,s0+.02); g.gain.exponentialRampToValueAtTime(.001,s0+.9);
+    o.connect(g); g.connect(AC.destination); o.start(s0); o.stop(s0+1); }); }catch(e){}
+}
+function pmStart(){
+  if(T.running) return; const left=pmLeft(); T.endAt=Date.now()+left; T.running=true; T.left=null;
+  if(T.phase==='focus'){ if(!T.cur) T.cur={start:Date.now(),ms:0,words:0,total0:totalWords(),scenes:new Set()}; T.cur.since=Date.now();
+    if(ui.view&&ui.view.k==='scene') T.cur.scenes.add(ui.view.id);
+    say(pick(['Timer on. I will keep watch while you write.','Focus time! Words first, worries later.','Go! I am counting your words.'])); }
+  pmAudio(); clearInterval(T.tick); T.tick=setInterval(pmTick,250); pmPaint();
+}
+function pmPause(){ if(!T.running) return; T.left=pmLeft(); T.running=false; clearInterval(T.tick); if(T.cur) T.cur.ms+=Date.now()-T.cur.since; pmPaint(); }
+function pmRecord(done){
+  const c=T.cur; T.cur=null; if(!c) return null; if(T.running) c.ms+=Date.now()-c.since;
+  if(c.ms<60000&&!c.words) return null;   // under a minute with nothing written is not worth keeping
+  const id=uid('w_'); S.ss[id]={start:c.start,end:Date.now(),planned:S.meta.pomo.focus,mins:Math.round(c.ms/6000)/10,words:c.words,net:totalWords()-c.total0,done:!!done,scenes:[...c.scenes]};
+  dirty('ss_'+id); if(ui.view&&ui.view.k==='ss') renderMain(); return S.ss[id];
+}
+function pmTick(){ if(!T.running) return; if(Date.now()>=T.endAt) pmEnd(); else pmPaint(); }
+function pmNext(rec){ T.count++; T.phase=T.count%S.meta.pomo.every===0?'long':'short'; return rec; }
+function pmEnd(){
+  clearInterval(T.tick); const P2=S.meta.pomo, wasFocus=T.phase==='focus'; let r=null;
+  if(wasFocus) r=pmRecord(true);
+  T.running=false; T.left=null;
+  if(wasFocus){ pmNext();
+    const msg=(r?'Session done: '+fmt(r.words)+' new word'+(r.words===1?'':'s')+'. ':'Session done. ')+(T.phase==='long'?'Take a long break, you earned it.':'Stretch, sip something, back soon.');
+    pmChime(true); cheer(msg,!!(r&&P2.goal&&r.words>=P2.goal)); if(P2.autoBreak) pmStart(); }
+  else { T.phase='focus'; pmChime(false); toast('Break is over. Ready when you are.'); say('Break is over. Shall we write?'); if(P2.autoFocus) pmStart(); }
+  pmPaint();
+}
+function pmStop(){
+  const wasFocus=T.phase==='focus'&&T.cur, r=wasFocus?pmRecord(false):null;
+  clearInterval(T.tick); T.running=false; T.left=null; T.cur=null; pmPaint();
+  if(r) toast('Saved this session: '+fmt(r.words)+' new words in '+r.mins+' min.',{plain:true});
+}
+function pmSkip(){
+  if(T.phase==='focus'){ const r=pmRecord(false); clearInterval(T.tick); T.running=false; T.left=null; pmNext(); if(r) toast('Saved this session ('+fmt(r.words)+' new words). On to your break.',{plain:true}); }
+  else { clearInterval(T.tick); T.running=false; T.left=null; T.phase='focus'; }
+  pmPaint();
+}
+function pmHalt(){ if(T.cur) pmRecord(false); clearInterval(T.tick); T.running=false; T.left=null; T.cur=null; T.phase='focus'; pmPaint(); }
+const RING2=2*Math.PI*52;
+function pmPaint(){
+  if(!S) return; const left=pmLeft(), len=pmLen(T.phase), P2=S.meta.pomo, active=T.running||T.left!=null||!!T.cur;
+  const chip=$('#pmChip'); if(chip){ chip.hidden=!active; chip.lastChild.textContent=(T.phase==='focus'?'':'Break ')+mmss(left); chip.classList.toggle('brk',T.phase!=='focus'); chip.classList.toggle('paused',!T.running); }
+  const el=$('#pmTime'); if(!el) return; const box=$('#pomo');
+  box.dataset.ph=T.phase; box.classList.toggle('run',T.running);
+  el.textContent=mmss(left); $('#pmPhase').textContent=PM_PHASE[T.phase]+(!T.running&&T.left!=null?' · paused':'');
+  const fr=Math.min(1,Math.max(0,1-left/len)), arc=$('#pmArc'); arc.style.strokeDasharray=(RING2*fr).toFixed(1)+' '+RING2.toFixed(1); arc.style.opacity=fr>0?1:0;
+  $('#pmGo').innerHTML=T.running?ico('pause',14)+'<span>Pause</span>':ico('play',14)+'<span>'+(T.left!=null?'Resume':T.phase==='focus'?'Start focus':'Start break')+'</span>';
+  const done=T.count%P2.every; $('#pmDots').innerHTML=Array.from({length:P2.every},(_,i)=>'<i class="'+(i<done?'on':'')+'"></i>').join('')+'<span>'+(done?done+' of '+P2.every+' before a long break':P2.every+' focus sessions, then a long break')+'</span>';
+  const lg=$('.pm-log span'); if(lg) lg.textContent='Past sessions ('+Object.keys(S.ss).length+')';
+  const today=Object.values(S.ss).filter(x=>keyOf(new Date(x.start))===todayKey());
+  $('#pmNow').innerHTML=T.cur?'This session: <b>'+fmt(T.cur.words)+'</b> new word'+(T.cur.words===1?'':'s')+(P2.goal?' of '+fmt(P2.goal):'')
+    :(today.length?'Today: '+today.length+' session'+(today.length===1?'':'s')+', '+fmt(today.reduce((a,x)=>a+x.words,0))+' new words.':'Write in focused bursts. Each session and its word count is saved.');
+}
+function pomoHtml(){
+  const P2=S.meta.pomo, n=Object.keys(S.ss).length, num2=(k,l,mn,mx)=>'<label class="f">'+l+'<input type="number" inputmode="numeric" min="'+mn+'" max="'+mx+'" data-pms="'+k+'" value="'+P2[k]+'"></label>';
+  return '<section class="psec pomo" id="pomo" data-ph="focus"><h3><span>Focus timer</span><span class="pm-tools"><button class="ibtn" data-pm="log" title="Past sessions" aria-label="Past sessions">'+ico('list',15)+'</button><button class="ibtn" data-pm="set" aria-expanded="'+!!ui.pmSet+'" title="Timer settings" aria-label="Timer settings">'+ico('sliders',15)+'</button></span></h3>'
+    +'<div class="pm-face"><svg viewBox="0 0 120 120" class="pm-ring" aria-hidden="true"><circle class="bg" cx="60" cy="60" r="52"/><circle class="arc" id="pmArc" cx="60" cy="60" r="52" transform="rotate(-90 60 60)"/></svg><div class="pm-txt" role="timer" aria-live="off"><b class="mono" id="pmTime"></b><span id="pmPhase"></span></div></div>'
+    +'<div class="pm-dots" id="pmDots"></div>'
+    +'<div class="pm-btns"><button class="btn pri" id="pmGo" data-pm="go"></button><button class="btn" data-pm="stop" title="Stop and save this session">'+ico('stop',14)+'<span>Stop</span></button><button class="btn" data-pm="skip" title="Skip to the next part">'+ico('skip',14)+'<span>Skip</span></button></div>'
+    +'<p class="fine" id="pmNow"></p>'
+    +(ui.pmSet?'<div class="pm-set"><div class="two">'+num2('focus','Focus (minutes)',1,180)+num2('short','Short break',1,60)+num2('long','Long break',1,120)+num2('every','Long break after',1,12)+'</div>'
+      +num2('goal','Words to aim for each session (0 for none)',0,20000)
+      +[['autoBreak','Start breaks automatically'],['autoFocus','Start the next focus session after a break'],['sound','Play a chime']].map(o=>'<label class="ck"><input type="checkbox" data-pms="'+o[0]+'"'+(P2[o[0]]?' checked':'')+'>'+o[1]+'</label>').join('')
+      +'<p class="fine">Changes apply from the next session. "Long break after" counts focus sessions.</p></div>':'')
+    +'<button class="btn sm pm-log" data-pm="log">'+ico('list',14)+'<span>Past sessions ('+n+')</span></button></section>';
+}
+function bindPomo(){
+  const box=$('#pomo'); if(!box) return;
+  box.addEventListener('click',e=>{ const b=e.target.closest('[data-pm]'); if(!b||b.tagName==='INPUT') return; const a=b.dataset.pm;
+    if(a==='go'){ if(T.running) pmPause(); else pmStart(); }
+    else if(a==='stop') pmStop(); else if(a==='skip') pmSkip();
+    else if(a==='set'){ ui.pmSet=!ui.pmSet; renderInspector(); }
+    else if(a==='log') go({k:'ss'}); });
+  box.addEventListener('change',e=>{ const x=e.target, k=x.dataset.pms; if(!k) return; const P2=S.meta.pomo;
+    if(x.type==='checkbox') P2[k]=x.checked; else { S.meta.pomo=normPomo(Object.assign({},P2,{[k]:x.value})); x.value=S.meta.pomo[k]; }
+    dirty('meta'); pmPaint(); });
+}
+function renderSs(el){
+  const list=Object.keys(S.ss).map(id=>Object.assign({id},S.ss[id])).sort((a,b)=>b.start-a.start), cf=ui.confirm;
+  const tot=list.reduce((a,x)=>({mins:a.mins+x.mins,words:a.words+x.words}),{mins:0,words:0}), best=list.reduce((b,x)=>!b||x.words>b.words?x:b,null);
+  const dur=m=>m>=60?Math.floor(m/60)+' h '+Math.round(m%60)+' min':(Math.round(m*10)/10)+' min';
+  const hm=t=>{ const d=new Date(t); return pad(d.getHours())+':'+pad(d.getMinutes()); };
+  const dayName=t=>new Date(t).toLocaleDateString(undefined,{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+  const days=[]; list.forEach(x=>{ const k=keyOf(new Date(x.start)); let d=days[days.length-1]; if(!d||d.k!==k){ d={k,items:[]}; days.push(d); } d.items.push(x); });
+  const tile=(v,l)=>'<div class="ss-tile"><b class="mono">'+v+'</b><span>'+l+'</span></div>';
+  el.innerHTML='<div class="main-head">'+backBtn()+'<span class="kind">'+ico('timer',16)+'</span><h1 class="mh-title">Writing sessions</h1>'
+    +(list.length?'<button class="btn danger" data-ss="all">'+ico('trash')+'<span>'+(cf==='ssall'?'Click again to delete every session':'Delete all')+'</span></button>':'')+'</div>'
+    +'<div class="ss-wrap"><p class="muted ss-sub">Focus timer sessions for <b>'+esc(S.meta.title)+'</b>. New words are counted the same way as your daily goal: pasted blocks over 600 words are left out.</p>'
+    +(list.length?'<div class="ss-tiles">'+tile(list.length,'sessions')+tile(dur(tot.mins),'focused')+tile(fmt(tot.words),'new words')+tile(fmt(tot.words/list.length),'words per session')
+      +tile(tot.mins?(Math.round(tot.words/tot.mins*10)/10):0,'words per minute')+tile(best?fmt(best.words):0,'best session')+'</div>'
+      +days.map(d=>{ const w=d.items.reduce((a,x)=>a+x.words,0), m=d.items.reduce((a,x)=>a+x.mins,0);
+        return '<section class="ss-day"><header><h2>'+esc(dayName(d.items[0].start))+'</h2><span class="muted">'+d.items.length+' session'+(d.items.length===1?'':'s')+' · '+dur(m)+' · '+fmt(w)+' new words</span>'
+          +'<button class="btn sm'+(cf==='ssd'+d.k?' danger':'')+'" data-ss="day" data-id="'+d.k+'">'+(cf==='ssd'+d.k?'Delete this day?':'Delete day')+'</button></header>'
+          +d.items.map(x=>'<div class="ss-row"><span class="mono ss-time">'+hm(x.start)+'–'+hm(x.end)+'</span>'
+            +'<span class="ss-badge '+(x.done?'ok':'early')+'">'+(x.done?'Completed':'Stopped early')+'</span>'
+            +'<span class="ss-dur">'+dur(x.mins)+(x.planned?' <span class="muted">of '+x.planned+'</span>':'')+'</span>'
+            +'<b class="ss-w">'+fmt(x.words)+' <span>new words</span></b>'
+            +'<span class="muted ss-net">'+(x.net>=0?'+':'')+fmt(x.net)+' net · '+(x.mins?Math.round(x.words/x.mins*10)/10:0)+'/min</span>'
+            +'<span class="ss-sc">'+x.scenes.filter(id=>S.meta.scenes[id]).map(id=>'<button class="tc-sc" data-ss="open" data-id="'+id+'">'+ico('pen',12)+'<span>'+esc(S.meta.scenes[id].title)+'</span></button>').join('')+'</span>'
+            +'<button class="ibtn'+(cf==='ss'+x.id?' on':'')+'" data-ss="del" data-id="'+x.id+'" aria-label="Delete this session">'+(cf==='ss'+x.id?'Delete?':ico('trash',14))+'</button></div>').join('')+'</section>'; }).join('')
+      :'<div class="ss-empty"><b>No sessions yet</b><p class="muted">Start the focus timer next to '+esc(S.meta.pet.name)+' and write. Each focus session is saved here with its word count.</p><button class="btn pri" data-ss="timer">'+ico('play',14)+'<span>Start a focus session</span></button></div>')+'</div>';
+  const gone=ids=>{ ids.forEach(id=>{ delete S.ss[id]; P.gone.add('ss_'+id); P.dirty.delete('ss_'+id); }); dirty(); renderSs(el); renderInspector(); };
+  el.onclick=ev=>{ const b=ev.target.closest('[data-ss]'); if(!b) return; const a=b.dataset.ss, id=b.dataset.id, rr=()=>renderSs(el);
+    if(a==='open') go({k:'scene',id});
+    else if(a==='timer'){ pmStart(); ui.tab='pet'; syncTab(); }
+    else if(a==='del') confirmDo('ss'+id,()=>gone([id]),rr);
+    else if(a==='day') confirmDo('ssd'+id,()=>gone(Object.keys(S.ss).filter(k=>keyOf(new Date(S.ss[k].start))===id)),rr);
+    else if(a==='all') confirmDo('ssall',()=>{ gone(Object.keys(S.ss)); toast('All sessions for this project deleted.',{plain:true}); },rr); };
+}
+
 /* ---------- inspector ---------- */
 function renderInspector(){
   const m=S.meta, p=m.pet, st=stageOf(p.total), nx=STAGES[st+1], md=curMood(), v=ui.view;
@@ -2693,7 +2887,7 @@ function renderInspector(){
   let h='<section class="pet-card m-'+md+'"><div class="pet-stage"><button class="pet-btn" id="petBtn" aria-label="Cheer with '+esc(p.name)+'"><span id="petArt">'+petSVG(md,st)+'</span></button></div>'
     +'<div class="bubble" id="bubble">'+esc(ui.say||line(md))+'</div>'
     +'<div class="pet-meta"><input class="pet-name" id="petName" maxlength="18" value="'+esc(p.name)+'" aria-label="Pet name"><span class="stage-tag" id="stageTag">'+STAGES[st].n+'</span></div>'
-    +'<div class="evo">'+(nx?'<div class="bar"><i id="evoBar" style="width:'+Math.min(100,(p.total-STAGES[st].at)/(nx.at-STAGES[st].at)*100)+'%"></i></div>':'')+'<small id="evoTxt"></small></div></section>';
+    +'<div class="evo">'+(nx?'<div class="bar"><i id="evoBar" style="width:'+Math.min(100,(p.total-STAGES[st].at)/(nx.at-STAGES[st].at)*100)+'%"></i></div>':'')+'<small id="evoTxt"></small></div></section>'+pomoHtml();
   h+='<section class="psec"><h3>Today</h3><div class="big"><b class="mono" id="goalNum">0</b><span>of <span class="mono" id="goalOf">0</span> new words</span></div><div class="bar lg"><i id="goalBar" style="width:0"></i></div>'
     +'<div class="chips"><span class="chip2" id="streakChip"></span></div>'
     +'<div class="two"><label class="f">Daily goal<input id="goalIn" type="number" inputmode="numeric" min="50" max="20000" step="50" value="'+m.goal+'"></label><label class="f">Novel length goal<input id="tgtIn" type="number" inputmode="numeric" min="1000" max="1000000" step="1000" value="'+m.target+'"></label></div>'
@@ -2706,7 +2900,7 @@ function renderInspector(){
       +'<label class="sec-l" for="noteIn">Notes</label><textarea class="ta" id="noteIn" rows="3" placeholder="Reminders, research, loose ends.">'+esc(d.notes)+'</textarea>'
       +'<span class="sec-l">Linked in this scene</span><div class="chiplinks" id="sceneChips"></div></section>';
   }
-  const el=$('#insp'); el.innerHTML=h; updateStats(); updateSceneChips();
+  const el=$('#insp'); el.innerHTML=h; updateStats(); updateSceneChips(); bindPomo(); pmPaint();
   $('#petBtn').addEventListener('click',()=>{ bump(); say(line(curMood())); });
   $('#petName').addEventListener('input',e=>{ p.name=e.target.value.trim()||'Inky'; dirty('meta'); });
   $('#goalIn').addEventListener('change',e=>{ m.goal=Math.max(50,Math.min(20000,Math.round(+e.target.value||500))); e.target.value=m.goal; dirty('meta'); updateStats(); });
@@ -2735,8 +2929,8 @@ function manuscriptMd(){
 }
 function renderMenu(){
   const cf=ui.confirm, el=$('#menu');
-  if(DESK){ el.innerHTML='<button data-m="projects">Projects…</button><button data-m="projects">New project…</button><hr><button data-m="md">Export manuscript (.md)</button><button data-m="json">Back up this project (.json)</button><button data-m="import">Import a backup as a new project…</button><button data-m="reveal">Show projects folder</button><small>Saved on this computer as you write. Each project folder also keeps automatic backups.</small>'; return; }
-  el.innerHTML='<button data-m="md">Export manuscript (.md)</button><button data-m="json">Back up project (.json)</button><button data-m="restore">Restore from a backup…</button><hr>'
+  if(DESK){ el.innerHTML='<button data-m="projects">Projects…</button><button data-m="projects">New project…</button><hr><button data-m="md">Export manuscript (.md)</button><button data-m="json">Back up this project (.json)</button><button data-m="import">Import a backup as a new project…</button><button data-m="reveal">Show projects folder</button><button data-m="sessions">Writing sessions</button><small>Saved on this computer as you write. Each project folder also keeps automatic backups.</small>'; return; }
+  el.innerHTML='<button data-m="sessions">Writing sessions</button><hr><button data-m="md">Export manuscript (.md)</button><button data-m="json">Back up project (.json)</button><button data-m="restore">Restore from a backup…</button><hr>'
     +'<button class="warn" data-m="sample">'+(cf==='m-sample'?'Replace everything with the sample? Click again':'Load the sample project')+'</button>'
     +'<button class="warn" data-m="blank">'+(cf==='m-blank'?'Replace everything with a blank project? Click again':'Start a blank project')+'</button>'
     +'<small>'+(P.db?'Your project saves automatically to your Claude account, private to you. Replacing a project keeps your Inkling and goals.':'Your project saves on this device only. Back it up from here when you can.')+'</small>';
@@ -2751,6 +2945,7 @@ function bindMenu(){
     else if(a==='projects'){ closeMenu(); openProjects(); }
     else if(a==='import'){ closeMenu(); deskImportPick(); }
     else if(a==='reveal'){ closeMenu(); DESK.reveal(); }
+    else if(a==='sessions'){ closeMenu(); go({k:'ss'}); }
     else if(a==='restore'){ closeMenu(); $('#fileIn').value=''; $('#fileIn').click(); }
     else if(a==='sample') confirmDo('m-sample',()=>{ closeMenu(); replaceProject(normalize(sampleProject()),true); },renderMenu);
     else if(a==='blank') confirmDo('m-blank',()=>{ closeMenu(); replaceProject(normalize(blankProject()),true); },renderMenu);
@@ -2781,16 +2976,16 @@ async function deskCreate(np,imgs){
   if(imgs!==undefined) await adoptImages(np,imgs,id);
   await DESK.save(id,JSON.stringify(snapshot(np)),deskInfo(np)); return id;
 }
-async function deskNew(kind){ await deskFlush(); const id=await deskCreate(normalize(kind==='sample'?sampleProject():blankProject())); await deskOpen(id); return id; }
+async function deskNew(kind){ pmHalt(); await deskFlush(); const id=await deskCreate(normalize(kind==='sample'?sampleProject():blankProject())); await deskOpen(id); return id; }
 async function deskImport(text){
   let o, np; try{ o=JSON.parse(text); if(!o||!o.meta||!Array.isArray(o.meta.chapters)) throw 0; np=normalize(o); }catch(e){ toast('That file is not an Inkling backup.',{plain:true}); return; }
-  await deskFlush(); const id=await deskCreate(np,o.imgs||{}); await deskOpen(id);
+  pmHalt(); await deskFlush(); const id=await deskCreate(np,o.imgs||{}); await deskOpen(id);
   toast('Imported “'+np.meta.title+'” as a new project. Your other projects are unchanged.',{plain:true}); return id;
 }
 async function deskImportPick(){ try{ const t=await DESK.openFile(); if(t!=null){ await deskImport(t); closeProjects(); } }catch(e){ toast('Could not open that file.',{plain:true}); } }
 async function deskBoot(){
-  DESK.onMenu(a=>{ if(a==='new'||a==='projects') openProjects(); else if(a==='backup') doBackup(); else if(a==='export') doExport(); else if(a==='import') deskImportPick(); });
-  DESK.onClosing(async()=>{ try{ await deskFlush(); }catch(e){} DESK.closeReady(); });
+  DESK.onMenu(a=>{ if(a==='new'||a==='projects') openProjects(); else if(a==='backup') doBackup(); else if(a==='export') doExport(); else if(a==='import') deskImportPick(); else if(a==='sessions') go({k:'ss'}); else if(a==='timer'){ if(T.running) pmPause(); else pmStart(); } });
+  DESK.onClosing(async()=>{ try{ pmHalt(); await deskFlush(); }catch(e){} DESK.closeReady(); });
   const b=document.createElement('button'); b.className='ibtn'; b.id='pjBtn'; b.title='Projects'; b.setAttribute('aria-label','Projects'); b.innerHTML=ico('folder',18);
   b.addEventListener('click',()=>openProjects()); $('#projTitle').before(b);
   try{
@@ -2826,7 +3021,7 @@ async function pjAct(a,id,name){
   const st=ui.pj, refresh=async()=>{ st.list=await DESK.list(); drawProjects(); };
   try{
     if(a==='close') closeProjects();
-    else if(a==='open'){ if(id!==PJ.id){ await deskFlush(); if(!await deskOpen(id)) return; } closeProjects(); }
+    else if(a==='open'){ if(id!==PJ.id){ pmHalt(); await deskFlush(); if(!await deskOpen(id)) return; } closeProjects(); }
     else if(a==='blank'||a==='sample'){ await deskNew(a); closeProjects(); if(a==='blank'){ const t=$('#projTitle'); t.focus(); t.select(); } }
     else if(a==='import') await deskImportPick();
     else if(a==='dup'){ await deskFlush(); await DESK.duplicate(id); await refresh(); toast('Duplicated. The copy is at the top of the list.',{plain:true}); }
@@ -2858,6 +3053,8 @@ function init(){
   $('#tabs').innerHTML=[['binder','Binder','book'],['write','Write','pen'],['pet','Inkling','spark']].map(t=>'<button role="tab" data-tab="'+t[0]+'" aria-selected="false">'+ico(t[2],20)+'<span>'+t[1]+'</span></button>').join('');
   $('#tabs').addEventListener('click',e=>{ const b=e.target.closest('button[data-tab]'); if(!b) return; ui.tab=b.dataset.tab; syncTab(); });
   $('#goalChip').addEventListener('click',()=>{ ui.tab='pet'; syncTab(); const i=$('#insp'); if(i) i.scrollTop=0; });
+  const pc=document.createElement('button'); pc.id='pmChip'; pc.className='chip pm-chip'; pc.hidden=true; pc.setAttribute('aria-label','Focus timer'); pc.innerHTML=ico('timer',16)+'<span class="mono"></span>';
+  pc.addEventListener('click',()=>{ ui.tab='pet'; syncTab(); const t=$('#pomo'); if(t) t.scrollIntoView({block:'nearest'}); }); $('#goalChip').after(pc);
   $('#projTitle').addEventListener('input',e=>{ S.meta.title=e.target.value||'Untitled novel'; dirty('meta'); if(DESK){ document.title=S.meta.title+' – Inkling'; DESK.setTitle(document.title); } });
   bindBinder(); bindMenu();
   $('#main').addEventListener('click',e=>{
@@ -2877,7 +3074,7 @@ function init(){
   document.addEventListener('keydown',e=>{ if(e.key==='Escape'){ const pj=$('#pj'); if(pj&&!pj.hidden){ if(PJ.id) closeProjects(); } else if(ui.menu) closeMenu(); else if((ui.view.k==='rm'||ui.view.k==='ft')&&(ui.cvSel||ui.cvPop)){ ui.cvSel=null; ui.cvPop=false; ui.confirm=null; cvRefresh(); } else if(ui.view.k==='tl'&&ui.tlSide){ ui.tlSide=null; ui.confirm=null; drawSide(); drawTl(); } else if(ui.focus){ ui.focus=false; syncTab(); renderMain(); } } });
   let rz; window.addEventListener('resize',()=>{ clearTimeout(rz); rz=setTimeout(()=>{ if(ui.view&&ui.view.k==='tl') drawTl(); },150); });
   document.addEventListener('visibilitychange',()=>{ if(document.hidden&&P.dirty.size) flush(); });
-  window.addEventListener('pagehide',()=>{ if(P.dirty.size) mirrorLocal(); });
+  window.addEventListener('pagehide',()=>{ if(T.cur) pmRecord(false); if(P.dirty.size){ mirrorLocal(); flush(); } });
   setInterval(()=>{ if(!document.hidden&&Date.now()-ui.sayAt>40000) say(line(curMood())); },15000);
   renderAll();
   if(DESK) deskBoot(); else { setStatus('local'); connectDb(!!local); }
