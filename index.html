@@ -663,7 +663,7 @@ const DESK=window.inklingDesktop||null;
 const PJ={id:null};   // the desktop project that is open
 let linker=null;
 const ui={view:null,hist:[],cork:'all',rename:null,confirm:null,menu:false,tab:'write',focus:false,openSec:{ol:true,nt:true,tl:true,rm:true,ft:true,char:true,place:true,thing:true},say:'',sayAt:0,mood:'',touched:false,sel:'',focusName:false,fs:18,
-  relabel:null,ntAdd:false,binderCfg:false,cvFor:null,cvSel:null,cvPop:false,ftGen:{},imgOpts:false,imgBusy:null,tlFor:null,tlSel:null,tlSide:null,tlSideKey:'',tlQ:'',tlEnt:'',tlR:null,tlDragged:false};
+  relabel:null,ntAdd:false,olUndo:null,binderCfg:false,cvFor:null,cvSel:null,cvPop:false,ftGen:{},imgOpts:false,imgBusy:null,tlFor:null,tlSel:null,tlSide:null,tlSideKey:'',tlQ:'',tlEnt:'',tlR:null,tlDragged:false};
 const P={db:null,base:null,keys:new Set(),dirty:new Set(),gone:new Set(),timer:null,busy:false,again:false,fails:0};
 
 /* ---------- sample + blank projects ---------- */
@@ -780,7 +780,7 @@ function normalize(o){
   meta.ols.forEach(x=>{ const d=oli[x.id]||{}; let prev=-1;
     olo[x.id]={num:OL_NUMS.some(n=>n[0]===d.num)?d.num:'decimal',showNotes:d.showNotes!==false,
       items:(Array.isArray(d.items)?d.items:[]).filter(i=>i&&i.id).map(i=>{ const dp=Math.min(prev+1,clamp(Math.round(num(i.depth,0)),0,OL_MAX)); prev=dp;
-        return {id:String(i.id),text:String(i.text||''),note:String(i.note||''),depth:dp,done:!!i.done,open:i.open!==false,noteOpen:!!i.noteOpen,scene:i.scene&&meta.scenes[i.scene]?String(i.scene):''}; })}; });
+        return {id:String(i.id),text:String(i.text||''),note:String(i.note||''),depth:dp,done:!!i.done,open:i.open!==false,noteOpen:!!i.noteOpen,scene:i.scene&&meta.scenes[i.scene]?String(i.scene):'',tpl:i.tpl&&typeof i.tpl==='object'&&typeof i.tpl.t==='string'?{t:i.tpl.t.slice(0,200),n:String(i.tpl.n||'').slice(0,1000),p:isFinite(i.tpl.p)?+i.tpl.p:undefined}:undefined}; })}; });
   const rmo={}, fto={}, rmi=o.rm&&typeof o.rm==='object'?o.rm:{}, fti=o.ft&&typeof o.ft==='object'?o.ft:{};
   meta.rms=(Array.isArray(meta.rms)?meta.rms:[]).filter(x=>x&&x.id).map(x=>({id:String(x.id),name:String(x.name||'Relationship map')}));
   meta.fts=(Array.isArray(meta.fts)?meta.fts:[]).filter(x=>x&&x.id).map(x=>({id:String(x.id),name:String(x.name||'Family tree')}));
@@ -1707,8 +1707,57 @@ const OL_TPL={
     [0,'Retreat'],[1,'Inkling of doubt'],[1,'Deepening doubt'],[1,'Retreat'],[1,'Shields up'],[1,'Break up'],
     [0,'Fighting for love'],[1,'Dark night of the soul'],[1,'Wake up'],[1,'Grand gesture'],[1,'Whole-hearted'],[1,'Happily ever after']]]
 };
+// Where each template line falls in a story (% of the way through), in the same order as OL_TPL's rows.
+// Switching templates uses it to move what the writer wrote to the beat at the same point in the story.
+const OL_POS={three:[0,1,10,20,25,35,50,75,80,88,99],cat:[0,1,5,7,10,15,20,20,23,35,50,62,75,78,80,81,88,99],
+  hero:[0,1,10,14,17,20,25,35,45,50,60,75,75,88,99],seven:[1,20,35,50,62,81,99],
+  romance:[0,1,5,10,15,20,20,25,30,37,43,50,55,55,62,68,72,75,78,78,82,88,94,99]};
 const curOl=()=>S.ol[ui.view.id];
 const olItem=(text,depth,o)=>Object.assign({id:uid('i_'),text:text||'',note:'',depth:depth||0,done:false,open:true,noteOpen:false,scene:''},o||{});
+// Choosing a template replaces the lines a template wrote and keeps what the writer typed. A template line
+// remembers its original wording in `tpl` (older outlines are recognised by matching a known beat name).
+// Notes written on a template line move to the new template's matching beat (same name, else the same relative
+// place in the story); renamed template lines and the writer's own lines follow that beat as lines under it.
+const olKey=s=>String(s).toLowerCase().replace(/[^a-z0-9]+/g,' ').trim();
+function olApplyTemplate(old,key){
+  const beats=new Map(); Object.values(OL_TPL).forEach(t=>t[1].forEach(r=>{ if(!beats.has(r[1])) beats.set(r[1],r[2]||''); }));
+  Object.keys(OL_TPL).forEach(k=>OL_TPL[k][1].forEach((r,i)=>{ const b=beats.get(r[1]); if(b&&typeof b==='string') beats.set(r[1],{n:b,p:OL_POS[k][i]}); else if(!b||b.p==null) beats.set(r[1],{n:r[2]||'',p:OL_POS[k][i]}); }));
+  const fresh=OL_TPL[key][1].map((r,i)=>olItem(r[1],r[0],{note:r[2]||'',tpl:{t:r[1],n:r[2]||'',p:OL_POS[key][i]}}));
+  const isT=x=>!!x.tpl||beats.has(x.text), tplOf=x=>{ const b=beats.get((x.tpl||{}).t||x.text)||{}; return {t:x.tpl?x.tpl.t:x.text,n:x.tpl?x.tpl.n:b.n,p:x.tpl&&x.tpl.p!=null?x.tpl.p:b.p}; };
+  const oldT=old.filter(isT), oldLeaves=oldT.filter(x=>x.depth>0), oldTops=oldT.filter(x=>x.depth===0);
+  const leaves=fresh.filter(x=>x.depth>0), tops=fresh.filter(x=>x.depth===0), pos=(a,x)=>a.length>1?a.indexOf(x)/(a.length-1):0;
+  const hits=new Map();
+  const target=x=>{
+    if(hits.has(x)) return hits.get(x);
+    let hit=fresh.find(y=>olKey(y.text)===olKey(tplOf(x).t));
+    if(!hit){ const group=x.depth===0&&oldLeaves.length&&tops.length, to=group?tops:(leaves.length?leaves:fresh), tp=tplOf(x);
+      if(tp.p!=null) hit=to.reduce((b,y)=>Math.abs(y.tpl.p-tp.p)<Math.abs(b.tpl.p-tp.p)?y:b,to[0]);
+      else { const from=x.depth>0?oldLeaves:(oldLeaves.length?oldTops:oldT), f=pos(from,x); hit=to.reduce((b,y)=>Math.abs(pos(to,y)-f)<Math.abs(pos(to,b)-f)?y:b,to[0]); } }
+    hits.set(x,hit); return hit;
+  };
+  const head=[], under=new Map(), notes=new Map(); let anchor=null, kept=0;
+  const put=(beat,x)=>{ if(!under.has(beat)) under.set(beat,[]); under.get(beat).push(x); };
+  old.forEach(x=>{
+    if(isT(x)){
+      anchor=x; const t=tplOf(x), beat=target(x), title=x.text!==t.t?x.text.trim():'', note=x.note&&x.note!==t.n?x.note.trim():'';
+      if(note){ const m=note.match(/^From “(.+?)”: ([\s\S]*)$/), from=m?m[1]:t.t, body=m?m[2]:note;   // keep where it was first written
+        notes.set(beat,(notes.get(beat)||[]).concat(olKey(from)===olKey(beat.text)?body:'From “'+from+'”: '+body)); kept++; }
+      if(title){ const y=Object.assign({},x,{text:title,note:''}); delete y.tpl; put(beat,y); kept++; }
+      else { if(x.done) beat.done=true; if(x.scene&&!beat.scene) beat.scene=x.scene; }
+      return;
+    }
+    if(!x.text.trim()&&!x.note.trim()) return;   // empty lines go
+    kept++; if(anchor) put(target(anchor),Object.assign({},x)); else head.push(Object.assign({},x));
+  });
+  const out=head.slice();
+  fresh.forEach(b=>{
+    if(notes.has(b)) b.note=notes.get(b).join('\n\n');
+    out.push(b); const xs=under.get(b)||[], base=Math.min(...xs.map(y=>y.depth));
+    xs.forEach(y=>{ y.depth=Math.min(OL_MAX,b.depth+1+y.depth-base); out.push(y); });
+  });
+  let prev=-1; out.forEach(y=>{ y.depth=Math.max(0,Math.min(y.depth,prev+1)); prev=y.depth; });
+  return {items:out,kept};
+}
 const olEnd=(it,i)=>{ let j=i+1; while(j<it.length&&it[j].depth>it[i].depth) j++; return j; };   // end of item i's block
 const olHasKids=(it,i)=>i+1<it.length&&it[i+1].depth>it[i].depth;
 function olVisible(it){ const out=[]; let hide=99; it.forEach((x,i)=>{ if(x.depth>hide) return; hide=99; out.push(i); if(!x.open&&olHasKids(it,i)) hide=x.depth; }); return out; }
@@ -1726,25 +1775,27 @@ function renderOl(el,v){
   el.innerHTML='<div class="main-head">'+backBtn()+'<span class="kind">'+ico('list',16)+'</span><input id="olName" class="title-in" value="'+esc(x.name)+'" maxlength="80" aria-label="Outline name">'
     +'<span class="mono muted" id="olProg"></span>'
     +'<div class="tools"><button class="btn pri" data-o="add">'+ico('plus')+'<span>Item</span></button>'
-    +'<select id="olTpl" aria-label="Add a structure template"><option value="">Add a template…</option>'+Object.keys(OL_TPL).map(k=>'<option value="'+k+'">'+OL_TPL[k][0]+'</option>').join('')+'</select>'
+    +'<select id="olTpl" aria-label="Use a structure template"><option value="">Use a template…</option>'+Object.keys(OL_TPL).map(k=>'<option value="'+k+'">'+OL_TPL[k][0]+'</option>').join('')+'</select>'
     +'<button class="btn" data-o="frommss" title="Add every chapter and scene to this outline">'+ico('book')+'<span>From manuscript</span></button></div></div>'
     +'<div class="ol-bar"><label class="muted">Numbering <select id="olNum">'+OL_NUMS.map(n=>'<option value="'+n[0]+'"'+(o.num===n[0]?' selected':'')+'>'+n[1]+'</option>').join('')+'</select></label>'
     +'<label class="ck"><input type="checkbox" id="olNotes"'+(o.showNotes?' checked':'')+'>Show notes</label>'
-    +'<button class="btn sm" data-o="expand">Expand all</button><button class="btn sm" data-o="collapse">Collapse all</button>'
+    +'<button class="btn sm" data-o="undo" id="olUndo" hidden>Undo template switch</button><button class="btn sm" data-o="expand">Expand all</button><button class="btn sm" data-o="collapse">Collapse all</button>'
     +'<span class="tl-help">Enter adds a line, Tab and Shift+Tab indent, Alt+↑↓ moves a line with everything under it.</span></div>'
     +'<div class="sheet ol-sheet"><div id="olList" class="ol-list"></div></div>';
   const nm=$('#olName',el);
   nm.addEventListener('input',()=>{ x.name=nm.value||'Outline'; dirty('meta'); renderBinder(); });
   $('#olNum',el).addEventListener('change',ev=>{ o.num=ev.target.value; dirty('ol_'+v.id); drawOl(); });
   $('#olNotes',el).addEventListener('change',ev=>{ o.showNotes=ev.target.checked; dirty('ol_'+v.id); drawOl(); });
-  $('#olTpl',el).addEventListener('change',ev=>{ const t=OL_TPL[ev.target.value]; ev.target.value=''; if(!t) return;
-    if(o.items.length===1&&!o.items[0].text&&!o.items[0].note) o.items=[];
-    t[1].forEach(r=>o.items.push(olItem(r[1],r[0],{note:r[2]||''}))); dirty('ol_'+v.id); drawOl(); renderBinder(); toast('Added '+t[0]+'. Rename, delete or rearrange anything.',{plain:true}); });
+  $('#olTpl',el).addEventListener('change',ev=>{ const key=ev.target.value, t=OL_TPL[key]; ev.target.value=''; if(!t) return;
+    const before=JSON.parse(JSON.stringify(o.items)), r=olApplyTemplate(o.items,key);
+    o.items=r.items; ui.olUndo={id:v.id,items:before,name:t[0]}; dirty('ol_'+v.id); drawOl(); renderBinder(); olUndoBtn();
+    toast(r.kept?'Switched to '+t[0]+'. Kept everything you wrote ('+r.kept+' note'+(r.kept===1?'':'s')+' and lines).':'Switched to '+t[0]+'. Rename, delete or rearrange anything.',{plain:true}); });
   const list=$('#olList',el);
   el.onclick=ev=>{
     const b=ev.target.closest('[data-o]'); if(!b||b.tagName==='INPUT'||b.tagName==='TEXTAREA'||b.tagName==='SELECT') return;
     const a=b.dataset.o, row=b.closest('[data-i]'), it=o.items, i=row?it.findIndex(y=>y.id===row.dataset.i):-1;
     if(a==='add'){ it.push(olItem('',0)); dirty('ol_'+v.id); drawOl(it[it.length-1].id); renderBinder(); }
+    else if(a==='undo'){ if(ui.olUndo&&ui.olUndo.id===v.id){ o.items=ui.olUndo.items; ui.olUndo=null; dirty('ol_'+v.id); drawOl(); renderBinder(); olUndoBtn(); toast('Your outline is back the way it was.',{plain:true}); } }
     else if(a==='expand'||a==='collapse'){ it.forEach(y=>{ y.open=a==='expand'; }); dirty('ol_'+v.id); drawOl(); }
     else if(a==='frommss'){ if(it.length===1&&!it[0].text&&!it[0].note) it.length=0; S.meta.chapters.forEach(c=>{ it.push(olItem(c.title,0)); c.scenes.forEach(id=>it.push(olItem(S.meta.scenes[id].title,1,{scene:id,note:S.sc[id].synopsis}))); }); dirty('ol_'+v.id); drawOl(); renderBinder(); toast('Added your chapters and scenes. Scene lines link back to the scene.',{plain:true}); }
     else if(i<0) return;
@@ -1768,9 +1819,11 @@ function renderOl(el,v){
     else if(ev.key==='ArrowDown'&&vi<vis.length-1){ ev.preventDefault(); olFocus(it[vis[vi+1]].id); }
     else if(ev.key==='Backspace'&&!t.value&&it.length>1&&!olHasKids(it,i)){ ev.preventDefault(); const prev=vi>0?it[vis[vi-1]].id:null; olDelete(i); if(prev) olFocus(prev,true); }
   });
-  drawOl();
+  if(ui.olUndo&&ui.olUndo.id!==v.id) ui.olUndo=null;
+  drawOl(); olUndoBtn();
   if(ui.focusName){ ui.focusName=false; nm.focus(); nm.select(); }
 }
+function olUndoBtn(){ const b=$('#olUndo'); if(b) b.hidden=!(ui.olUndo&&ui.olUndo.id===ui.view.id); }
 function olFocus(id,end){ const i=$('#olList [data-i="'+id+'"] .ol-tx'); if(i){ i.focus(); const n=end?i.value.length:i.selectionStart; try{ i.setSelectionRange(n,n); }catch(e){} } }
 function olDelete(i){ const o=curOl(), it=o.items, e=olEnd(it,i); for(let j=i+1;j<e;j++) it[j].depth--; it.splice(i,1); if(!it.length) it.push(olItem('',0)); dirty('ol_'+ui.view.id); drawOl(); renderBinder(); }
 function olOp(a,i,keep){
