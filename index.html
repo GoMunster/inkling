@@ -671,6 +671,62 @@ dl.fam{display:grid;grid-template-columns:auto 1fr;gap:6px 10px} dl.fam dt{color
 .tour-ring{position:fixed;z-index:84;pointer-events:none;border:2px solid var(--accent);border-radius:12px;box-shadow:0 0 0 4000px rgba(13,18,26,.28);transition:all .2s}
 @media (prefers-reduced-motion:reduce){.tour-ring{transition:none}}
 
+/* Inky's room */
+.pet-stage{position:relative;overflow:hidden;aspect-ratio:300/190;padding:0;place-items:end center}
+.pet-stage .room,.den-stage .room{position:absolute;inset:0;display:flex;align-items:flex-end}
+.roomsvg{width:100%;height:100%;display:block}
+.pet-stage .pet-btn{position:relative;margin-bottom:6px}
+.pet-stage .pet-btn svg{width:128px;height:128px}
+.den-btn{position:absolute;top:8px;right:8px;padding:3px 8px;font-size:11.5px;background:color-mix(in srgb,var(--paper) 85%,transparent)}
+.dot-new{width:8px;height:8px;border-radius:50%;background:var(--char);display:inline-block;margin-left:2px}
+.pals{position:absolute;left:8px;bottom:6px;display:flex;gap:4px}
+.pal{display:flex;flex-direction:column;align-items:center;font-size:10px;color:var(--muted)}
+.pal svg{width:44px;height:44px}
+.roomsvg .floor{fill:color-mix(in srgb,var(--line) 70%,transparent)}
+.roomsvg .frame{fill:none;stroke:var(--paper);stroke-width:3}
+.roomsvg .win rect{stroke:var(--line);stroke-width:1}
+.roomsvg .wstar{fill:var(--thing);opacity:.9}
+.roomsvg .mapf rect{fill:#EFE2C4;stroke:#9B7A45;stroke-width:3} .roomsvg .mapf path{stroke:#9B7A45;stroke-width:1.6;stroke-dasharray:3 2} .roomsvg .mapf circle{fill:var(--char)}
+.roomsvg .shelf>rect:first-child{fill:#9B7A45} .roomsvg .book.b0{fill:var(--accent)} .roomsvg .book.b1{fill:var(--char)} .roomsvg .book.b2{fill:var(--place)} .roomsvg .book.b3{fill:var(--thing)}
+.roomsvg .hg path{fill:none;stroke:#9B7A45;stroke-width:2;stroke-linecap:round}
+.roomsvg .rug{fill:color-mix(in srgb,var(--char) 30%,transparent)}
+.roomsvg .chair rect{fill:color-mix(in srgb,var(--accent) 55%,var(--paper))}
+.roomsvg .lamp .shade{fill:var(--thing)} .roomsvg .lamp .pole{fill:none;stroke:var(--muted);stroke-width:3;stroke-linecap:round} .roomsvg .lamp .glow{fill:#FFE7A0;opacity:.28}
+.roomsvg .plant .stem{stroke:var(--place);stroke-width:3;stroke-linecap:round} .roomsvg .plant .leaf{fill:var(--place)} .roomsvg .plant .pot{fill:#B9673F}
+.roomsvg .plant .bloom{fill:var(--char)} .roomsvg .plant .bloomc{fill:var(--thing)}
+.petsvg .it .c1{fill:var(--char)} .petsvg .it .c2{fill:var(--accent)} .petsvg .it .c3{fill:#F4EFD8;stroke:#F4EFD8} .petsvg .it .gold{fill:var(--thing)}
+.petsvg .it .lens{fill:none;stroke:var(--thing);stroke-width:3} .petsvg .it .chain{fill:none;stroke:var(--thing);stroke-width:2}
+.petsvg .it .dark{fill:var(--pet-ink)} .petsvg .it .star{fill:#fff} .petsvg .it .steam{fill:none;stroke:var(--muted);stroke-width:2;stroke-linecap:round}
+.petsvg .it path[stroke-width]{stroke:currentColor}
+.petsvg .it .c3[stroke-width]{stroke:#F4EFD8}
+.den{max-width:980px;margin:0 auto;padding:16px 16px 48px;display:grid;gap:14px}
+.den-hero{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:16px;background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:14px}
+.den-stage{position:relative;aspect-ratio:300/190;background:var(--panel2);border-radius:12px;overflow:hidden;display:grid;place-items:end center}
+.den-pet{position:relative;margin-bottom:8px} .den-pet svg{width:min(190px,40vw);height:auto;display:block}
+.den-name{display:flex;align-items:center;gap:10px;font-size:20px;font-family:var(--f-prose)}
+.den-tiles{grid-template-columns:repeat(2,minmax(0,1fr));margin:10px 0 4px}
+.den-tiles .ss-tile{background:var(--bg);padding:8px 12px} .den-tiles .ss-tile b{font-size:18px}
+.swatches{display:flex;gap:8px;flex-wrap:wrap}
+.sw{width:28px;height:28px;border-radius:50%;border:2px solid var(--paper);background:var(--c,var(--pet));box-shadow:0 0 0 1px var(--line)}
+.sw.on{box-shadow:0 0 0 2px var(--ink)}
+.wd-row{margin-top:8px}
+.wd-opts{display:flex;gap:8px;flex-wrap:wrap}
+.wd{width:78px;border:1px solid var(--line);border-radius:10px;background:var(--bg);padding:6px 4px 4px;display:flex;flex-direction:column;align-items:center;gap:2px}
+.wd svg{width:54px;height:54px;overflow:visible}
+.wd small{font-size:11px;color:var(--muted);text-align:center;line-height:1.2}
+.wd.on{border-color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent)}
+.wd.locked{opacity:.45;cursor:not-allowed} .wd.locked svg{filter:grayscale(1)}
+.wd-auto{height:54px;display:grid;place-items:center;font-size:12px;font-weight:600;color:var(--muted)}
+.ach{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:8px;margin-top:10px}
+.ach-card{border:1px solid var(--line);border-radius:10px;padding:10px 12px;background:var(--bg);display:flex;flex-direction:column;gap:4px;font-size:13px}
+.ach-card span{color:var(--muted);font-size:12.5px} .ach-card small{font-size:11.5px;color:var(--muted)}
+.ach-card.got{border-color:color-mix(in srgb,var(--place) 50%,var(--line));background:color-mix(in srgb,var(--place) 9%,var(--bg))}
+.ach-card.got b::before{content:'✓ ';color:var(--place)}
+.ach-card .bar{height:5px}
+.here-chip.sprinting{border-color:var(--accent)}
+.here-pop .spr{color:var(--accent);font-weight:600}
+@media (max-width:760px){.den-hero{grid-template-columns:1fr}}
+
 /* sharing */
 .here-chip{gap:4px;padding:3px 10px 3px 4px}
 .here-chip span{font-size:12px}
@@ -814,7 +870,7 @@ const ADD_DOCS=[];   // (raw, out) => out.<prefix> = normalized records, for doc
 const snapshot=st=>{ if(!st) stampMine(S); st=st||S; const o={meta:st.meta}; DOCS.forEach(p=>{ o[p]=st[p]; }); return o; };
 // The desktop app (desktop/) provides window.inklingDesktop: each project is a folder on the computer. Elsewhere it is null.
 const DESK=window.inklingDesktop||null;
-const APP_VERSION='1.1.0';   // the desktop build replaces this with desktop/package.json's version
+const APP_VERSION='1.2.0';   // the desktop build replaces this with desktop/package.json's version
 // Saved-format version. When the shape of saved data changes: bump FORMAT and add MIGRATE[old] that upgrades a raw
 // project one step (it runs before normalize()). A project from a newer FORMAT is never loaded or overwritten.
 const FORMAT=2;
@@ -931,11 +987,11 @@ function normalize(o){
   const gn=meta.gone&&typeof meta.gone==='object'?meta.gone:{}, cut=Date.now()-180*864e5; meta.gone={};
   Object.keys(gn).filter(k=>+gn[k]>cut).sort((a,b)=>gn[b]-gn[a]).slice(0,2000).forEach(k=>{ meta.gone[k]=+gn[k]; }); meta.title=meta.title||'Untitled novel'; meta.goal=+meta.goal||500; meta.target=+meta.target||80000;
   meta.chapters=Array.isArray(meta.chapters)?meta.chapters:[]; meta.scenes=meta.scenes||{}; meta.ents=meta.ents||{};
-  meta.pet=meta.pet||{name:'Inky',total:0}; meta.pet.name=meta.pet.name||'Inky'; meta.pet.total=+meta.pet.total||0;
+  meta.pet=normPet(meta.pet);
   meta.days=meta.days||{}; meta.saved=+meta.saved||0; meta.pomo=normPomo(meta.pomo); meta.exp=normExp(meta.exp); meta.author=String(meta.author||'');
   const wr=meta.writers&&typeof meta.writers==='object'?meta.writers:{}; meta.writers={};
   Object.keys(wr).slice(0,60).forEach(k=>{ const w=wr[k]; if(!w||typeof w!=='object') return;
-    meta.writers[String(k).slice(0,60)]={name:String(w.name||'').slice(0,60),days:w.days&&typeof w.days==='object'?w.days:{},pet:{name:String((w.pet||{}).name||'Inky').slice(0,40),total:+((w.pet||{}).total)||0},
+    meta.writers[String(k).slice(0,60)]={name:String(w.name||'').slice(0,60),days:w.days&&typeof w.days==='object'?w.days:{},pet:normPet(w.pet),
       mark:w.mark||null,goal:+w.goal||500,pomo:normPomo(w.pomo),devs:(Array.isArray(w.devs)?w.devs:[]).filter(x=>typeof x==='string').slice(-10),at:+w.at||0}; });
   const sx=meta.secs&&typeof meta.secs==='object'?meta.secs:{rm:false,ft:false}; meta.secs={};
   OPT_SECS.forEach(k=>{ meta.secs[k]=sx[k]===undefined?!(k==='rm'||k==='ft'):!!sx[k]; });
@@ -1336,11 +1392,12 @@ function streak(){
 function curMood(){ const w=todayWords(), g=S.meta.goal; if(w>=g) return 'party'; if(w>=g*.5) return 'hype'; if(w>0) return 'happy'; return 'sleepy'; }
 function orderedScenes(){ const out=[]; S.meta.chapters.forEach(c=>c.scenes.forEach(id=>out.push({id,ch:c}))); return out; }
 function firstView(){ const s=orderedScenes()[0]; return s?{k:'scene',id:s.id}:{k:'cork'}; }
-function viewValid(v){ if(!v) return false; if(v.k==='scene') return !!S.meta.scenes[v.id]; if(v.k==='ent') return !!S.meta.ents[v.id]; if(v.k==='tl') return !!(S.tl[v.id]&&S.meta.tls.some(x=>x.id===v.id)); if(v.k==='nt') return !!(S.nt[v.id]&&S.meta.nts.some(x=>x.id===v.id)); if(v.k==='ol') return !!(S.ol[v.id]&&S.meta.ols.some(x=>x.id===v.id)); if(v.k==='rm'||v.k==='ft') return !!(S[v.k][v.id]&&S.meta[v.k+'s'].some(x=>x.id===v.id)); if(v.k==='snap') return !!S.meta.scenes[v.id]; return v.k==='cork'||v.k==='ss'||v.k==='prefs'||v.k==='find'||v.k==='help'; }
-function viewName(v){ if(v.k==='scene') return S.meta.scenes[v.id].title; if(v.k==='ent') return S.meta.ents[v.id].name; if(v.k==='tl') return S.meta.tls.find(x=>x.id===v.id).name; if(v.k==='nt') return S.meta.nts.find(x=>x.id===v.id).name; if(v.k==='ol') return S.meta.ols.find(x=>x.id===v.id).name; if(v.k==='rm'||v.k==='ft') return S.meta[v.k+'s'].find(x=>x.id===v.id).name; if(v.k==='ss') return 'Writing sessions'; if(v.k==='prefs') return 'Settings'; if(v.k==='find') return 'Find and replace'; if(v.k==='help') return 'How sharing works'; if(v.k==='snap') return 'Snapshots: '+S.meta.scenes[v.id].title; return 'Corkboard'; }
+function viewValid(v){ if(!v) return false; if(v.k==='scene') return !!S.meta.scenes[v.id]; if(v.k==='ent') return !!S.meta.ents[v.id]; if(v.k==='tl') return !!(S.tl[v.id]&&S.meta.tls.some(x=>x.id===v.id)); if(v.k==='nt') return !!(S.nt[v.id]&&S.meta.nts.some(x=>x.id===v.id)); if(v.k==='ol') return !!(S.ol[v.id]&&S.meta.ols.some(x=>x.id===v.id)); if(v.k==='rm'||v.k==='ft') return !!(S[v.k][v.id]&&S.meta[v.k+'s'].some(x=>x.id===v.id)); if(v.k==='snap') return !!S.meta.scenes[v.id]; return v.k==='cork'||v.k==='ss'||v.k==='prefs'||v.k==='find'||v.k==='help'||v.k==='den'; }
+function viewName(v){ if(v.k==='scene') return S.meta.scenes[v.id].title; if(v.k==='ent') return S.meta.ents[v.id].name; if(v.k==='tl') return S.meta.tls.find(x=>x.id===v.id).name; if(v.k==='nt') return S.meta.nts.find(x=>x.id===v.id).name; if(v.k==='ol') return S.meta.ols.find(x=>x.id===v.id).name; if(v.k==='rm'||v.k==='ft') return S.meta[v.k+'s'].find(x=>x.id===v.id).name; if(v.k==='ss') return 'Writing sessions'; if(v.k==='prefs') return 'Settings'; if(v.k==='find') return 'Find and replace'; if(v.k==='help') return 'How sharing works'; if(v.k==='den') return S.meta.pet.name+'’s room'; if(v.k==='snap') return 'Snapshots: '+S.meta.scenes[v.id].title; return 'Corkboard'; }
 
 /* ---------- pet ---------- */
-function petSVG(m,stage){
+function petSVG(m,stage,look){
+  look=look||(S&&S.meta&&S.meta.pet)||{}; const wear=look.wear||{}, slot=k=>wear[k]&&wear[k]!=='auto'?wear[k]:'auto';
   const arms={sleepy:['M34 108 q-10 8 -8 22','M126 108 q10 8 8 22'],happy:['M34 106 q-14 2 -16 16','M126 106 q14 2 16 16'],hype:['M34 102 q-18 -6 -18 -28','M126 106 q14 2 16 16'],party:['M34 100 q-20 -8 -18 -32','M126 100 q20 -8 18 -32']}[m];
   const pomL=(m==='hype'||m==='party')?'<g class="pomg"><circle class="pom" cx="16" cy="'+(m==='party'?66:70)+'" r="9"/><circle class="pom2" cx="12" cy="'+(m==='party'?62:66)+'" r="4"/></g>':'';
   const pomR=m==='party'?'<g class="pomg"><circle class="pom" cx="144" cy="66" r="9"/><circle class="pom2" cx="148" cy="62" r="4"/></g>':'';
@@ -1356,8 +1413,9 @@ function petSVG(m,stage){
     eyes='<g class="blink"><ellipse class="eye" cx="59" cy="90" rx="7" ry="'+ry+'"/><ellipse class="eye" cx="101" cy="90" rx="7" ry="'+ry+'"/><circle class="hl" cx="61.5" cy="86.5" r="2.4"/><circle class="hl" cx="103.5" cy="86.5" r="2.4"/></g>';
     mouth=m==='hype'?'<path class="pm" d="M68 104 q12 18 24 0 z"/>':'<path class="pe" d="M70 105 q10 9 20 0"/>';
   }
-  const tuft=stage<3?'<path class="tuft" d="M80 26 C76 12 90 6 96 14"/>':'';
-  const glass=stage>=2?'<g class="glass"><circle cx="59" cy="90" r="13"/><circle cx="101" cy="90" r="13"/><path d="M72 90 h16"/></g>':'';
+  const hd=slot('head'), fc=slot('face'), hn=slot('hand'), nk=slot('neck');
+  const tuft=(hd==='auto'?stage<3:hd==='none')?'<path class="tuft" d="M80 26 C76 12 90 6 96 14"/>':'';
+  const glass=(fc==='auto'?stage>=2:fc==='glasses')?'<g class="glass"><circle cx="59" cy="90" r="13"/><circle cx="101" cy="90" r="13"/><path d="M72 90 h16"/></g>':(fc!=='auto'&&fc!=='none'&&PET_ART[fc]?PET_ART[fc]:'');
   let hat='';
   if(stage===3) hat='<path class="beret" d="M42 46 C40 12 120 12 118 46 C100 38 60 38 42 46 Z"/><circle class="beret" cx="80" cy="14" r="3.5"/>';
   if(stage>=4){
@@ -1369,14 +1427,16 @@ function petSVG(m,stage){
     }
     hat='<g class="laurel"><path d="M46 46 Q80 14 114 46"/>'+leaves+'</g>';
   }
-  const quill=stage>=1?'<path class="quill" d="M110 34 C120 14 140 8 154 12 C152 28 130 40 112 38 Z"/><path class="qstem" d="M110 36 L152 12"/>':'';
-  return '<svg class="petsvg" viewBox="0 0 160 160" role="img" aria-label="Your Inkling looks '+(m==='party'?'ecstatic':m==='hype'?'excited':m==='happy'?'happy':'sleepy')+'">'
+  if(hd!=='auto'){ const l=hat.indexOf('class="laurel"')>=0?hat:''; hat=hd==='laurel'?(l||hat):hd==='beret'?'<path class="beret" d="M42 46 C40 12 120 12 118 46 C100 38 60 38 42 46 Z"/><circle class="beret" cx="80" cy="14" r="3.5"/>':(PET_ART[hd]||''); }
+  const quill=(hn==='auto'?stage>=1:hn==='quill')?'<path class="quill" d="M110 34 C120 14 140 8 154 12 C152 28 130 40 112 38 Z"/><path class="qstem" d="M110 36 L152 12"/>':(hn!=='auto'&&hn!=='none'&&PET_ART[hn]?PET_ART[hn]:'');
+  const neck=nk!=='auto'&&nk!=='none'&&PET_ART[nk]?PET_ART[nk]:'';
+  return '<svg class="petsvg"'+petStyle(look)+' viewBox="0 0 160 160" role="img" aria-label="Your Inkling looks '+(m==='party'?'ecstatic':m==='hype'?'excited':m==='happy'?'happy':'sleepy')+'">'
     +'<ellipse class="shadow" cx="80" cy="150" rx="40" ry="6"/>'
     +'<path class="arm" d="'+arms[0]+'"/><path class="arm" d="'+arms[1]+'"/>'+pomL+pomR
     +'<ellipse class="pdeep" cx="62" cy="141" rx="13" ry="7"/><ellipse class="pdeep" cx="98" cy="141" rx="13" ry="7"/>'
     +'<path class="pbody" d="M80 24 C112 24 134 52 134 90 C134 124 112 142 80 142 C48 142 26 124 26 90 C26 52 48 24 80 24 Z"/>'
     +'<path class="shine" d="M50 58 q8 -14 24 -17"/>'
-    +tuft+cheeks+eyes+glass+mouth+hat+quill+zz+'</svg>';
+    +neck+tuft+cheeks+eyes+glass+mouth+hat+quill+zz+'</svg>';
 }
 const LINES={
   sleepy:['Zzz… write a sentence and I will wake up.','I am resting my ink. Say hello with a few words?','Quiet page, quiet me. Type something!'],
@@ -1407,7 +1467,11 @@ function confetti(){
     fx.appendChild(s); setTimeout(()=>s.remove(),2000);
   }
 }
-function cheer(msg,big){ say(msg); toast(msg); bump(); if(big) confetti(); }
+function cheer(msg,big){   // Settings in Inky's room: chatty (default), quiet (only big moments pop up) or silent (speech bubble only)
+  say(msg); bump(); const talk=LOOK.petTalk||'chatty';
+  if(talk==='chatty'||(talk==='quiet'&&big)) toast(msg);
+  if(big&&talk!=='off'&&LOOK.confetti!==false) confetti();
+}
 function credit(delta){
   if(delta<=0||delta>600) return;      // pasted blocks do not count as writing
   if(T.cur&&T.running&&T.phase==='focus'){ T.cur.words+=delta; pmPaint(); }
@@ -1425,8 +1489,167 @@ function credit(delta){
   else if(top==='q25') msg=pick(['A quarter of today\'s goal. Keep it flowing!','25%! The quill is warming up.']);
   else if(after>=g){ const over=Math.floor((after-g)/250); if(over>m.mark.over){ m.mark.over=over; msg=pick(['Bonus words! '+fmt(after-g)+' past the goal.',name+' cannot stop cheering.']); } }
   else if(!hit.start&&after>=20){ hit.start=1; msg=pick(['First words of the day. '+name+' is awake!','The page is no longer blank. Nice start.']); }
+  const hr=new Date().getHours(), fl=m.pet.flags;
+  if(!msg&&hr>=4&&hr<7&&!fl.early){ fl.early=1; msg=pick(['Early bird! The page is fresh and so are you.','Writing before sunrise? I brought the lamp.']); }
+  else if(!msg&&(hr>=23||hr<4)&&!fl.night){ fl.night=1; msg=pick(['Writing by moonlight. I will keep the lamp on.','Night owl hours! The best ideas come out after dark.']); }
   if(msg) cheer(msg,big);
+  checkAch();
 }
+
+/* ---------- Inky: looks, things to earn, room ---------- */
+// Everything here is personal (it lives in meta.pet, which follows the writer on shared projects).
+const PET_COLORS=[['teal','Teal',null],['blue','Blue',['#3E7BE0','#2A5BB0','#0B1E3D']],['plum','Plum',['#9A63D3','#7140A6','#1F0B33']],['rose','Rose',['#E0607E','#B03C5A','#3A0B18']],
+  ['amber','Amber',['#E2A23B','#B47A1C','#33210A']],['moss','Moss',['#6FA34A','#4C7A2E','#14250A']],['slate','Slate',['#7C8BA1','#56657A','#121A26']]];
+function normPet(p){
+  p=p&&typeof p==='object'?p:{};
+  const wear={}; ['head','face','neck','hand'].forEach(k=>{ const v=String((p.wear||{})[k]||'auto'); wear[k]=/^[a-z]{2,12}$/.test(v)?v:'auto'; });
+  const got={}; Object.keys(p.got||{}).forEach(k=>{ if(/^[a-z0-9]{2,16}$/.test(k)) got[k]=+p.got[k]||Date.now(); });
+  return {name:String(p.name||'Inky').slice(0,40),total:Math.max(0,+p.total||0),color:PET_COLORS.some(c=>c[0]===p.color)?p.color:'teal',wear,got,
+    flags:{early:!!(p.flags||{}).early,night:!!(p.flags||{}).night}};
+}
+const petStyle=look=>{ const c=PET_COLORS.find(x=>x[0]===(look&&look.color)); return c&&c[2]?' style="--pet:'+c[2][0]+';--pet-deep:'+c[2][1]+';--pet-ink:'+c[2][2]+'"':''; };
+// Extra things to wear, drawn in the pet's 160x160 space.
+const PET_ART={
+  nightcap:'<g class="it"><path class="c1" d="M42 46 C46 14 96 2 124 22 C134 30 140 46 142 60 L134 62 C128 48 118 40 106 38 C88 36 60 38 42 46Z"/><path class="c2" d="M40 48 C62 36 98 34 120 42 L118 50 C96 42 62 44 42 56Z"/><circle class="c3" cx="140" cy="64" r="7"/></g>',
+  sunhat:'<g class="it"><ellipse class="c3" cx="80" cy="44" rx="60" ry="11"/><path class="c3" d="M50 44 C52 18 108 18 110 44Z"/><path class="c1" d="M51 38 C70 33 90 33 109 38 L110 44 C90 40 70 40 50 44Z"/></g>',
+  crown:'<g class="it"><path class="gold" d="M50 44 L52 14 L66 30 L80 8 L94 30 L108 14 L110 44Z"/><circle class="c1" cx="80" cy="34" r="4"/><circle class="c2" cx="64" cy="38" r="3"/><circle class="c2" cx="96" cy="38" r="3"/></g>',
+  partyhat:'<g class="it"><path class="c2" d="M64 38 L84 -6 L102 34Z"/><path class="c3" d="M72 20 L94 16 M68 30 L98 25" stroke-width="5" fill="none"/><circle class="gold" cx="84" cy="-6" r="6"/></g>',
+  flower:'<g class="it"><circle class="c1" cx="108" cy="30" r="6"/><circle class="c1" cx="120" cy="34" r="6"/><circle class="c1" cx="118" cy="46" r="6"/><circle class="c1" cx="106" cy="44" r="6"/><circle class="c1" cx="100" cy="36" r="6"/><circle class="gold" cx="110" cy="38" r="5"/></g>',
+  monocle:'<g class="it"><circle class="lens" cx="101" cy="90" r="14"/><path class="chain" d="M114 96 q8 18 -2 34"/></g>',
+  shades:'<g class="it"><rect class="dark" x="44" y="80" width="30" height="18" rx="8"/><rect class="dark" x="86" y="80" width="30" height="18" rx="8"/><path class="chain" d="M74 86 h12"/></g>',
+  scarf:'<g class="it"><path class="c1" d="M32 112 Q80 134 128 112 L128 124 Q80 146 32 124Z"/><path class="c1" d="M96 128 l4 26 l12 -3 l-4 -24Z"/><path class="c3" d="M44 118 l0 8 M58 123 l0 8 M72 126 l0 8 M88 126 l0 8 M104 123 l0 8 M118 118 l0 8" stroke-width="3"/></g>',
+  bowtie:'<g class="it"><path class="c2" d="M80 122 L62 112 L62 134Z M80 122 L98 112 L98 134Z"/><circle class="c2" cx="80" cy="122" r="5"/></g>',
+  medal:'<g class="it"><path class="c2" d="M66 106 L80 126 L94 106" fill="none" stroke-width="6"/><circle class="gold" cx="80" cy="132" r="9"/><path class="star" d="M80 126 l2 4 4 .5 -3 3 1 4 -4 -2 -4 2 1 -4 -3 -3 4 -.5Z"/></g>',
+  mug:'<g class="it"><path class="steam" d="M134 98 q-4 -6 0 -12 M142 98 q-4 -6 0 -12"/><rect class="c3" x="128" y="102" width="20" height="22" rx="4"/><path class="c3" d="M148 108 q8 0 8 6 q0 6 -8 6" fill="none" stroke-width="4"/><rect class="c1" x="128" y="108" width="20" height="5"/></g>'
+};
+const PET_ITEMS={   // id: [slot, name]
+  quill:['hand','Quill'],mug:['hand','Mug of ink'],glasses:['face','Reading glasses'],monocle:['face','Monocle'],shades:['face','Sunglasses'],
+  beret:['head','Beret'],nightcap:['head','Nightcap'],sunhat:['head','Sun hat'],flower:['head','Flower'],partyhat:['head','Party hat'],crown:['head','Crown'],laurel:['head','Laurel wreath'],
+  scarf:['neck','Scarf'],bowtie:['neck','Bow tie'],medal:['neck','Medal'],
+  lamp:['room','Desk lamp'],rug:['room','Rug'],armchair:['room','Armchair'],mapframe:['room','Map on the wall'],shelf:['room','Bookshelf'],hourglass:['room','Hourglass']
+};
+function petStats(){
+  const m=S.meta, d=m.days, g=Math.max(1,m.goal), ks=Object.keys(d).sort(); let best=0, run=0, prev=0;
+  ks.forEach(k=>{ const t=new Date(k+'T12:00').getTime(); if(d[k]>=g){ run=prev&&t-prev<36*36e5?run+1:1; prev=t; best=Math.max(best,run); } else { run=0; prev=0; } });
+  return {total:m.pet.total,streak:streak(),best:Math.max(best,streak()),goalDays:ks.filter(k=>d[k]>=g).length,bigDay:ks.reduce((a,k)=>Math.max(a,d[k]||0),0),
+    sprints:mySs().filter(x=>x.done).length,pages:Object.keys(m.ents).length,
+    polished:Object.values(m.scenes).filter(x=>x.status!=='draft').length,
+    chDone:m.chapters.filter(c=>c.scenes.length&&c.scenes.every(id=>m.scenes[id]&&m.scenes[id].status==='final')).length,
+    early:+m.pet.flags.early,night:+m.pet.flags.night};
+}
+// [id, name, how to earn it, reward, stat, target]
+const ACH=[
+  ['first','First words','Write 100 words.','mug','total',100],
+  ['inkling','Inkling','Write 1,000 words.','quill','total',1000],
+  ['goal1','Goal getter','Reach your daily goal.','beret','goalDays',1],
+  ['streak3','Three in a row','Reach your goal 3 days running.','scarf','best',3],
+  ['rug','Settling in','Write 5,000 words.','rug','total',5000],
+  ['early','Early bird','Write before 7 in the morning.','sunhat','early',1],
+  ['night','Night owl','Write after 11 at night.','nightcap','night',1],
+  ['sprint1','First sprint','Finish a focus session.','lamp','sprints',1],
+  ['pages5','World builder','Make 5 story pages.','mapframe','pages',5],
+  ['streak7','A week of words','Reach your goal 7 days running.','flower','best',7],
+  ['scribe','Scribe','Write 10,000 words.','glasses','total',10000],
+  ['party','Ten thousand','Write 10,000 words. Party!','partyhat','total',10000],
+  ['bigday','Marathon','Write 2,000 words in one day.','shades','bigDay',2000],
+  ['polish','Polisher','Mark 10 scenes Revised or Final.','monocle','polished',10],
+  ['chapter','Chapter done','Mark every scene in a chapter Final.','shelf','chDone',1],
+  ['sprint10','Ten sprints','Finish 10 focus sessions.','bowtie','sprints',10],
+  ['goal10','Ten good days','Reach your daily goal on 10 days.','medal','goalDays',10],
+  ['sprint25','Time keeper','Finish 25 focus sessions.','hourglass','sprints',25],
+  ['chair','Comfy now','Write 25,000 words.','armchair','total',25000],
+  ['streak30','Month of ink','Reach your goal 30 days running.','crown','best',30],
+  ['laureate','Laureate','Write 60,000 words.','laurel','total',60000]
+];
+const owns=id=>{ const a=ACH.find(x=>x[3]===id); return !a||!!S.meta.pet.got[a[0]]; };
+// Marks newly earned achievements. quiet: at startup, catch up without a fanfare for each one.
+function checkAch(quiet){
+  if(!S||!S.meta) return; const st=petStats(), got=S.meta.pet.got, fresh=[];
+  ACH.forEach(a=>{ if(!got[a[0]]&&st[a[4]]>=a[5]){ got[a[0]]=Date.now(); fresh.push(a); } });
+  if(!fresh.length) return; dirty('meta'); ui.newThings=1;
+  const d=$('#denBtn'); if(d&&!d.querySelector('.dot-new')) d.insertAdjacentHTML('beforeend','<i class="dot-new" aria-label="new things"></i>');
+  const nm=S.meta.pet.name;
+  if(quiet){ if(fresh.length) setTimeout(()=>say(nm+' found '+fresh.length+' new thing'+(fresh.length>1?'s':'')+' in the room. Have a look!'),1200); return; }
+  const a=fresh[fresh.length-1], it=PET_ITEMS[a[3]];
+  cheer(a[1]+'! '+nm+' earned '+(it[0]==='room'?'a '+it[1].toLowerCase()+' for the room':'a '+it[1].toLowerCase())+'.'+(fresh.length>1?' And '+(fresh.length-1)+' more.':''),true);
+  const room=$('#petRoom'); if(room) room.innerHTML=roomSVG();
+  if(ui.view&&ui.view.k==='den') renderMain();
+}
+function sceneFinal(id){
+  const m=S.meta, ch=m.chapters.find(c=>c.scenes.includes(id)), sc=m.scenes[id];
+  if(ch&&ch.scenes.every(x=>m.scenes[x].status==='final')) cheer('“'+ch.title+'” is finished! Every scene is final.',true);
+  else say(pick(['“'+sc.title+'” is final. Polished to a shine!','Another scene done. '+m.pet.name+' approves.']));
+  checkAch();
+}
+function greet(){   // said once when a project opens
+  const d=S.meta.days, ks=Object.keys(d).filter(k=>d[k]>0).sort(), last=ks[ks.length-1]; if(!last) return;
+  const gap=Math.round((new Date(todayKey()+'T12:00')-new Date(last+'T12:00'))/864e5);
+  if(gap>=3) say(pick(['Welcome back! It has been '+gap+' days. Shall we write a little?','There you are! '+gap+' days away. I kept your pages warm.']));
+  else if(gap===1&&streak()>0) say('Back for day '+(streak()+1)+'? Let us keep the streak going.');
+}
+// The room behind the pet: a window that follows the time of day, a plant that grows with the streak, and what was earned.
+function roomSVG(){
+  const st=petStats(), hr=new Date().getHours(), night=hr<6||hr>=20, dusk=hr>=17&&hr<20;
+  const sky=night?'#1F2B4D':dusk?'#F2B27A':'#A8D8F5';
+  let h='<svg viewBox="0 0 300 190" preserveAspectRatio="xMidYMax meet" class="roomsvg">'
+    +'<rect class="floor" x="0" y="152" width="300" height="38"/>'
+    +'<g class="win"><rect x="20" y="18" width="62" height="52" rx="4" fill="'+sky+'"/>'
+    +(night?'<circle cx="64" cy="32" r="7" fill="#F4EFD8"/><circle cx="34" cy="28" r="1.4" fill="#fff"/><circle cx="44" cy="50" r="1.2" fill="#fff"/><circle cx="72" cy="56" r="1.2" fill="#fff"/>':'<circle cx="'+(dusk?40:66)+'" cy="'+(dusk?58:32)+'" r="8" fill="'+(dusk?'#F06C3B':'#FFD86B')+'"/>')
+    +'<path class="frame" d="M20 18h62v52h-62z M51 18v52 M20 44h62"/></g>';
+  const gd=Math.min(12,st.goalDays); for(let i=0;i<gd;i++) h+='<path class="wstar" transform="translate('+(102+i*12)+' '+(16+(i%2)*6)+') scale(.55)" d="M8 0 l2.4 5 5.6.8 -4 4 1 5.6 -5 -2.6 -5 2.6 1 -5.6 -4 -4 5.6 -.8Z"/>';
+  if(owns('mapframe')) h+='<g class="mapf"><rect x="214" y="22" width="64" height="44" rx="2"/><path d="M222 54 q10 -18 20 -6 t18 -14 t12 6" fill="none"/><circle cx="252" cy="40" r="2.5"/></g>';
+  if(owns('shelf')){ h+='<g class="shelf"><rect x="10" y="98" width="78" height="5"/>'; const n=Math.max(1,Math.min(9,st.chDone)); for(let i=0;i<n;i++) h+='<rect class="book b'+(i%4)+'" x="'+(13+i*8)+'" y="'+(74+(i%3)*3)+'" width="7" height="'+(24-(i%3)*3)+'" rx="1"/>'; h+='</g>'; }
+  if(owns('hourglass')) h+='<g class="hg" transform="translate('+(owns('shelf')?74:16)+' 80)"><path d="M0 0h12 M0 18h12 M2 0 q0 9 4 9 q-4 0 -4 9 M10 0 q0 9 -4 9 q4 0 4 9"/></g>';
+  if(owns('rug')) h+='<ellipse class="rug" cx="150" cy="172" rx="92" ry="11"/>';
+  if(owns('armchair')) h+='<g class="chair"><rect x="14" y="128" width="58" height="34" rx="10"/><rect x="8" y="138" width="14" height="28" rx="6"/><rect x="64" y="138" width="14" height="28" rx="6"/><rect x="18" y="164" width="6" height="10"/><rect x="62" y="164" width="6" height="10"/></g>';
+  if(owns('lamp')) h+='<g class="lamp"><path class="shade" d="M226 98 l22 0 l8 20 l-38 0Z"/><path class="pole" d="M237 118 v52 M226 172 h22"/>'+(night||dusk?'<path class="glow" d="M218 118 l38 0 l20 50 l-78 0Z"/>':'')+'</g>';
+  const s=st.streak, ph=s>=7?46:s>=3?32:s>=1?20:10;
+  h+='<g class="plant"><path class="stem" d="M276 158 v-'+ph+'"/>'+(s>=1?'<ellipse class="leaf" cx="'+(270)+'" cy="'+(156-ph*.5)+'" rx="7" ry="3.5" transform="rotate(-30 270 '+(156-ph*.5)+')"/><ellipse class="leaf" cx="282" cy="'+(154-ph*.7)+'" rx="7" ry="3.5" transform="rotate(30 282 '+(154-ph*.7)+')"/>':'')
+    +(s>=3?'<ellipse class="leaf" cx="269" cy="'+(156-ph*.9)+'" rx="8" ry="4" transform="rotate(-40 269 '+(156-ph*.9)+')"/>':'')+(s>=7?'<circle class="bloom" cx="276" cy="'+(158-ph)+'" r="6"/><circle class="bloomc" cx="276" cy="'+(158-ph)+'" r="2.5"/>':'')
+    +'<path class="pot" d="M264 156 h24 l-3 18 h-18Z"/></g>';
+  return h+'</svg>';
+}
+// Co-writers' pets, when they are sprinting at the same time as you.
+function paintPals(){
+  const box=$('#petPals'); if(!box) return; const o=(ui.others||[]).filter(x=>x.sprint>Date.now()&&x.pet);
+  box.innerHTML=o.slice(0,2).map(x=>'<span class="pal" title="'+esc(whoName(x))+' is sprinting">'+petSVG('hype',Math.max(0,Math.min(4,+x.pet.st||0)),{color:x.pet.c,wear:{}})+'<b>'+esc(whoName(x))+'</b></span>').join('');
+}
+function pmJoin(end,who){
+  if(T.running&&T.phase==='focus'){ toast('Your focus timer is already running.',{plain:true}); return; }
+  const left=end-Date.now(); if(left<30000){ toast('That sprint is nearly over. Start your own from the timer.',{plain:true}); return; }
+  T.phase='focus'; T.left=left; pmStart(); say('Sprinting with '+who+'! Same finish line.'); hereSoon();
+}
+function renderDen(el){
+  const p=S.meta.pet, st=petStats(), stg=stageOf(p.total), md=curMood(), unlockedItem=id=>{ if(id==='quill') return stg>=1||owns('quill'); if(id==='glasses') return stg>=2||owns('glasses'); if(id==='beret') return stg>=3||owns('beret'); if(id==='laurel') return stg>=4||owns('laurel'); return owns(id); };
+  const slots=[['head','On the head'],['face','Eyes'],['neck','Neck'],['hand','In hand']];
+  const opt=(slot,id,label,ok,hint)=>{ const on=(p.wear[slot]||'auto')===id, look={color:p.color,wear:{head:'none',face:'none',neck:'none',hand:'none',[slot]:id}};
+    return '<button class="wd'+(on?' on':'')+(ok?'':' locked')+'" data-wear="'+slot+'" data-v="'+id+'"'+(ok?'':' disabled')+' title="'+esc(ok?label:hint)+'" aria-pressed="'+on+'">'
+      +(id==='auto'?'<span class="wd-auto">Auto</span>':id==='none'?'<span class="wd-auto">None</span>':petSVG('happy',0,look))+(id==='auto'||id==='none'?'':'<small>'+esc(ok?label:'🔒 '+((ACH.find(x=>x[3]===id)||[])[1]||'Locked'))+'</small>')+'</button>'; };
+  const hintFor=id=>{ const a=ACH.find(x=>x[3]===id); return a?a[2]:{quill:'Write 1,000 words.',glasses:'Write 10,000 words.',beret:'Reach your daily goal.',laurel:'Write 60,000 words.'}[id]||''; };
+  el.innerHTML='<div class="main-head">'+backBtn()+'<span class="kind">'+ico('spark',16)+'</span><h1 class="mh-title">'+esc(p.name)+'’s room</h1></div><div class="den">'
+    +'<section class="den-hero"><div class="den-stage"><div class="room">'+roomSVG()+'</div><span class="den-pet">'+petSVG(md,stg)+'</span></div>'
+    +'<div class="den-side"><div class="den-name"><b>'+esc(p.name)+'</b><span class="stage-tag">'+STAGES[stg].n+'</span></div>'
+    +'<div class="ss-tiles den-tiles"><div class="ss-tile"><b class="mono">'+fmt(st.total)+'</b><span>words written</span></div><div class="ss-tile"><b class="mono">'+st.best+'</b><span>best streak</span></div><div class="ss-tile"><b class="mono">'+st.goalDays+'</b><span>days at goal</span></div><div class="ss-tile"><b class="mono">'+st.sprints+'</b><span>sprints</span></div></div>'
+    +'<span class="sec-l">Colour</span><div class="swatches">'+PET_COLORS.map(c=>'<button class="sw'+(p.color===c[0]?' on':'')+'" data-color="'+c[0]+'" aria-label="'+c[1]+'" title="'+c[1]+'"'+(c[2]?' style="--c:'+c[2][0]+'"':'')+'></button>').join('')+'</div>'
+    +'<span class="sec-l">How chatty</span><div class="seg">'+[['chatty','Chatty'],['quiet','Only big moments'],['off','Quiet']].map(o=>'<button data-talk="'+o[0]+'"'+((LOOK.petTalk||'chatty')===o[0]?' class="on"':'')+'>'+o[1]+'</button>').join('')+'</div>'
+    +'<label class="ck"><input type="checkbox" id="denConf"'+(LOOK.confetti!==false?' checked':'')+'>Confetti for big moments</label>'
+    +'<p class="fine">'+esc(p.name)+' and everything earned belong to you'+(DESK?', on every project you share':'')+'. Chattiness and confetti are set per '+(DESK?'computer':'browser')+'.</p></div></section>'
+    +'<section class="pf"><h2>Wardrobe</h2><p class="fine">“Auto” follows '+esc(p.name)+'’s rank. Earn more by writing.</p>'
+    +slots.map(([k,label])=>{ const ids=Object.keys(PET_ITEMS).filter(id=>PET_ITEMS[id][0]===k);
+      return '<div class="wd-row"><span class="sec-l">'+label+'</span><div class="wd-opts">'+opt(k,'auto','Auto',true)+opt(k,'none','None',true)+ids.map(id=>opt(k,id,PET_ITEMS[id][1],unlockedItem(id),hintFor(id))).join('')+'</div></div>'; }).join('')+'</section>'
+    +'<section class="pf"><h2>Achievements</h2><p class="fine">'+ACH.filter(a=>p.got[a[0]]).length+' of '+ACH.length+' earned. Room things appear in the room as soon as they are earned.</p><div class="ach">'
+    +ACH.map(a=>{ const got=p.got[a[0]], cur=Math.min(st[a[4]],a[5]), it=PET_ITEMS[a[3]];
+      return '<div class="ach-card'+(got?' got':'')+'"><b>'+esc(a[1])+'</b><span>'+esc(a[2])+'</span>'+(got?'<small>Earned '+esc(new Date(got).toLocaleDateString())+' · '+esc(it[1])+'</small>'
+        :'<div class="bar"><i style="width:'+(cur/a[5]*100)+'%"></i></div><small>'+(a[5]>1?fmt(cur)+' / '+fmt(a[5])+' · ':'')+'Unlocks '+esc(it[1].toLowerCase())+'</small>')+'</div>'; }).join('')+'</div></section></div>';
+  el.onclick=e=>{
+    const w=e.target.closest('[data-wear]'), c=e.target.closest('[data-color]'), t=e.target.closest('[data-talk]');
+    if(w&&!w.disabled){ p.wear[w.dataset.wear]=w.dataset.v; dirty('meta'); renderDen(el); updatePetArt(); }
+    else if(c){ p.color=c.dataset.color; dirty('meta'); renderDen(el); updatePetArt(); }
+    else if(t){ LOOK.petTalk=t.dataset.talk; saveLook(); renderDen(el); }
+  };
+  $('#denConf',el).addEventListener('change',e=>{ LOOK.confetti=e.target.checked; saveLook(); });
+}
+function updatePetArt(){ const a=$('#petArt'); if(a) a.innerHTML=petSVG(curMood(),stageOf(S.meta.pet.total)); const r=$('#petRoom'); if(r) r.innerHTML=roomSVG(); }
 
 /* ---------- header / stats ---------- */
 function updateStats(){
@@ -1484,7 +1707,7 @@ function addScene(chId,thenOpen){
 }
 function addChapter(){
   const m=S.meta, id=uid('c_'); m.chapters.push({id,title:'Chapter '+(m.chapters.length+1),open:true,scenes:[]}); S.ch[id]={notes:''};
-  dirty('meta'); addScene(id,true);
+  dirty('meta'); addScene(id,true); say(pick(['A new chapter begins!','Chapter '+m.chapters.length+'. Turning the page!']));
 }
 function moveScene(id,dir){
   const cs=S.meta.chapters; let ci=cs.findIndex(c=>c.scenes.includes(id)); if(ci<0) return;
@@ -1513,7 +1736,11 @@ function delChapter(id){
 }
 function addEntity(type,name){
   const id=uid('e_'); S.meta.ents[id]={id,type,name,aliases:[],tag:''}; S.en[id]={fields:{},pic:normPic()};
-  dirty('meta','en_'+id); linker=buildLinker(); return id;
+  dirty('meta','en_'+id); linker=buildLinker();
+  const fresh=/^New /.test(name);
+  say(fresh?pick({char:['A new character! Give them a name and I will remember it.','Someone new is joining the story. Who are they?'],place:['A new place! Where in the world is it?','Somewhere new to explore. Name it and I will keep track.'],thing:['A new thing! Is it magic, or just important?','Something new for the story. What is it called?']}[type]||['Something new for the story!'])
+    :pick({char:['Ooh, who is '+name+'?','Hello, '+name+'! I will keep an eye on you.'],place:[name+'? I want to visit.','Adding '+name+' to my map.'],thing:[name+'… that sounds important.','I will remember '+name+'.']}[type]||['Noted: '+name+'.']));
+  setTimeout(checkAch,0); return id;
 }
 function delEntity(id){
   dropPic(id); unlinkEnt(id);
@@ -1689,7 +1916,7 @@ function renderMain(){
   if(!viewValid(v)){ ui.view=firstView(); return renderMain(); }
   const key=v.k+':'+(v.id||''), reset=key!==ui.lastKey; ui.lastKey=key;
   const keep=el.scrollTop;
-  if(v.k==='ent') renderEnt(el,v); else if(v.k==='cork') renderCork(el); else if(v.k==='tl') renderTl(el,v); else if(v.k==='nt') renderNt(el,v); else if(v.k==='ol') renderOl(el,v); else if(v.k==='rm'||v.k==='ft') renderCv(el,v); else if(v.k==='ss') renderSs(el); else if(v.k==='prefs') renderPrefs(el); else if(v.k==='snap') renderSnap(el,v); else if(v.k==='find') renderFind(el); else if(v.k==='help') renderHelp(el); else renderScene(el,v);
+  if(v.k==='ent') renderEnt(el,v); else if(v.k==='cork') renderCork(el); else if(v.k==='tl') renderTl(el,v); else if(v.k==='nt') renderNt(el,v); else if(v.k==='ol') renderOl(el,v); else if(v.k==='rm'||v.k==='ft') renderCv(el,v); else if(v.k==='ss') renderSs(el); else if(v.k==='prefs') renderPrefs(el); else if(v.k==='snap') renderSnap(el,v); else if(v.k==='find') renderFind(el); else if(v.k==='help') renderHelp(el); else if(v.k==='den') renderDen(el); else renderScene(el,v);
   el.scrollTop=reset?0:keep;
 }
 function renderScene(el,v){
@@ -1721,7 +1948,7 @@ function renderScene(el,v){
   });
   ed.addEventListener('click',e=>{ const t=e.target.closest('.ent'); if(t&&getSelection().isCollapsed) go({k:'ent',id:t.dataset.ent}); });
   const tt=$('#sceneTitle'); tt.addEventListener('input',()=>{ S.meta.scenes[v.id].title=tt.value||'Untitled scene'; dirty('meta'); renderBinder(); });
-  $('#sceneStatus').addEventListener('change',e=>{ S.meta.scenes[v.id].status=e.target.value; dirty('meta'); renderBinder(); });
+  $('#sceneStatus').addEventListener('change',e=>{ S.meta.scenes[v.id].status=e.target.value; dirty('meta'); renderBinder(); if(e.target.value==='final') sceneFinal(v.id); else checkAch(); });
   $('#focusBtn').addEventListener('click',()=>{ ui.focus=!ui.focus; syncTab(); renderMain(); });
   $('#snBtn').addEventListener('click',()=>go({k:'snap',id:v.id}));
   const fs=n=>{ ui.fs=Math.max(14,Math.min(28,ui.fs+n)); ed.style.fontSize=ui.fs+'px'; try{localStorage.setItem('inkling:fs',ui.fs);}catch(e){} };
@@ -1761,7 +1988,8 @@ function selectRange(el,s,e){
 function onType(id,ed){
   snDaily(id);
   const text=getText(ed), sc=S.meta.scenes[id], d=S.sc[id];
-  d.text=text; const w=wc(text), delta=w-sc.words; sc.words=w;
+  d.text=text; const w=wc(text), delta=w-sc.words, k0=Math.floor(sc.words/1000); sc.words=w;
+  if(delta>0&&delta<=600&&w>=1000&&Math.floor(w/1000)>k0) say(pick(['This scene just passed '+fmt(Math.floor(w/1000)*1000)+' words.','“'+trunc(sc.title,30)+'” is up to '+fmt(Math.floor(w/1000)*1000)+' words!']));
   if(T.cur&&T.running) T.cur.scenes.add(id);
   dirty('sc_'+id,'meta');
   $('#sceneWc').textContent=fmt(w)+' words';
@@ -3211,9 +3439,9 @@ function pmStart(){
   if(T.phase==='focus'){ if(!T.cur) T.cur={start:Date.now(),ms:0,words:0,total0:totalWords(),scenes:new Set()}; T.cur.since=Date.now();
     if(ui.view&&ui.view.k==='scene') T.cur.scenes.add(ui.view.id);
     say(pick(['Timer on. I will keep watch while you write.','Focus time! Words first, worries later.','Go! I am counting your words.'])); }
-  pmAudio(); clearInterval(T.tick); T.tick=setInterval(pmTick,250); pmPaint();
+  hereSoon(); pmAudio(); clearInterval(T.tick); T.tick=setInterval(pmTick,250); pmPaint();
 }
-function pmPause(){ if(!T.running) return; T.left=pmLeft(); T.running=false; clearInterval(T.tick); if(T.cur) T.cur.ms+=Date.now()-T.cur.since; pmPaint(); }
+function pmPause(){ if(!T.running) return; hereSoon(); T.left=pmLeft(); T.running=false; clearInterval(T.tick); if(T.cur) T.cur.ms+=Date.now()-T.cur.since; pmPaint(); }
 function pmRecord(done){
   const c=T.cur; T.cur=null; if(!c) return null; if(T.running) c.ms+=Date.now()-c.since;
   if(c.ms<60000&&!c.words) return null;   // under a minute with nothing written is not worth keeping
@@ -3223,18 +3451,18 @@ function pmRecord(done){
 function pmTick(){ if(!T.running) return; if(Date.now()>=T.endAt) pmEnd(); else pmPaint(); }
 function pmNext(rec){ T.count++; T.phase=T.count%S.meta.pomo.every===0?'long':'short'; return rec; }
 function pmEnd(){
-  clearInterval(T.tick); const P2=S.meta.pomo, wasFocus=T.phase==='focus'; let r=null;
+  clearInterval(T.tick); const P2=S.meta.pomo, wasFocus=T.phase==='focus'; let r=null; hereSoon();
   if(wasFocus) r=pmRecord(true);
   T.running=false; T.left=null;
   if(wasFocus){ pmNext();
     const msg=(r?'Session done: '+fmt(r.words)+' new word'+(r.words===1?'':'s')+'. ':'Session done. ')+(T.phase==='long'?'Take a long break, you earned it.':'Stretch, sip something, back soon.');
-    pmChime(true); cheer(msg,!!(r&&P2.goal&&r.words>=P2.goal)); if(P2.autoBreak) pmStart(); }
+    pmChime(true); cheer(msg,!!(r&&P2.goal&&r.words>=P2.goal)); checkAch(); if(P2.autoBreak) pmStart(); }
   else { T.phase='focus'; pmChime(false); toast('Break is over. Ready when you are.'); say('Break is over. Shall we write?'); if(P2.autoFocus) pmStart(); }
   pmPaint();
 }
 function pmStop(){
   const wasFocus=T.phase==='focus'&&T.cur, r=wasFocus?pmRecord(false):null;
-  clearInterval(T.tick); T.running=false; T.left=null; T.cur=null; pmPaint();
+  clearInterval(T.tick); T.running=false; T.left=null; T.cur=null; pmPaint(); hereSoon();
   if(r) toast('Saved this session: '+fmt(r.words)+' new words in '+r.mins+' min.',{plain:true});
 }
 function pmSkip(){
@@ -3376,7 +3604,9 @@ function drawWcBox(box){
 function renderInspector(){
   const m=S.meta, p=m.pet, st=stageOf(p.total), nx=STAGES[st+1], md=curMood(), v=ui.view;
   ui.mood=md; ui.stage=st;
-  let h='<section class="pet-card m-'+md+'"><div class="pet-stage"><button class="pet-btn" id="petBtn" aria-label="Cheer with '+esc(p.name)+'"><span id="petArt">'+petSVG(md,st)+'</span></button></div>'
+  let h='<section class="pet-card m-'+md+'"><div class="pet-stage"><div class="room" id="petRoom" aria-hidden="true">'+roomSVG()+'</div><div class="pals" id="petPals"></div>'
+    +'<button class="pet-btn" id="petBtn" aria-label="Cheer with '+esc(p.name)+'"><span id="petArt">'+petSVG(md,st)+'</span></button>'
+    +'<button class="btn sm den-btn" id="denBtn">'+ico('spark',13)+'<span>Room</span>'+(ui.newThings?'<i class="dot-new" aria-label="new things"></i>':'')+'</button></div>'
     +'<div class="bubble" id="bubble">'+esc(ui.say||line(md))+'</div>'
     +'<div class="pet-meta"><input class="pet-name" id="petName" maxlength="18" value="'+esc(p.name)+'" aria-label="Pet name"><span class="stage-tag" id="stageTag">'+STAGES[st].n+'</span></div>'
     +'<div class="evo">'+(nx?'<div class="bar"><i id="evoBar" style="width:'+Math.min(100,(p.total-STAGES[st].at)/(nx.at-STAGES[st].at)*100)+'%"></i></div>':'')+'<small id="evoTxt"></small></div></section>'+pomoHtml();
@@ -3394,6 +3624,8 @@ function renderInspector(){
   }
   const el=$('#insp'); el.innerHTML=h; updateStats(); updateSceneChips(); bindPomo(); pmPaint();
   $('#petBtn').addEventListener('click',()=>{ bump(); say(line(curMood())); });
+  $('#denBtn').addEventListener('click',()=>{ ui.newThings=0; go({k:'den'}); });
+  paintPals();
   $('#petName').addEventListener('input',e=>{ p.name=e.target.value.trim()||'Inky'; dirty('meta'); });
   $('#goalIn').addEventListener('change',e=>{ m.goal=Math.max(50,Math.min(20000,Math.round(+e.target.value||500))); e.target.value=m.goal; dirty('meta'); updateStats(); });
   $('#tgtIn').addEventListener('change',e=>{ m.target=Math.max(1000,Math.min(1000000,Math.round(+e.target.value||80000))); e.target.value=m.target; dirty('meta'); updateStats(); });
@@ -3747,7 +3979,7 @@ function adoptMine(st){
   const m=st.meta, wr=m.writers||{}; let w=wr[myKey()];
   if(!w){ const k=Object.keys(wr).find(k=>(wr[k].devs||[]).includes(DEVICE)); if(k) w=wr[k]; }   // this computer under an earlier name
   if(w) PERSONAL.forEach(f=>{ if(w[f]!==undefined) m[f]=clone(w[f]); });
-  else if(Object.keys(wr).length){ m.days={}; m.pet={name:'Inky',total:0}; m.mark=null; }   // someone else's project: your own pet and goals start fresh
+  else if(Object.keys(wr).length){ m.days={}; m.pet=normPet({}); m.mark=null; }   // someone else's project: your own pet and goals start fresh
 }
 // Puts merged data into the live state, keeping every object that did not change (open screens hold references to them).
 function patchState(ns){
@@ -3828,7 +4060,7 @@ function announceMerge(rep){
 const whoName=o=>o.name||o.host||'Someone';
 async function hereTick(){
   if(!DESK||!PJ.id) return; const v=ui.view, sc=v&&v.k==='scene'&&S.meta.scenes[v.id];
-  try{ ui.others=await DESK.here(PJ.id,{name:ME.name,scene:sc?v.id:'',sceneTitle:sc?sc.title:''})||[]; }catch(e){ ui.others=[]; }
+  try{ ui.others=await DESK.here(PJ.id,{name:ME.name,scene:sc?v.id:'',sceneTitle:sc?sc.title:'',sprint:T.running&&T.phase==='focus'?T.endAt:0,pet:{c:S.meta.pet.color,st:stageOf(S.meta.pet.total),n:S.meta.pet.name}})||[]; }catch(e){ ui.others=[]; }
   paintHere();
 }
 function hereSoon(){ if(!DESK) return; clearTimeout(ui.hereT); ui.hereT=setTimeout(hereTick,400); }
@@ -3837,7 +4069,12 @@ function paintHere(){
   if(!chip){ chip=document.createElement('button'); chip.id='hereChip'; chip.className='chip here-chip'; chip.hidden=true; $('#saveSt').after(chip);
     chip.addEventListener('click',e=>{ e.stopPropagation(); const pop=$('#herePop'); if(pop){ pop.remove(); return; } openHerePop(); }); }
   chip.hidden=!others.length;
-  chip.innerHTML=others.slice(0,3).map(o=>'<i class="av" style="--h:'+hue(whoName(o))+'">'+esc(whoName(o).slice(0,1).toUpperCase())+'</i>').join('')+'<span>'+(others.length===1?esc(whoName(others[0]))+' is here':others.length+' others here')+'</span>';
+  const sprinting=others.filter(o=>o.sprint>Date.now());
+  chip.innerHTML=others.slice(0,3).map(o=>'<i class="av" style="--h:'+hue(whoName(o))+'">'+esc(whoName(o).slice(0,1).toUpperCase())+'</i>').join('')
+    +'<span>'+(sprinting.length?esc(whoName(sprinting[0]))+(sprinting.length>1?' and '+(sprinting.length-1)+' more':'')+' sprinting':others.length===1?esc(whoName(others[0]))+' is here':others.length+' others here')+'</span>';
+  chip.classList.toggle('sprinting',!!sprinting.length);
+  sprinting.forEach(o=>{ const k=whoName(o)+o.sprint; if(ui.sprintSeen!==k&&!(T.running&&T.phase==='focus')){ ui.sprintSeen=k; say(whoName(o)+' started a writing sprint. Join from the chip at the top!'); } });
+  paintPals();
   chip.setAttribute('aria-label',others.map(o=>whoName(o)+(o.sceneTitle?' in '+o.sceneTitle:'')).join(', ')+' also in this project');
   const v=ui.view, ban=$('#hereBan');
   if(ban){ const w=others.filter(o=>v.k==='scene'&&o.scene===v.id);
@@ -3852,12 +4089,13 @@ const hue=n=>{ let h=0; for(const c of String(n)) h=(h*31+c.charCodeAt(0))%360; 
 function openHerePop(){
   const pop=document.createElement('div'); pop.id='herePop'; pop.className='pop here-pop';
   pop.innerHTML='<div class="pt">Also in this project</div>'+(ui.others||[]).map(o=>'<div class="here-row"><i class="av" style="--h:'+hue(whoName(o))+'">'+esc(whoName(o).slice(0,1).toUpperCase())+'</i><span><b>'+esc(whoName(o))+'</b>'
-      +(o.name&&o.host?' <span class="muted">on '+esc(o.host)+'</span>':'')+'<br><span class="muted">'+(o.sceneTitle?'In “'+esc(o.sceneTitle)+'”':'Looking around')+(o.version&&o.version!==APP_VERSION?' · Inkling '+esc(o.version):'')+'</span></span></div>').join('')
+      +(o.name&&o.host?' <span class="muted">on '+esc(o.host)+'</span>':'')+'<br><span class="muted">'+(o.sceneTitle?'In “'+esc(o.sceneTitle)+'”':'Looking around')+(o.version&&o.version!==APP_VERSION?' · Inkling '+esc(o.version):'')+'</span>'
+      +(o.sprint>Date.now()?'<br><span class="spr">Sprinting · '+Math.max(1,Math.round((o.sprint-Date.now())/60000))+' min left</span>'+(T.running&&T.phase==='focus'?'':' <button class="btn sm pri" data-hp="join" data-end="'+o.sprint+'" data-who="'+esc(whoName(o))+'">Join the sprint</button>'):'')+'</span></div>').join('')
     +(ME.name?'':'<p class="fine">Add your name in Settings so co-writers see who you are.</p>')
     +'<button class="btn sm" data-hp="help">How sharing works</button>';
   document.body.appendChild(pop); const r=$('#hereChip').getBoundingClientRect();
   pop.style.top=(r.bottom+6)+'px'; pop.style.left=Math.max(8,Math.min(innerWidth-288,r.left))+'px';
-  pop.addEventListener('click',e=>{ if(e.target.closest('[data-hp]')){ pop.remove(); go({k:'help'}); } });
+  pop.addEventListener('click',e=>{ const b=e.target.closest('[data-hp]'); if(!b) return; pop.remove(); if(b.dataset.hp==='join') pmJoin(+b.dataset.end,b.dataset.who); else go({k:'help'}); });
   setTimeout(()=>document.addEventListener('click',function off(e){ if(!pop.contains(e.target)){ pop.remove(); document.removeEventListener('click',off); } }),0);
 }
 
@@ -3909,7 +4147,7 @@ function helpShareHtml(){
     +(DESK?'':'<p class="banner-note">Sharing works in the Inkling desktop app for Windows, Mac and Linux. In a browser or in Claude, a project is yours alone; you can still back it up and import it into the desktop app.</p>')
     +sec('What sharing is','<p>Two or more people can work on the same novel, each in Inkling on their own computer. The project lives in a folder that a sync service keeps the same on every computer: Dropbox, Google Drive, OneDrive or iCloud Drive. Inkling has no server and no accounts; your sync service carries the files, and Inkling merges everyone’s changes.</p><p>It is not live like Google Docs: changes arrive when the sync service delivers them, usually within a few seconds to a minute. It works best when co-writers work on different scenes, or take turns.</p>')
     +sec('Setting it up','<ol><li>Open the project and choose <b>Share this project…</b> (in the File menu, or <b>Share</b> on the Projects screen).</li><li>Move it into a folder inside Dropbox, Google Drive, OneDrive or iCloud Drive. Inkling copies it, checks the copy, then moves the original to the trash.</li><li>In your sync service, share that project folder with your co-writers, with permission to edit.</li><li>Each co-writer installs Inkling, waits for the folder to sync, and chooses <b>File › Open a shared project…</b>, then picks the folder. It joins their Projects list.</li><li>Everyone types their name in <b>Settings › You</b>.</li></ol>')
-    +sec('Working at the same time','<ul><li><b>Who is here.</b> A chip at the top shows who else has the project open, and a letter beside a scene shows who is in it. A note appears above a scene when someone else is in it too.</li><li><b>Different things merge.</b> If you change one scene and your co-writer changes another, or adds a character, a timeline card or a chapter, both changes are kept. Inkling checks for new changes every few seconds and whenever you come back to the window, and says what came in.</li><li><b>The same scene.</b> If you both change the same scene before the sync catches up, the newer change is kept in the scene and the other text is saved as a <b>snapshot</b> of that scene, named after whoever wrote it. A note appears with a <b>Compare</b> button, so you can copy anything back. Nothing is thrown away.</li><li><b>Other pages.</b> For a story page, timeline, outline, note, map or tree that you both changed, the newer change is kept. The project’s Backups have earlier versions.</li><li><b>Deleting.</b> Deleting something removes it for everyone, unless someone changed it after it was deleted; then it comes back.</li><li><b>Chapter order and titles</b> merge too: scenes one person adds or moves appear in place for everyone.</li></ul>')
+    +sec('Working at the same time','<ul><li><b>Who is here.</b> A chip at the top shows who else has the project open, and a letter beside a scene shows who is in it. A note appears above a scene when someone else is in it too.</li><li><b>Sprint together.</b> When a co-writer starts a focus sprint, the chip at the top says so. Click it and choose <b>Join the sprint</b>: your timer ends at the same moment as theirs, and their Inky sits beside yours.</li><li><b>Different things merge.</b> If you change one scene and your co-writer changes another, or adds a character, a timeline card or a chapter, both changes are kept. Inkling checks for new changes every few seconds and whenever you come back to the window, and says what came in.</li><li><b>The same scene.</b> If you both change the same scene before the sync catches up, the newer change is kept in the scene and the other text is saved as a <b>snapshot</b> of that scene, named after whoever wrote it. A note appears with a <b>Compare</b> button, so you can copy anything back. Nothing is thrown away.</li><li><b>Other pages.</b> For a story page, timeline, outline, note, map or tree that you both changed, the newer change is kept. The project’s Backups have earlier versions.</li><li><b>Deleting.</b> Deleting something removes it for everyone, unless someone changed it after it was deleted; then it comes back.</li><li><b>Chapter order and titles</b> merge too: scenes one person adds or moves appear in place for everyone.</li></ul>')
     +sec('What stays yours','<p>Your Inkling pet, daily goal, word history chart, focus timer settings and writing sessions belong to you, under the name you set. Appearance settings (theme, font, spacing) are per computer. Everything else (the text, story pages, timelines, outlines, notes, maps, trees, chapter notes, snapshots and export settings) is shared.</p><p>Use the same name on each of your own computers so your pet follows you.</p>')
     +sec('Good habits','<ul><li>Agree who is writing which chapters or scenes.</li><li>Before you start, check the sync service has finished syncing (its icon shows a tick).</li><li>Keep everyone on the same version of Inkling (Help › Check for updates). Inkling warns you when a co-writer has a different version.</li><li>Make the folder “available offline” or “always keep on this device” (Google Drive: right-click › Offline access; OneDrive: Always keep on this device; iCloud: Download Now). Online-only files can make Inkling wait.</li><li>Take a <b>snapshot</b> of a scene before a big rewrite.</li></ul>')
     +sec('If something looks wrong','<ul><li><b>A co-writer’s changes have not arrived.</b> Check that their sync service is running and finished. Switching back to Inkling, or waiting a few seconds, brings in anything that has arrived.</li><li><b>Text you expected is missing from a scene.</b> Open the scene’s <b>Snapshots</b>: the other version from a clash is there, named after its writer.</li><li><b>Files called “conflicted copy”, “(1)” or with a computer’s name.</b> Sync services make these when two saves cross. Inkling merges them in automatically and moves them into the project’s backups folder.</li><li><b>Going back to an earlier state.</b> Projects › Backups lists copies made every 10 minutes; opening one makes a separate project, so nothing is overwritten.</li><li><b>Stopping sharing.</b> In your sync service, stop sharing the folder. To take a shared project off your own list without affecting anyone, use <b>Remove from list</b> on the Projects screen.</li></ul>')
@@ -3948,7 +4186,7 @@ async function deskOpen(id){
   S=ns; PJ.id=id; linker=buildLinker(); ui.locked=0;
   Object.assign(ui,{view:firstView(),hist:[],touched:false,mood:'',confirm:null,menu:false,tlFor:null,tlSide:null,cvFor:null,cvSel:null,relabel:null,others:r.others||[]});
   ['#mergeBar','#herePop'].forEach(q=>{ const x=$(q); if(x) x.remove(); });
-  renderAll(); setStatus('disk'); document.title=S.meta.title+' – Inkling'; DESK.setTitle(document.title); paintHere(); hereSoon();
+  renderAll(); setStatus('disk'); document.title=S.meta.title+' – Inkling'; DESK.setTitle(document.title); paintHere(); hereSoon(); checkAch(true); greet();
   if(ui.others.length) toast(ui.others.map(whoName).join(' and ')+(ui.others.length>1?' have':' has')+' this project open too. Inkling merges your changes; see Help › How sharing works.',{plain:true});
   setTimeout(syncCheck,800);   // conflicted copies a sync service left behind
   return true;
@@ -4103,7 +4341,7 @@ function init(){
   document.addEventListener('visibilitychange',()=>{ if(document.hidden&&P.dirty.size) flush(); });
   window.addEventListener('pagehide',()=>{ if(T.cur) pmRecord(false); if(P.dirty.size){ mirrorLocal(); flush(); } });
   setInterval(()=>{ if(!document.hidden&&Date.now()-ui.sayAt>40000) say(line(curMood())); },15000);
-  renderAll();
+  renderAll(); checkAch(true); greet();
   if(newer){ lockNewer(newer); return; }
   if(DESK) deskBoot(); else { setStatus('local'); connectDb(!!local); setTimeout(()=>startTour(),700); }
 }

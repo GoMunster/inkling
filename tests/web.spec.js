@@ -184,3 +184,35 @@ test('the sharing guide opens from the menu, and says sharing needs the desktop 
   await expect(page.locator('.hs h2')).toHaveCount(7);
   expect(errors).toEqual([]);
 });
+
+test('Inky earns things, wears them, and notices new characters', async ({ page }) => {
+  const errors = await openApp(page);
+  await page.fill('#goalIn', '50'); await page.press('#goalIn', 'Tab');
+  await page.click('.sc-btn');
+  await page.click('#ed'); await page.keyboard.press('Control+End');
+  await page.keyboard.type(' ' + 'The lanterns flickered along the quay as the tide came in. '.repeat(6));
+  await expect(page.locator('#bubble')).toContainText('Goal getter');
+  await page.click('[data-a="adde"][data-t="char"]');
+  await expect(page.locator('#bubble')).toContainText(/character|Someone new/);
+  await page.click('#denBtn');
+  await expect(page.locator('.ach-card.got')).toContainText(['Goal getter']);
+  await expect(page.locator('[data-wear="neck"][data-v="scarf"]')).toBeDisabled();
+  await page.click('[data-wear="head"][data-v="beret"]');
+  await page.click('[data-color="plum"]');
+  await expect(page.locator('#petArt .beret').first()).toBeAttached();
+  expect(await page.locator('#petArt svg').getAttribute('style')).toContain('--pet:');
+  const p = await waitSaved(page, p => p.meta.pet.wear.head === 'beret' && p.meta.pet.color === 'plum');
+  expect(p.meta.pet.got.goal1).toBeGreaterThan(0);
+  expect(errors).toEqual([]);
+});
+
+test('a quiet Inky keeps celebrations to the speech bubble', async ({ page }) => {
+  await openApp(page);
+  await page.click('#denBtn'); await page.click('[data-talk="off"]');
+  await page.fill('#goalIn', '50'); await page.press('#goalIn', 'Tab');
+  await page.click('.sc-btn'); await page.click('#ed'); await page.keyboard.press('Control+End');
+  await page.keyboard.type(' ' + 'Quiet words for a quiet pet, written one after another. '.repeat(6));
+  await expect(page.locator('#bubble')).toContainText('Goal getter');
+  await expect(page.locator('#toast')).toBeHidden();
+  await expect(page.locator('#fx i')).toHaveCount(0);
+});

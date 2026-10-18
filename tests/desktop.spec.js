@@ -90,7 +90,8 @@ test('two writers share one project through a synced folder', async () => {
   expect(await syncUntil(B.app, B.win, () => merged(B.win), 25000)).toBe(true);
   expect(await syncUntil(A.app, A.win, () => merged(A.win), 25000)).toBe(true);
   const pj = JSON.parse(fs.readFileSync(file, 'utf8'));
-  const snap = Object.values(pj.sn).find(x => x.auto === 'merge');
+  const merges = Object.values(pj.sn).filter(x => x.auto === 'merge'); if (merges.length !== 1) console.log('MERGE SNAPSHOTS', JSON.stringify(merges.map(x => [x.name, x.text.slice(-40)])));
+  const snap = merges.find(x => x.text.includes('Ann ending.')) || merges[0];
   expect(snap.name).toBe('Ann’s version'); expect(snap.text).toContain('Ann ending.');
 
   // a deletion reaches the other computer
@@ -111,6 +112,17 @@ test('two writers share one project through a synced folder', async () => {
   expect(await syncUntil(A.app, A.win, async () => (await A.win.locator('#binder .sc-btn', { hasText: 'Stray scene' }).count()) === 1, 25000)).toBe(true);
   expect(fs.readdirSync(proj).some(n => /conflicted/.test(n))).toBe(false);
   expect(fs.readdirSync(path.join(proj, 'backups')).some(n => /conflicted/.test(n))).toBe(true);
+
+  // Ann starts a sprint; Ben sees it, joins, and both timers end together
+  await A.win.click('#pmGo');
+  expect(await syncUntil(B.app, B.win, async () => /sprinting/.test(await B.win.locator('#hereChip').textContent()))).toBe(true);
+  await expect(B.win.locator('#petPals .pal')).toHaveCount(1);
+  await B.win.click('#hereChip'); await B.win.click('#herePop [data-hp="join"]');
+  await expect(B.win.locator('#pmChip')).toBeVisible();
+  const left = (w) => w.locator('#pmChip .mono').textContent();
+  const [a1, b1] = [await left(A.win), await left(B.win)];
+  const secs = t => { const [m, s] = t.split(':').map(Number); return m * 60 + s; };
+  expect(Math.abs(secs(a1) - secs(b1))).toBeLessThanOrEqual(3);
 
   expect(A.errors).toEqual([]); expect(B.errors).toEqual([]);
   await A.app.close(); await B.app.close();

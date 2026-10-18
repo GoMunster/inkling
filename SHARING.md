@@ -60,6 +60,12 @@ The shared project is now on your Projects list. Inkling remembers where it is; 
 - A coloured letter beside a scene in the binder shows who is in that scene.
 - When you open a scene someone else is in, a note above the text says so.
 
+### Sprinting together
+
+When a co-writer starts a focus sprint, the chip at the top says so ("Ben sprinting") and Inky tells you. Click the
+chip and choose **Join the sprint**: your focus timer starts and ends at the same moment as theirs, and their Inky sits
+beside yours until it ends. Each of you keeps your own session and word count.
+
 ### What merges
 
 Inkling checks for a co-writer's changes every few seconds, when you come back to the window, and whenever it saves.

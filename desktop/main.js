@@ -117,7 +117,7 @@ async function othersHere(id) {
     const h = await readJson(path.join(dir, n)); if (!h) continue;
     const age = Date.now() - (+h.at || 0);
     if (age > 7 * 864e5) { fsp.unlink(path.join(dir, n)).catch(() => {}); continue; }   // left behind by a crash long ago
-    if (age < HERE_FRESH) out.push({ name: String(h.name || '').slice(0, 60), host: String(h.host || '').slice(0, 60), scene: String(h.scene || '').slice(0, 40), sceneTitle: String(h.sceneTitle || '').slice(0, 100), version: String(h.version || ''), at: +h.at });
+    if (age < HERE_FRESH) out.push({ name: String(h.name || '').slice(0, 60), host: String(h.host || '').slice(0, 60), scene: String(h.scene || '').slice(0, 40), sceneTitle: String(h.sceneTitle || '').slice(0, 100), version: String(h.version || ''), sprint: Math.max(0, +h.sprint || 0), pet: h.pet && typeof h.pet === 'object' ? { c: String(h.pet.c || '').slice(0, 12), st: Math.max(0, Math.min(9, +h.pet.st || 0)), n: String(h.pet.n || '').slice(0, 40) } : null, at: +h.at });
   }
   return out;
 }
@@ -203,7 +203,8 @@ handle('clearStrays', async (id, names) => {
 // Presence: what this computer is doing (name, scene); returns everyone else who has the project open.
 handle('here', async (id, info) => {
   const i = info && typeof info === 'object' ? info : {};
-  hereInfo = { name: String(i.name || '').slice(0, 60), scene: String(i.scene || '').slice(0, 40), sceneTitle: String(i.sceneTitle || '').slice(0, 100) };
+  const pet = i.pet && typeof i.pet === 'object' ? { c: String(i.pet.c || '').slice(0, 12), st: Math.max(0, Math.min(9, Math.round(+i.pet.st || 0))), n: String(i.pet.n || '').slice(0, 40) } : null;
+  hereInfo = { name: String(i.name || '').slice(0, 60), scene: String(i.scene || '').slice(0, 40), sceneTitle: String(i.sceneTitle || '').slice(0, 100), sprint: Math.max(0, +i.sprint || 0), pet };
   if (id === openId) await writeHere(id);
   return othersHere(id);
 });
