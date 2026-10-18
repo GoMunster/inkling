@@ -39,7 +39,7 @@ jobs:
         shell: bash
         run: npm version --no-git-tag-version --allow-same-version "${GITHUB_REF_NAME#v}"
       - name: Build installer
-        run: npm run dist -- --publish never
+        run: npm run dist   # the dist script already passes --publish never; the release job uploads
         env:
           CSC_IDENTITY_AUTO_DISCOVERY: false   # no code-signing certificates yet
       - uses: actions/upload-artifact@v4
