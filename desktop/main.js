@@ -1,26 +1,36 @@
 'use strict';
 // Inkling desktop: wraps index.html in a window and keeps every project as a folder on this computer.
-//   <projects folder>/<project id>/project.json   the whole project (same shape as a JSON backup)
-//                                  /info.json     title, words and save time for the Projects screen
-//                                  /pictures/     story page pictures, one file each
-//                                  /backups/      automatic copies of project.json, newest kept
-const { app, BrowserWindow, ipcMain, dialog, shell, Menu, protocol, net } = require('electron');
+//   <projects folder>/<project id>/project.json         the whole project (same shape as a JSON backup)
+//                                  /info.json           title, words and save time for the Projects screen
+//                                  /pictures/           story page pictures, one file each
+//                                  /backups/            automatic copies of project.json, newest kept
+//                                  /.inkling-lock.json  which computer has the project open (for sync folders)
+// The projects folder can live in Dropbox, iCloud Drive or OneDrive; the lock file and the "changed on disk" check
+// stop two computers from silently overwriting each other.
+const { app, BrowserWindow, ipcMain, dialog, shell, Menu, protocol, net, session } = require('electron');
 const path = require('path');
 const fs = require('fs');
+const os = require('os');
 const fsp = fs.promises;
 const { pathToFileURL } = require('url');
 
+const REPO = 'GoMunster/inkling';
+const RELEASES = 'https://github.com/' + REPO + '/releases';
 const ID_RE = /^[a-z0-9][a-z0-9_-]{2,60}$/i;
 const PIC_RE = /^[a-z0-9][a-z0-9_.-]{0,80}$/i;
+const BACKUP_RE = /^[\d-]+(-yours)?\.json$/;
 const PIC_TYPES = { 'image/png': 'png', 'image/jpeg': 'jpg', 'image/webp': 'webp', 'image/gif': 'gif', 'image/svg+xml': 'svg', 'image/avif': 'avif', 'image/bmp': 'bmp' };
 const BACKUP_EVERY = 10 * 60 * 1000;   // at most one automatic backup per project every 10 minutes
 const BACKUPS_KEPT = 40;
+const LOCK = '.inkling-lock.json', LOCK_FRESH = 150 * 1000;   // a lock older than this means that computer has closed or crashed
 
 protocol.registerSchemesAsPrivileged([{ scheme: 'inkpic', privileges: { standard: true, secure: true, supportFetchAPI: true } }]);
 
-let win = null, closing = false, settings = {};
+let win = null, closing = false, settings = {}, openId = null, updater = null, upd = { state: 'idle' };
+const lastMtime = {};   // project id -> project.json mtime when this computer last read or wrote it
 const settingsFile = () => path.join(app.getPath('userData'), 'settings.json');
-const projectsDir = () => settings.dir || path.join(app.getPath('documents'), 'Inkling Projects');
+const defaultDir = () => path.join(app.getPath('documents'), 'Inkling Projects');
+const projectsDir = () => settings.dir || defaultDir();
 function projDir(id) { if (!ID_RE.test(String(id || ''))) throw new Error('Bad project id'); return path.join(projectsDir(), id); }
 function picFile(id, name) { if (!PIC_RE.test(String(name || ''))) throw new Error('Bad picture name'); return path.join(projDir(id), 'pictures', name); }
 
@@ -32,9 +42,13 @@ async function writeAtomic(file, data) {
   try { await fh.writeFile(data); await fh.sync(); } finally { await fh.close(); }
   await fsp.rename(tmp, file);
 }
-function loadSettings() { try { settings = JSON.parse(fs.readFileSync(settingsFile(), 'utf8')) || {}; } catch (e) { settings = {}; } }
+function loadSettings() {
+  try { settings = JSON.parse(fs.readFileSync(settingsFile(), 'utf8')) || {}; } catch (e) { settings = {}; }
+  if (!settings.device) settings.device = 'c' + Math.random().toString(36).slice(2, 10);
+}
 const saveSettings = () => writeAtomic(settingsFile(), JSON.stringify(settings, null, 1)).catch(() => {});
 const readJson = async (file) => { try { return JSON.parse(await fsp.readFile(file, 'utf8')); } catch (e) { return null; } };
+const mtime = async (file) => { try { return (await fsp.stat(file)).mtimeMs; } catch (e) { return 0; } };
 const stamp = () => new Date().toISOString().replace(/[:T]/g, '-').replace(/\..+/, '');
 function newId(title) {
   const base = String(title || 'novel').toLowerCase().normalize('NFKD').replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 32) || 'novel';
@@ -45,11 +59,11 @@ async function backupIfDue(id) {
   const dir = projDir(id), cur = path.join(dir, 'project.json'), bdir = path.join(dir, 'backups');
   if (!fs.existsSync(cur)) return;
   await fsp.mkdir(bdir, { recursive: true });
-  const names = (await fsp.readdir(bdir)).filter(n => n.endsWith('.json')).sort();
+  const names = (await fsp.readdir(bdir)).filter(n => BACKUP_RE.test(n)).sort();
   const last = names.length ? (await fsp.stat(path.join(bdir, names[names.length - 1]))).mtimeMs : 0;
   if (Date.now() - last < BACKUP_EVERY) return;
   await fsp.copyFile(cur, path.join(bdir, stamp() + '.json'));
-  const all = (await fsp.readdir(bdir)).filter(n => n.endsWith('.json')).sort();
+  const all = (await fsp.readdir(bdir)).filter(n => BACKUP_RE.test(n)).sort();
   for (const n of all.slice(0, Math.max(0, all.length - BACKUPS_KEPT))) await fsp.unlink(path.join(bdir, n)).catch(() => {});
 }
 async function copyProject(fromId, title, json) {
@@ -64,6 +78,18 @@ async function copyProject(fromId, title, json) {
   return id;
 }
 
+/* ---------- which computer has a project open ---------- */
+async function writeLock(id) { try { await fsp.writeFile(path.join(projDir(id), LOCK), JSON.stringify({ device: settings.device, host: os.hostname(), at: Date.now() })); } catch (e) {} }
+async function dropLock(id) {
+  if (!id) return;
+  try { const l = await readJson(path.join(projDir(id), LOCK)); if (l && l.device === settings.device) await fsp.unlink(path.join(projDir(id), LOCK)); } catch (e) {}
+}
+async function otherLock(id) {
+  const l = await readJson(path.join(projDir(id), LOCK));
+  return l && l.device !== settings.device && Date.now() - (+l.at || 0) < LOCK_FRESH ? { host: String(l.host || 'another computer'), at: +l.at } : null;
+}
+setInterval(() => { if (openId) writeLock(openId); }, 60 * 1000);
+
 /* ---------- requests from the page ---------- */
 const handle = (name, fn) => ipcMain.handle('ink:' + name, async (e, ...args) => {
   if (!win || e.sender !== win.webContents) throw new Error('Not allowed');
@@ -76,38 +102,54 @@ handle('list', async () => {
     if (!d.isDirectory() || !ID_RE.test(d.name) || !fs.existsSync(path.join(root, d.name, 'project.json'))) continue;
     const info = (await readJson(path.join(root, d.name, 'info.json'))) || {};
     const st = await fsp.stat(path.join(root, d.name, 'project.json'));
-    out.push({ id: d.name, title: String(info.title || d.name), words: +info.words || 0, saved: +info.saved || st.mtimeMs, sample: !!info.sample });
+    out.push({ id: d.name, title: String(info.title || d.name), words: +info.words || 0, saved: +info.saved || st.mtimeMs, sample: !!info.sample, other: await otherLock(d.name) });
   }
   return out.sort((a, b) => b.saved - a.saved);
 });
 handle('create', async (title) => { const id = newId(title); await fsp.mkdir(path.join(projDir(id), 'pictures'), { recursive: true }); return id; });
-handle('load', async (id) => {
+// Returns the project text, plus `other` when another computer seems to have it open right now.
+handle('load', async (id, force) => {
   const file = path.join(projDir(id), 'project.json');
+  const other = await otherLock(id);
+  if (other && !force) return { data: null, other };
   let data = null; try { data = await fsp.readFile(file, 'utf8'); } catch (e) {}
-  if (data != null) { settings.last = id; saveSettings(); }
-  return data;
+  if (data != null) {
+    if (openId && openId !== id) await dropLock(openId);
+    openId = id; lastMtime[id] = await mtime(file); await writeLock(id);
+    settings.last = id; saveSettings();
+  }
+  return { data, other: null };
 });
 handle('last', async () => (settings.last && ID_RE.test(settings.last) && fs.existsSync(path.join(projDir(settings.last), 'project.json'))) ? settings.last : null);
-handle('save', async (id, json, info) => {
+// Refuses (conflict) when project.json changed on disk since this computer last read or wrote it, which happens
+// when a sync service brings in another computer's edits. This computer's version is kept as a "-yours" backup.
+handle('save', async (id, json, info, force) => {
   if (typeof json !== 'string') throw new Error('Bad data');
+  const file = path.join(projDir(id), 'project.json'), now = await mtime(file);
+  if (!force && lastMtime[id] && now > lastMtime[id] + 1000) {
+    await writeAtomic(path.join(projDir(id), 'backups', stamp() + '-yours.json'), json);
+    return { conflict: true };
+  }
   await backupIfDue(id);
-  await writeAtomic(path.join(projDir(id), 'project.json'), json);
+  await writeAtomic(file, json);
+  lastMtime[id] = await mtime(file);
   const i = info && typeof info === 'object' ? info : {};
   await writeAtomic(path.join(projDir(id), 'info.json'), JSON.stringify({ title: String(i.title || '').slice(0, 120), words: +i.words || 0, sample: !!i.sample, saved: Date.now() }));
-  return true;
+  return { ok: true };
 });
+handle('changed', async (id) => { const t = await mtime(path.join(projDir(id), 'project.json')); return !!(lastMtime[id] && t > lastMtime[id] + 1000); });
 handle('duplicate', async (id) => {
   const json = await fsp.readFile(path.join(projDir(id), 'project.json'), 'utf8');
   const title = ((JSON.parse(json).meta || {}).title || 'Untitled novel') + ' (copy)';
   return copyProject(id, title, json);
 });
-handle('trash', async (id) => { await shell.trashItem(projDir(id)); if (settings.last === id) { settings.last = null; saveSettings(); } return true; });
+handle('trash', async (id) => { await shell.trashItem(projDir(id)); if (settings.last === id) { settings.last = null; saveSettings(); } if (openId === id) openId = null; return true; });
 handle('backups', async (id) => {
   const bdir = path.join(projDir(id), 'backups'); if (!fs.existsSync(bdir)) return [];
-  return (await fsp.readdir(bdir)).filter(n => /^[\d-]+\.json$/.test(n)).sort().reverse();
+  return (await fsp.readdir(bdir)).filter(n => BACKUP_RE.test(n)).sort().reverse();
 });
 handle('restoreBackup', async (id, name) => {
-  if (!/^[\d-]+\.json$/.test(String(name))) throw new Error('Bad backup');
+  if (!BACKUP_RE.test(String(name))) throw new Error('Bad backup');
   const json = await fsp.readFile(path.join(projDir(id), 'backups', name), 'utf8');
   const title = ((JSON.parse(json).meta || {}).title || 'Untitled novel') + ' (backup ' + name.slice(0, 16).replace(/-(\d\d)-(\d\d)$/, ' $1:$2') + ')';
   return copyProject(id, title, json);
@@ -124,10 +166,12 @@ handle('picRead', async (id, name) => {
   const type = Object.keys(PIC_TYPES).find(t => PIC_TYPES[t] === ext) || 'application/octet-stream';
   return 'data:' + type + ';base64,' + buf.toString('base64');
 });
+const safeName = (n) => String(n || 'inkling.txt').replace(/[\\/:*?"<>|]+/g, '-');
+// `data` is text, or bytes (Uint8Array) for Word and EPUB files.
 handle('saveFile', async (name, data) => {
-  const r = await dialog.showSaveDialog(win, { defaultPath: path.join(app.getPath('documents'), String(name || 'inkling.txt').replace(/[\\/:*?"<>|]+/g, '-')) });
+  const r = await dialog.showSaveDialog(win, { defaultPath: path.join(app.getPath('documents'), safeName(name)) });
   if (r.canceled || !r.filePath) return null;
-  await writeAtomic(r.filePath, String(data)); return r.filePath;
+  await writeAtomic(r.filePath, data instanceof Uint8Array ? Buffer.from(data) : String(data)); return r.filePath;
 });
 handle('openFile', async () => {
   const r = await dialog.showOpenDialog(win, { properties: ['openFile'], filters: [{ name: 'Inkling backup', extensions: ['json'] }] });
@@ -135,34 +179,124 @@ handle('openFile', async () => {
   const st = await fsp.stat(r.filePaths[0]); if (st.size > 300e6) throw new Error('That file is too large.');
   return fsp.readFile(r.filePaths[0], 'utf8');
 });
+// Manuscript PDF: print the page's generated HTML in a hidden window, with the running header Chromium supports.
+handle('pdf', async (html, opts) => {
+  const o = opts || {}, tmp = path.join(app.getPath('temp'), 'inkling-print-' + process.pid + '.html');
+  await fsp.writeFile(tmp, String(html));
+  const pw = new BrowserWindow({ show: false, webPreferences: { javascript: false, sandbox: true } });
+  try {
+    await pw.loadFile(tmp);
+    const esc = (s) => String(s || '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+    const pdf = await pw.webContents.printToPDF({
+      pageSize: o.pageSize === 'A4' ? 'A4' : 'Letter', printBackground: false, preferCSSPageSize: false,
+      margins: { top: 1, bottom: 1, left: 1, right: 1 },
+      displayHeaderFooter: !!o.header,
+      headerTemplate: '<div style="font-family:' + esc(o.font || 'Times New Roman') + ',serif;font-size:11px;width:100%;text-align:right;padding:0 0.9in;color:#000">' + esc(o.header) + ' / <span class="pageNumber"></span></div>',
+      footerTemplate: '<span></span>'
+    });
+    const r = await dialog.showSaveDialog(win, { defaultPath: path.join(app.getPath('documents'), safeName(o.name || 'manuscript.pdf')), filters: [{ name: 'PDF', extensions: ['pdf'] }] });
+    if (r.canceled || !r.filePath) return null;
+    await writeAtomic(r.filePath, pdf); return r.filePath;
+  } finally { pw.destroy(); fsp.unlink(tmp).catch(() => {}); }
+});
 handle('reveal', async (id) => { const d = id ? projDir(id) : projectsDir(); await fsp.mkdir(d, { recursive: true }); return shell.openPath(d); });
 handle('dir', async () => projectsDir());
 handle('setTitle', async (t) => { if (win) win.setTitle(String(t || 'Inkling').slice(0, 160)); return true; });
-ipcMain.on('ink:closeReady', (e) => { if (win && e.sender === win.webContents) { closing = true; win.close(); } });
+
+/* ---------- settings, projects folder, updates ---------- */
+const ses = () => session.defaultSession;
+handle('prefs', async () => ({
+  version: app.getVersion(), platform: process.platform, packaged: app.isPackaged, host: os.hostname(),
+  dir: projectsDir(), defaultDir: defaultDir(), autoUpdate: settings.autoUpdate !== false, lastVersion: settings.lastVersion || null,
+  spell: (ses().getSpellCheckerLanguages() || [])[0] || '', spellLangs: process.platform === 'darwin' ? [] : ses().availableSpellCheckerLanguages, update: upd
+}));
+handle('setPrefs', async (p) => {
+  p = p || {};
+  if ('autoUpdate' in p) settings.autoUpdate = !!p.autoUpdate;
+  if ('lastVersion' in p) settings.lastVersion = String(p.lastVersion).slice(0, 40);
+  if (p.spell && process.platform !== 'darwin' && ses().availableSpellCheckerLanguages.includes(p.spell)) { ses().setSpellCheckerLanguages([p.spell]); settings.spell = p.spell; }
+  await saveSettings(); return true;
+});
+handle('chooseDir', async () => {
+  const r = await dialog.showOpenDialog(win, { title: 'Choose a folder for your Inkling projects', defaultPath: projectsDir(), properties: ['openDirectory', 'createDirectory'] });
+  return r.canceled || !r.filePaths[0] ? null : r.filePaths[0];
+});
+// Switch the projects folder. With `move`, each project is copied, checked, and only then its old folder goes to the
+// trash; a project whose name already exists in the new folder is left where it was.
+handle('useDir', async (dir, move) => {
+  dir = dir ? path.resolve(String(dir)) : defaultDir();
+  await fsp.mkdir(dir, { recursive: true });
+  const old = projectsDir(), res = { moved: 0, skipped: [], failed: [] };
+  if (openId) await dropLock(openId);
+  if (move && path.resolve(old) !== dir && fs.existsSync(old)) {
+    for (const d of await fsp.readdir(old, { withFileTypes: true })) {
+      if (!d.isDirectory() || !ID_RE.test(d.name) || !fs.existsSync(path.join(old, d.name, 'project.json'))) continue;
+      const to = path.join(dir, d.name);
+      if (fs.existsSync(to)) { res.skipped.push(d.name); continue; }
+      try {
+        await fsp.cp(path.join(old, d.name), to, { recursive: true });
+        JSON.parse(await fsp.readFile(path.join(to, 'project.json'), 'utf8'));
+        // the copy checked out, so the old folder can go (to the trash where the system has one)
+        await shell.trashItem(path.join(old, d.name)).catch(() => fsp.rm(path.join(old, d.name), { recursive: true, force: true })); res.moved++;
+      } catch (e) { res.failed.push(d.name); }
+    }
+  }
+  settings.dir = path.resolve(dir) === path.resolve(defaultDir()) ? undefined : dir;
+  openId = null;
+  for (const k of Object.keys(lastMtime)) delete lastMtime[k];
+  await saveSettings(); return res;
+});
+handle('checkUpdates', async () => {
+  if (!updater || !app.isPackaged) return { state: 'unavailable' };
+  try { const r = await updater.checkForUpdates(); return r && r.updateInfo && r.updateInfo.version !== app.getVersion() ? upd : { state: 'none' }; }
+  catch (e) { return { state: 'error', message: String(e && e.message || e) }; }
+});
+handle('installUpdate', async () => { if (upd.state === 'ready' && updater) { closing = true; setImmediate(() => updater.quitAndInstall()); } return true; });
+handle('openReleases', async (version) => { shell.openExternal(version && /^[\w.-]+$/.test(version) ? RELEASES + '/tag/v' + version : RELEASES + '/latest'); return true; });
+ipcMain.on('ink:closeReady', (e) => { if (win && e.sender === win.webContents) { dropLock(openId).finally(() => { closing = true; if (win) win.close(); }); } });
+
+// Windows and Linux download the update in the background and install it on restart. macOS needs a signed app to
+// update itself, so there Inkling only says a new version exists and opens the download page.
+function setupUpdates() {
+  if (!app.isPackaged) return;
+  try { updater = require('electron-updater').autoUpdater; } catch (e) { return; }
+  updater.autoDownload = process.platform !== 'darwin';
+  updater.autoInstallOnAppQuit = process.platform !== 'darwin';
+  const tell = (s) => { upd = s; if (win) win.webContents.send('ink:update', s); };
+  updater.on('update-available', (i) => tell({ state: updater.autoDownload ? 'downloading' : 'available', version: i.version }));
+  updater.on('update-downloaded', (i) => tell({ state: 'ready', version: i.version }));
+  updater.on('error', (e) => { upd = { state: 'error', message: String(e && e.message || e) }; });
+  if (settings.autoUpdate !== false) setTimeout(() => updater.checkForUpdates().catch(() => {}), 10000);
+}
 
 /* ---------- window and menu ---------- */
 const send = (a) => { if (win) win.webContents.send('ink:menu', a); };
 function buildMenu() {
   const mac = process.platform === 'darwin';
   const tpl = [
-    ...(mac ? [{ role: 'appMenu' }] : []),
+    ...(mac ? [{ label: app.name, submenu: [{ role: 'about' }, { type: 'separator' }, { label: 'Settings…', accelerator: 'CmdOrCtrl+,', click: () => send('prefs') }, { type: 'separator' }, { role: 'hide' }, { role: 'hideOthers' }, { role: 'unhide' }, { type: 'separator' }, { role: 'quit' }] }] : []),
     { label: 'File', submenu: [
       { label: 'New project…', accelerator: 'CmdOrCtrl+N', click: () => send('new') },
       { label: 'Projects…', accelerator: 'CmdOrCtrl+O', click: () => send('projects') },
       { type: 'separator' },
+      { label: 'Export…', accelerator: 'CmdOrCtrl+E', click: () => send('export') },
       { label: 'Back up this project…', accelerator: 'CmdOrCtrl+Shift+S', click: () => send('backup') },
-      { label: 'Export manuscript…', accelerator: 'CmdOrCtrl+E', click: () => send('export') },
       { label: 'Import a backup as a new project…', click: () => send('import') },
       { type: 'separator' },
       { label: 'Show projects folder', click: () => shell.openPath(projectsDir()) },
-      ...(mac ? [] : [{ type: 'separator' }, { role: 'quit' }])
+      ...(mac ? [] : [{ label: 'Settings…', accelerator: 'CmdOrCtrl+,', click: () => send('prefs') }, { type: 'separator' }, { role: 'quit' }])
     ] },
-    { role: 'editMenu' },
+    { label: 'Edit', submenu: [{ role: 'undo' }, { role: 'redo' }, { type: 'separator' }, { role: 'cut' }, { role: 'copy' }, { role: 'paste' }, { role: 'selectAll' }, { type: 'separator' },
+      { label: 'Find and replace…', accelerator: 'CmdOrCtrl+Shift+F', click: () => send('find') }, { label: 'Scene snapshots…', click: () => send('snapshots') }] },
     { label: 'View', submenu: [{ label: 'Writing sessions', accelerator: 'CmdOrCtrl+Shift+H', click: () => send('sessions') }, { label: 'Start or pause the focus timer', accelerator: 'CmdOrCtrl+Shift+T', click: () => send('timer') }, { type: 'separator' }, { role: 'zoomIn' }, { role: 'zoomOut' }, { role: 'resetZoom' }, { type: 'separator' }, { role: 'togglefullscreen' }, { type: 'separator' }, { role: 'toggleDevTools', label: 'Developer tools' }] },
     { role: 'windowMenu' },
     { role: 'help', submenu: [
+      { label: 'Show the tour', click: () => send('tour') },
+      { label: 'Check for updates…', click: () => send('updcheck') },
+      { label: 'What’s new', click: () => shell.openExternal(RELEASES + '/tag/v' + app.getVersion()) },
+      { type: 'separator' },
       { label: 'Where are my projects?', click: () => shell.openPath(projectsDir()) },
-      { label: 'About Inkling', click: () => dialog.showMessageBox(win, { type: 'info', title: 'About Inkling', message: 'Inkling ' + app.getVersion(), detail: 'Your projects are saved on this computer in:\n' + projectsDir() + '\n\nEach project keeps automatic backups in its backups folder.' }) }
+      { label: 'About Inkling', click: () => dialog.showMessageBox(win, { type: 'info', title: 'About Inkling', message: 'Inkling ' + app.getVersion(), detail: 'Your projects are saved on this computer in:\n' + projectsDir() + '\n\nEach project keeps automatic backups in its backups folder. Inkling contacts GitHub only to check for updates, and you can turn that off in Settings.' }) }
     ] }
   ];
   Menu.setApplicationMenu(Menu.buildFromTemplate(tpl));
@@ -189,12 +323,13 @@ function createWindow() {
     else if (p.selectionText) items.push({ role: 'copy' });
     if (items.length) Menu.buildFromTemplate(items).popup({ window: win });
   });
+  win.on('focus', () => { if (win) win.webContents.send('ink:focus'); });
   // Closing: let the page finish saving first (it answers with closeReady), with a safety timeout.
   win.on('close', (e) => {
     const b = win.getNormalBounds(); settings.win = { x: b.x, y: b.y, w: b.width, h: b.height, max: win.isMaximized() }; saveSettings();
     if (closing) return;
     e.preventDefault(); win.webContents.send('ink:closing');
-    setTimeout(() => { if (!closing && win) { closing = true; win.close(); } }, 5000);
+    setTimeout(() => { if (!closing && win) { closing = true; dropLock(openId).finally(() => win && win.close()); } }, 5000);
   });
   win.on('closed', () => { win = null; });
 }
@@ -203,7 +338,8 @@ if (!app.requestSingleInstanceLock()) app.quit();   // one window, so two copies
 else {
   app.on('second-instance', () => { if (win) { if (win.isMinimized()) win.restore(); win.focus(); } });
   app.whenReady().then(() => {
-    loadSettings();
+    loadSettings(); saveSettings();
+    if (settings.spell && process.platform !== 'darwin') try { ses().setSpellCheckerLanguages([settings.spell]); } catch (e) {}
     protocol.handle('inkpic', (req) => {   // inkpic://p/<project id>/<picture file>
       try {
         const u = new URL(req.url), parts = u.pathname.split('/').filter(Boolean).map(decodeURIComponent);
@@ -211,7 +347,7 @@ else {
         return net.fetch(pathToFileURL(picFile(parts[0], parts[1])).toString());
       } catch (e) { return new Response('Not found', { status: 404 }); }
     });
-    buildMenu(); createWindow();
+    buildMenu(); createWindow(); setupUpdates();
   });
   app.on('window-all-closed', () => app.quit());
 }

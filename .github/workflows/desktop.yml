@@ -1,5 +1,6 @@
 # Builds the Inkling desktop app for Windows, macOS and Linux.
 # Push a tag like v1.0.0 to build all three and attach them to a GitHub Release.
+# The latest*.yml files and blockmaps let installed copies find and download the update (see RELEASING.md).
 # "Run workflow" on the Actions tab builds them without a release (download them from the run's Artifacts).
 name: Desktop app
 
@@ -12,7 +13,11 @@ permissions:
   contents: write
 
 jobs:
+  tests:
+    uses: ./.github/workflows/test.yml
+
   build:
+    needs: tests
     strategy:
       fail-fast: false
       matrix:
@@ -44,6 +49,9 @@ jobs:
             desktop/dist/*.exe
             desktop/dist/*.dmg
             desktop/dist/*.AppImage
+            desktop/dist/*.zip
+            desktop/dist/*.blockmap
+            desktop/dist/latest*.yml
           if-no-files-found: error
 
   release:

@@ -143,9 +143,9 @@ select{border:1px solid var(--line);background:var(--paper);border-radius:8px;pa
 .pop .pt{font-size:12px;color:var(--muted);padding:2px 6px 6px;overflow-wrap:anywhere}
 .pop button{display:flex;align-items:center;gap:8px;border:0;background:transparent;border-radius:8px;padding:8px;text-align:left}
 .pop button:hover{background:var(--panel2)}
-.sheet{max-width:780px;margin:24px auto;background:var(--paper);border:1px solid var(--line);border-radius:6px;box-shadow:var(--shadow);padding:52px 64px;min-width:0}
+.sheet{max-width:var(--ed-w,780px);margin:24px auto;background:var(--paper);border:1px solid var(--line);border-radius:6px;box-shadow:var(--shadow);padding:52px 64px;min-width:0}
 .pane-main > .sheet{width:calc(100% - 32px)}
-.editor{min-height:52vh;font-family:var(--f-prose);font-size:var(--fs);line-height:1.8;white-space:pre-wrap;word-wrap:break-word;overflow-wrap:anywhere;outline:none;caret-color:var(--accent);font-variation-settings:'opsz' 18}
+.editor{min-height:52vh;font-family:var(--ed-font,var(--f-prose));font-size:var(--fs);line-height:var(--ed-lh,1.8);white-space:pre-wrap;word-wrap:break-word;overflow-wrap:anywhere;outline:none;caret-color:var(--accent);font-variation-settings:'opsz' 18}
 .editor:empty::before{content:attr(data-ph);color:var(--muted);pointer-events:none}
 .ent{cursor:pointer;border-bottom:2px solid currentColor;border-radius:2px;background:color-mix(in srgb,currentColor 11%,transparent);padding:0 1px}
 .ent:hover{background:color-mix(in srgb,currentColor 22%,transparent)}
@@ -584,6 +584,25 @@ dl.fam{display:grid;grid-template-columns:auto 1fr;gap:6px 10px} dl.fam dt{color
 
 /* writing sessions */
 .ss-wrap{max-width:900px;margin:0 auto;padding:16px 16px 40px}
+.wc-box{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:14px 16px 10px;margin-bottom:18px}
+.wc-box .ss-tiles{margin:12px 0}
+.wc-box .ss-tile{background:var(--bg);padding:8px 12px} .wc-box .ss-tile b{font-size:18px}
+.wc-head{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.wc-head h2{margin:0 auto 0 0;font-size:15px}
+.wc-plot{position:relative;overflow:hidden}
+.wc-plot svg{display:block;touch-action:pan-y}
+.wc-bar{fill:var(--accent)} .wc-bar.on{fill:color-mix(in srgb,var(--accent) 75%,var(--ink))}
+.wc-grid{stroke:var(--line);stroke-width:1;opacity:.7} .wc-base{stroke:var(--muted);stroke-width:1}
+.wc-goal{stroke:var(--muted);stroke-width:1.5;stroke-dasharray:4 4}
+.wc-cross{stroke:var(--muted);stroke-width:1;opacity:.5}
+.wc-ax{fill:var(--muted);font-family:var(--f-mono);font-size:11px}
+.wc-hit{fill:transparent;cursor:crosshair}
+.wc-tip{position:absolute;pointer-events:none;background:var(--panel);border:1px solid var(--line);box-shadow:var(--shadow);border-radius:8px;padding:5px 9px;font-size:12.5px;white-space:nowrap;color:var(--ink)}
+.wc-tip span{color:var(--muted);margin-right:6px}
+.wc-table{max-height:280px;overflow:auto;margin-bottom:6px}
+.wc-table table{width:100%;border-collapse:collapse;font-size:13px}
+.wc-table th{text-align:left;color:var(--muted);font-weight:600;font-size:12px;position:sticky;top:0;background:var(--paper)}
+.wc-table th,.wc-table td{padding:5px 8px;border-bottom:1px solid var(--line)}
 .ss-sub{margin:0 0 14px;font-size:13px}
 .ss-tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-bottom:18px}
 .ss-tile{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:12px 14px;display:flex;flex-direction:column;gap:2px}
@@ -607,6 +626,68 @@ dl.fam{display:grid;grid-template-columns:auto 1fr;gap:6px 10px} dl.fam dt{color
 /* outline: delete a section */
 .ol-del{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:2px 0 8px calc(var(--d) * 28px + 50px);padding:8px 10px;border:1px solid color-mix(in srgb,var(--danger) 40%,var(--line));border-radius:10px;background:color-mix(in srgb,var(--danger) 6%,var(--paper));font-size:13px}
 .ol-del span:first-child{font-weight:600;margin-right:4px}
+
+/* snapshots, find and replace */
+.sn-wrap{display:grid;grid-template-columns:minmax(220px,300px) minmax(0,1fr);gap:16px;padding:16px;max-width:1200px;margin:0 auto}
+.sn-list ul{list-style:none;margin:10px 0 0;padding:0;display:grid;gap:4px}
+.sn-new{display:flex;flex-direction:column;gap:6px}
+.sn-new input{width:100%;border:1px solid var(--line);background:var(--paper);border-radius:8px;padding:8px 10px;font-size:14px;color:var(--ink)}
+.sn-new input:focus{border-color:var(--accent);outline:none}
+.sn-it{width:100%;text-align:left;display:flex;flex-direction:column;gap:2px;padding:8px 10px;border:1px solid var(--line);border-radius:10px;background:var(--paper);font-size:13px}
+.sn-it span{font-size:12px}
+.sn-it.on{border-color:var(--accent);box-shadow:inset 3px 0 0 var(--accent)}
+.sn-main{min-width:0;background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:16px 18px}
+.sn-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;margin-bottom:12px}
+.sn-head h2{margin:0;font-family:var(--f-prose);font-size:19px}
+.sn-head .fine{margin-top:2px}
+.sn-text{margin-top:12px;font-family:var(--ed-font,var(--f-prose));line-height:1.7;font-size:15.5px;overflow-wrap:anywhere}
+.sn-text p{margin:0 0 .7em}
+.df ins,.sn-sum ins{background:color-mix(in srgb,var(--place) 22%,transparent);color:inherit;text-decoration:none;border-radius:3px}
+.df del,.sn-sum del{background:color-mix(in srgb,var(--danger) 18%,transparent);color:inherit;text-decoration:line-through;text-decoration-color:var(--danger);border-radius:3px}
+.df .df-same{color:var(--muted)}
+.df .df-gap{color:var(--muted);font-family:var(--f-ui);font-size:12px;text-align:center;border-top:1px dashed var(--line);border-bottom:1px dashed var(--line);padding:4px 0}
+.sn-empty{color:var(--muted)}
+@media (max-width:760px){.sn-wrap{grid-template-columns:1fr}}
+.fd-wrap{max-width:900px;margin:0 auto;padding:16px 16px 48px}
+.fd-form{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+.fd-opts{display:flex;gap:14px;align-items:center;flex-wrap:wrap;margin-top:8px}
+.fd-opts .ck{margin-top:0}
+.fd-bar{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:16px 0 8px;flex-wrap:wrap}
+.fd-sc{margin-bottom:14px}
+.fd-sc h3{display:flex;justify-content:space-between;align-items:center;gap:8px;margin:0 0 6px;font-size:13.5px}
+.lnk{border:0;background:none;padding:0;color:var(--accent);font-weight:600;text-align:left;cursor:pointer}
+.lnk:hover{text-decoration:underline}
+.fd-hit{display:flex;gap:8px;align-items:center;border:1px solid var(--line);background:var(--paper);border-radius:10px;padding:4px 6px 4px 4px;margin-bottom:4px}
+.fd-go{flex:1;min-width:0;text-align:left;border:0;background:none;padding:6px 8px;border-radius:8px;font-family:var(--f-prose);font-size:14px;line-height:1.5;overflow-wrap:anywhere;color:var(--ink)}
+.fd-go:hover{background:var(--bg)}
+.fd-go mark{background:color-mix(in srgb,var(--thing) 40%,transparent);color:inherit;border-radius:3px;padding:0 1px}
+
+/* tour */
+.tour{position:fixed;z-index:85;width:min(320px,calc(100vw - 32px));background:var(--panel);border:1px solid var(--accent);border-radius:14px;box-shadow:var(--shadow);padding:14px 16px 12px;font-size:13.5px;line-height:1.5}
+.tour b{font-family:var(--f-prose);font-size:17px}
+.tour p{margin:6px 0 10px}
+.tour-f{display:flex;align-items:center;gap:8px;justify-content:flex-end}
+.tour-f .muted{margin-right:auto;font-size:12px}
+.tour-ring{position:fixed;z-index:84;pointer-events:none;border:2px solid var(--accent);border-radius:12px;box-shadow:0 0 0 4000px rgba(13,18,26,.28);transition:all .2s}
+@media (prefers-reduced-motion:reduce){.tour-ring{transition:none}}
+
+/* dialogs, update bar, settings */
+.ask-ov{z-index:80}
+.pj-dlg.ask{width:min(480px,100%)}
+.pj-dlg.ex{width:min(620px,100%)} .ex .seg{margin-bottom:2px}
+.ask h2{margin:0 0 8px;font-family:var(--f-prose);font-size:20px}
+.ask p{margin:0 0 16px;line-height:1.5;overflow-wrap:anywhere}
+.ask code,.pf code{font-family:var(--f-mono);font-size:12px;overflow-wrap:anywhere}
+.ask-btns{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+.upd-bar{position:fixed;left:16px;bottom:calc(16px + var(--tabh) + env(safe-area-inset-bottom,0px));z-index:45;display:flex;align-items:center;gap:8px;flex-wrap:wrap;max-width:calc(100vw - 32px);background:var(--paper);border:1px solid var(--accent);border-radius:12px;box-shadow:var(--shadow);padding:8px 10px 8px 12px;font-size:13.5px;color:var(--ink)}
+.upd-bar>.ico{color:var(--accent)}
+.pf-wrap{max-width:760px;margin:0 auto;padding:16px 16px 48px;display:grid;gap:14px}
+.pf{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:16px 18px}
+.pf h2{margin:0 0 6px;font-size:15px}
+.pf p{margin:6px 0} .pf label.f{margin-top:10px} .pf .seg{margin-bottom:4px}
+.ex .two{margin-top:10px} .ex>label.f{margin-top:10px} .pj-dlg.ex label.f textarea{font-family:var(--f-ui);font-size:13.5px;line-height:1.45}
+.pf-row{display:flex;align-items:center;gap:10px}
+.pf-sample{margin-top:14px!important;padding:14px 16px;border:1px dashed var(--line);border-radius:10px;font-family:var(--ed-font,var(--f-prose));line-height:var(--ed-lh,1.8)}
 
 /* tab layout */
 @media (max-width:1079px){
@@ -683,7 +764,7 @@ const ICO={plus:'M12 5v14M5 12h14',down:'M6 9l6 6 6-6',right:'M9 6l6 6-6 6',up:'
   spark:'M12 3l2 6 6 2-6 2-2 6-2-6-6-2 6-2z',x:'M6 6l12 12M18 6L6 18',
   note:'M6 3h9l4 4v14H6zM14 3v5h5M9 13h7M9 17h5',list:'M9 6h11M9 12h11M9 18h11M4 6h.01M4 12h.01M4 18h.01',bulb:'M9 18h6M10 21h4M12 3a6 6 0 00-4 10.5c.7.7 1 1.5 1 2.5h6c0-1 .3-1.8 1-2.5A6 6 0 0012 3z',
   image:'M4 5h16v14H4zM4 16l5-5 4 4 3-3 4 4M15 9h.01',indent:'M4 6h16M10 12h10M10 18h10M4 10l3 2-3 2',outdent:'M4 6h16M10 12h10M10 18h10M7 10l-3 2 3 2',upload:'M12 16V4M7 9l5-5 5 5M4 20h16',play:'M7 5l12 7-12 7z',pause:'M8 5v14M16 5v14',stop:'M6 6h12v12H6z',skip:'M5 5l10 7-10 7zM19 5v14',timer:'M12 9v4l2.5 2M9 2h6M12 22a8 8 0 100-16 8 8 0 000 16z',folder:'M3 7a2 2 0 012-2h4l2 2h8a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z',web:'M8 7a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0zM21 7a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0zM14.5 18a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0zM8 7h8M6.5 9l4.5 7M17.5 9L13 16',tree:'M9 3h6v4H9zM3 17h6v4H3zM15 17h6v4h-6zM12 7v5M6 12h12M6 12v5M18 12v5',heart:'M12 20s-7-4.5-7-10a4 4 0 017-2.6A4 4 0 0119 10c0 5.5-7 10-7 10z',
-  time:'M3 12h18M7 12V7M12 12v5M17 12V7',sliders:'M4 7h9M17 7h3M4 17h3M11 17h9M15 5v4M9 15v4',minus:'M5 12h14',
+  time:'M3 12h18M7 12V7M12 12v5M17 12V7',sliders:'M4 7h9M17 7h3M4 17h3M11 17h9M15 5v4M9 15v4',search:'M11 4a7 7 0 1 0 0 14a7 7 0 1 0 0-14M20 20l-4.2-4.2',minus:'M5 12h14',
   grip:'M9 6h.01M15 6h.01M9 12h.01M15 12h.01M9 18h.01M15 18h.01',copy:'M8 8h11v11H8zM5 16V5h11',fit:'M4 12h16M4 12l4-4M4 12l4 4M20 12l-4-4M20 12l-4 4'};
 const ico=(n,s)=>'<svg class="ico" width="'+(s||16)+'" height="'+(s||16)+'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="'+ICO[n]+'"/></svg>';
 
@@ -704,10 +785,27 @@ const stageOf=t=>{let i=0;STAGES.forEach((s,j)=>{if(t>=s.at)i=j});return i};
 
 /* ---------- state ---------- */
 let S=null;          // {meta, sc:{id:{text,synopsis,notes}}, en:{id:{fields,pic}}, tl:{id:timeline}, ch:{id:{notes}}, nt:{id:{text,ideas}}, ol:{id:{num,showNotes,items}}}
-const DOCS=['sc','en','tl','ch','nt','ol','rm','ft','ss'];   // each record of these maps is its own saved doc, '<prefix>_<id>'
+const DOCS=['sc','en','tl','ch','nt','ol','rm','ft','ss','sn'];   // each record of these maps is its own saved doc, '<prefix>_<id>'
+const ADD_DOCS=[];   // (raw, out) => out.<prefix> = normalized records, for doc types added after normalize() was written
 const snapshot=st=>{ st=st||S; const o={meta:st.meta}; DOCS.forEach(p=>{ o[p]=st[p]; }); return o; };
 // The desktop app (desktop/) provides window.inklingDesktop: each project is a folder on the computer. Elsewhere it is null.
 const DESK=window.inklingDesktop||null;
+const APP_VERSION='1.0.0';   // the desktop build replaces this with desktop/package.json's version
+// Saved-format version. When the shape of saved data changes: bump FORMAT and add MIGRATE[old] that upgrades a raw
+// project one step (it runs before normalize()). A project from a newer FORMAT is never loaded or overwritten.
+const FORMAT=2;
+const MIGRATE={
+  1:o=>o   // 1 → 2: records gain change stamps (_m, _dev) and meta.gone; nothing to convert
+};
+function migrate(o){
+  const v=Math.max(1,Math.round(+((o.meta||{}).v)||1));
+  if(v>FORMAT){ const e=new Error('This project was saved by a newer version of Inkling.'); e.code='newer'; e.v=v; throw e; }
+  for(let n=v;n<FORMAT;n++) o=(MIGRATE[n]||(x=>x))(o);
+  o.meta.v=FORMAT; return o;
+}
+// Sync-ready bookkeeping: each saved record carries _m (last change, ms) and _dev (device that changed it), and
+// meta.gone keeps a dated marker for each deleted record, so a future sync can tell edits from deletions.
+const DEVICE=(()=>{ try{ let d=localStorage.getItem('inkling:device'); if(!d){ d='d'+Math.random().toString(36).slice(2,10); localStorage.setItem('inkling:device',d); } return d; }catch(e){ return 'd-unknown'; } })();
 const PJ={id:null};   // the desktop project that is open
 let linker=null;
 const ui={view:null,hist:[],cork:'all',rename:null,confirm:null,menu:false,tab:'write',focus:false,openSec:{ol:true,nt:true,tl:true,rm:true,ft:true,char:true,place:true,thing:true},say:'',sayAt:0,mood:'',touched:false,sel:'',focusName:false,fs:18,
@@ -796,12 +894,15 @@ function blankProject(){
   return {meta:{v:1,title:'Untitled novel',author:'',goal:500,target:80000,sample:false,saved:Date.now(),chapters:[{id:c,title:'Chapter 1',open:true,scenes:[s]}],scenes:{[s]:{title:'Opening scene',status:'draft',words:0}},ents:{},pet:{name:'Inky',total:0},days:{},mark:null},sc:{[s]:{text:'',synopsis:'',notes:''}},en:{}};
 }
 function normalize(o){
-  o=JSON.parse(JSON.stringify(o));
-  const meta=o.meta||{};
-  meta.v=1; meta.title=meta.title||'Untitled novel'; meta.goal=+meta.goal||500; meta.target=+meta.target||80000;
+  o=JSON.parse(JSON.stringify(o)); o.meta=o.meta||{}; o=migrate(o);
+  const stamps={}; DOCS.forEach(p=>{ const m=o[p]&&typeof o[p]==='object'?o[p]:{}; Object.keys(m).forEach(id=>{ const x=m[id]; if(x&&x._m) (stamps[p]=stamps[p]||{})[id]=[+x._m,String(x._dev||'')]; }); });
+  const meta=o.meta;
+  meta.v=FORMAT;
+  const gn=meta.gone&&typeof meta.gone==='object'?meta.gone:{}, cut=Date.now()-180*864e5; meta.gone={};
+  Object.keys(gn).filter(k=>+gn[k]>cut).sort((a,b)=>gn[b]-gn[a]).slice(0,2000).forEach(k=>{ meta.gone[k]=+gn[k]; }); meta.title=meta.title||'Untitled novel'; meta.goal=+meta.goal||500; meta.target=+meta.target||80000;
   meta.chapters=Array.isArray(meta.chapters)?meta.chapters:[]; meta.scenes=meta.scenes||{}; meta.ents=meta.ents||{};
   meta.pet=meta.pet||{name:'Inky',total:0}; meta.pet.name=meta.pet.name||'Inky'; meta.pet.total=+meta.pet.total||0;
-  meta.days=meta.days||{}; meta.saved=+meta.saved||0; meta.pomo=normPomo(meta.pomo);
+  meta.days=meta.days||{}; meta.saved=+meta.saved||0; meta.pomo=normPomo(meta.pomo); meta.exp=normExp(meta.exp); meta.author=String(meta.author||'');
   const sx=meta.secs&&typeof meta.secs==='object'?meta.secs:{rm:false,ft:false}; meta.secs={};
   OPT_SECS.forEach(k=>{ meta.secs[k]=sx[k]===undefined?!(k==='rm'||k==='ft'):!!sx[k]; });
   const lb=meta.labels&&typeof meta.labels==='object'?meta.labels:{}; meta.labels={};
@@ -842,7 +943,10 @@ function normalize(o){
   Object.keys(ssi).forEach(id=>{ const x=ssi[id]; if(!x||!isFinite(+x.start)) return;
     sso[id]={start:+x.start,end:isFinite(+x.end)?+x.end:+x.start,planned:Math.max(0,Math.round(num(x.planned,25))),mins:Math.max(0,num(x.mins,0)),words:Math.max(0,Math.round(num(x.words,0))),
       net:Math.round(num(x.net,0)),done:!!x.done,scenes:(Array.isArray(x.scenes)?x.scenes:[]).filter(y=>typeof y==='string').slice(0,60)}; });
-  return {meta,sc,en,tl:tlo,ch:cho,nt:nto,ol:olo,rm:rmo,ft:fto,ss:sso};
+  const out={meta,sc,en,tl:tlo,ch:cho,nt:nto,ol:olo,rm:rmo,ft:fto,ss:sso};
+  ADD_DOCS.forEach(f=>f(o,out));
+  DOCS.forEach(p=>{ const st=stamps[p]||{}, m=out[p]||{}; Object.keys(m).forEach(id=>{ if(st[id]&&m[id]&&typeof m[id]==='object'){ m[id]._m=st[id][0]; m[id]._dev=st[id][1]; } }); });
+  return out;
 }
 
 /* ---------- timeline data ---------- */
@@ -1102,41 +1206,51 @@ function relinkEditor(force){
 /* ---------- persistence ---------- */
 function setStatus(k){
   const el=$('#saveSt'); if(!el) return; el.dataset.s=k;
-  el.lastChild.textContent={saving:'Saving…',saved:'Saved to your account',local:'Saved on this device',disk:'Saved on this computer',error:'Could not save, retrying'}[k]||'Saved';
+  el.lastChild.textContent={saving:'Saving…',saved:'Saved to your account',local:'Saved on this device',disk:'Saved on this computer',locked:'Read-only: made by a newer Inkling',error:'Could not save, retrying'}[k]||'Saved';
 }
 function dirty(){
-  ui.touched=true;
-  for(const k of arguments){ P.dirty.add(k); P.gone.delete(k); }
+  ui.touched=true; const now=Date.now();
+  for(const k of arguments){ P.dirty.add(k); P.gone.delete(k); const d=docData(k); if(d&&typeof d==='object'){ d._m=now; d._dev=DEVICE; } if(S.meta.gone[k]) delete S.meta.gone[k]; }
   if(P.dirty.has('meta')) S.meta.saved=Date.now();
   schedule(1400);
 }
+// A record the writer deleted: drop it from the store and leave a dated marker in meta.gone.
+function forget(k){ P.gone.add(k); P.dirty.delete(k); S.meta.gone[k]=Date.now(); }
 function schedule(ms){ clearTimeout(P.timer); P.timer=setTimeout(flush,ms); }
 function docData(k){
   if(k==='meta') return S.meta;
   const pre=k.slice(0,2); if(k[2]==='_'&&DOCS.includes(pre)) return S[pre][k.slice(3)]||null;
   return null;
 }
+function lockNewer(v){
+  ui.locked=v; clearTimeout(P.timer); setStatus('locked');
+  toast('This project was saved by a newer version of Inkling (format '+v+'). Update Inkling to keep working on it. Nothing here will overwrite it.',{plain:true});
+}
 function mirrorLocal(){
-  if(DESK) return;
+  if(DESK||ui.locked) return;
   try{ const s=JSON.stringify(snapshot()); if(s.length<4500000) localStorage.setItem('inkling:project',s); }catch(e){}
 }
+// Where the open project is saved. Every store gets the same call, write(keys, gone): `keys` are the records that
+// changed ('meta' or '<prefix>_<id>', read them with docData) and `gone` the ones deleted. A cloud store is one more
+// entry here, plus a load path like connectDb()/deskOpen(). `label` is the save-status text key.
+const STORES={
+  local:{label:'local',async write(){ /* mirrorLocal(), called by flush() before every write, is this store */ }},
+  claude:{label:'saved',async write(keys,gone){
+    const col=P.db.collection(P.base);
+    for(const k of keys){ const d=docData(k); if(d==null) continue; await col.doc(k).set(d); P.keys.add(k); }
+    for(const k of gone){ await col.doc(k).delete(); P.keys.delete(k); }
+  }},
+  desktop:{label:'disk',async write(){ if(!PJ.id) return; const r=await DESK.save(PJ.id,JSON.stringify(snapshot()),deskInfo()); if(r&&r.conflict) await deskConflict(); }}
+};
+let store=DESK?STORES.desktop:STORES.local;
 async function flush(){
+  if(ui.locked) return;   // a project from a newer Inkling is shown but never overwritten
   if(P.busy){ P.again=true; return; }
-  P.busy=true; const keys=[...P.dirty]; P.dirty.clear();
+  P.busy=true; const keys=[...P.dirty], gone=[...P.gone]; P.dirty.clear(); P.gone.clear();
   setStatus('saving'); mirrorLocal();
-  try{
-    if(DESK){
-      if(PJ.id) await DESK.save(PJ.id,JSON.stringify(snapshot()),deskInfo());
-      P.gone.clear(); P.fails=0; setStatus('disk');
-    } else if(P.db){
-      const col=P.db.collection(P.base);
-      for(const k of keys){ const d=docData(k); if(d==null) continue; await col.doc(k).set(d); P.keys.add(k); }
-      const del=[...P.gone]; P.gone.clear();
-      for(const k of del){ await col.doc(k).delete(); P.keys.delete(k); }
-      P.fails=0; setStatus('saved');
-    } else setStatus('local');
-  }catch(e){
-    keys.forEach(k=>P.dirty.add(k)); P.fails++; setStatus('error');
+  try{ await store.write(keys,gone); P.fails=0; setStatus(store.label); }
+  catch(e){
+    keys.forEach(k=>P.dirty.add(k)); gone.forEach(k=>P.gone.add(k)); P.fails++; setStatus('error');
     if(DESK&&P.fails===1) toast('Could not save to this computer: '+((e&&e.message)||'unknown error')+'. Retrying.',{plain:true});
     if(P.fails<=4) schedule(4000*P.fails);
   }finally{
@@ -1157,13 +1271,13 @@ async function connectDb(local){
     const dbs=await Promise.all([cl.use('db'),cl.use('user')]);
     const db=dbs[0], user=dbs[1]; if(!db||!user) return;
     const id=await user.id(); if(!id) return;
-    P.db=db; P.base='data/users/'+id;
+    P.db=db; P.base='data/users/'+id; store=STORES.claude;
     const snap=await db.collection(P.base).get();
     const docs={}; snap.docs.forEach(d=>{docs[d.id]=d.data(); P.keys.add(d.id);});
     if(docs.meta){
       const o={meta:docs.meta}; DOCS.forEach(p=>{ o[p]={}; });
       Object.keys(docs).forEach(k=>{ const pre=k.slice(0,2); if(k[2]==='_'&&DOCS.includes(pre)) o[pre][k.slice(3)]=docs[k]; });
-      const remote=normalize(o);
+      let remote; try{ remote=normalize(o); }catch(e){ if(e.code==='newer'){ lockNewer(e.v); return; } throw e; }
       if(ui.touched||(local&&S.meta.saved>remote.meta.saved)){ markAllDirty(); }
       else{
         S=remote; linker=buildLinker(); mirrorLocal();
@@ -1187,8 +1301,8 @@ function streak(){
 function curMood(){ const w=todayWords(), g=S.meta.goal; if(w>=g) return 'party'; if(w>=g*.5) return 'hype'; if(w>0) return 'happy'; return 'sleepy'; }
 function orderedScenes(){ const out=[]; S.meta.chapters.forEach(c=>c.scenes.forEach(id=>out.push({id,ch:c}))); return out; }
 function firstView(){ const s=orderedScenes()[0]; return s?{k:'scene',id:s.id}:{k:'cork'}; }
-function viewValid(v){ if(!v) return false; if(v.k==='scene') return !!S.meta.scenes[v.id]; if(v.k==='ent') return !!S.meta.ents[v.id]; if(v.k==='tl') return !!(S.tl[v.id]&&S.meta.tls.some(x=>x.id===v.id)); if(v.k==='nt') return !!(S.nt[v.id]&&S.meta.nts.some(x=>x.id===v.id)); if(v.k==='ol') return !!(S.ol[v.id]&&S.meta.ols.some(x=>x.id===v.id)); if(v.k==='rm'||v.k==='ft') return !!(S[v.k][v.id]&&S.meta[v.k+'s'].some(x=>x.id===v.id)); return v.k==='cork'||v.k==='ss'; }
-function viewName(v){ if(v.k==='scene') return S.meta.scenes[v.id].title; if(v.k==='ent') return S.meta.ents[v.id].name; if(v.k==='tl') return S.meta.tls.find(x=>x.id===v.id).name; if(v.k==='nt') return S.meta.nts.find(x=>x.id===v.id).name; if(v.k==='ol') return S.meta.ols.find(x=>x.id===v.id).name; if(v.k==='rm'||v.k==='ft') return S.meta[v.k+'s'].find(x=>x.id===v.id).name; if(v.k==='ss') return 'Writing sessions'; return 'Corkboard'; }
+function viewValid(v){ if(!v) return false; if(v.k==='scene') return !!S.meta.scenes[v.id]; if(v.k==='ent') return !!S.meta.ents[v.id]; if(v.k==='tl') return !!(S.tl[v.id]&&S.meta.tls.some(x=>x.id===v.id)); if(v.k==='nt') return !!(S.nt[v.id]&&S.meta.nts.some(x=>x.id===v.id)); if(v.k==='ol') return !!(S.ol[v.id]&&S.meta.ols.some(x=>x.id===v.id)); if(v.k==='rm'||v.k==='ft') return !!(S[v.k][v.id]&&S.meta[v.k+'s'].some(x=>x.id===v.id)); if(v.k==='snap') return !!S.meta.scenes[v.id]; return v.k==='cork'||v.k==='ss'||v.k==='prefs'||v.k==='find'; }
+function viewName(v){ if(v.k==='scene') return S.meta.scenes[v.id].title; if(v.k==='ent') return S.meta.ents[v.id].name; if(v.k==='tl') return S.meta.tls.find(x=>x.id===v.id).name; if(v.k==='nt') return S.meta.nts.find(x=>x.id===v.id).name; if(v.k==='ol') return S.meta.ols.find(x=>x.id===v.id).name; if(v.k==='rm'||v.k==='ft') return S.meta[v.k+'s'].find(x=>x.id===v.id).name; if(v.k==='ss') return 'Writing sessions'; if(v.k==='prefs') return 'Settings'; if(v.k==='find') return 'Find and replace'; if(v.k==='snap') return 'Snapshots: '+S.meta.scenes[v.id].title; return 'Corkboard'; }
 
 /* ---------- pet ---------- */
 function petSVG(m,stage){
@@ -1350,14 +1464,14 @@ function moveChapter(id,dir){
 }
 function delScene(id){
   const m=S.meta; m.chapters.forEach(c=>{c.scenes=c.scenes.filter(x=>x!==id);});
-  delete m.scenes[id]; delete S.sc[id]; P.gone.add('sc_'+id); P.dirty.delete('sc_'+id); dirty('meta');
+  delete m.scenes[id]; delete S.sc[id]; forget('sc_'+id); snDrop(id); dirty('meta');
   if(!viewValid(ui.view)) ui.view=firstView(); ui.hist=ui.hist.filter(viewValid);
   renderAll();
 }
 function delChapter(id){
   const m=S.meta, c=m.chapters.find(x=>x.id===id); if(!c) return;
-  c.scenes.forEach(s=>{delete m.scenes[s]; delete S.sc[s]; P.gone.add('sc_'+s); P.dirty.delete('sc_'+s);});
-  delete S.ch[id]; P.gone.add('ch_'+id); P.dirty.delete('ch_'+id);
+  c.scenes.forEach(s=>{delete m.scenes[s]; delete S.sc[s]; forget('sc_'+s); snDrop(s);});
+  delete S.ch[id]; forget('ch_'+id);
   m.chapters=m.chapters.filter(x=>x.id!==id); dirty('meta');
   if(!viewValid(ui.view)) ui.view=firstView(); ui.hist=ui.hist.filter(viewValid);
   renderAll();
@@ -1368,7 +1482,7 @@ function addEntity(type,name){
 }
 function delEntity(id){
   dropPic(id); unlinkEnt(id);
-  delete S.meta.ents[id]; delete S.en[id]; P.gone.add('en_'+id); P.dirty.delete('en_'+id); dirty('meta'); linker=buildLinker();
+  delete S.meta.ents[id]; delete S.en[id]; forget('en_'+id); dirty('meta'); linker=buildLinker();
   if(!viewValid(ui.view)) ui.view=firstView(); ui.hist=ui.hist.filter(viewValid);
   renderAll();
 }
@@ -1380,7 +1494,7 @@ function addDocItem(k,kind){
   ui.openSec[k]=true; ui.focusName=true; dirty('meta',k+'_'+id); go({k,id});
 }
 function delDocItem(k,id){
-  S.meta[k+'s']=S.meta[k+'s'].filter(x=>x.id!==id); delete S[k][id]; P.gone.add(k+'_'+id); P.dirty.delete(k+'_'+id); dirty('meta');
+  S.meta[k+'s']=S.meta[k+'s'].filter(x=>x.id!==id); delete S[k][id]; forget(k+'_'+id); dirty('meta');
   if(!viewValid(ui.view)) ui.view=firstView(); ui.hist=ui.hist.filter(viewValid);
   renderAll();
 }
@@ -1391,7 +1505,7 @@ function addTimeline(src){
   ui.openSec.tl=true; ui.confirm=null; dirty('meta','tl_'+id); go({k:'tl',id});
 }
 function delTimeline(id){
-  S.meta.tls=S.meta.tls.filter(x=>x.id!==id); delete S.tl[id]; P.gone.add('tl_'+id); P.dirty.delete('tl_'+id); dirty('meta');
+  S.meta.tls=S.meta.tls.filter(x=>x.id!==id); delete S.tl[id]; forget('tl_'+id); dirty('meta');
   if(!viewValid(ui.view)) ui.view=firstView(); ui.hist=ui.hist.filter(viewValid);
   renderAll();
 }
@@ -1539,7 +1653,7 @@ function renderMain(){
   if(!viewValid(v)){ ui.view=firstView(); return renderMain(); }
   const key=v.k+':'+(v.id||''), reset=key!==ui.lastKey; ui.lastKey=key;
   const keep=el.scrollTop;
-  if(v.k==='ent') renderEnt(el,v); else if(v.k==='cork') renderCork(el); else if(v.k==='tl') renderTl(el,v); else if(v.k==='nt') renderNt(el,v); else if(v.k==='ol') renderOl(el,v); else if(v.k==='rm'||v.k==='ft') renderCv(el,v); else if(v.k==='ss') renderSs(el); else renderScene(el,v);
+  if(v.k==='ent') renderEnt(el,v); else if(v.k==='cork') renderCork(el); else if(v.k==='tl') renderTl(el,v); else if(v.k==='nt') renderNt(el,v); else if(v.k==='ol') renderOl(el,v); else if(v.k==='rm'||v.k==='ft') renderCv(el,v); else if(v.k==='ss') renderSs(el); else if(v.k==='prefs') renderPrefs(el); else if(v.k==='snap') renderSnap(el,v); else if(v.k==='find') renderFind(el); else renderScene(el,v);
   el.scrollTop=reset?0:keep;
 }
 function renderScene(el,v){
@@ -1550,9 +1664,10 @@ function renderScene(el,v){
     +'<span class="mono muted" id="sceneWc">'+fmt(sc.words)+' words</span>'
     +'<div class="tools"><div class="mk-wrap"><button class="btn" id="mkBtn" title="Select a name in your text, then link it to a new page">'+ico('link')+'<span>Link selection</span></button><div class="pop" id="mkPop" hidden></div></div>'
     +'<button class="ibtn" id="fsDn" aria-label="Smaller text" style="width:auto;padding:0 8px;font-weight:600">A−</button><button class="ibtn" id="fsUp" aria-label="Larger text" style="width:auto;padding:0 8px;font-weight:600">A+</button>'
+    +'<button class="btn" id="snBtn" title="Saved versions of this scene">'+ico('time')+'<span>Snapshots</span></button>'
     +'<button class="btn" id="focusBtn" aria-pressed="'+(ui.focus?'true':'false')+'">'+ico('focus')+'<span>'+(ui.focus?'Exit focus':'Focus')+'</span></button></div></div>'
     +(m.sample?'<div class="banner"><span>This is a sample project, so you can try the links and the pet. '+(DESK?'Choose <b>File → New project</b> when you are ready for your own.':'Open the menu and choose <b>Start a blank project</b> when you are ready for your own.')+'</span><button class="btn sm" id="bnX">Dismiss</button></div>':'')
-    +'<div class="sheet"><div id="ed" class="editor" role="textbox" aria-multiline="true" aria-label="Scene text" spellcheck="true" data-ph="Start writing. Names you have pages for will link automatically."></div></div>'
+    +'<div class="sheet"><div id="ed" class="editor" role="textbox" aria-multiline="true" aria-label="Scene text" spellcheck="'+(LOOK.spell?'true':'false')+'" data-ph="Start writing. Names you have pages for will link automatically."></div></div>'
     +'<p class="hint">Highlighted names are linked. Click one to open its page, or move through it with the arrow keys to edit.</p>';
   const ed=$('#ed'); ed.innerHTML=renderText(d.text);
   ed.setAttribute('contenteditable','plaintext-only'); if(ed.contentEditable!=='plaintext-only') ed.setAttribute('contenteditable','true');
@@ -1571,6 +1686,7 @@ function renderScene(el,v){
   const tt=$('#sceneTitle'); tt.addEventListener('input',()=>{ sc.title=tt.value||'Untitled scene'; dirty('meta'); renderBinder(); });
   $('#sceneStatus').addEventListener('change',e=>{ sc.status=e.target.value; dirty('meta'); renderBinder(); });
   $('#focusBtn').addEventListener('click',()=>{ ui.focus=!ui.focus; syncTab(); renderMain(); });
+  $('#snBtn').addEventListener('click',()=>go({k:'snap',id:v.id}));
   const fs=n=>{ ui.fs=Math.max(14,Math.min(28,ui.fs+n)); ed.style.fontSize=ui.fs+'px'; try{localStorage.setItem('inkling:fs',ui.fs);}catch(e){} };
   $('#fsDn').addEventListener('click',()=>fs(-1)); $('#fsUp').addEventListener('click',()=>fs(1));
   const bn=$('#bnX'); if(bn) bn.addEventListener('click',()=>{ m.sample=false; dirty('meta'); renderMain(); });
@@ -1592,8 +1708,21 @@ function renderScene(el,v){
     toast('Linked '+name+' as a '+LS(b.dataset.t).toLowerCase()+'. Click it to open its page.',{plain:true});
   });
   updateSceneChips();
+  const fsel=ui.findSel; ui.findSel=null;
+  if(fsel&&fsel.id===v.id){ ed.focus(); selectRange(ed,fsel.s,fsel.e); }
+}
+function selectRange(el,s,e){
+  const w=document.createTreeWalker(el,NodeFilter.SHOW_TEXT), r=document.createRange(); let n,acc=0,ok=0;
+  while((n=w.nextNode())){ const l=n.nodeValue.length;
+    if(!ok&&acc+l>=s){ r.setStart(n,s-acc); ok=1; }
+    if(ok&&acc+l>=e){ r.setEnd(n,e-acc); ok=2; break; }
+    acc+=l; }
+  if(ok<2) return; const sel=getSelection(); sel.removeAllRanges(); sel.addRange(r);
+  const b=r.getBoundingClientRect(), sc=el.closest('.main')||document.scrollingElement;
+  if(b.top<80||b.bottom>innerHeight-80) (r.startContainer.parentElement||el).scrollIntoView({block:'center'});
 }
 function onType(id,ed){
+  snDaily(id);
   const text=getText(ed), sc=S.meta.scenes[id], d=S.sc[id];
   d.text=text; const w=wc(text), delta=w-sc.words; sc.words=w;
   if(T.cur&&T.running) T.cur.scenes.add(id);
@@ -2751,6 +2880,272 @@ function renderTl(el,v){
   drawLaneChips(); drawSide(); drawTl(); bindTl($('#tlv',el));
 }
 
+/* ---------- scene snapshots ---------- */
+// sn[id] = {scene, at, name, text, words, auto}. Saved by hand, automatically once a day when a scene is first
+// changed (auto 'daily'), and before restoring a snapshot ('restore') or replacing text ('replace').
+const SN_AUTO_MAX=30;
+const SN_AUTO={daily:'Start of the day',restore:'Before restoring a snapshot',replace:'Before find and replace'};
+ADD_DOCS.push((o,out)=>{
+  const i=o.sn&&typeof o.sn==='object'?o.sn:{}, r={};
+  Object.keys(i).forEach(id=>{ const x=i[id]; if(!x||!out.meta.scenes[x.scene]) return;
+    r[id]={scene:String(x.scene),at:+x.at||0,name:String(x.name||'').slice(0,80),text:String(x.text||''),words:wc(x.text),auto:SN_AUTO[x.auto]?x.auto:''}; });
+  out.sn=r;
+});
+const snList=sid=>Object.keys(S.sn).filter(k=>S.sn[k].scene===sid).map(k=>Object.assign({id:k},S.sn[k])).sort((a,b)=>b.at-a.at);
+const snLabel=x=>x.name||SN_AUTO[x.auto]||'Snapshot';
+const snWhen=t=>new Date(t).toLocaleString([],{weekday:'short',month:'short',day:'numeric',year:'numeric',hour:'numeric',minute:'2-digit'});
+function snTake(sid,name,auto){
+  const t=(S.sc[sid]||{}).text||''; if(!t.trim()) return null;
+  const last=snList(sid)[0]; if(auto&&last&&last.text===t) return null;
+  const id=uid('n_'); S.sn[id]={scene:sid,at:Date.now(),name:String(name||'').slice(0,80),text:t,words:wc(t),auto:auto||''}; dirty('sn_'+id);
+  if(auto) snList(sid).filter(x=>x.auto).slice(SN_AUTO_MAX).forEach(x=>{ delete S.sn[x.id]; forget('sn_'+x.id); });
+  return id;
+}
+function snDaily(sid){   // the scene as it was before today's first change
+  const day=todayKey(); ui.snDay=ui.snDay||{}; if(ui.snDay[sid]===day) return; ui.snDay[sid]=day;
+  if(snList(sid).some(x=>keyOf(new Date(x.at))===day)) return;
+  snTake(sid,'','daily');
+}
+function snDrop(sid){ Object.keys(S.sn).forEach(k=>{ if(S.sn[k].scene===sid){ delete S.sn[k]; forget('sn_'+k); } }); }
+function setSceneText(sid,text){   // changes made by Inkling, not typing: no pet credit
+  const sc=S.meta.scenes[sid]; S.sc[sid].text=text; sc.words=wc(text); dirty('sc_'+sid,'meta');
+}
+// Differences between two texts: paragraphs first, then words within paragraphs that changed.
+function lcs(a,b){
+  let p=0; while(p<a.length&&p<b.length&&a[p]===b[p]) p++;
+  let q=0; while(q<a.length-p&&q<b.length-p&&a[a.length-1-q]===b[b.length-1-q]) q++;
+  const A=a.slice(p,a.length-q), B=b.slice(p,b.length-q), n=A.length, m=B.length;
+  if(n*m>4e6) return null;
+  const dp=[]; for(let i=0;i<=n;i++) dp.push(new Uint32Array(m+1));
+  for(let i=n-1;i>=0;i--) for(let j=m-1;j>=0;j--) dp[i][j]=A[i]===B[j]?dp[i+1][j+1]+1:Math.max(dp[i+1][j],dp[i][j+1]);
+  const out=a.slice(0,p).map(x=>['=',x]); let i=0,j=0;
+  while(i<n&&j<m){ if(A[i]===B[j]){ out.push(['=',A[i]]); i++; j++; } else if(dp[i+1][j]>=dp[i][j+1]) out.push(['-',A[i++]]); else out.push(['+',B[j++]]); }
+  while(i<n) out.push(['-',A[i++]]); while(j<m) out.push(['+',B[j++]]);
+  return out.concat(a.slice(a.length-q).map(x=>['=',x]));
+}
+// Word changes inside one paragraph, with neighbouring changes of the same kind joined into one run.
+function wordOps(a,b){
+  const w=lcs(a.split(/(\s+)/),b.split(/(\s+)/)); if(!w) return null; const out=[];
+  w.forEach((o,i)=>{ const p=out[out.length-1];
+    if(o[0]==='='&&!o[1].trim()&&p&&p[0]!=='='){ const nx=w.slice(i+1).find(z=>z[0]!=='='||z[1].trim()); if(nx&&nx[0]===p[0]){ p[1]+=o[1]; return; } }
+    if(p&&p[0]===o[0]&&o[0]!=='=') p[1]+=o[1]; else out.push([o[0],o[1]]); });
+  return out;
+}
+function diffHtml(from,to){
+  const pa=t=>t.split('\n').map(x=>x.trim()).filter(Boolean), ops=lcs(pa(from),pa(to));
+  if(!ops) return {html:'<p class="fine">These versions are too long to compare. Switch to “Snapshot text” to read it.</p>',add:0,del:0};
+  let html='', add=0, del=0, same=[];
+  const flushSame=()=>{ if(same.length>3) html+='<p class="df-same">'+esc(trunc(same[0],160))+'</p><p class="df-gap">'+(same.length-2)+' unchanged paragraphs</p><p class="df-same">'+esc(trunc(same[same.length-1],160))+'</p>';
+    else html+=same.map(x=>'<p class="df-same">'+esc(x)+'</p>').join(''); same=[]; };
+  for(let k=0;k<ops.length;){
+    if(ops[k][0]==='='){ same.push(ops[k][1]); k++; continue; }
+    flushSame(); const dl=[], ad=[]; while(k<ops.length&&ops[k][0]!=='='){ (ops[k][0]==='-'?dl:ad).push(ops[k][1]); k++; }
+    for(let x=0;x<Math.max(dl.length,ad.length);x++){
+      if(x<dl.length&&x<ad.length){ const w=wordOps(dl[x],ad[x]);
+        if(w){ html+='<p class="df-ch">'+w.map(o=>{ if(o[0]==='=') return esc(o[1]); const n=wc(o[1]); if(o[0]==='+') add+=n; else del+=n; return o[1].trim()?'<'+(o[0]==='+'?'ins':'del')+'>'+esc(o[1])+'</'+(o[0]==='+'?'ins':'del')+'>':esc(o[1]); }).join('')+'</p>'; continue; } }
+      if(x<dl.length){ del+=wc(dl[x]); html+='<p class="df-ch"><del>'+esc(dl[x])+'</del></p>'; }
+      if(x<ad.length){ add+=wc(ad[x]); html+='<p class="df-ch"><ins>'+esc(ad[x])+'</ins></p>'; }
+    }
+  }
+  flushSame(); return {html,add,del};
+}
+function renderSnap(el,v){
+  const sid=v.id, sc=S.meta.scenes[sid], list=snList(sid), cur=S.sc[sid].text;
+  if(!list.some(x=>x.id===ui.snSel)) ui.snSel=list.length?list[0].id:null;
+  const sel=list.find(x=>x.id===ui.snSel), mode=ui.snMode==='text'?'text':'diff';
+  let main='<div class="sn-empty"><p>No snapshots of this scene yet.</p><p class="fine">Save one before a big rewrite. Inkling also keeps one automatically each day you change the scene, and before find and replace changes it.</p></div>';
+  if(sel){
+    const d=mode==='diff'?diffHtml(sel.text,cur):null, same=sel.text===cur;
+    main='<div class="sn-head"><div><h2>'+esc(snLabel(sel))+'</h2><p class="fine">'+esc(snWhen(sel.at))+' · '+fmt(sel.words)+' words'+(sel.name&&sel.auto?'':'')+'</p></div>'
+      +'<div class="ts-row" style="margin:0"><button class="btn pri" data-sn="restore"'+(same?' disabled':'')+'>Restore this version</button><button class="btn danger" data-sn="del">'+ico('trash',14)+'<span>Delete</span></button></div></div>'
+      +'<div class="seg" role="tablist"><button data-sn="diff"'+(mode==='diff'?' class="on"':'')+'>Changes since then</button><button data-sn="text"'+(mode==='text'?' class="on"':'')+'>Snapshot text</button></div>'
+      +(mode==='diff'?(same?'<p class="fine">The scene is the same as this snapshot.</p>':'<p class="fine sn-sum"><ins>+'+fmt(d.add)+' words</ins> added and <del>−'+fmt(d.del)+' words</del> removed since this snapshot.</p>')+'<div class="sn-text df">'+(same?'':d.html)+'</div>'
+        :'<div class="sn-text">'+sel.text.split('\n').filter(x=>x.trim()).map(x=>'<p>'+esc(x)+'</p>').join('')+'</div>');
+  }
+  el.innerHTML='<div class="main-head">'+backBtn()+'<span class="kind">'+ico('time',16)+'</span><h1 class="mh-title">Snapshots</h1>'+((ui.hist[ui.hist.length-1]||{}).id===sid?'':'<button class="btn" data-sn="open">'+ico('pen',14)+'<span>'+esc(trunc(sc.title,40))+'</span></button>')+'</div>'
+    +'<div class="sn-wrap"><aside class="sn-list"><form class="sn-new" id="snForm"><input id="snName" maxlength="80" placeholder="Name this version (optional)" aria-label="Snapshot name"><button class="btn pri" type="submit">'+ico('plus',14)+'<span>Save snapshot</span></button></form>'
+    +(list.length?'<ul>'+list.map(x=>'<li><button class="sn-it'+(x.id===ui.snSel?' on':'')+'" data-sel="'+x.id+'"><b>'+esc(snLabel(x))+'</b><span class="muted">'+esc(snWhen(x.at))+' · '+fmt(x.words)+' words</span></button></li>').join('')+'</ul>':'')
+    +'</aside><section class="sn-main">'+main+'</section></div>';
+  $('#snForm',el).addEventListener('submit',e=>{ e.preventDefault(); const n=$('#snName',el).value.trim();
+    const id=snTake(sid,n||'Saved by hand',''); if(!id){ toast('This scene is empty, so there is nothing to save.',{plain:true}); return; } ui.snSel=id; renderSnap(el,v); toast('Snapshot saved.',{plain:true}); });
+  el.onclick=async e=>{
+    const it=e.target.closest('[data-sel]'); if(it){ ui.snSel=it.dataset.sel; renderSnap(el,v); return; }
+    const b=e.target.closest('[data-sn]'); if(!b) return; const a=b.dataset.sn;
+    if(a==='open') go({k:'scene',id:sid});
+    else if(a==='diff'||a==='text'){ ui.snMode=a; renderSnap(el,v); }
+    else if(a==='restore'&&sel){ snTake(sid,'','restore'); setSceneText(sid,sel.text); renderBinder(); updateStats(); go({k:'scene',id:sid});
+      toast('Restored “'+snLabel(sel)+'”. The text you replaced is saved as a snapshot too.',{plain:true}); }
+    else if(a==='del'&&sel){ if(await ask('Delete this snapshot?','“'+esc(snLabel(sel))+'” from '+esc(snWhen(sel.at))+' will be gone for good. Your scene is not changed.',[['del','Delete','danger'],['cancel','Cancel']])!=='del') return;
+      delete S.sn[sel.id]; forget('sn_'+sel.id); ui.snSel=null; renderSnap(el,v); }
+  };
+}
+
+/* ---------- find and replace ---------- */
+function findRe(f){
+  if(!f.q) return null; const q=f.q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+  try{ return new RegExp(f.ww?'(?<![\\p{L}\\p{N}_])'+q+'(?![\\p{L}\\p{N}_])':q,'gu'+(f.mc?'':'i')); }catch(e){ return null; }
+}
+function findAll(f){
+  const re=findRe(f), out=[]; if(!re) return out;
+  S.meta.chapters.forEach(c=>{ if(f.scope!=='all'&&f.scope!==c.id) return;
+    c.scenes.forEach(id=>{ const t=S.sc[id].text, hits=[]; re.lastIndex=0; let m;
+      while((m=re.exec(t))){ if(!m[0].length){ re.lastIndex++; continue; } hits.push({s:m.index,e:m.index+m[0].length}); }
+      if(hits.length) out.push({id,ch:c,hits}); }); });
+  return out;
+}
+function renderFind(el){
+  const f=ui.find=ui.find||{q:'',r:'',mc:false,ww:false,scope:'all'};
+  if(f.scope!=='all'&&!S.meta.chapters.some(c=>c.id===f.scope)) f.scope='all';
+  el.innerHTML='<div class="main-head">'+backBtn()+'<span class="kind">'+ico('search',16)+'</span><h1 class="mh-title">Find and replace</h1></div>'
+    +'<div class="fd-wrap"><div class="fd-form"><div class="two" style="margin-top:0"><label class="f">Find<input id="fdQ" value="'+esc(f.q)+'" placeholder="A word or phrase" autocomplete="off"></label>'
+    +'<label class="f">Replace with<input id="fdR" value="'+esc(f.r)+'" placeholder="Leave empty to remove" autocomplete="off"></label></div>'
+    +'<div class="fd-opts"><label class="ck"><input type="checkbox" id="fdMc"'+(f.mc?' checked':'')+'>Match case</label><label class="ck"><input type="checkbox" id="fdWw"'+(f.ww?' checked':'')+'>Whole words only</label>'
+    +'<select id="fdScope" aria-label="Where to look"><option value="all">The whole book</option>'+S.meta.chapters.map(c=>'<option value="'+c.id+'"'+(f.scope===c.id?' selected':'')+'>'+esc(c.title)+'</option>').join('')+'</select></div></div>'
+    +'<div id="fdRes" aria-live="polite"></div></div>';
+  const draw=()=>{
+    const res=findAll(f), n=res.reduce((a,x)=>a+x.hits.length,0), box=$('#fdRes',el); let shown=0;
+    if(!f.q){ box.innerHTML='<p class="fine">Searches the text of every scene. Click a result to open it in the scene.</p>'; return; }
+    box.innerHTML='<div class="fd-bar"><b>'+(n?fmt(n)+' match'+(n===1?'':'es')+' in '+res.length+' scene'+(res.length===1?'':'s'):'No matches')+'</b>'
+      +(n?'<button class="btn" data-fd="all">Replace all</button>':'')+'</div>'
+      +res.map(x=>{ const t=S.sc[x.id].text;
+        return '<section class="fd-sc"><h3><button class="lnk" data-open="'+x.id+'">'+esc(x.ch.title)+' › '+esc(S.meta.scenes[x.id].title)+'</button><span class="muted">'+x.hits.length+'</span></h3>'
+          +x.hits.map((h,i)=>{ if(++shown>400) return ''; const a=Math.max(0,h.s-50), b=Math.min(t.length,h.e+70);
+            return '<div class="fd-hit"><button class="fd-go" data-id="'+x.id+'" data-i="'+i+'">'+(a?'…':'')+esc(t.slice(a,h.s)).replace(/\n/g,' ⏎ ')+'<mark>'+esc(t.slice(h.s,h.e))+'</mark>'+esc(t.slice(h.e,b)).replace(/\n/g,' ⏎ ')+(b<t.length?'…':'')+'</button>'
+              +'<button class="btn sm" data-fd="one" data-id="'+x.id+'" data-i="'+i+'">Replace</button></div>'; }).join('')+'</section>'; }).join('')
+      +(shown>400?'<p class="fine">Showing the first 400 matches.</p>':'');
+  };
+  const inp=(id,k,ev)=>$(id,el).addEventListener(ev||'input',e=>{ f[k]=e.target.type==='checkbox'?e.target.checked:e.target.value; draw(); });
+  inp('#fdQ','q'); inp('#fdR','r'); inp('#fdMc','mc','change'); inp('#fdWw','ww','change'); inp('#fdScope','scope','change');
+  const replaceIn=(id,hits)=>{   // hits from one scene, replaced from the end so offsets stay right
+    const old=S.sc[id].text; let t=old;
+    if(!S.sn||!snList(id).some(x=>x.auto==='replace'&&Date.now()-x.at<6e5)) snTake(id,'','replace');
+    hits.slice().sort((a,b)=>b.s-a.s).forEach(h=>{ t=t.slice(0,h.s)+f.r+t.slice(h.e); });
+    setSceneText(id,t);
+  };
+  el.onclick=async e=>{
+    const o=e.target.closest('[data-open]'); if(o){ go({k:'scene',id:o.dataset.open}); return; }
+    const g=e.target.closest('.fd-go'); if(g){ const x=findAll(f).find(r=>r.id===g.dataset.id), h=x&&x.hits[+g.dataset.i]; if(!h) return; ui.findSel={id:x.id,s:h.s,e:h.e}; go({k:'scene',id:x.id}); return; }
+    const b=e.target.closest('[data-fd]'); if(!b) return;
+    if(b.dataset.fd==='one'){ const x=findAll(f).find(r=>r.id===b.dataset.id), h=x&&x.hits[+b.dataset.i]; if(!h) return; replaceIn(x.id,[h]); }
+    else { const res=findAll(f), n=res.reduce((a,x)=>a+x.hits.length,0);
+      if(await ask('Replace '+fmt(n)+' match'+(n===1?'':'es')+'?','“'+esc(f.q)+'” becomes “'+esc(f.r)+'”'+(f.r?'':' (removed)')+' in '+res.length+' scene'+(res.length===1?'':'s')+'. Each scene is saved as a snapshot first, so you can undo this from its Snapshots.',[['go','Replace all','pri'],['cancel','Cancel']])!=='go') return;
+      res.forEach(x=>replaceIn(x.id,x.hits)); toast('Replaced '+fmt(n)+' match'+(n===1?'':'es')+'.',{plain:true}); }
+    renderBinder(); updateStats(); draw();
+  };
+  draw(); const q=$('#fdQ',el); q.focus(); q.select();
+}
+document.addEventListener('keydown',e=>{ if(!DESK&&(e.ctrlKey||e.metaKey)&&e.shiftKey&&!e.altKey&&e.key.toLowerCase()==='f'){ e.preventDefault(); openFind(); } });
+function openFind(){ const s=getSelection(), t=s&&$('#ed')&&$('#ed').contains(s.anchorNode)?s.toString().trim():''; if(t&&t.length<80&&!t.includes('\n')){ ui.find=ui.find||{q:'',r:'',mc:false,ww:false,scope:'all'}; ui.find.q=t; } go({k:'find'}); }
+
+/* ---------- first-run tour ---------- */
+// A few coach marks, shown once per device (localStorage 'inkling:tour'); Show the tour replays them.
+const TOUR=[
+  [null,'Welcome to Inkling','A place to write your novel and keep track of everything in it. This takes a few seconds; you can replay it from the menu any time.'],
+  ['#binder','Your book','Chapters and scenes live here, with pages for your characters, places and things, plus timelines, outlines and notes. Choose which sections you use at the bottom of this list.'],
+  ['#main','Write','Open a scene and write. Names that have a page link themselves, so you can jump to a character’s notes mid-sentence.'],
+  ['#insp','Your writing pet','It grows with every new word you write. The focus timer is here too, and it records each writing session.'],
+  ['#goalChip','Daily goal','Your words today against your daily goal. You can change the goal in the panel under your pet.'],
+  ['#menuBtn','Everything else','Export to Word, PDF or EPUB, find and replace, settings, writing history and backups.']
+];
+function startTour(force){
+  try{ if(!force&&localStorage.getItem('inkling:tour')) return; localStorage.setItem('inkling:tour','1'); }catch(e){ if(!force) return; }
+  let i=0; endTour();
+  const ring=document.createElement('div'); ring.className='tour-ring'; ring.id='tourRing';
+  const bub=document.createElement('div'); bub.className='tour'; bub.id='tour'; bub.setAttribute('role','dialog'); bub.setAttribute('aria-live','polite');
+  document.body.append(ring,bub);
+  const show=()=>{
+    const st=TOUR[i], t=st[0]&&$(st[0]), r=t&&t.getBoundingClientRect(), vis=r&&r.width>20&&r.height>20&&r.bottom>0&&r.top<innerHeight;
+    bub.innerHTML='<b>'+esc(st[1])+'</b><p>'+esc(st[2])+'</p><div class="tour-f"><span class="muted">'+(i+1)+' of '+TOUR.length+'</span>'
+      +(i<TOUR.length-1?'<button class="btn sm" data-t="end">Skip</button><button class="btn sm pri" data-t="next">Next</button>':'<button class="btn sm pri" data-t="end">Start writing</button>')+'</div>';
+    ring.hidden=!vis;
+    if(vis){ const pad=4, x=Math.max(2,r.left-pad), y=Math.max(2,r.top-pad), w=Math.min(innerWidth-4,r.right+pad)-x, h=Math.min(innerHeight-4,r.bottom+pad)-y;
+      Object.assign(ring.style,{left:x+'px',top:y+'px',width:w+'px',height:h+'px'});
+      const bw=Math.min(320,innerWidth-32), bh=bub.offsetHeight;
+      let bx, by;
+      if(r.right+16+bw<innerWidth) { bx=r.right+12; by=r.top+12; }          // right of the target
+      else if(r.left-16-bw>0) { bx=r.left-12-bw; by=r.top+12; }             // left of it
+      else { bx=r.left+r.width/2-bw/2; by=r.bottom+12; if(by+bh>innerHeight-16) by=r.top+16; }  // below, or inside near the top
+      Object.assign(bub.style,{left:Math.max(16,Math.min(innerWidth-bw-16,bx))+'px',top:Math.max(16,Math.min(innerHeight-bh-16,by))+'px'});
+    } else Object.assign(bub.style,{left:Math.max(16,(innerWidth-bub.offsetWidth)/2)+'px',top:Math.max(16,(innerHeight-bub.offsetHeight)/2)+'px'});
+    const f=$('[data-t="next"],[data-t="end"].pri',bub); if(f) f.focus({preventScroll:true});
+  };
+  bub.addEventListener('click',e=>{ const b=e.target.closest('[data-t]'); if(!b) return; if(b.dataset.t==='next'){ i++; show(); } else endTour(); });
+  bub.addEventListener('keydown',e=>{ if(e.key==='Escape') endTour(); });
+  ui.tourResize=()=>show(); addEventListener('resize',ui.tourResize);
+  show();
+}
+function endTour(){ ['#tour','#tourRing'].forEach(q=>{ const x=$(q); if(x) x.remove(); }); if(ui.tourResize){ removeEventListener('resize',ui.tourResize); ui.tourResize=null; } }
+
+/* ---------- settings ---------- */
+// Appearance is per device (localStorage), not per project: theme, writing font, line spacing, page width, spellcheck.
+const LOOK_DEF={theme:'system',font:'literata',lh:1.8,width:'standard',spell:true};
+const FONTS=[['literata','Literata (book serif)',"'Literata',Georgia,serif"],['georgia','Georgia',"Georgia,'Times New Roman',serif"],['times','Times New Roman',"'Times New Roman',Times,serif"],
+  ['sans','Instrument Sans',"'Instrument Sans',system-ui,sans-serif"],['mono','Typewriter (IBM Plex Mono)',"'IBM Plex Mono',ui-monospace,monospace"],['system','This computer’s font',"system-ui,-apple-system,'Segoe UI',sans-serif"]];
+const WIDTHS={narrow:['Narrow',640],standard:['Standard',780],wide:['Wide',980]};
+let LOOK=Object.assign({},LOOK_DEF);
+try{ LOOK=Object.assign(LOOK,JSON.parse(localStorage.getItem('inkling:look')||'{}')); }catch(e){}
+function applyLook(){
+  const r=document.documentElement, f=FONTS.find(x=>x[0]===LOOK.font)||FONTS[0];
+  if(LOOK.theme==='light'||LOOK.theme==='dark') r.dataset.theme=LOOK.theme; else delete r.dataset.theme;
+  r.style.setProperty('--ed-font',f[2]); r.style.setProperty('--ed-lh',String(LOOK.lh)); r.style.setProperty('--ed-w',(WIDTHS[LOOK.width]||WIDTHS.standard)[1]+'px');
+  const ed=$('#ed'); if(ed) ed.spellcheck=!!LOOK.spell;
+}
+function saveLook(){ try{ localStorage.setItem('inkling:look',JSON.stringify(LOOK)); }catch(e){} applyLook(); }
+applyLook();
+async function renderPrefs(el){
+  const pf=DESK?await DESK.prefs().catch(()=>null):null;
+  const seg=(k,opts)=>'<div class="seg">'+opts.map(o=>'<button data-look="'+k+'" data-v="'+o[0]+'"'+(String(LOOK[k])===String(o[0])?' class="on"':'')+'>'+o[1]+'</button>').join('')+'</div>';
+  el.innerHTML='<div class="main-head">'+backBtn()+'<span class="kind">'+ico('sliders',16)+'</span><h1 class="mh-title">Settings</h1></div><div class="pf-wrap">'
+    +'<section class="pf"><h2>Appearance</h2><p class="fine">These apply to this '+(DESK?'computer':'browser')+', for every project.</p>'
+    +'<span class="sec-l">Theme</span>'+seg('theme',[['system','Match my computer'],['light','Light'],['dark','Dark']])
+    +'<label class="f">Writing font<select data-look="font">'+FONTS.map(f=>'<option value="'+f[0]+'"'+(LOOK.font===f[0]?' selected':'')+'>'+esc(f[1])+'</option>').join('')+'</select></label>'
+    +'<span class="sec-l">Text size</span><div class="pf-row"><button class="btn sm" data-fs="-1">A−</button><b class="mono" id="pfFs">'+ui.fs+' px</b><button class="btn sm" data-fs="1">A+</button></div>'
+    +'<span class="sec-l">Line spacing</span>'+seg('lh',[[1.5,'Tight'],[1.8,'Comfortable'],[2,'Double'],[2.3,'Airy']])
+    +'<span class="sec-l">Page width</span>'+seg('width',Object.keys(WIDTHS).map(k=>[k,WIDTHS[k][0]]))
+    +'<p class="pf-sample" id="pfSample">Ilsa Verrin stepped off the ferry with one bag, one coat, and no plan she was willing to say aloud.</p></section>'
+    +'<section class="pf"><h2>Writing</h2><label class="ck"><input type="checkbox" data-look="spell"'+(LOOK.spell?' checked':'')+'>Check spelling as I type</label>'
+    +(pf&&pf.spellLangs&&pf.spellLangs.length?'<label class="f">Spelling language<select data-pf="spell">'+pf.spellLangs.map(l=>'<option value="'+esc(l)+'"'+(pf.spell===l?' selected':'')+'>'+esc(l)+'</option>').join('')+'</select></label>':'')
+    +(pf&&pf.platform==='darwin'?'<p class="fine">On a Mac, spelling uses your system language settings.</p>':'')+'</section>'
+    +(pf?'<section class="pf"><h2>Projects folder</h2><p><code>'+esc(pf.dir)+'</code></p>'
+      +'<p class="fine">To back your projects up online and use them on more than one computer, put this folder inside Dropbox, iCloud Drive, Google Drive or OneDrive. Close Inkling on one computer before writing on another: Inkling warns you if a project is open somewhere else or was changed by another computer.</p>'
+      +'<div class="ts-row"><button class="btn" data-pf="dir">'+ico('folder',14)+'<span>Change folder…</span></button>'+(pf.dir!==pf.defaultDir?'<button class="btn" data-pf="dirdef">Use the standard folder</button>':'')+'<button class="btn" data-pf="reveal">Open folder</button></div></section>'
+      +'<section class="pf"><h2>Updates</h2><p>You have Inkling <b>'+esc(pf.version)+'</b>.</p><label class="ck"><input type="checkbox" data-pf="auto"'+(pf.autoUpdate?' checked':'')+'>Check for updates automatically</label>'
+      +'<p class="fine">'+(pf.platform==='darwin'?'When a new version is out, Inkling tells you and opens the download page.':'New versions download in the background, and Inkling asks before restarting to install them.')+'</p>'
+      +'<div class="ts-row"><button class="btn" data-pf="check">Check now</button><button class="btn" data-pf="notes">What’s new</button></div></section>':'')
+    +'<section class="pf"><h2>About and privacy</h2><p>Inkling '+esc(pf?pf.version:APP_VERSION)+' · project format '+FORMAT+'</p>'
+    +'<p class="fine">'+(DESK?'Your writing stays in your projects folder. Inkling has no accounts, ads or tracking. It connects to the internet only to check for updates, and only if that is switched on above.'
+      :window.claude&&window.claude.use?'In Claude, your project saves to your Claude account, private to you. Inkling has no ads or tracking.':'Your project saves in this browser only. Inkling has no accounts, ads or tracking. Back it up from the menu now and then.')+'</p>'
+    +'<div class="ts-row"><button class="btn" data-pf="tour">Show the tour</button></div></section></div>';
+  const sample=()=>{ const x=$('#pfSample',el); if(x){ x.style.fontSize=ui.fs+'px'; } };
+  sample();
+  el.onclick=async e=>{
+    const b=e.target.closest('[data-look],[data-fs],[data-pf]'); if(!b||b.tagName==='SELECT'||b.type==='checkbox') return;
+    if(b.dataset.look){ const k=b.dataset.look; LOOK[k]=k==='lh'?+b.dataset.v:b.dataset.v; saveLook(); renderPrefs(el); return; }
+    if(b.dataset.fs){ ui.fs=Math.max(14,Math.min(28,ui.fs+ +b.dataset.fs)); try{ localStorage.setItem('inkling:fs',ui.fs); }catch(x){} $('#pfFs',el).textContent=ui.fs+' px'; sample(); return; }
+    const a=b.dataset.pf;
+    if(a==='check') checkUpdatesNow(); else if(a==='notes') DESK.openReleases(pf.version); else if(a==='reveal') DESK.reveal(); else if(a==='tour') startTour(true);
+    else if(a==='dir'||a==='dirdef') changeFolder(a==='dirdef');
+  };
+  el.onchange=async e=>{
+    const x=e.target;
+    if(x.dataset.look){ LOOK[x.dataset.look]=x.type==='checkbox'?x.checked:x.value; saveLook(); return; }
+    if(x.dataset.pf==='auto') await DESK.setPrefs({autoUpdate:x.checked});
+    if(x.dataset.pf==='spell') await DESK.setPrefs({spell:x.value});
+  };
+}
+async function changeFolder(toDefault){
+  const pf=await DESK.prefs(), dir=toDefault?pf.defaultDir:await DESK.chooseDir(); if(!dir||dir===pf.dir) return;
+  const n=(await DESK.list()).length;
+  const c=await ask('Use this projects folder?','<code>'+esc(dir)+'</code><br><br>'+(n?'You have '+n+' project'+(n===1?'':'s')+' in the current folder. Moving copies each one, checks it, then puts the old copy in the trash.':'The current folder has no projects.')
+    +' Choose “Use it as it is” when the new folder already holds your projects from another computer.',(n?[['move','Move my projects there','pri']]:[]).concat([['use','Use it as it is'],['cancel','Cancel']]));
+  if(c!=='move'&&c!=='use') return;
+  pmHalt(); await deskFlush(); const cur=PJ.id;
+  const r=await DESK.useDir(toDefault?null:dir,c==='move'), list=await DESK.list();
+  if(list.some(x=>x.id===cur)) await deskOpen(cur,true); else if(list.length) await deskOpen(list[0].id); else await deskNew('blank');
+  go({k:'prefs'},{push:false});
+  toast(c==='move'?'Moved '+r.moved+' project'+(r.moved===1?'':'s')+'.'+(r.skipped.length?' '+r.skipped.length+' already existed there and stayed in the old folder.':'')+(r.failed.length?' '+r.failed.length+' could not be moved and stayed where they were.':''):'Now using the new folder.',{plain:true});
+}
+
 /* ---------- focus timer (pomodoro) and writing sessions ---------- */
 // Timer state lives only in this page (T); each finished or stopped focus session is saved to S.ss with the
 // new words credited while it ran (same rules as the daily goal) and the scenes typed in.
@@ -2858,6 +3253,7 @@ function renderSs(el){
   el.innerHTML='<div class="main-head">'+backBtn()+'<span class="kind">'+ico('timer',16)+'</span><h1 class="mh-title">Writing sessions</h1>'
     +(list.length?'<button class="btn danger" data-ss="all">'+ico('trash')+'<span>'+(cf==='ssall'?'Click again to delete every session':'Delete all')+'</span></button>':'')+'</div>'
     +'<div class="ss-wrap"><p class="muted ss-sub">Focus timer sessions for <b>'+esc(S.meta.title)+'</b>. New words are counted the same way as your daily goal: pasted blocks over 600 words are left out.</p>'
+    +'<section class="wc-box" id="wcBox"></section>'
     +(list.length?'<div class="ss-tiles">'+tile(list.length,'sessions')+tile(dur(tot.mins),'focused')+tile(fmt(tot.words),'new words')+tile(fmt(tot.words/list.length),'words per session')
       +tile(tot.mins?(Math.round(tot.words/tot.mins*10)/10):0,'words per minute')+tile(best?fmt(best.words):0,'best session')+'</div>'
       +days.map(d=>{ const w=d.items.reduce((a,x)=>a+x.words,0), m=d.items.reduce((a,x)=>a+x.mins,0);
@@ -2871,13 +3267,67 @@ function renderSs(el){
             +'<span class="ss-sc">'+x.scenes.filter(id=>S.meta.scenes[id]).map(id=>'<button class="tc-sc" data-ss="open" data-id="'+id+'">'+ico('pen',12)+'<span>'+esc(S.meta.scenes[id].title)+'</span></button>').join('')+'</span>'
             +'<button class="ibtn'+(cf==='ss'+x.id?' on':'')+'" data-ss="del" data-id="'+x.id+'" aria-label="Delete this session">'+(cf==='ss'+x.id?'Delete?':ico('trash',14))+'</button></div>').join('')+'</section>'; }).join('')
       :'<div class="ss-empty"><b>No sessions yet</b><p class="muted">Start the focus timer next to '+esc(S.meta.pet.name)+' and write. Each focus session is saved here with its word count.</p><button class="btn pri" data-ss="timer">'+ico('play',14)+'<span>Start a focus session</span></button></div>')+'</div>';
-  const gone=ids=>{ ids.forEach(id=>{ delete S.ss[id]; P.gone.add('ss_'+id); P.dirty.delete('ss_'+id); }); dirty(); renderSs(el); renderInspector(); };
+  drawWcBox($('#wcBox',el));
+  const gone=ids=>{ ids.forEach(id=>{ delete S.ss[id]; forget('ss_'+id); }); dirty('meta'); renderSs(el); renderInspector(); };
   el.onclick=ev=>{ const b=ev.target.closest('[data-ss]'); if(!b) return; const a=b.dataset.ss, id=b.dataset.id, rr=()=>renderSs(el);
     if(a==='open') go({k:'scene',id});
     else if(a==='timer'){ pmStart(); ui.tab='pet'; syncTab(); }
     else if(a==='del') confirmDo('ss'+id,()=>gone([id]),rr);
     else if(a==='day') confirmDo('ssd'+id,()=>gone(Object.keys(S.ss).filter(k=>keyOf(new Date(S.ss[k].start))===id)),rr);
     else if(a==='all') confirmDo('ssall',()=>{ gone(Object.keys(S.ss)); toast('All sessions for this project deleted.',{plain:true}); },rr); };
+}
+
+/* ---------- word-count history ---------- */
+// New words per day (meta.days) as one series of bars, with the daily goal as a reference line.
+function wcSeries(range){
+  const out=[], now=new Date(), days=S.meta.days; now.setHours(12,0,0,0);
+  if(range==='year'){
+    const mon=new Date(now); mon.setDate(mon.getDate()-((mon.getDay()+6)%7));
+    for(let w=51;w>=0;w--){ const st=new Date(mon); st.setDate(mon.getDate()-w*7); let v=0;
+      for(let i=0;i<7;i++){ const x=new Date(st); x.setDate(st.getDate()+i); v+=days[keyOf(x)]||0; } out.push({d:st,v}); }
+  } else { const n=range==='90'?90:30; for(let i=n-1;i>=0;i--){ const x=new Date(now); x.setDate(now.getDate()-i); out.push({d:x,v:days[keyOf(x)]||0}); } }
+  return out;
+}
+function niceMax(v){ if(v<=0) return 100; const e=Math.pow(10,Math.floor(Math.log10(v))), f=v/e; return (f<=1?1:f<=2?2:f<=2.5?2.5:f<=5?5:10)*e; }
+function drawWcBox(box){
+  if(!box) return; const range=['30','90','year'].includes(ui.wcRange)?ui.wcRange:'30', wk=range==='year', goal=S.meta.goal, data=wcSeries(range);
+  const tot=data.reduce((a,x)=>a+x.v,0), act=data.filter(x=>x.v>0), best=data.reduce((b,x)=>x.v>b.v?x:b,{v:0});
+  let streak=0; { const d=new Date(); if(!S.meta.days[keyOf(d)]) d.setDate(d.getDate()-1); while(S.meta.days[keyOf(d)]>0){ streak++; d.setDate(d.getDate()-1); } }
+  const fd=(d,o)=>d.toLocaleDateString(undefined,o||{month:'short',day:'numeric'}), tile=(v,l)=>'<div class="ss-tile"><b class="mono">'+v+'</b><span>'+l+'</span></div>';
+  box.innerHTML='<div class="wc-head"><h2>New words '+(wk?'per week':'per day')+'</h2><div class="seg">'+[['30','30 days'],['90','90 days'],['year','12 months']].map(r=>'<button data-wr="'+r[0]+'"'+(range===r[0]?' class="on"':'')+'>'+r[1]+'</button>').join('')+'</div>'
+    +'<button class="btn sm" data-wr="table" aria-pressed="'+(!!ui.wcTable)+'">'+(ui.wcTable?'Show chart':'Show table')+'</button></div>'
+    +'<div class="ss-tiles">'+tile(fmt(tot),'new words')+tile(fmt(act.length?tot/act.length:0),wk?'per writing week':'per writing day')
+    +tile(best.v?fmt(best.v):'–','best '+(wk?'week':'day')+(best.v?' · '+fd(best.d):''))+tile(streak,'day streak')+(wk?'':tile(data.filter(x=>x.v>=goal).length,'days at goal'))+'</div>'
+    +(ui.wcTable?'<div class="wc-table"><table><thead><tr><th>'+(wk?'Week of':'Day')+'</th><th>New words</th></tr></thead><tbody>'
+        +(act.length?act.slice().reverse().map(x=>'<tr><td>'+fd(x.d,{weekday:wk?undefined:'short',month:'short',day:'numeric',year:'numeric'})+'</td><td class="mono">'+fmt(x.v)+'</td></tr>').join(''):'<tr><td colspan="2" class="muted">No words written in this time yet.</td></tr>')+'</tbody></table></div>'
+      :'<div class="wc-plot"><svg id="wcSvg" role="img" aria-label="'+esc('Bar chart of new words '+(wk?'per week':'per day')+': '+fmt(tot)+' in total, best '+fmt(best.v))+'"></svg><div class="wc-tip" id="wcTip" hidden></div></div>');
+  box.onclick=e=>{ const b=e.target.closest('[data-wr]'); if(!b) return; if(b.dataset.wr==='table') ui.wcTable=!ui.wcTable; else ui.wcRange=b.dataset.wr; drawWcBox(box); };
+  const svg=$('#wcSvg',box); if(!svg) return;
+  const plot=()=>{
+    const W=Math.max(260,svg.parentNode.clientWidth), H=210, L=46, R=wk?10:58, T=12, B=26, pw=W-L-R, ph=H-T-B, n=data.length;
+    const max=niceMax(Math.max(...data.map(x=>x.v),wk?0:goal)*1.05), y=v=>T+ph-v/max*ph, slot=pw/n, bw=Math.max(1.5,slot-2), r=Math.min(4,bw/2);
+    let h='';
+    for(let i=0;i<=4;i++){ const v=max*i/4, yy=Math.round(y(v))+.5; h+='<line class="wc-grid" x1="'+L+'" x2="'+(W-R)+'" y1="'+yy+'" y2="'+yy+'"/><text class="wc-ax" x="'+(L-8)+'" y="'+(yy+4)+'" text-anchor="end">'+(v>=1000?(Math.round(v/100)/10)+'k':Math.round(v))+'</text>'; }
+    data.forEach((x,i)=>{ if(!x.v) return; const x0=L+i*slot+(slot-bw)/2, y0=y(x.v), b=T+ph, rr=Math.min(r,b-y0);
+      h+='<path class="wc-bar" data-i="'+i+'" d="M'+x0+' '+b+'V'+(y0+rr)+'Q'+x0+' '+y0+' '+(x0+rr)+' '+y0+'H'+(x0+bw-rr)+'Q'+(x0+bw)+' '+y0+' '+(x0+bw)+' '+(y0+rr)+'V'+b+'Z"/>'; });
+    if(!wk&&goal){ const gy=Math.round(y(goal))+.5; h+='<line class="wc-goal" x1="'+L+'" x2="'+(W-R)+'" y1="'+gy+'" y2="'+gy+'"/><text class="wc-ax" x="'+(W-R+6)+'" y="'+(gy+4)+'">goal '+fmt(goal)+'</text>'; }
+    const every=Math.max(1,Math.ceil(70/slot)); let last=-1;
+    data.forEach((x,i)=>{ const isEnd=i===n-1; if(i%every&&!isEnd) return; if(isEnd&&last>=0&&(i-last)*slot<70) return; last=i;
+      h+='<text class="wc-ax" x="'+(L+i*slot+slot/2)+'" y="'+(H-8)+'" text-anchor="middle">'+esc(isEnd&&!wk?'Today':fd(x.d))+'</text>'; });
+    h+='<line class="wc-base" x1="'+L+'" x2="'+(W-R)+'" y1="'+(T+ph+.5)+'" y2="'+(T+ph+.5)+'"/><rect class="wc-hit" x="'+L+'" y="'+T+'" width="'+pw+'" height="'+ph+'"/>';
+    svg.setAttribute('viewBox','0 0 '+W+' '+H); svg.setAttribute('width',W); svg.setAttribute('height',H); svg.innerHTML=h;
+    const tip=$('#wcTip',box), hit=$('.wc-hit',svg);
+    const show=e=>{ const bx=svg.getBoundingClientRect(), i=Math.max(0,Math.min(n-1,Math.floor((e.clientX-bx.left-L)/slot))), x=data[i];
+      svg.querySelectorAll('.wc-bar.on').forEach(b=>b.classList.remove('on')); const bar=svg.querySelector('.wc-bar[data-i="'+i+'"]'); if(bar) bar.classList.add('on');
+      let cross=svg.querySelector('.wc-cross'); if(!cross){ cross=document.createElementNS('http://www.w3.org/2000/svg','line'); cross.setAttribute('class','wc-cross'); svg.insertBefore(cross,svg.firstChild); }
+      const cx=L+i*slot+slot/2; cross.setAttribute('x1',cx); cross.setAttribute('x2',cx); cross.setAttribute('y1',T); cross.setAttribute('y2',T+ph);
+      tip.innerHTML='<span>'+esc(wk?'Week of '+fd(x.d):fd(x.d,{weekday:'short',month:'short',day:'numeric'}))+'</span><b class="mono">'+fmt(x.v)+'</b> new words'+(!wk&&x.v>=goal&&x.v?' · goal met':'');
+      tip.hidden=false; const tw=tip.offsetWidth; tip.style.left=Math.max(0,Math.min(W-tw,cx-tw/2))+'px'; tip.style.top=Math.max(0,(bar?y(x.v):T+ph)-44)+'px'; };
+    const hide=()=>{ tip.hidden=true; svg.querySelectorAll('.wc-bar.on').forEach(b=>b.classList.remove('on')); const c=svg.querySelector('.wc-cross'); if(c) c.remove(); };
+    hit.addEventListener('pointermove',show); hit.addEventListener('pointerdown',show); hit.addEventListener('pointerleave',hide);
+  };
+  plot();
+  if(window.ResizeObserver){ let w=svg.parentNode.clientWidth; const ro=new ResizeObserver(()=>{ if(!svg.isConnected){ ro.disconnect(); return; } const nw=svg.parentNode.clientWidth; if(Math.abs(nw-w)>4){ w=nw; plot(); } }); ro.observe(svg.parentNode); }
 }
 
 /* ---------- inspector ---------- */
@@ -2920,19 +3370,204 @@ async function saveFile(name,data){
   const u=URL.createObjectURL(new Blob([data],{type:'application/octet-stream'})), a=document.createElement('a');
   a.href=u; a.download=name; document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(u),5000);
 }
-async function doBackup(){ const imgs=await collectImages(); saveFile(slug(S.meta.title)+'-backup.json',JSON.stringify(Object.assign({app:'inkling',v:1},snapshot(),{imgs}),null,1)); }
-const doExport=()=>saveFile(slug(S.meta.title)+'.md',manuscriptMd());
-function manuscriptMd(){
-  const m=S.meta; let out='# '+m.title+'\n\n'+(m.author?'by '+m.author+'\n\n':'');
-  m.chapters.forEach(c=>{ out+='## '+c.title+'\n\n'+c.scenes.map(id=>(S.sc[id].text||'').trim()).filter(Boolean).join('\n\n* * *\n\n')+'\n\n'; });
+async function doBackup(){ const imgs=await collectImages(); saveFile(slug(S.meta.title)+'-backup.json',JSON.stringify(Object.assign({app:'inkling',appVersion:APP_VERSION},snapshot(),{imgs}),null,1)); }
+/* ---------- export: Word, PDF, EPUB, Markdown, plain text ---------- */
+// Word and PDF follow standard manuscript format: 12 pt Times or Courier, double spaced, 1" margins, indented paragraphs,
+// a "Surname / TITLE / page" header, and a title page with contact details and a rounded word count.
+// In the text, each line is a paragraph and *words* or _words_ are italic.
+const EXP_FMTS={docx:['Word','.docx'],pdf:['PDF','.pdf'],epub:['EPUB ebook','.epub'],md:['Markdown','.md'],txt:['Plain text','.txt']};
+function normExp(x){
+  x=x&&typeof x==='object'?x:{};
+  return {fmt:EXP_FMTS[x.fmt]?x.fmt:'docx', byline:String(x.byline||'').slice(0,120), contact:String(x.contact||'').slice(0,600),
+    font:x.font==='courier'?'courier':'times', page:x.page==='a4'?'a4':'letter', title:x.title!==false, chNew:x.chNew!==false,
+    brk:String(x.brk==null?'#':x.brk).slice(0,12), uid:/^[\w-]{8,64}$/.test(x.uid||'')?x.uid:''};
+}
+function expBook(scope){
+  return S.meta.chapters.filter(c=>scope==='all'||c.id===scope).map(c=>({title:c.title,
+    scenes:c.scenes.map(id=>String(S.sc[id].text||'').split('\n').map(l=>l.trim()).filter(Boolean)).filter(x=>x.length)}));
+}
+function runs(p){
+  const out=[], re=/\*([^*\n]+)\*|(?<!\w)_([^_\n]+)_(?!\w)/g; let i=0, m;
+  while((m=re.exec(p))){ if(m.index>i) out.push([p.slice(i,m.index),0]); out.push([m[1]||m[2],1]); i=re.lastIndex; }
+  if(i<p.length) out.push([p.slice(i),0]); return out;
+}
+const xe=s=>String(s).replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F]/g,'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const roundWords=n=>n<1000?Math.max(100,Math.round(n/100)*100):n<10000?Math.round(n/500)*500:Math.round(n/1000)*1000;
+function expInfo(scope){
+  const m=S.meta, o=m.exp, book=expBook(scope), words=book.reduce((a,c)=>a+c.scenes.reduce((b,x)=>b+x.reduce((d,l)=>d+wc(l),0),0),0);
+  const author=String(m.author||'').trim(), byline=o.byline.trim()||author;
+  return {m,o,book,words,author,byline,title:m.title,surname:(byline.split(/\s+/).pop()||''),
+    contact:o.contact.split('\n').map(l=>l.trim()).filter(Boolean),
+    head:((byline.split(/\s+/).pop()||'')+' / '+m.title.toUpperCase().split(/\s+/).slice(0,4).join(' ')).replace(/^ \/ /,''),
+    font:o.font==='courier'?'Courier New':'Times New Roman', full:scope==='all'};
+}
+// A minimal zip writer (stored, no compression), enough for .docx and .epub.
+const CRC=(()=>{ const t=new Uint32Array(256); for(let n=0;n<256;n++){ let c=n; for(let k=0;k<8;k++) c=c&1?0xEDB88320^(c>>>1):c>>>1; t[n]=c>>>0; } return t; })();
+function crc32(b){ let c=0xFFFFFFFF; for(let i=0;i<b.length;i++) c=CRC[(c^b[i])&255]^(c>>>8); return (c^0xFFFFFFFF)>>>0; }
+function zip(files){
+  const te=new TextEncoder(), parts=[], cen=[], d=new Date(); let off=0;
+  const dt=((d.getFullYear()-1980)<<9)|((d.getMonth()+1)<<5)|d.getDate(), tm=(d.getHours()<<11)|(d.getMinutes()<<5)|(d.getSeconds()>>1);
+  for(const [name,data] of files){
+    const nb=te.encode(name), b=typeof data==='string'?te.encode(data):data, crc=crc32(b);
+    const h=new DataView(new ArrayBuffer(30));
+    h.setUint32(0,0x04034b50,true); h.setUint16(4,20,true); h.setUint16(10,tm,true); h.setUint16(12,dt,true);
+    h.setUint32(14,crc,true); h.setUint32(18,b.length,true); h.setUint32(22,b.length,true); h.setUint16(26,nb.length,true);
+    const c=new DataView(new ArrayBuffer(46));
+    c.setUint32(0,0x02014b50,true); c.setUint16(4,20,true); c.setUint16(6,20,true); c.setUint16(12,tm,true); c.setUint16(14,dt,true);
+    c.setUint32(16,crc,true); c.setUint32(20,b.length,true); c.setUint32(24,b.length,true); c.setUint16(28,nb.length,true); c.setUint32(42,off,true);
+    parts.push(new Uint8Array(h.buffer),nb,b); cen.push(new Uint8Array(c.buffer),nb); off+=30+nb.length+b.length;
+  }
+  const size=cen.reduce((a,x)=>a+x.length,0), e=new DataView(new ArrayBuffer(22));
+  e.setUint32(0,0x06054b50,true); e.setUint16(8,files.length,true); e.setUint16(10,files.length,true); e.setUint32(12,size,true); e.setUint32(16,off,true);
+  const all=parts.concat(cen,[new Uint8Array(e.buffer)]), out=new Uint8Array(all.reduce((a,x)=>a+x.length,0)); let p=0;
+  all.forEach(x=>{ out.set(x,p); p+=x.length; }); return out;
+}
+function expDocx(scope){
+  const I=expInfo(scope), o=I.o, a4=o.page==='a4', pw=a4?11906:12240, ph=a4?16838:15840, tw=pw-2880;
+  const W='xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"';
+  const run=(t,i)=>'<w:r>'+(i?'<w:rPr><w:i/></w:rPr>':'')+'<w:t xml:space="preserve">'+xe(t)+'</w:t></w:r>';
+  const para=(t,pp)=>'<w:p>'+(pp?'<w:pPr>'+pp+'</w:pPr>':'')+runs(t).map(r=>run(r[0],r[1])).join('')+'</w:p>';
+  const flat='<w:spacing w:line="240" w:lineRule="auto"/><w:ind w:firstLine="0"/>', mid='<w:jc w:val="center"/><w:ind w:firstLine="0"/>';
+  const sect=(first)=>'<w:sectPr>'+(first?'':'<w:headerReference w:type="default" r:id="rIdH"/>')+'<w:pgSz w:w="'+pw+'" w:h="'+ph+'"/><w:pgMar w:top="1440" w:right="1440" w:bottom="1440" w:left="1440" w:header="720" w:footer="720" w:gutter="0"/>'+(first?'':o.title?'<w:pgNumType w:start="1"/>':'')+'</w:sectPr>';
+  let body='';
+  if(o.title){
+    const lines=I.contact.length?I.contact:[I.author||I.byline||' '];
+    lines.forEach((l,i)=>{ body+='<w:p><w:pPr>'+flat+'<w:tabs><w:tab w:val="right" w:pos="'+tw+'"/></w:tabs></w:pPr>'+run(l)+(i===0?'<w:r><w:tab/></w:r>'+run('about '+roundWords(I.words).toLocaleString('en-US')+' words'):'')+'</w:p>'; });
+    body+='<w:p><w:pPr>'+mid+'<w:spacing w:before="'+(4320-lines.length*240)+'"/></w:pPr>'+run(I.title)+'</w:p>';
+    if(I.byline) body+=para('by '+I.byline,mid);
+    body+='<w:p><w:pPr>'+sect(true).replace('<w:sectPr>','<w:sectPr><w:type w:val="nextPage"/>')+'</w:pPr></w:p>';
+  }
+  I.book.forEach((c,ci)=>{
+    body+='<w:p><w:pPr><w:pStyle w:val="Heading1"/>'+(ci>0&&o.chNew?'<w:pageBreakBefore/>':'')+'</w:pPr>'+run(c.title)+'</w:p>';
+    c.scenes.forEach((x,si)=>{ if(si) body+=para(o.brk||' ',mid); x.forEach(l=>{ body+=para(l); }); });
+  });
+  if(I.full) body+=para('END','<w:jc w:val="center"/><w:ind w:firstLine="0"/><w:spacing w:before="480"/>');
+  const doc='<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:document '+W+'><w:body>'+body+sect(false)+'</w:body></w:document>';
+  const styles='<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:styles '+W+'><w:docDefaults><w:rPrDefault><w:rPr><w:rFonts w:ascii="'+I.font+'" w:hAnsi="'+I.font+'" w:cs="'+I.font+'" w:eastAsia="'+I.font+'"/><w:sz w:val="24"/><w:szCs w:val="24"/><w:lang w:val="en-US"/></w:rPr></w:rPrDefault>'
+    +'<w:pPrDefault><w:pPr><w:spacing w:after="0" w:line="480" w:lineRule="auto"/></w:pPr></w:pPrDefault></w:docDefaults>'
+    +'<w:style w:type="paragraph" w:default="1" w:styleId="Normal"><w:name w:val="Normal"/><w:qFormat/><w:pPr><w:widowControl/><w:ind w:firstLine="720"/></w:pPr></w:style>'
+    +'<w:style w:type="paragraph" w:styleId="Heading1"><w:name w:val="heading 1"/><w:basedOn w:val="Normal"/><w:next w:val="Normal"/><w:qFormat/><w:pPr><w:keepNext/><w:spacing w:before="2880" w:after="480"/><w:ind w:firstLine="0"/><w:jc w:val="center"/><w:outlineLvl w:val="0"/></w:pPr></w:style>'
+    +'<w:style w:type="paragraph" w:styleId="Header"><w:name w:val="header"/><w:basedOn w:val="Normal"/><w:pPr><w:spacing w:line="240" w:lineRule="auto"/><w:ind w:firstLine="0"/><w:jc w:val="right"/></w:pPr></w:style></w:styles>';
+  const header='<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:hdr '+W+'><w:p><w:pPr><w:pStyle w:val="Header"/></w:pPr>'+run(I.head+' / ')+'<w:fldSimple w:instr=" PAGE "><w:r><w:t>1</w:t></w:r></w:fldSimple></w:p></w:hdr>';
+  const now=new Date().toISOString().replace(/\.\d+Z$/,'Z');
+  return zip([
+    ['[Content_Types].xml','<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/>'
+      +'<Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/><Override PartName="/word/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.styles+xml"/>'
+      +'<Override PartName="/word/header1.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.header+xml"/><Override PartName="/docProps/core.xml" ContentType="application/vnd.openxmlformats-package.core-properties+xml"/></Types>'],
+    ['_rels/.rels','<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/><Relationship Id="rId2" Type="http://schemas.openxmlformats.org/package/2006/relationships/metadata/core-properties" Target="docProps/core.xml"/></Relationships>'],
+    ['docProps/core.xml','<?xml version="1.0" encoding="UTF-8" standalone="yes"?><cp:coreProperties xmlns:cp="http://schemas.openxmlformats.org/package/2006/metadata/core-properties" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><dc:title>'+xe(I.title)+'</dc:title><dc:creator>'+xe(I.byline)+'</dc:creator><dcterms:created xsi:type="dcterms:W3CDTF">'+now+'</dcterms:created><dcterms:modified xsi:type="dcterms:W3CDTF">'+now+'</dcterms:modified></cp:coreProperties>'],
+    ['word/_rels/document.xml.rels','<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rIdS" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/><Relationship Id="rIdH" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/header" Target="header1.xml"/></Relationships>'],
+    ['word/document.xml',doc],['word/styles.xml',styles],['word/header1.xml',header]]);
+}
+const htmlRuns=l=>runs(l).map(r=>r[1]?'<em>'+xe(r[0])+'</em>':xe(r[0])).join('');
+function expPdfHtml(scope){
+  const I=expInfo(scope), o=I.o, fam=I.font==='Courier New'?"'Courier New',Courier,monospace":"'Times New Roman',Times,serif";
+  let h='<!doctype html><html><head><meta charset="utf-8"><title>'+xe(I.title)+'</title><style>@page{size:'+(o.page==='a4'?'A4':'letter')+';margin:1in}'
+    +'html,body{margin:0;background:#fff;color:#000}body{font-family:'+fam+';font-size:12pt;line-height:2}p{margin:0;text-indent:.5in;orphans:2;widows:2}'
+    +'.c{text-align:center;text-indent:0}.tp{page-break-after:always;line-height:1.15}.tp .wc{float:right}.tp .t{margin-top:3.2in;text-align:center;line-height:2}'
+    +'h1{font-size:12pt;font-weight:normal;text-align:center;margin:2in 0 .35in;break-after:avoid}h1.nb{page-break-before:always}</style></head><body>';
+  if(o.title){ const lines=I.contact.length?I.contact:[I.author||I.byline||''];
+    h+='<div class="tp"><div class="wc">about '+roundWords(I.words).toLocaleString('en-US')+' words</div>'+lines.map(l=>'<div>'+xe(l)+'</div>').join('')
+      +'<div class="t">'+xe(I.title)+(I.byline?'<br>by '+xe(I.byline):'')+'</div></div>'; }
+  I.book.forEach((c,ci)=>{ h+='<h1'+(ci>0&&o.chNew?' class="nb"':'')+'>'+xe(c.title)+'</h1>';
+    c.scenes.forEach((x,si)=>{ if(si) h+='<p class="c">'+xe(o.brk||' ')+'</p>'; h+=x.map(l=>'<p>'+htmlRuns(l)+'</p>').join(''); }); });
+  if(I.full) h+='<p class="c" style="margin-top:1em">END</p>';
+  return {html:h+'</body></html>',I};
+}
+function expEpub(scope){
+  const I=expInfo(scope), o=I.o, m=S.meta, lang=xe((navigator.language||'en').split(',')[0]);
+  if(!o.uid){ o.uid=uid('bk')+uid(''); dirty('meta'); }
+  const page=(title,body)=>'<?xml version="1.0" encoding="UTF-8"?>\n<!DOCTYPE html>\n<html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops" lang="'+lang+'" xml:lang="'+lang+'"><head><meta charset="utf-8"/><title>'+xe(title)+'</title><link rel="stylesheet" type="text/css" href="style.css"/></head><body>'+body+'</body></html>';
+  const files=[['mimetype','application/epub+zip'],
+    ['META-INF/container.xml','<?xml version="1.0" encoding="UTF-8"?><container version="1.0" xmlns="urn:oasis:names:tc:opendocument:xmlns:container"><rootfiles><rootfile full-path="OEBPS/content.opf" media-type="application/oebps-package+xml"/></rootfiles></container>'],
+    ['OEBPS/style.css','body{margin:0 5%;line-height:1.5}p{margin:0;text-indent:1.5em}h1+p,p.brk+p,p.first{text-indent:0}p.brk{text-align:center;text-indent:0;margin:1em 0}h1{text-align:center;font-weight:normal;margin:3em 0 2em;page-break-before:always}.title{text-align:center;margin-top:30%}.title h1{font-size:2em;margin:0 0 1em}.title p{text-indent:0}']];
+  const items=[], nav=[];
+  if(o.title){ files.push(['OEBPS/title.xhtml',page(I.title,'<section class="title" epub:type="titlepage"><h1>'+xe(I.title)+'</h1>'+(I.byline?'<p>'+xe(I.byline)+'</p>':'')+'</section>')]); items.push('title'); }
+  I.book.forEach((c,i)=>{ const id='ch'+(i+1);
+    files.push(['OEBPS/'+id+'.xhtml',page(c.title,'<section epub:type="chapter"><h1>'+xe(c.title)+'</h1>'+c.scenes.map(x=>x.map(l=>'<p>'+htmlRuns(l)+'</p>').join('')).join('<p class="brk">'+xe(o.brk||'*')+'</p>')+'</section>')]);
+    items.push(id); nav.push('<li><a href="'+id+'.xhtml">'+xe(c.title)+'</a></li>'); });
+  files.push(['OEBPS/nav.xhtml',page('Contents','<nav epub:type="toc" id="toc"><h1>Contents</h1><ol>'+nav.join('')+'</ol></nav>')]);
+  const mod=new Date().toISOString().replace(/\.\d+Z$/,'Z');
+  files.push(['OEBPS/content.opf','<?xml version="1.0" encoding="UTF-8"?><package xmlns="http://www.idpf.org/2007/opf" version="3.0" unique-identifier="uid" xml:lang="'+lang+'"><metadata xmlns:dc="http://purl.org/dc/elements/1.1/">'
+    +'<dc:identifier id="uid">urn:inkling:'+xe(o.uid)+'</dc:identifier><dc:title>'+xe(I.title)+'</dc:title>'+(I.byline?'<dc:creator>'+xe(I.byline)+'</dc:creator>':'')+'<dc:language>'+lang+'</dc:language><meta property="dcterms:modified">'+mod+'</meta></metadata><manifest>'
+    +'<item id="nav" href="nav.xhtml" media-type="application/xhtml+xml" properties="nav"/><item id="css" href="style.css" media-type="text/css"/>'
+    +items.map(id=>'<item id="'+id+'" href="'+id+'.xhtml" media-type="application/xhtml+xml"/>').join('')+'</manifest><spine>'+items.map(id=>'<itemref idref="'+id+'"/>').join('')+'</spine></package>']);
+  return zip(files);
+}
+function manuscriptMd(scope){
+  const I=expInfo(scope||'all'); let out='# '+I.title+'\n\n'+(I.byline?'by '+I.byline+'\n\n':'');
+  I.book.forEach(c=>{ out+='## '+c.title+'\n\n'+c.scenes.map(x=>x.join('\n\n')).join('\n\n'+(I.o.brk||'* * *')+'\n\n')+'\n\n'; });
   return out.trim()+'\n';
+}
+function manuscriptTxt(scope){
+  const I=expInfo(scope); let out=I.title+'\n'+(I.byline?'by '+I.byline+'\n':'')+'\n\n';
+  I.book.forEach(c=>{ out+=c.title+'\n\n'+c.scenes.map(x=>x.join('\n\n')).join('\n\n'+(I.o.brk||'#')+'\n\n')+'\n\n\n'; });
+  return out.trim()+'\n';
+}
+async function printHtml(html){   // the browser's print window; the writer chooses "Save as PDF"
+  const f=document.createElement('iframe'); f.style.cssText='position:fixed;width:0;height:0;border:0;right:0;bottom:0'; f.setAttribute('aria-hidden','true');
+  document.body.appendChild(f); const d=f.contentDocument; d.open(); d.write(html); d.close();
+  await new Promise(r=>setTimeout(r,250));
+  try{ f.contentWindow.focus(); f.contentWindow.print(); }catch(e){ toast('Printing is blocked here. Export to Word instead, then save that as a PDF.',{plain:true}); }
+  setTimeout(()=>f.remove(),60000);
+}
+async function doExport(fmt,scope){
+  const m=S.meta, ch=scope!=='all'&&m.chapters.find(c=>c.id===scope), base=slug(m.title)+(ch?'-'+slug(ch.title):''), name=base+EXP_FMTS[fmt][1];
+  if(fmt==='docx') return saveFile(name,expDocx(scope));
+  if(fmt==='epub') return saveFile(name,expEpub(scope));
+  if(fmt==='md') return saveFile(name,manuscriptMd(scope));
+  if(fmt==='txt') return saveFile(name,manuscriptTxt(scope));
+  const r=expPdfHtml(scope);
+  if(DESK){ try{ const at=await DESK.pdf(r.html,{pageSize:m.exp.page==='a4'?'A4':'Letter',header:r.I.head,font:r.I.font,name}); if(at) toast('Saved to '+at,{plain:true}); }catch(e){ toast('Could not make the PDF.',{plain:true}); } return; }
+  printHtml(r.html);
+}
+function openExport(){
+  const m=S.meta, o=m.exp; let scope=m.chapters.some(c=>c.id===ui.expScope)?ui.expScope:'all';
+  const ov=document.createElement('div'); ov.className='pj-ov';
+  const close=()=>{ ov.remove(); document.removeEventListener('keydown',key,true); };
+  const key=e=>{ if(e.key==='Escape'){ e.stopPropagation(); close(); } };
+  const draw=()=>{
+    const ms=o.fmt==='docx'||o.fmt==='pdf', words=expInfo(scope).words;
+    ov.innerHTML='<div class="pj-dlg ex" role="dialog" aria-modal="true" aria-labelledby="exH"><header><h2 id="exH">'+ico('book',20)+'Export</h2><button class="ibtn" data-x="close" aria-label="Close">'+ico('x')+'</button></header>'
+      +'<span class="sec-l">Format</span><div class="seg">'+Object.keys(EXP_FMTS).map(k=>'<button data-fmt="'+k+'"'+(o.fmt===k?' class="on"':'')+'>'+EXP_FMTS[k][0]+'</button>').join('')+'</div>'
+      +'<p class="fine">'+({docx:'Standard manuscript format, ready to send to agents and editors, or to keep editing in Word, Google Docs or Pages.',pdf:DESK?'Standard manuscript format as a PDF.':'Standard manuscript format. Your browser’s print window opens: choose “Save as PDF”.',epub:'An ebook for Kindle, Apple Books and other readers, to read your draft like a book.',md:'Plain text with headings, for other writing apps.',txt:'Just the words.'}[o.fmt])+'</p>'
+      +'<div class="two"><label class="f">Include<select data-e="scope"><option value="all">The whole book</option>'+m.chapters.map(c=>'<option value="'+c.id+'"'+(scope===c.id?' selected':'')+'>'+esc(c.title)+'</option>').join('')+'</select></label>'
+      +'<label class="f">Scene break<input data-e="brk" value="'+esc(o.brk)+'" maxlength="12" placeholder="#"></label></div>'
+      +'<div class="two"><label class="f">Your name<input data-e="author" value="'+esc(m.author||'')+'" maxlength="120" placeholder="Your legal name"></label>'
+      +'<label class="f">Byline (pen name)<input data-e="byline" value="'+esc(o.byline)+'" maxlength="120" placeholder="Same as your name"></label></div>'
+      +(ms?'<label class="f">Contact details for the title page<textarea data-e="contact" rows="4" maxlength="600" placeholder="Name\nStreet address\nCity, State ZIP\nemail@example.com · phone">'+esc(o.contact)+'</textarea></label>'
+        +'<div class="two"><div><span class="sec-l">Font</span><div class="seg"><button data-o="font" data-v="times"'+(o.font==='times'?' class="on"':'')+'>Times New Roman</button><button data-o="font" data-v="courier"'+(o.font==='courier'?' class="on"':'')+'>Courier</button></div></div>'
+        +'<div><span class="sec-l">Page size</span><div class="seg"><button data-o="page" data-v="letter"'+(o.page==='letter'?' class="on"':'')+'>Letter</button><button data-o="page" data-v="a4"'+(o.page==='a4'?' class="on"':'')+'>A4</button></div></div></div>':'')
+      +(o.fmt==='md'||o.fmt==='txt'?'':'<label class="ck"><input type="checkbox" data-e="title"'+(o.title?' checked':'')+'>Title page'+(ms?' with word count (about '+roundWords(words).toLocaleString()+')':'')+'</label>')
+      +(ms?'<label class="ck"><input type="checkbox" data-e="chNew"'+(o.chNew?' checked':'')+'>Start each chapter on a new page</label>':'')
+      +'<p class="fine">Each line you type is a paragraph. Put *asterisks* or _underscores_ around words to make them italic.</p>'
+      +'<div class="ask-btns" style="margin-top:14px"><button class="btn" data-x="close">Cancel</button><button class="btn pri" data-x="go">'+ico('down',14)+'<span>Export '+EXP_FMTS[o.fmt][0]+'</span></button></div></div>';
+  };
+  ov.addEventListener('click',e=>{
+    if(e.target===ov) return close();
+    const b=e.target.closest('[data-fmt],[data-o],[data-x]'); if(!b) return;
+    if(b.dataset.fmt){ o.fmt=b.dataset.fmt; dirty('meta'); draw(); }
+    else if(b.dataset.o){ o[b.dataset.o]=b.dataset.v; dirty('meta'); draw(); }
+    else if(b.dataset.x==='close') close();
+    else if(b.dataset.x==='go'){ close(); doExport(o.fmt,scope); }
+  });
+  ov.addEventListener('input',e=>{ const k=e.target.dataset.e; if(!k||e.target.type==='checkbox'||k==='scope') return;
+    if(k==='author') m.author=e.target.value.slice(0,120); else o[k]=e.target.value; dirty('meta'); });
+  ov.addEventListener('change',e=>{ const k=e.target.dataset.e; if(!k) return;
+    if(k==='scope'){ scope=ui.expScope=e.target.value; draw(); return; }
+    if(e.target.type==='checkbox'){ o[k]=e.target.checked; dirty('meta'); } });
+  document.addEventListener('keydown',key,true); draw(); document.body.appendChild(ov); $('[data-fmt].on',ov).focus();
 }
 function renderMenu(){
   const cf=ui.confirm, el=$('#menu');
-  if(DESK){ el.innerHTML='<button data-m="projects">Projects…</button><button data-m="projects">New project…</button><hr><button data-m="md">Export manuscript (.md)</button><button data-m="json">Back up this project (.json)</button><button data-m="import">Import a backup as a new project…</button><button data-m="reveal">Show projects folder</button><button data-m="sessions">Writing sessions</button><small>Saved on this computer as you write. Each project folder also keeps automatic backups.</small>'; return; }
-  el.innerHTML='<button data-m="sessions">Writing sessions</button><hr><button data-m="md">Export manuscript (.md)</button><button data-m="json">Back up project (.json)</button><button data-m="restore">Restore from a backup…</button><hr>'
-    +'<button class="warn" data-m="sample">'+(cf==='m-sample'?'Replace everything with the sample? Click again':'Load the sample project')+'</button>'
-    +'<button class="warn" data-m="blank">'+(cf==='m-blank'?'Replace everything with a blank project? Click again':'Start a blank project')+'</button>'
+  const item=(m,label,cls)=>'<button data-m="'+m+'"'+(cls?' class="'+cls+'"':'')+'>'+label+'</button>';
+  if(DESK){ el.innerHTML=item('projects','Projects…')+'<hr>'+item('export','Export… (Word, PDF, EPUB)')+item('json','Back up this project (.json)')+item('import','Import a backup as a new project…')+'<hr>'
+    +item('find','Find and replace…')+item('sessions','Writing sessions')+item('prefs','Settings')+item('tour','Show the tour')+'<hr>'+item('reveal','Show projects folder')
+    +'<small>Saved on this computer as you write. Each project folder also keeps automatic backups.</small>'; return; }
+  el.innerHTML=item('export','Export… (Word, PDF, EPUB)')+item('json','Back up project (.json)')+item('restore','Restore from a backup…')+'<hr>'
+    +item('find','Find and replace…')+item('sessions','Writing sessions')+item('prefs','Settings')+item('tour','Show the tour')+'<hr>'
+    +item('sample',cf==='m-sample'?'Replace everything with the sample? Click again':'Load the sample project','warn')
+    +item('blank',cf==='m-blank'?'Replace everything with a blank project? Click again':'Start a blank project','warn')
     +'<small>'+(P.db?'Your project saves automatically to your Claude account, private to you. Replacing a project keeps your Inkling and goals.':'Your project saves on this device only. Back it up from here when you can.')+'</small>';
 }
 function bindMenu(){
@@ -2940,7 +3575,10 @@ function bindMenu(){
   $('#menuBtn').addEventListener('click',e=>{ e.stopPropagation(); ui.menu=!ui.menu; ui.confirm=null; $('#menu').hidden=!ui.menu; if(ui.menu) renderMenu(); });
   $('#menu').addEventListener('click',e=>{
     const b=e.target.closest('[data-m]'); if(!b) return; const a=b.dataset.m;
-    if(a==='md'){ closeMenu(); doExport(); }
+    if(a==='md'||a==='export'){ closeMenu(); openExport(); }
+    else if(a==='find'){ closeMenu(); openFind(); }
+    else if(a==='prefs'){ closeMenu(); go({k:'prefs'}); }
+    else if(a==='tour'){ closeMenu(); startTour(true); }
     else if(a==='json'){ closeMenu(); doBackup(); }
     else if(a==='projects'){ closeMenu(); openProjects(); }
     else if(a==='import'){ closeMenu(); deskImportPick(); }
@@ -2953,21 +3591,51 @@ function bindMenu(){
   $('#fileIn').addEventListener('change',e=>{
     const f=e.target.files&&e.target.files[0]; if(!f) return;
     const r=new FileReader();
-    r.onload=async()=>{ let o, np; try{ o=JSON.parse(r.result); if(!o||!o.meta||!Array.isArray(o.meta.chapters)) throw 0; np=normalize(o); }catch(x){ toast('That file is not an Inkling backup.',{plain:true}); return; }
+    r.onload=async()=>{ let o, np; try{ o=JSON.parse(r.result); if(!o||!o.meta||!Array.isArray(o.meta.chapters)) throw 0; np=normalize(o); }catch(x){ toast(x&&x.code==='newer'?'That backup was made by a newer version of Inkling. Update Inkling to open it.':'That file is not an Inkling backup.',{plain:true}); return; }
       await adoptImages(np,o.imgs,null); replaceProject(np,false); toast('Backup restored.',{plain:true}); };
     r.readAsText(f);
   });
 }
 function closeMenu(){ ui.menu=false; ui.confirm=null; $('#menu').hidden=true; }
 
+/* ---------- dialog ---------- */
+// ask(title, html, [[value,label,style]]) resolves with the chosen value ('' when closed with Escape).
+function ask(title,html,buttons){
+  return new Promise(res=>{
+    const ov=document.createElement('div'); ov.className='pj-ov ask-ov';
+    ov.innerHTML='<div class="pj-dlg ask" role="alertdialog" aria-modal="true" aria-labelledby="askH"><h2 id="askH">'+esc(title)+'</h2><p>'+html+'</p><div class="ask-btns">'
+      +buttons.map(b=>'<button class="btn'+(b[2]?' '+b[2]:'')+'" data-v="'+b[0]+'">'+esc(b[1])+'</button>').join('')+'</div></div>';
+    const done=v=>{ ov.remove(); document.removeEventListener('keydown',k,true); res(v); };
+    const k=e=>{ if(e.key==='Escape'){ e.stopPropagation(); e.preventDefault(); done(''); } };
+    ov.addEventListener('click',e=>{ const b=e.target.closest('[data-v]'); if(b) done(b.dataset.v); });
+    document.addEventListener('keydown',k,true); document.body.appendChild(ov); $('[data-v]',ov).focus();
+  });
+}
+
 /* ---------- desktop projects ---------- */
 const deskInfo=st=>{ st=st||S; return {title:st.meta.title,words:Object.values(st.meta.scenes).reduce((a,x)=>a+(x.words||0),0),sample:!!st.meta.sample}; };
+// project.json changed on disk since this computer last read it: a sync service brought in another computer's edits.
+async function deskConflict(){
+  if(ui.conflict) return; ui.conflict=true;
+  try{
+    const c=await ask('This project changed on another computer','“'+esc(S.meta.title)+'” was saved somewhere else (through your sync folder) after you opened it here. Your version from this computer is kept in the project’s Backups either way.',
+      [['theirs','Use the other computer’s version','pri'],['mine','Keep this computer’s version']]);
+    if(c==='mine'){ await DESK.save(PJ.id,JSON.stringify(snapshot()),deskInfo(),true); setStatus('disk'); toast('Kept this computer’s version.',{plain:true}); }
+    else { P.dirty.clear(); P.gone.clear(); await deskOpen(PJ.id,true); toast('Loaded the other computer’s version. Yours is in Projects → Backups.',{plain:true}); }
+  } finally { ui.conflict=false; }
+}
 async function deskFlush(){ clearTimeout(P.timer); for(let i=0;i<60&&P.busy;i++) await new Promise(r=>setTimeout(r,100)); if(P.dirty.size||P.gone.size) await flush(); }
-async function deskOpen(id){
-  const raw=await DESK.load(id); if(raw==null){ toast('That project could not be found.',{plain:true}); return false; }
-  let o; try{ o=JSON.parse(raw); }catch(e){ toast('This project file is damaged. Open its Backups in Projects to get back a recent copy.',{plain:true}); return false; }
+async function deskOpen(id,force){
+  let r=await DESK.load(id,!!force);
+  if(r&&r.other){
+    const c=await ask('This project is open on another computer','“'+esc(r.other.host)+'” had it open '+esc(ago(r.other.at))+'. Writing in two places at once through a sync folder can lose work. Close it there first, or open it here anyway.',[['open','Open it anyway','danger'],['cancel','Cancel']]);
+    if(c!=='open') return false; r=await DESK.load(id,true);
+  }
+  const raw=r&&r.data; if(raw==null){ toast('That project could not be found.',{plain:true}); return false; }
+  let o, ns; try{ o=JSON.parse(raw); }catch(e){ toast('This project file is damaged. Open its Backups in Projects to get back a recent copy.',{plain:true}); return false; }
+  try{ ns=normalize(o); }catch(e){ toast(e.code==='newer'?'“'+((o.meta||{}).title||'This project')+'” was saved by a newer version of Inkling. Update Inkling to open it.':'This project could not be opened: '+e.message,{plain:true}); return false; }
   clearTimeout(P.timer); P.dirty.clear(); P.gone.clear(); P.keys.clear();
-  S=normalize(o); PJ.id=id; linker=buildLinker();
+  S=ns; PJ.id=id; linker=buildLinker();
   Object.assign(ui,{view:firstView(),hist:[],touched:false,mood:'',confirm:null,menu:false,tlFor:null,tlSide:null,cvFor:null,cvSel:null,relabel:null});
   renderAll(); setStatus('disk'); document.title=S.meta.title+' – Inkling'; DESK.setTitle(document.title); return true;
 }
@@ -2978,21 +3646,55 @@ async function deskCreate(np,imgs){
 }
 async function deskNew(kind){ pmHalt(); await deskFlush(); const id=await deskCreate(normalize(kind==='sample'?sampleProject():blankProject())); await deskOpen(id); return id; }
 async function deskImport(text){
-  let o, np; try{ o=JSON.parse(text); if(!o||!o.meta||!Array.isArray(o.meta.chapters)) throw 0; np=normalize(o); }catch(e){ toast('That file is not an Inkling backup.',{plain:true}); return; }
+  let o, np; try{ o=JSON.parse(text); if(!o||!o.meta||!Array.isArray(o.meta.chapters)) throw 0; np=normalize(o); }catch(e){ toast(e&&e.code==='newer'?'That backup was made by a newer version of Inkling. Update Inkling to open it.':'That file is not an Inkling backup.',{plain:true}); return; }
   pmHalt(); await deskFlush(); const id=await deskCreate(np,o.imgs||{}); await deskOpen(id);
   toast('Imported “'+np.meta.title+'” as a new project. Your other projects are unchanged.',{plain:true}); return id;
 }
 async function deskImportPick(){ try{ const t=await DESK.openFile(); if(t!=null){ await deskImport(t); closeProjects(); } }catch(e){ toast('Could not open that file.',{plain:true}); } }
 async function deskBoot(){
-  DESK.onMenu(a=>{ if(a==='new'||a==='projects') openProjects(); else if(a==='backup') doBackup(); else if(a==='export') doExport(); else if(a==='import') deskImportPick(); else if(a==='sessions') go({k:'ss'}); else if(a==='timer'){ if(T.running) pmPause(); else pmStart(); } });
+  DESK.onMenu(a=>{ if(a==='new'||a==='projects') openProjects(); else if(a==='backup') doBackup(); else if(a==='export') openExport(); else if(a==='find') openFind(); else if(a==='prefs') go({k:'prefs'}); else if(a==='tour') startTour(true); else if(a==='updcheck') checkUpdatesNow(); else if(a==='snapshots'){ if(ui.view.k==='scene') go({k:'snap',id:ui.view.id}); else toast('Open a scene first, then choose Scene snapshots.',{plain:true}); } else if(a==='import') deskImportPick(); else if(a==='sessions') go({k:'ss'}); else if(a==='timer'){ if(T.running) pmPause(); else pmStart(); } });
   DESK.onClosing(async()=>{ try{ pmHalt(); await deskFlush(); }catch(e){} DESK.closeReady(); });
+  DESK.onUpdate(showUpdate);
+  DESK.onFocus(async()=>{   // pick up edits a sync folder brought in while Inkling was in the background
+    if(!PJ.id||P.dirty.size||P.busy||ui.conflict) return;
+    try{ if(await DESK.changed(PJ.id)){ const v=ui.view; if(await deskOpen(PJ.id,true)){ if(viewValid(v)) go(v,{push:false}); toast('Updated with changes from another computer.',{plain:true}); } } }catch(e){}
+  });
   const b=document.createElement('button'); b.className='ibtn'; b.id='pjBtn'; b.title='Projects'; b.setAttribute('aria-label','Projects'); b.innerHTML=ico('folder',18);
   b.addEventListener('click',()=>openProjects()); $('#projTitle').before(b);
   try{
     let id=await DESK.last(); if(!id){ const l=await DESK.list(); id=l.length?l[0].id:null; }
-    if(id){ if(!await deskOpen(id)) openProjects(); return; }
-    await deskNew('sample');
+    if(id){ if(!await deskOpen(id)) openProjects(); } else await deskNew('sample');
   }catch(e){ toast('Inkling could not open your projects folder: '+((e&&e.message)||e),{plain:true}); }
+  try{   // after an update, offer the release notes once
+    const pf=await DESK.prefs();
+    if(pf.update&&pf.update.state) showUpdate(pf.update);
+    if(pf.lastVersion!==pf.version){
+      if(pf.lastVersion&&await ask('Inkling was updated','You are now on Inkling '+esc(pf.version)+'. Your projects are unchanged.',[['notes','See what’s new','pri'],['ok','OK']])==='notes') DESK.openReleases(pf.version);
+      DESK.setPrefs({lastVersion:pf.version});
+    }
+  }catch(e){}
+  startTour();
+}
+function showUpdate(st){
+  let bar=$('#updBar'); if(!st||!/available|ready/.test(st.state)){ if(bar) bar.remove(); return; }
+  if(!bar){ bar=document.createElement('div'); bar.id='updBar'; bar.className='upd-bar'; bar.setAttribute('role','status'); document.body.appendChild(bar);
+    bar.addEventListener('click',async e=>{ const b=e.target.closest('[data-u]'); if(!b) return; const a=b.dataset.u;
+      if(a==='later') bar.remove(); else if(a==='notes') DESK.openReleases(bar.dataset.v);
+      else if(a==='get') DESK.openReleases(bar.dataset.v);
+      else if(a==='install'){ b.disabled=true; b.textContent='Saving…'; pmHalt(); await deskFlush(); DESK.installUpdate(); } }); }
+  bar.dataset.v=st.version||'';
+  bar.innerHTML=ico('spark',16)+'<span>'+(st.state==='ready'?'Inkling '+esc(st.version)+' is ready to install.':'Inkling '+esc(st.version)+' is out.')+'</span>'
+    +(st.state==='ready'?'<button class="btn sm pri" data-u="install">Restart to update</button>':'<button class="btn sm pri" data-u="get">Download</button>')
+    +'<button class="btn sm" data-u="notes">What’s new</button><button class="ibtn" data-u="later" aria-label="Later">'+ico('x',14)+'</button>';
+}
+async function checkUpdatesNow(){
+  if(!DESK){ toast('This is Inkling '+APP_VERSION+'. The online version updates itself.',{plain:true}); return; }
+  toast('Checking for updates…',{plain:true}); const r=await DESK.checkUpdates();
+  if(r.state==='none') toast('You have the latest version of Inkling.',{plain:true});
+  else if(r.state==='unavailable') toast('Updates are checked in the installed app, not this development copy.',{plain:true});
+  else if(r.state==='error') toast('Could not check for updates: '+r.message,{plain:true});
+  else if(r.state==='downloading') toast('Downloading Inkling '+r.version+'. You will be asked to restart when it is ready.',{plain:true});
+  else showUpdate(r);
 }
 const ago=t=>{ const s=(Date.now()-t)/1000; if(s<60) return 'just now'; if(s<3600) return Math.round(s/60)+' min ago'; if(s<86400) return Math.round(s/3600)+' h ago'; if(s<86400*7) return Math.round(s/86400)+' days ago'; return new Date(t).toLocaleDateString(); };
 async function openProjects(){
@@ -3047,7 +3749,8 @@ function renderAll(){
 function init(){
   try{ const f=+localStorage.getItem('inkling:fs'); if(f>=14&&f<=28) ui.fs=f; }catch(e){}
   let local=null;
-  if(!DESK) try{ const raw=localStorage.getItem('inkling:project'); if(raw) local=normalize(JSON.parse(raw)); }catch(e){}
+  let newer=0;
+  if(!DESK) try{ const raw=localStorage.getItem('inkling:project'); if(raw) local=normalize(JSON.parse(raw)); }catch(e){ if(e.code==='newer') newer=e.v; }
   S=local||normalize(sampleProject());
   linker=buildLinker(); ui.view=firstView();
   $('#tabs').innerHTML=[['binder','Binder','book'],['write','Write','pen'],['pet','Inkling','spark']].map(t=>'<button role="tab" data-tab="'+t[0]+'" aria-selected="false">'+ico(t[2],20)+'<span>'+t[1]+'</span></button>').join('');
@@ -3077,7 +3780,8 @@ function init(){
   window.addEventListener('pagehide',()=>{ if(T.cur) pmRecord(false); if(P.dirty.size){ mirrorLocal(); flush(); } });
   setInterval(()=>{ if(!document.hidden&&Date.now()-ui.sayAt>40000) say(line(curMood())); },15000);
   renderAll();
-  if(DESK) deskBoot(); else { setStatus('local'); connectDb(!!local); }
+  if(newer){ lockNewer(newer); return; }
+  if(DESK) deskBoot(); else { setStatus('local'); connectDb(!!local); setTimeout(()=>startTour(),700); }
 }
 init();
 })();

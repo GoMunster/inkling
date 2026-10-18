@@ -1,0 +1,37 @@
+# Runs the automated tests (tests/) on every push and pull request, and before each desktop release.
+name: Tests
+
+on:
+  push:
+  pull_request:
+  workflow_call:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: |
+            package-lock.json
+            desktop/package-lock.json
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - name: Install the desktop app's dependencies (Electron)
+        run: npm ci
+        working-directory: desktop
+      - name: Run the tests (desktop ones need a virtual screen)
+        run: xvfb-run -a npm test
+        env:
+          CI: true
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: test-report
+          path: |
+            playwright-report/
+            test-results/
+          retention-days: 7

@@ -18,11 +18,21 @@ A novel-writing app inspired by Scrivener, with a virtual pet that cheers you on
 - **Auto-linking:** any name or alias that has a page is highlighted in your scenes. Click it to open that page; each page lists the scenes where it appears. Select text and use *Link selection* to create a page.
 - **Focus timer:** a pomodoro timer next to Inky with your own focus and break lengths, a per-session word goal and a chime. Every session is saved with its new words, and **Writing sessions** shows your history for the project, with totals, per-day groups, and deleting by session, day or all.
 - **Inky, the pet:** reacts to your daily goal (25/50/75/100%, bonus words, streaks) and grows from Blot to Inkling, Scribe, Bard and Laureate as lifetime words add up.
-- **Export and backup:** manuscript as Markdown, project as JSON (restore from the menu).
+- **Export:** Word (.docx) and PDF in standard manuscript format (12 pt Times or Courier, double spaced, 1" margins, a *Surname / TITLE / page* header, a title page with your contact details and a rounded word count), an EPUB ebook to read your draft on a Kindle or phone, Markdown and plain text. Export the whole book or one chapter. `*Asterisks*` or `_underscores_` make italics.
+- **Scene snapshots:** save a version of a scene before a rewrite, compare any snapshot with the current text (added and removed words highlighted) and restore it. Inkling also keeps one automatically each day you change a scene, and before find and replace or a restore changes it.
+- **Find and replace:** across the whole book or one chapter, with match case and whole words. Click a result to jump to it in the scene. Replace one at a time or all at once (each changed scene is snapshotted first).
+- **Writing history:** a chart of new words per day (30 or 90 days) or per week (12 months), with totals, best day, streak and days at goal, and a table view.
+- **Settings:** light or dark theme, writing font, text size, line spacing, page width and spellcheck, kept per device.
+- **A short tour** on first run, replayable from the menu.
+- **Backup:** the whole project as JSON, pictures included (restore from the menu).
 
 ## Desktop app
 
-Inkling also comes as a downloadable app for Windows, macOS and Linux that needs no Claude account or internet, and keeps several projects on the computer, each in its own folder with automatic backups. See [desktop/README.md](desktop/README.md) for installing, building and releasing it.
+Inkling also comes as a downloadable app for Windows, macOS and Linux that needs no Claude account or internet, and keeps several projects on the computer, each in its own folder with automatic backups. Put the projects folder in Dropbox, iCloud Drive, Google Drive or OneDrive to back it up online and write on more than one computer; Inkling warns you when a project is open on another computer or was changed by one. It tells people when a new version is out and, on Windows and Linux, installs it with one click. See [desktop/README.md](desktop/README.md) for installing and building it, and [RELEASING.md](RELEASING.md) for publishing an update.
+
+## Privacy
+
+Inkling has no accounts, ads, analytics or tracking. The desktop app keeps everything in your projects folder and connects to the internet only to check GitHub for a new version (which you can switch off in Settings). In a browser your project stays in that browser's storage; in the Claude artifact it saves to your Claude account, private to you.
 
 ## Run it
 
@@ -33,6 +43,17 @@ python3 -m http.server 8000   # then open http://localhost:8000
 ```
 
 Or open `index.html` directly in a browser. Projects save to `localStorage` in that browser, so use *Back up project* in the menu regularly.
+
+## Tests
+
+```sh
+npm install
+npx playwright install chromium
+npm test                     # web and desktop tests
+npm run test:web             # just the browser ones
+```
+
+The desktop tests need `npm ci` in `desktop/` first, and a screen (on Linux servers, run them under `xvfb-run -a`). GitHub Actions runs everything on every push and before each release.
 
 ## Notes
 

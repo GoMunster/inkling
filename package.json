@@ -1,0 +1,13 @@
+{
+  "name": "inkling-tests",
+  "private": true,
+  "description": "Automated tests for Inkling. The app itself (index.html) has no dependencies or build step.",
+  "scripts": {
+    "test": "playwright test",
+    "test:web": "playwright test --project=web",
+    "test:desktop": "playwright test --project=desktop"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.56.1"
+  }
+}

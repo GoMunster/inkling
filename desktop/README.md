@@ -15,12 +15,32 @@ Inkling Projects/
     info.json        title, word count and last save, for the Projects screen
     pictures/        story page pictures, one file each
     backups/         automatic copies, at most one every 10 minutes, newest 40 kept
+    .inkling-lock.json   which computer has the project open right now
 ```
 
 Saving happens as you write and again when the window closes. Every save is written to a temporary file first
 and then swapped in, so a crash or power cut cannot leave a half-written project. **File › Projects…**
 (Ctrl/Cmd+O) lists every project, with New, Open, Duplicate, Backups (open any automatic backup as a copy),
 Show folder and Delete (which moves the folder to the computer's trash, so it can be recovered).
+
+## Using Dropbox, iCloud, Google Drive or OneDrive
+
+**Settings › Projects folder › Change folder…** moves your projects into any folder, for example
+`Dropbox/Inkling`. Each project is copied, checked, and only then is the old copy put in the trash. Choose **Use it
+as it is** instead when the folder already holds your projects (setting up a second computer). The sync service
+then backs everything up and carries it between computers.
+
+Two safety checks make this work without a server:
+
+- **Open on another computer.** While a project is open, its folder holds a small lock file naming the computer,
+  refreshed every minute. Opening it somewhere else shows *This project is open on another computer*, with the
+  choice to open it anyway. A lock older than a few minutes (a computer that crashed or went to sleep) is ignored.
+- **Changed on another computer.** Inkling remembers when it last read or wrote `project.json`. If the sync service
+  brings in a newer one, Inkling doesn't overwrite it: it asks whether to use the other computer's version or keep
+  this one, and keeps this computer's version in the project's backups either way. When you switch back to the
+  Inkling window and nothing is unsaved, it quietly loads the other computer's changes.
+
+The rule of thumb for writers: close Inkling on one computer and let the sync finish before writing on another.
 
 **File › Import a backup as a new project…** opens a backup made anywhere: in the desktop app, in a browser, or
 in the Claude artifact. Pictures come with it.
@@ -42,7 +62,8 @@ Download the file for your computer from the latest release on the
 The app is the same `index.html` as the web version. `scripts/prepare.js` copies it into `app/`, swaps the
 Google Fonts link for bundled copies of the fonts (from Fontsource, SIL Open Font License) and adds a content
 security policy that blocks all network access. `index.html` notices `window.inklingDesktop` (from
-`preload.js`) and saves through it instead of the browser or the Claude artifact.
+`preload.js`) and saves through it instead of the browser or the Claude artifact. The page can only use the fixed
+list of actions in `preload.js`, and `main.js` checks every project id and file name it is given.
 
 ```sh
 cd desktop
@@ -51,17 +72,12 @@ npm start            # run it
 npm run dist         # build an installer for this computer into desktop/dist/
 ```
 
-### Releasing
+### Updates and releasing
 
-Push a version tag and GitHub Actions builds all three installers and attaches them to a new release:
-
-```sh
-git tag v1.0.0
-git push origin v1.0.0
-```
-
-You can also run the **Desktop app** workflow by hand from the Actions tab; the installers then appear under
-that run's **Artifacts**.
+Installed copies check GitHub Releases for a newer version (electron-updater). Windows and Linux download it in the
+background and offer **Restart to update**; macOS, unsigned, offers **Download** and opens the release page. See
+[RELEASING.md](../RELEASING.md) for the steps: `node desktop/scripts/version.js 1.1.0`, commit, then push the tag
+`v1.1.0`. The **Desktop app** workflow runs the tests, builds all three installers and publishes the release.
 
 ### Code signing (optional, later)
 
