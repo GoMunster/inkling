@@ -110,7 +110,8 @@ test('two writers share one project through a synced folder', async () => {
   copy.meta.scenes.s_stray = { title: 'Stray scene', status: 'draft', words: 5 }; copy.meta.chapters[0].scenes.push('s_stray');
   fs.writeFileSync(path.join(proj, "project (Ann's conflicted copy).json"), JSON.stringify(copy));
   expect(await syncUntil(A.app, A.win, async () => (await A.win.locator('#binder .sc-btn', { hasText: 'Stray scene' }).count()) === 1, 25000)).toBe(true);
-  expect(fs.readdirSync(proj).some(n => /conflicted/.test(n))).toBe(false);
+  // the copy is filed away just after the merged project is saved, a moment after the scene appears
+  expect(await until(() => !fs.readdirSync(proj).some(n => /conflicted/.test(n)))).toBe(true);
   expect(fs.readdirSync(path.join(proj, 'backups')).some(n => /conflicted/.test(n))).toBe(true);
 
   // Ann starts a sprint; Ben sees it, joins, and both timers end together
