@@ -790,7 +790,7 @@ const ADD_DOCS=[];   // (raw, out) => out.<prefix> = normalized records, for doc
 const snapshot=st=>{ st=st||S; const o={meta:st.meta}; DOCS.forEach(p=>{ o[p]=st[p]; }); return o; };
 // The desktop app (desktop/) provides window.inklingDesktop: each project is a folder on the computer. Elsewhere it is null.
 const DESK=window.inklingDesktop||null;
-const APP_VERSION='1.0.0';   // the desktop build replaces this with desktop/package.json's version
+const APP_VERSION='1.0.1';   // the desktop build replaces this with desktop/package.json's version
 // Saved-format version. When the shape of saved data changes: bump FORMAT and add MIGRATE[old] that upgrades a raw
 // project one step (it runs before normalize()). A project from a newer FORMAT is never loaded or overwritten.
 const FORMAT=2;
@@ -1477,7 +1477,7 @@ function delChapter(id){
   renderAll();
 }
 function addEntity(type,name){
-  const id=uid('e_'); S.meta.ents[id]={id,type,name,aliases:[],tag:''}; S.en[id]={fields:{}};
+  const id=uid('e_'); S.meta.ents[id]={id,type,name,aliases:[],tag:''}; S.en[id]={fields:{},pic:normPic()};
   dirty('meta','en_'+id); linker=buildLinker(); return id;
 }
 function delEntity(id){

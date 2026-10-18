@@ -161,3 +161,17 @@ test('outline templates replace template lines but keep what the writer typed', 
   expect(lines.length).toBeGreaterThan(1);
   expect(was).toBeTruthy();
 });
+
+test('a new character, place or thing opens, and opens again from the binder', async ({ page }) => {
+  const errors = await openApp(page);
+  for (const t of ['char', 'place', 'thing']) {
+    const before = await page.locator('[data-a="open-e"]').evaluateAll(a => a.map(x => x.dataset.id));
+    await page.click('[data-a="adde"][data-t="' + t + '"]');
+    await expect(page.locator('#main')).toContainText('Development page');
+    const id = (await page.locator('[data-a="open-e"]').evaluateAll(a => a.map(x => x.dataset.id))).find(x => !before.includes(x));
+    await page.click('.sc-btn');
+    await page.click('[data-a="open-e"][data-id="' + id + '"]');
+    await expect(page.locator('#main')).toContainText('Development page');
+  }
+  expect(errors).toEqual([]);
+});
