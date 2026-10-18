@@ -175,3 +175,12 @@ test('a new character, place or thing opens, and opens again from the binder', a
   }
   expect(errors).toEqual([]);
 });
+
+test('the sharing guide opens from the menu, and says sharing needs the desktop app', async ({ page }) => {
+  const errors = await openApp(page);
+  await page.click('#menuBtn'); await page.click('[data-m="help"]');
+  await expect(page.locator('#main h1')).toHaveText('How sharing works');
+  await expect(page.locator('.banner-note')).toContainText('desktop app');
+  await expect(page.locator('.hs h2')).toHaveCount(7);
+  expect(errors).toEqual([]);
+});

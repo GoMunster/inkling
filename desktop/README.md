@@ -15,7 +15,7 @@ Inkling Projects/
     info.json        title, word count and last save, for the Projects screen
     pictures/        story page pictures, one file each
     backups/         automatic copies, at most one every 10 minutes, newest 40 kept
-    .inkling-lock.json   which computer has the project open right now
+    .inkling-here/   one small file per computer that has the project open (who is here, which scene)
 ```
 
 Saving happens as you write and again when the window closes. Every save is written to a temporary file first
@@ -23,24 +23,38 @@ and then swapped in, so a crash or power cut cannot leave a half-written project
 (Ctrl/Cmd+O) lists every project, with New, Open, Duplicate, Backups (open any automatic backup as a copy),
 Show folder and Delete (which moves the folder to the computer's trash, so it can be recovered).
 
-## Using Dropbox, iCloud, Google Drive or OneDrive
+## Using Dropbox, iCloud, Google Drive or OneDrive, and sharing with co-writers
+
+For writers: the full guide is [SHARING.md](../SHARING.md) (also in the app under **Help › How sharing works**).
+
+### Moving all your projects
 
 **Settings › Projects folder › Change folder…** moves your projects into any folder, for example
 `Dropbox/Inkling`. Each project is copied, checked, and only then is the old copy put in the trash. Choose **Use it
 as it is** instead when the folder already holds your projects (setting up a second computer). The sync service
 then backs everything up and carries it between computers.
 
-Two safety checks make this work without a server:
+### Sharing one project
 
-- **Open on another computer.** While a project is open, its folder holds a small lock file naming the computer,
-  refreshed every minute. Opening it somewhere else shows *This project is open on another computer*, with the
-  choice to open it anyway. A lock older than a few minutes (a computer that crashed or went to sleep) is ignored.
-- **Changed on another computer.** Inkling remembers when it last read or wrote `project.json`. If the sync service
-  brings in a newer one, Inkling doesn't overwrite it: it asks whether to use the other computer's version or keep
-  this one, and keeps this computer's version in the project's backups either way. When you switch back to the
-  Inkling window and nothing is unsaved, it quietly loads the other computer's changes.
+**File › Share this project…** moves a single project into a folder you pick (say `Dropbox/Shared/`) and keeps it
+on your list as a *linked* project (`settings.links` in the app's settings file maps its id to the folder).
+Co-writers use **File › Open a shared project…** to link the same folder on their computers. Linked projects can't
+be deleted from Inkling (only **Remove from list**), so nobody trashes everyone's copy by accident.
 
-The rule of thumb for writers: close Inkling on one computer and let the sync finish before writing on another.
+How two computers stay safe without a server:
+
+- **Compare-and-swap saves.** `main.js` remembers the hash of `project.json` as this computer last read or wrote it,
+  and refuses a save (`{conflict: true}`) when the file on disk is different. The page then reads the disk version
+  (`DESK.read`, which also returns any conflicted copies a sync service made), merges, and saves with that version's
+  token, so a third save arriving in between is never overwritten.
+- **Record-by-record merge** in `index.html` (`mergeProjects`): three-way against the version both sides last had
+  (`PJ.base`), using each record's change time (`_m`), author (`_by`) and the deletion times in `meta.gone`. A scene
+  both sides changed keeps the newer text and saves the other as a snapshot.
+- **Presence.** `.inkling-here/<computer>.json` holds name, scene and Inkling version, refreshed every 30 seconds;
+  entries older than 2.5 minutes are ignored.
+- **Personal stats** (pet, daily goal, word history, timer settings) are stored per writer in `meta.writers`.
+
+The page checks for changes every 8 seconds and when the window gets focus.
 
 **File › Import a backup as a new project…** opens a backup made anywhere: in the desktop app, in a browser, or
 in the Claude artifact. Pictures come with it.

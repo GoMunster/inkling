@@ -29,43 +29,91 @@ test('first run makes a sample project, saves to disk, and reopens it', async ()
   const dir = await projectsDir(app), ids = fs.readdirSync(dir);
   expect(ids.length).toBe(1);
   const file = path.join(dir, ids[0], 'project.json');
-  expect(fs.existsSync(path.join(dir, ids[0], '.inkling-lock.json'))).toBe(true);
+  expect(fs.readdirSync(path.join(dir, ids[0], '.inkling-here')).length).toBe(1);   // "this computer has it open"
   await typeInScene(win, ' Saved on disk.');
   expect(await until(() => fs.readFileSync(file, 'utf8').includes('Saved on disk.'))).toBe(true);
   const pj = JSON.parse(fs.readFileSync(file, 'utf8')); expect(pj.meta.v).toBe(2);
   await typeInScene(win, ' Written just before closing.');
   await app.close();   // the window waits for the last save
   expect(fs.readFileSync(file, 'utf8')).toContain('Written just before closing.');
-  expect(fs.existsSync(path.join(dir, ids[0], '.inkling-lock.json'))).toBe(false);
+  expect(fs.readdirSync(path.join(dir, ids[0], '.inkling-here')).length).toBe(0);
   ({ app, win } = await launch(home));
   await expect(win.locator('#ed')).toContainText('Written just before closing.');
   expect(errors).toEqual([]);
   await app.close();
 });
 
-test('warns about a project open on another computer, and about edits that arrive from one', async () => {
-  const home = newHome();
-  const { app, win, errors } = await launch(home);
-  const dir = await projectsDir(app);
-  // a second project, then pretend another computer has it open
-  await win.click('#pjBtn'); await win.click('[data-pj="blank"]'); await win.waitForTimeout(600);
-  const other = fs.readdirSync(dir).find(id => !/sample/.test(id));
-  await win.click('#pjBtn'); await win.click('[data-pj="open"][data-id^="the-lantern"]'); await win.waitForTimeout(500);
-  fs.writeFileSync(path.join(dir, other, '.inkling-lock.json'), JSON.stringify({ device: 'elsewhere', host: 'Study-PC', at: Date.now() }));
-  await win.click('#pjBtn'); await win.click('[data-pj="open"][data-id="' + other + '"]');
-  await expect(win.locator('.ask')).toContainText('Study-PC');
-  await win.click('.ask [data-v="open"]'); await win.waitForTimeout(500);
-  // another computer saves through the sync folder
-  const file = path.join(dir, other, 'project.json');
-  await new Promise(r => setTimeout(r, 1200));
-  const pj = JSON.parse(fs.readFileSync(file, 'utf8')); pj.meta.title = 'From the other computer'; fs.writeFileSync(file, JSON.stringify(pj));
-  await win.click('.sc-btn'); await typeInScene(win, 'Typed here.');
-  await expect(win.locator('.ask h2')).toHaveText('This project changed on another computer');
-  await win.click('.ask [data-v="theirs"]');
-  await expect(win.locator('#projTitle')).toHaveValue('From the other computer');
-  expect(fs.readdirSync(path.join(dir, other, 'backups')).some(f => /-yours\.json$/.test(f))).toBe(true);
-  expect(errors).toEqual([]);
-  await app.close();
+const stubFolder = (app, dir) => app.evaluate(({ dialog }, d) => { dialog.showOpenDialog = async () => ({ canceled: false, filePaths: [d] }); }, dir);
+const focus = (app) => app.evaluate(({ BrowserWindow }) => BrowserWindow.getAllWindows()[0].webContents.send('ink:focus'));
+async function setName(win, name) {
+  await win.click('#menuBtn'); await win.click('[data-m="prefs"]');
+  await win.fill('#pfName', name); await win.press('#pfName', 'Tab');
+}
+const sceneText = (win, i) => win.evaluate(i => { const b = document.querySelectorAll('#binder .sc-btn')[i]; b.click(); return document.querySelector('#ed').textContent; }, i);
+// Brings in the other computer's saves: wait for this computer's save, then nudge the sync check until `ok` holds.
+async function syncUntil(app, win, ok, ms = 15000) {
+  const end = Date.now() + ms;
+  for (;;) { await focus(app); await win.waitForTimeout(400); if (await ok()) return true; if (Date.now() > end) return false; }
+}
+
+test('two writers share one project through a synced folder', async () => {
+  test.setTimeout(150000);
+  const shared = fs.mkdtempSync(path.join(os.tmpdir(), 'Dropbox-'));
+  const A = await launch(newHome()), B = await launch(newHome());
+  await setName(A.win, 'Ann'); await setName(B.win, 'Ben');
+
+  // Ann moves the sample into the shared folder; Ben opens it from there
+  await stubFolder(A.app, shared);
+  await A.win.click('#menuBtn'); await A.win.click('[data-m="share"]'); await A.win.click('[data-sh="move"]');
+  await expect(A.win.locator('.sh-steps li').first()).toHaveClass(/done/);
+  await A.win.click('.share [data-sh="close"] >> nth=-1');
+  const proj = path.join(shared, fs.readdirSync(shared)[0]), file = path.join(proj, 'project.json');
+  await stubFolder(B.app, proj);
+  await B.win.click('#pjBtn'); await B.win.click('[data-pj="openShared"]');
+  await expect(B.win.locator('#projTitle')).toHaveValue(/Lantern Tide/);
+  expect(await syncUntil(B.app, B.win, async () => /Ann/.test(await B.win.locator('#hereChip').textContent()))).toBe(true);
+  expect(await syncUntil(A.app, A.win, async () => /Ben/.test(await A.win.locator('#hereChip').textContent()))).toBe(true);
+
+  // different scenes: both changes survive, on disk and on both screens
+  await A.win.click('#binder .sc-btn >> nth=0'); await typeInScene(A.win, ' Ann was here.');
+  await B.win.click('#binder .sc-btn >> nth=1'); await typeInScene(B.win, ' Ben was here and here.');
+  expect(await until(() => { const t = fs.readFileSync(file, 'utf8'); return t.includes('Ann was here.') && t.includes('Ben was here and here.'); }, 20000)
+    || await syncUntil(A.app, A.win, async () => { const t = fs.readFileSync(file, 'utf8'); return t.includes('Ann was here.') && t.includes('Ben was here and here.'); })).toBe(true);
+  expect(await syncUntil(A.app, A.win, async () => (await sceneText(A.win, 1)).includes('Ben was here and here.'))).toBe(true);
+  expect(await syncUntil(B.app, B.win, async () => (await sceneText(B.win, 0)).includes('Ann was here.'))).toBe(true);
+  expect(await B.win.locator('#binder .here').count()).toBeGreaterThan(0);   // Ann's letter beside the scene she is in
+
+  // the same scene at once: the newer text stays, the other is kept as a snapshot named after its writer
+  await A.win.click('#binder .sc-btn >> nth=2'); await B.win.click('#binder .sc-btn >> nth=2');
+  await typeInScene(A.win, ' Ann ending.'); await typeInScene(B.win, ' Ben ending.');
+  const merged = async (win) => { const t = await sceneText(win, 2); return t.includes('Ben ending.') && !t.includes('Ann ending.'); };
+  expect(await syncUntil(B.app, B.win, () => merged(B.win), 25000)).toBe(true);
+  expect(await syncUntil(A.app, A.win, () => merged(A.win), 25000)).toBe(true);
+  const pj = JSON.parse(fs.readFileSync(file, 'utf8'));
+  const snap = Object.values(pj.sn).find(x => x.auto === 'merge');
+  expect(snap.name).toBe('Ann’s version'); expect(snap.text).toContain('Ann ending.');
+
+  // a deletion reaches the other computer
+  const ent = await B.win.locator('[data-a="open-e"]').last().getAttribute('data-id');
+  await B.win.click('[data-a="dele"][data-id="' + ent + '"]', { force: true }); await B.win.click('[data-a="dele"][data-id="' + ent + '"]', { force: true });
+  expect(await syncUntil(A.app, A.win, async () => (await A.win.locator('[data-a="open-e"][data-id="' + ent + '"]').count()) === 0, 25000)).toBe(true);
+
+  // each writer keeps their own daily words
+  await expect(A.win.locator('#chipTxt')).toHaveText(/^5 \//);
+  await expect(B.win.locator('#chipTxt')).toHaveText(/^7 \//);
+
+  // a sync service's conflicted copy is merged in and tidied away
+  await new Promise(r => setTimeout(r, 1500));
+  const copy = JSON.parse(fs.readFileSync(file, 'utf8')), now = Date.now();
+  copy.sc.s_stray = { text: 'Found in a conflicted copy.', synopsis: '', notes: '', _m: now, _dev: 'other', _by: 'Cat' };
+  copy.meta.scenes.s_stray = { title: 'Stray scene', status: 'draft', words: 5 }; copy.meta.chapters[0].scenes.push('s_stray');
+  fs.writeFileSync(path.join(proj, "project (Ann's conflicted copy).json"), JSON.stringify(copy));
+  expect(await syncUntil(A.app, A.win, async () => (await A.win.locator('#binder .sc-btn', { hasText: 'Stray scene' }).count()) === 1, 25000)).toBe(true);
+  expect(fs.readdirSync(proj).some(n => /conflicted/.test(n))).toBe(false);
+  expect(fs.readdirSync(path.join(proj, 'backups')).some(n => /conflicted/.test(n))).toBe(true);
+
+  expect(A.errors).toEqual([]); expect(B.errors).toEqual([]);
+  await A.app.close(); await B.app.close();
 });
 
 test('moves the projects folder (for Dropbox and similar)', async () => {

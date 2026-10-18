@@ -5,6 +5,8 @@ const call = (name) => (...args) => ipcRenderer.invoke('ink:' + name, ...args);
 
 contextBridge.exposeInMainWorld('inklingDesktop', {
   list: call('list'), create: call('create'), load: call('load'), last: call('last'), save: call('save'), changed: call('changed'),
+  read: call('read'), adopt: call('adopt'), clearStrays: call('clearStrays'), here: call('here'),
+  openShared: call('openShared'), shareMove: call('shareMove'), unlink: call('unlink'), where: call('where'),
   duplicate: call('duplicate'), trash: call('trash'), backups: call('backups'), restoreBackup: call('restoreBackup'),
   picSave: call('picSave'), picDelete: call('picDelete'), picRead: call('picRead'),
   saveFile: call('saveFile'), openFile: call('openFile'), pdf: call('pdf'), reveal: call('reveal'), dir: call('dir'),

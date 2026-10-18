@@ -22,13 +22,14 @@ A novel-writing app inspired by Scrivener, with a virtual pet that cheers you on
 - **Scene snapshots:** save a version of a scene before a rewrite, compare any snapshot with the current text (added and removed words highlighted) and restore it. Inkling also keeps one automatically each day you change a scene, and before find and replace or a restore changes it.
 - **Find and replace:** across the whole book or one chapter, with match case and whole words. Click a result to jump to it in the scene. Replace one at a time or all at once (each changed scene is snapshotted first).
 - **Writing history:** a chart of new words per day (30 or 90 days) or per week (12 months), with totals, best day, streak and days at goal, and a table view.
+- **Sharing with co-writers (desktop app):** keep a project in a Dropbox, Google Drive, OneDrive or iCloud Drive folder and several people can work on it from their own computers. Inkling merges everyone's changes piece by piece, shows who is in which scene, keeps each writer's pet and goals separate, and saves the other version of any scene two people changed at once as a snapshot. See [SHARING.md](SHARING.md).
 - **Settings:** light or dark theme, writing font, text size, line spacing, page width and spellcheck, kept per device.
 - **A short tour** on first run, replayable from the menu.
 - **Backup:** the whole project as JSON, pictures included (restore from the menu).
 
 ## Desktop app
 
-Inkling also comes as a downloadable app for Windows, macOS and Linux that needs no Claude account or internet, and keeps several projects on the computer, each in its own folder with automatic backups. Put the projects folder in Dropbox, iCloud Drive, Google Drive or OneDrive to back it up online and write on more than one computer; Inkling warns you when a project is open on another computer or was changed by one. It tells people when a new version is out and, on Windows and Linux, installs it with one click. See [desktop/README.md](desktop/README.md) for installing and building it, and [RELEASING.md](RELEASING.md) for publishing an update.
+Inkling also comes as a downloadable app for Windows, macOS and Linux that needs no Claude account or internet, and keeps several projects on the computer, each in its own folder with automatic backups. Put a project in Dropbox, iCloud Drive, Google Drive or OneDrive to back it up online, write on more than one computer, or share it with co-writers ([SHARING.md](SHARING.md)). It tells people when a new version is out and, on Windows and Linux, installs it with one click. See [desktop/README.md](desktop/README.md) for installing and building it, and [RELEASING.md](RELEASING.md) for publishing an update.
 
 ## Privacy
 

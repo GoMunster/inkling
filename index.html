@@ -671,6 +671,30 @@ dl.fam{display:grid;grid-template-columns:auto 1fr;gap:6px 10px} dl.fam dt{color
 .tour-ring{position:fixed;z-index:84;pointer-events:none;border:2px solid var(--accent);border-radius:12px;box-shadow:0 0 0 4000px rgba(13,18,26,.28);transition:all .2s}
 @media (prefers-reduced-motion:reduce){.tour-ring{transition:none}}
 
+/* sharing */
+.here-chip{gap:4px;padding:3px 10px 3px 4px}
+.here-chip span{font-size:12px}
+.av{display:inline-grid;place-items:center;width:20px;height:20px;border-radius:50%;font-style:normal;font-size:11px;font-weight:700;color:#fff;background:hsl(var(--h,210) 55% 42%);flex:none}
+.here-chip .av+.av{margin-left:-6px;box-shadow:0 0 0 2px var(--paper)}
+.sc-btn .here{width:16px;height:16px;font-size:9.5px;margin-left:4px}
+.here-pop{position:fixed;z-index:60;width:280px;max-width:calc(100vw - 16px);padding:10px 12px}
+.here-row{display:flex;gap:8px;align-items:flex-start;padding:6px 0;font-size:13px}
+.here-ban{max-width:var(--ed-w,780px);margin:12px auto 0;display:flex;gap:8px;align-items:flex-start;background:color-mix(in srgb,var(--accent) 10%,var(--paper));border:1px solid color-mix(in srgb,var(--accent) 35%,var(--line));border-radius:10px;padding:8px 12px;font-size:13px;color:var(--ink)}
+.here-ban[hidden]{display:none}
+.upd-bar.merge-bar{left:auto;right:16px;max-width:min(560px,calc(100vw - 32px))}
+.pj-tag{display:inline-flex;align-items:center;gap:4px;margin-left:8px;font-family:var(--f-ui);font-size:11px;font-weight:600;color:var(--accent);border:1px solid color-mix(in srgb,var(--accent) 40%,var(--line));border-radius:999px;padding:1px 7px;vertical-align:middle}
+.pj-dlg.share{width:min(640px,100%)}
+.sh-steps{margin:14px 0;padding-left:0;list-style:none;counter-reset:st;display:grid;gap:12px}
+.sh-steps li{counter-increment:st;position:relative;padding:10px 12px 10px 46px;border:1px solid var(--line);border-radius:12px;background:var(--paper);font-size:13.5px}
+.sh-steps li::before{content:counter(st);position:absolute;left:12px;top:10px;width:24px;height:24px;border-radius:50%;display:grid;place-items:center;background:var(--bg);border:1px solid var(--line);font-weight:700;font-size:12px}
+.sh-steps li.done::before{content:'✓';background:var(--ok);border-color:var(--ok);color:#fff}
+.sh-steps p{margin:4px 0 0;line-height:1.5;color:var(--muted)}
+.sh-steps code{font-family:var(--f-mono);font-size:12px;overflow-wrap:anywhere;color:var(--ink)}
+.sh-steps .ts-row{margin-top:8px}
+.hs ul,.hs ol{margin:6px 0;padding-left:20px;line-height:1.55;font-size:14px}
+.hs li{margin:4px 0} .hs p{line-height:1.55;font-size:14px}
+.banner-note{background:color-mix(in srgb,var(--accent) 10%,var(--paper));border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin:0;font-size:14px}
+
 /* dialogs, update bar, settings */
 .ask-ov{z-index:80}
 .pj-dlg.ask{width:min(480px,100%)}
@@ -764,7 +788,7 @@ const ICO={plus:'M12 5v14M5 12h14',down:'M6 9l6 6 6-6',right:'M9 6l6 6-6 6',up:'
   spark:'M12 3l2 6 6 2-6 2-2 6-2-6-6-2 6-2z',x:'M6 6l12 12M18 6L6 18',
   note:'M6 3h9l4 4v14H6zM14 3v5h5M9 13h7M9 17h5',list:'M9 6h11M9 12h11M9 18h11M4 6h.01M4 12h.01M4 18h.01',bulb:'M9 18h6M10 21h4M12 3a6 6 0 00-4 10.5c.7.7 1 1.5 1 2.5h6c0-1 .3-1.8 1-2.5A6 6 0 0012 3z',
   image:'M4 5h16v14H4zM4 16l5-5 4 4 3-3 4 4M15 9h.01',indent:'M4 6h16M10 12h10M10 18h10M4 10l3 2-3 2',outdent:'M4 6h16M10 12h10M10 18h10M7 10l-3 2 3 2',upload:'M12 16V4M7 9l5-5 5 5M4 20h16',play:'M7 5l12 7-12 7z',pause:'M8 5v14M16 5v14',stop:'M6 6h12v12H6z',skip:'M5 5l10 7-10 7zM19 5v14',timer:'M12 9v4l2.5 2M9 2h6M12 22a8 8 0 100-16 8 8 0 000 16z',folder:'M3 7a2 2 0 012-2h4l2 2h8a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z',web:'M8 7a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0zM21 7a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0zM14.5 18a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0zM8 7h8M6.5 9l4.5 7M17.5 9L13 16',tree:'M9 3h6v4H9zM3 17h6v4H3zM15 17h6v4h-6zM12 7v5M6 12h12M6 12v5M18 12v5',heart:'M12 20s-7-4.5-7-10a4 4 0 017-2.6A4 4 0 0119 10c0 5.5-7 10-7 10z',
-  time:'M3 12h18M7 12V7M12 12v5M17 12V7',sliders:'M4 7h9M17 7h3M4 17h3M11 17h9M15 5v4M9 15v4',search:'M11 4a7 7 0 1 0 0 14a7 7 0 1 0 0-14M20 20l-4.2-4.2',minus:'M5 12h14',
+  time:'M3 12h18M7 12V7M12 12v5M17 12V7',sliders:'M4 7h9M17 7h3M4 17h3M11 17h9M15 5v4M9 15v4',search:'M11 4a7 7 0 1 0 0 14a7 7 0 1 0 0-14M20 20l-4.2-4.2',users:'M9 11a3.5 3.5 0 1 0 0-7a3.5 3.5 0 1 0 0 7M2.5 20c.6-3.4 3.2-5.5 6.5-5.5s5.9 2.1 6.5 5.5M16 4.3a3.5 3.5 0 0 1 0 6.4M18 14.8c1.9.8 3.2 2.6 3.5 5.2',minus:'M5 12h14',
   grip:'M9 6h.01M15 6h.01M9 12h.01M15 12h.01M9 18h.01M15 18h.01',copy:'M8 8h11v11H8zM5 16V5h11',fit:'M4 12h16M4 12l4-4M4 12l4 4M20 12l-4-4M20 12l-4 4'};
 const ico=(n,s)=>'<svg class="ico" width="'+(s||16)+'" height="'+(s||16)+'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="'+ICO[n]+'"/></svg>';
 
@@ -787,10 +811,10 @@ const stageOf=t=>{let i=0;STAGES.forEach((s,j)=>{if(t>=s.at)i=j});return i};
 let S=null;          // {meta, sc:{id:{text,synopsis,notes}}, en:{id:{fields,pic}}, tl:{id:timeline}, ch:{id:{notes}}, nt:{id:{text,ideas}}, ol:{id:{num,showNotes,items}}}
 const DOCS=['sc','en','tl','ch','nt','ol','rm','ft','ss','sn'];   // each record of these maps is its own saved doc, '<prefix>_<id>'
 const ADD_DOCS=[];   // (raw, out) => out.<prefix> = normalized records, for doc types added after normalize() was written
-const snapshot=st=>{ st=st||S; const o={meta:st.meta}; DOCS.forEach(p=>{ o[p]=st[p]; }); return o; };
+const snapshot=st=>{ if(!st) stampMine(S); st=st||S; const o={meta:st.meta}; DOCS.forEach(p=>{ o[p]=st[p]; }); return o; };
 // The desktop app (desktop/) provides window.inklingDesktop: each project is a folder on the computer. Elsewhere it is null.
 const DESK=window.inklingDesktop||null;
-const APP_VERSION='1.0.1';   // the desktop build replaces this with desktop/package.json's version
+const APP_VERSION='1.1.0';   // the desktop build replaces this with desktop/package.json's version
 // Saved-format version. When the shape of saved data changes: bump FORMAT and add MIGRATE[old] that upgrades a raw
 // project one step (it runs before normalize()). A project from a newer FORMAT is never loaded or overwritten.
 const FORMAT=2;
@@ -806,7 +830,13 @@ function migrate(o){
 // Sync-ready bookkeeping: each saved record carries _m (last change, ms) and _dev (device that changed it), and
 // meta.gone keeps a dated marker for each deleted record, so a future sync can tell edits from deletions.
 const DEVICE=(()=>{ try{ let d=localStorage.getItem('inkling:device'); if(!d){ d='d'+Math.random().toString(36).slice(2,10); localStorage.setItem('inkling:device',d); } return d; }catch(e){ return 'd-unknown'; } })();
-const PJ={id:null};   // the desktop project that is open
+// Who is writing, for shared projects: a name chosen in Settings (per device). Personal things (pet, daily goal,
+// word history, focus timer) are kept per writer in meta.writers, keyed by the lower-cased name.
+const ME={name:''}; try{ ME.name=String(JSON.parse(localStorage.getItem('inkling:me')||'{}').name||'').slice(0,60); }catch(e){}
+const nameKey=n=>String(n||'').trim().toLowerCase();
+const myKey=()=>nameKey(ME.name);
+const PERSONAL=['days','pet','mark','goal','pomo'];
+const PJ={id:null,base:null};   // the desktop project that is open, and the version of it last read from or written to disk
 let linker=null;
 const ui={view:null,hist:[],cork:'all',rename:null,confirm:null,menu:false,tab:'write',focus:false,openSec:{ol:true,nt:true,tl:true,rm:true,ft:true,char:true,place:true,thing:true},say:'',sayAt:0,mood:'',touched:false,sel:'',focusName:false,fs:18,
   relabel:null,ntAdd:false,olUndo:null,binderCfg:false,cvFor:null,cvSel:null,cvPop:false,ftGen:{},imgOpts:false,imgBusy:null,tlFor:null,tlSel:null,tlSide:null,tlSideKey:'',tlQ:'',tlEnt:'',tlR:null,tlDragged:false};
@@ -895,7 +925,7 @@ function blankProject(){
 }
 function normalize(o){
   o=JSON.parse(JSON.stringify(o)); o.meta=o.meta||{}; o=migrate(o);
-  const stamps={}; DOCS.forEach(p=>{ const m=o[p]&&typeof o[p]==='object'?o[p]:{}; Object.keys(m).forEach(id=>{ const x=m[id]; if(x&&x._m) (stamps[p]=stamps[p]||{})[id]=[+x._m,String(x._dev||'')]; }); });
+  const stamps={}; DOCS.forEach(p=>{ const m=o[p]&&typeof o[p]==='object'?o[p]:{}; Object.keys(m).forEach(id=>{ const x=m[id]; if(x&&x._m) (stamps[p]=stamps[p]||{})[id]=[+x._m,String(x._dev||''),String(x._by||'').slice(0,60)]; }); });
   const meta=o.meta;
   meta.v=FORMAT;
   const gn=meta.gone&&typeof meta.gone==='object'?meta.gone:{}, cut=Date.now()-180*864e5; meta.gone={};
@@ -903,6 +933,10 @@ function normalize(o){
   meta.chapters=Array.isArray(meta.chapters)?meta.chapters:[]; meta.scenes=meta.scenes||{}; meta.ents=meta.ents||{};
   meta.pet=meta.pet||{name:'Inky',total:0}; meta.pet.name=meta.pet.name||'Inky'; meta.pet.total=+meta.pet.total||0;
   meta.days=meta.days||{}; meta.saved=+meta.saved||0; meta.pomo=normPomo(meta.pomo); meta.exp=normExp(meta.exp); meta.author=String(meta.author||'');
+  const wr=meta.writers&&typeof meta.writers==='object'?meta.writers:{}; meta.writers={};
+  Object.keys(wr).slice(0,60).forEach(k=>{ const w=wr[k]; if(!w||typeof w!=='object') return;
+    meta.writers[String(k).slice(0,60)]={name:String(w.name||'').slice(0,60),days:w.days&&typeof w.days==='object'?w.days:{},pet:{name:String((w.pet||{}).name||'Inky').slice(0,40),total:+((w.pet||{}).total)||0},
+      mark:w.mark||null,goal:+w.goal||500,pomo:normPomo(w.pomo),devs:(Array.isArray(w.devs)?w.devs:[]).filter(x=>typeof x==='string').slice(-10),at:+w.at||0}; });
   const sx=meta.secs&&typeof meta.secs==='object'?meta.secs:{rm:false,ft:false}; meta.secs={};
   OPT_SECS.forEach(k=>{ meta.secs[k]=sx[k]===undefined?!(k==='rm'||k==='ft'):!!sx[k]; });
   const lb=meta.labels&&typeof meta.labels==='object'?meta.labels:{}; meta.labels={};
@@ -945,7 +979,7 @@ function normalize(o){
       net:Math.round(num(x.net,0)),done:!!x.done,scenes:(Array.isArray(x.scenes)?x.scenes:[]).filter(y=>typeof y==='string').slice(0,60)}; });
   const out={meta,sc,en,tl:tlo,ch:cho,nt:nto,ol:olo,rm:rmo,ft:fto,ss:sso};
   ADD_DOCS.forEach(f=>f(o,out));
-  DOCS.forEach(p=>{ const st=stamps[p]||{}, m=out[p]||{}; Object.keys(m).forEach(id=>{ if(st[id]&&m[id]&&typeof m[id]==='object'){ m[id]._m=st[id][0]; m[id]._dev=st[id][1]; } }); });
+  DOCS.forEach(p=>{ const st=stamps[p]||{}, m=out[p]||{}; Object.keys(m).forEach(id=>{ if(st[id]&&m[id]&&typeof m[id]==='object'){ m[id]._m=st[id][0]; m[id]._dev=st[id][1]; if(st[id][2]) m[id]._by=st[id][2]; } }); });
   return out;
 }
 
@@ -1210,7 +1244,7 @@ function setStatus(k){
 }
 function dirty(){
   ui.touched=true; const now=Date.now();
-  for(const k of arguments){ P.dirty.add(k); P.gone.delete(k); const d=docData(k); if(d&&typeof d==='object'){ d._m=now; d._dev=DEVICE; } if(S.meta.gone[k]) delete S.meta.gone[k]; }
+  for(const k of arguments){ P.dirty.add(k); P.gone.delete(k); const d=docData(k); if(d&&typeof d==='object'){ d._m=now; d._dev=DEVICE; if(ME.name) d._by=ME.name; else delete d._by; } if(S.meta.gone[k]) delete S.meta.gone[k]; }
   if(P.dirty.has('meta')) S.meta.saved=Date.now();
   schedule(1400);
 }
@@ -1240,7 +1274,8 @@ const STORES={
     for(const k of keys){ const d=docData(k); if(d==null) continue; await col.doc(k).set(d); P.keys.add(k); }
     for(const k of gone){ await col.doc(k).delete(); P.keys.delete(k); }
   }},
-  desktop:{label:'disk',async write(){ if(!PJ.id) return; const r=await DESK.save(PJ.id,JSON.stringify(snapshot()),deskInfo()); if(r&&r.conflict) await deskConflict(); }}
+  desktop:{label:'disk',async write(){ if(!PJ.id) return; const json=JSON.stringify(snapshot()), r=await DESK.save(PJ.id,json,deskInfo());
+    if(r&&r.conflict) await deskSync(); else PJ.base=JSON.parse(json); }}
 };
 let store=DESK?STORES.desktop:STORES.local;
 async function flush(){
@@ -1301,8 +1336,8 @@ function streak(){
 function curMood(){ const w=todayWords(), g=S.meta.goal; if(w>=g) return 'party'; if(w>=g*.5) return 'hype'; if(w>0) return 'happy'; return 'sleepy'; }
 function orderedScenes(){ const out=[]; S.meta.chapters.forEach(c=>c.scenes.forEach(id=>out.push({id,ch:c}))); return out; }
 function firstView(){ const s=orderedScenes()[0]; return s?{k:'scene',id:s.id}:{k:'cork'}; }
-function viewValid(v){ if(!v) return false; if(v.k==='scene') return !!S.meta.scenes[v.id]; if(v.k==='ent') return !!S.meta.ents[v.id]; if(v.k==='tl') return !!(S.tl[v.id]&&S.meta.tls.some(x=>x.id===v.id)); if(v.k==='nt') return !!(S.nt[v.id]&&S.meta.nts.some(x=>x.id===v.id)); if(v.k==='ol') return !!(S.ol[v.id]&&S.meta.ols.some(x=>x.id===v.id)); if(v.k==='rm'||v.k==='ft') return !!(S[v.k][v.id]&&S.meta[v.k+'s'].some(x=>x.id===v.id)); if(v.k==='snap') return !!S.meta.scenes[v.id]; return v.k==='cork'||v.k==='ss'||v.k==='prefs'||v.k==='find'; }
-function viewName(v){ if(v.k==='scene') return S.meta.scenes[v.id].title; if(v.k==='ent') return S.meta.ents[v.id].name; if(v.k==='tl') return S.meta.tls.find(x=>x.id===v.id).name; if(v.k==='nt') return S.meta.nts.find(x=>x.id===v.id).name; if(v.k==='ol') return S.meta.ols.find(x=>x.id===v.id).name; if(v.k==='rm'||v.k==='ft') return S.meta[v.k+'s'].find(x=>x.id===v.id).name; if(v.k==='ss') return 'Writing sessions'; if(v.k==='prefs') return 'Settings'; if(v.k==='find') return 'Find and replace'; if(v.k==='snap') return 'Snapshots: '+S.meta.scenes[v.id].title; return 'Corkboard'; }
+function viewValid(v){ if(!v) return false; if(v.k==='scene') return !!S.meta.scenes[v.id]; if(v.k==='ent') return !!S.meta.ents[v.id]; if(v.k==='tl') return !!(S.tl[v.id]&&S.meta.tls.some(x=>x.id===v.id)); if(v.k==='nt') return !!(S.nt[v.id]&&S.meta.nts.some(x=>x.id===v.id)); if(v.k==='ol') return !!(S.ol[v.id]&&S.meta.ols.some(x=>x.id===v.id)); if(v.k==='rm'||v.k==='ft') return !!(S[v.k][v.id]&&S.meta[v.k+'s'].some(x=>x.id===v.id)); if(v.k==='snap') return !!S.meta.scenes[v.id]; return v.k==='cork'||v.k==='ss'||v.k==='prefs'||v.k==='find'||v.k==='help'; }
+function viewName(v){ if(v.k==='scene') return S.meta.scenes[v.id].title; if(v.k==='ent') return S.meta.ents[v.id].name; if(v.k==='tl') return S.meta.tls.find(x=>x.id===v.id).name; if(v.k==='nt') return S.meta.nts.find(x=>x.id===v.id).name; if(v.k==='ol') return S.meta.ols.find(x=>x.id===v.id).name; if(v.k==='rm'||v.k==='ft') return S.meta[v.k+'s'].find(x=>x.id===v.id).name; if(v.k==='ss') return 'Writing sessions'; if(v.k==='prefs') return 'Settings'; if(v.k==='find') return 'Find and replace'; if(v.k==='help') return 'How sharing works'; if(v.k==='snap') return 'Snapshots: '+S.meta.scenes[v.id].title; return 'Corkboard'; }
 
 /* ---------- pet ---------- */
 function petSVG(m,stage){
@@ -1423,7 +1458,7 @@ function go(v,o){
   if(!viewValid(v)) v=firstView();
   if(ui.view&&!(ui.view.k===v.k&&ui.view.id===v.id)&&o.push!==false){ ui.hist.push(ui.view); if(ui.hist.length>40) ui.hist.shift(); }
   ui.view=v; ui.tab='write'; ui.rename=null; ui.pop=false;
-  renderBinder(); renderMain(); renderInspector(); syncTab();
+  renderBinder(); renderMain(); renderInspector(); syncTab(); hereSoon();
   if(v.flash){
     const el=document.querySelector('#ed .ent[data-ent="'+v.flash+'"]');
     if(el){ el.scrollIntoView({block:'center'}); el.classList.add('flash'); setTimeout(()=>el.classList.remove('flash'),2000); }
@@ -1538,7 +1573,8 @@ function saveRelabel(ok){
   if(!S.meta.labels[t].p&&!S.meta.labels[t].s) delete S.meta.labels[t];
   dirty('meta'); renderAll();
 }
-function renderBinder(){
+function renderBinder(){ renderBinder0(); if(ui.others&&ui.others.length) paintHere(); }
+function renderBinder0(){
   const m=S.meta, cur=ui.view, el=$('#binder'), cf=ui.confirm;
   let h='<div class="pane-head"><h2>Binder</h2><div class="row"><button class="btn sm" data-a="cork-all">'+ico('card',14)+'<span>Corkboard</span></button><button class="btn sm" data-a="addch">'+ico('plus',14)+'<span>Chapter</span></button></div></div><div class="tree">';
   m.chapters.forEach((c,ci)=>{
@@ -1653,7 +1689,7 @@ function renderMain(){
   if(!viewValid(v)){ ui.view=firstView(); return renderMain(); }
   const key=v.k+':'+(v.id||''), reset=key!==ui.lastKey; ui.lastKey=key;
   const keep=el.scrollTop;
-  if(v.k==='ent') renderEnt(el,v); else if(v.k==='cork') renderCork(el); else if(v.k==='tl') renderTl(el,v); else if(v.k==='nt') renderNt(el,v); else if(v.k==='ol') renderOl(el,v); else if(v.k==='rm'||v.k==='ft') renderCv(el,v); else if(v.k==='ss') renderSs(el); else if(v.k==='prefs') renderPrefs(el); else if(v.k==='snap') renderSnap(el,v); else if(v.k==='find') renderFind(el); else renderScene(el,v);
+  if(v.k==='ent') renderEnt(el,v); else if(v.k==='cork') renderCork(el); else if(v.k==='tl') renderTl(el,v); else if(v.k==='nt') renderNt(el,v); else if(v.k==='ol') renderOl(el,v); else if(v.k==='rm'||v.k==='ft') renderCv(el,v); else if(v.k==='ss') renderSs(el); else if(v.k==='prefs') renderPrefs(el); else if(v.k==='snap') renderSnap(el,v); else if(v.k==='find') renderFind(el); else if(v.k==='help') renderHelp(el); else renderScene(el,v);
   el.scrollTop=reset?0:keep;
 }
 function renderScene(el,v){
@@ -1667,6 +1703,7 @@ function renderScene(el,v){
     +'<button class="btn" id="snBtn" title="Saved versions of this scene">'+ico('time')+'<span>Snapshots</span></button>'
     +'<button class="btn" id="focusBtn" aria-pressed="'+(ui.focus?'true':'false')+'">'+ico('focus')+'<span>'+(ui.focus?'Exit focus':'Focus')+'</span></button></div></div>'
     +(m.sample?'<div class="banner"><span>This is a sample project, so you can try the links and the pet. '+(DESK?'Choose <b>File → New project</b> when you are ready for your own.':'Open the menu and choose <b>Start a blank project</b> when you are ready for your own.')+'</span><button class="btn sm" id="bnX">Dismiss</button></div>':'')
+    +'<div class="here-ban" id="hereBan" role="status" hidden></div>'
     +'<div class="sheet"><div id="ed" class="editor" role="textbox" aria-multiline="true" aria-label="Scene text" spellcheck="'+(LOOK.spell?'true':'false')+'" data-ph="Start writing. Names you have pages for will link automatically."></div></div>'
     +'<p class="hint">Highlighted names are linked. Click one to open its page, or move through it with the arrow keys to edit.</p>';
   const ed=$('#ed'); ed.innerHTML=renderText(d.text);
@@ -1683,8 +1720,8 @@ function renderScene(el,v){
     typed();
   });
   ed.addEventListener('click',e=>{ const t=e.target.closest('.ent'); if(t&&getSelection().isCollapsed) go({k:'ent',id:t.dataset.ent}); });
-  const tt=$('#sceneTitle'); tt.addEventListener('input',()=>{ sc.title=tt.value||'Untitled scene'; dirty('meta'); renderBinder(); });
-  $('#sceneStatus').addEventListener('change',e=>{ sc.status=e.target.value; dirty('meta'); renderBinder(); });
+  const tt=$('#sceneTitle'); tt.addEventListener('input',()=>{ S.meta.scenes[v.id].title=tt.value||'Untitled scene'; dirty('meta'); renderBinder(); });
+  $('#sceneStatus').addEventListener('change',e=>{ S.meta.scenes[v.id].status=e.target.value; dirty('meta'); renderBinder(); });
   $('#focusBtn').addEventListener('click',()=>{ ui.focus=!ui.focus; syncTab(); renderMain(); });
   $('#snBtn').addEventListener('click',()=>go({k:'snap',id:v.id}));
   const fs=n=>{ ui.fs=Math.max(14,Math.min(28,ui.fs+n)); ed.style.fontSize=ui.fs+'px'; try{localStorage.setItem('inkling:fs',ui.fs);}catch(e){} };
@@ -2884,7 +2921,7 @@ function renderTl(el,v){
 // sn[id] = {scene, at, name, text, words, auto}. Saved by hand, automatically once a day when a scene is first
 // changed (auto 'daily'), and before restoring a snapshot ('restore') or replacing text ('replace').
 const SN_AUTO_MAX=30;
-const SN_AUTO={daily:'Start of the day',restore:'Before restoring a snapshot',replace:'Before find and replace'};
+const SN_AUTO={daily:'Start of the day',restore:'Before restoring a snapshot',replace:'Before find and replace',merge:'The other version from a shared edit'};
 ADD_DOCS.push((o,out)=>{
   const i=o.sn&&typeof o.sn==='object'?o.sn:{}, r={};
   Object.keys(i).forEach(id=>{ const x=i[id]; if(!x||!out.meta.scenes[x.scene]) return;
@@ -3096,6 +3133,7 @@ async function renderPrefs(el){
   const pf=DESK?await DESK.prefs().catch(()=>null):null;
   const seg=(k,opts)=>'<div class="seg">'+opts.map(o=>'<button data-look="'+k+'" data-v="'+o[0]+'"'+(String(LOOK[k])===String(o[0])?' class="on"':'')+'>'+o[1]+'</button>').join('')+'</div>';
   el.innerHTML='<div class="main-head">'+backBtn()+'<span class="kind">'+ico('sliders',16)+'</span><h1 class="mh-title">Settings</h1></div><div class="pf-wrap">'
+    +(DESK?'<section class="pf"><h2>You</h2><label class="f">Your name<input id="pfName" value="'+esc(ME.name)+'" maxlength="60" placeholder="For example, Mary"></label><p class="fine">Co-writers on a shared project see this name, and it keeps your pet, daily goal and word history separate from theirs. Use the same name on each of your computers. <button class="lnk" data-pf="help">How sharing works</button></p></section>':'')
     +'<section class="pf"><h2>Appearance</h2><p class="fine">These apply to this '+(DESK?'computer':'browser')+', for every project.</p>'
     +'<span class="sec-l">Theme</span>'+seg('theme',[['system','Match my computer'],['light','Light'],['dark','Dark']])
     +'<label class="f">Writing font<select data-look="font">'+FONTS.map(f=>'<option value="'+f[0]+'"'+(LOOK.font===f[0]?' selected':'')+'>'+esc(f[1])+'</option>').join('')+'</select></label>'
@@ -3125,10 +3163,12 @@ async function renderPrefs(el){
     const a=b.dataset.pf;
     if(a==='check') checkUpdatesNow(); else if(a==='notes') DESK.openReleases(pf.version); else if(a==='reveal') DESK.reveal(); else if(a==='tour') startTour(true);
     else if(a==='dir'||a==='dirdef') changeFolder(a==='dirdef');
+    else if(a==='help') go({k:'help'});
   };
   el.onchange=async e=>{
     const x=e.target;
     if(x.dataset.look){ LOOK[x.dataset.look]=x.type==='checkbox'?x.checked:x.value; saveLook(); return; }
+    if(x.id==='pfName'){ setMyName(x.value); toast(ME.name?'Co-writers will see you as '+ME.name+'.':'Name removed.',{plain:true}); return; }
     if(x.dataset.pf==='auto') await DESK.setPrefs({autoUpdate:x.checked});
     if(x.dataset.pf==='spell') await DESK.setPrefs({spell:x.value});
   };
@@ -3213,13 +3253,13 @@ function pmPaint(){
   const fr=Math.min(1,Math.max(0,1-left/len)), arc=$('#pmArc'); arc.style.strokeDasharray=(RING2*fr).toFixed(1)+' '+RING2.toFixed(1); arc.style.opacity=fr>0?1:0;
   $('#pmGo').innerHTML=T.running?ico('pause',14)+'<span>Pause</span>':ico('play',14)+'<span>'+(T.left!=null?'Resume':T.phase==='focus'?'Start focus':'Start break')+'</span>';
   const done=T.count%P2.every; $('#pmDots').innerHTML=Array.from({length:P2.every},(_,i)=>'<i class="'+(i<done?'on':'')+'"></i>').join('')+'<span>'+(done?done+' of '+P2.every+' before a long break':P2.every+' focus sessions, then a long break')+'</span>';
-  const lg=$('.pm-log span'); if(lg) lg.textContent='Past sessions ('+Object.keys(S.ss).length+')';
-  const today=Object.values(S.ss).filter(x=>keyOf(new Date(x.start))===todayKey());
+  const lg=$('.pm-log span'); if(lg) lg.textContent='Past sessions ('+mySs().length+')';
+  const today=mySs().filter(x=>keyOf(new Date(x.start))===todayKey());
   $('#pmNow').innerHTML=T.cur?'This session: <b>'+fmt(T.cur.words)+'</b> new word'+(T.cur.words===1?'':'s')+(P2.goal?' of '+fmt(P2.goal):'')
     :(today.length?'Today: '+today.length+' session'+(today.length===1?'':'s')+', '+fmt(today.reduce((a,x)=>a+x.words,0))+' new words.':'Write in focused bursts. Each session and its word count is saved.');
 }
 function pomoHtml(){
-  const P2=S.meta.pomo, n=Object.keys(S.ss).length, num2=(k,l,mn,mx)=>'<label class="f">'+l+'<input type="number" inputmode="numeric" min="'+mn+'" max="'+mx+'" data-pms="'+k+'" value="'+P2[k]+'"></label>';
+  const P2=S.meta.pomo, n=mySs().length, num2=(k,l,mn,mx)=>'<label class="f">'+l+'<input type="number" inputmode="numeric" min="'+mn+'" max="'+mx+'" data-pms="'+k+'" value="'+P2[k]+'"></label>';
   return '<section class="psec pomo" id="pomo" data-ph="focus"><h3><span>Focus timer</span><span class="pm-tools"><button class="ibtn" data-pm="log" title="Past sessions" aria-label="Past sessions">'+ico('list',15)+'</button><button class="ibtn" data-pm="set" aria-expanded="'+!!ui.pmSet+'" title="Timer settings" aria-label="Timer settings">'+ico('sliders',15)+'</button></span></h3>'
     +'<div class="pm-face"><svg viewBox="0 0 120 120" class="pm-ring" aria-hidden="true"><circle class="bg" cx="60" cy="60" r="52"/><circle class="arc" id="pmArc" cx="60" cy="60" r="52" transform="rotate(-90 60 60)"/></svg><div class="pm-txt" role="timer" aria-live="off"><b class="mono" id="pmTime"></b><span id="pmPhase"></span></div></div>'
     +'<div class="pm-dots" id="pmDots"></div>'
@@ -3242,8 +3282,10 @@ function bindPomo(){
     if(x.type==='checkbox') P2[k]=x.checked; else { S.meta.pomo=normPomo(Object.assign({},P2,{[k]:x.value})); x.value=S.meta.pomo[k]; }
     dirty('meta'); pmPaint(); });
 }
+// Writing sessions belong to the writer who recorded them (shared projects keep everyone's in one place).
+const mySs=()=>Object.keys(S.ss).map(id=>Object.assign({id},S.ss[id])).filter(x=>x._by?nameKey(x._by)===myKey():(!myKey()||!x._dev||x._dev===DEVICE));
 function renderSs(el){
-  const list=Object.keys(S.ss).map(id=>Object.assign({id},S.ss[id])).sort((a,b)=>b.start-a.start), cf=ui.confirm;
+  const list=mySs().sort((a,b)=>b.start-a.start), cf=ui.confirm;
   const tot=list.reduce((a,x)=>({mins:a.mins+x.mins,words:a.words+x.words}),{mins:0,words:0}), best=list.reduce((b,x)=>!b||x.words>b.words?x:b,null);
   const dur=m=>m>=60?Math.floor(m/60)+' h '+Math.round(m%60)+' min':(Math.round(m*10)/10)+' min';
   const hm=t=>{ const d=new Date(t); return pad(d.getHours())+':'+pad(d.getMinutes()); };
@@ -3273,8 +3315,8 @@ function renderSs(el){
     if(a==='open') go({k:'scene',id});
     else if(a==='timer'){ pmStart(); ui.tab='pet'; syncTab(); }
     else if(a==='del') confirmDo('ss'+id,()=>gone([id]),rr);
-    else if(a==='day') confirmDo('ssd'+id,()=>gone(Object.keys(S.ss).filter(k=>keyOf(new Date(S.ss[k].start))===id)),rr);
-    else if(a==='all') confirmDo('ssall',()=>{ gone(Object.keys(S.ss)); toast('All sessions for this project deleted.',{plain:true}); },rr); };
+    else if(a==='day') confirmDo('ssd'+id,()=>gone(mySs().filter(x=>keyOf(new Date(x.start))===id).map(x=>x.id)),rr);
+    else if(a==='all') confirmDo('ssall',()=>{ gone(mySs().map(x=>x.id)); toast('All sessions for this project deleted.',{plain:true}); },rr); };
 }
 
 /* ---------- word-count history ---------- */
@@ -3561,11 +3603,11 @@ function openExport(){
 function renderMenu(){
   const cf=ui.confirm, el=$('#menu');
   const item=(m,label,cls)=>'<button data-m="'+m+'"'+(cls?' class="'+cls+'"':'')+'>'+label+'</button>';
-  if(DESK){ el.innerHTML=item('projects','Projects…')+'<hr>'+item('export','Export… (Word, PDF, EPUB)')+item('json','Back up this project (.json)')+item('import','Import a backup as a new project…')+'<hr>'
-    +item('find','Find and replace…')+item('sessions','Writing sessions')+item('prefs','Settings')+item('tour','Show the tour')+'<hr>'+item('reveal','Show projects folder')
+  if(DESK){ el.innerHTML=item('projects','Projects…')+item('share','Share this project…')+'<hr>'+item('export','Export… (Word, PDF, EPUB)')+item('json','Back up this project (.json)')+item('import','Import a backup as a new project…')+'<hr>'
+    +item('find','Find and replace…')+item('sessions','Writing sessions')+item('prefs','Settings')+item('help','How sharing works')+item('tour','Show the tour')+'<hr>'+item('reveal','Show projects folder')
     +'<small>Saved on this computer as you write. Each project folder also keeps automatic backups.</small>'; return; }
   el.innerHTML=item('export','Export… (Word, PDF, EPUB)')+item('json','Back up project (.json)')+item('restore','Restore from a backup…')+'<hr>'
-    +item('find','Find and replace…')+item('sessions','Writing sessions')+item('prefs','Settings')+item('tour','Show the tour')+'<hr>'
+    +item('find','Find and replace…')+item('sessions','Writing sessions')+item('prefs','Settings')+item('help','How sharing works')+item('tour','Show the tour')+'<hr>'
     +item('sample',cf==='m-sample'?'Replace everything with the sample? Click again':'Load the sample project','warn')
     +item('blank',cf==='m-blank'?'Replace everything with a blank project? Click again':'Start a blank project','warn')
     +'<small>'+(P.db?'Your project saves automatically to your Claude account, private to you. Replacing a project keeps your Inkling and goals.':'Your project saves on this device only. Back it up from here when you can.')+'</small>';
@@ -3579,6 +3621,8 @@ function bindMenu(){
     else if(a==='find'){ closeMenu(); openFind(); }
     else if(a==='prefs'){ closeMenu(); go({k:'prefs'}); }
     else if(a==='tour'){ closeMenu(); startTour(true); }
+    else if(a==='share'){ closeMenu(); openShare(); }
+    else if(a==='help'){ closeMenu(); go({k:'help'}); }
     else if(a==='json'){ closeMenu(); doBackup(); }
     else if(a==='projects'){ closeMenu(); openProjects(); }
     else if(a==='import'){ closeMenu(); deskImportPick(); }
@@ -3598,6 +3642,285 @@ function bindMenu(){
 }
 function closeMenu(){ ui.menu=false; ui.confirm=null; $('#menu').hidden=true; }
 
+/* ---------- shared projects: merging ---------- */
+// Two computers can save the same project through a sync folder. Instead of one version replacing the other, the two
+// are merged record by record: a scene, a story page, a timeline... each is one record with a change stamp (_m) and
+// author (_by). PJ.base is the version this computer last read or wrote, so a record that only one side changed is
+// taken from that side; a record both sides changed keeps the newer change (for a scene, the other text is saved as a
+// snapshot). Deleting wins over an older edit and loses to a newer one (meta.gone holds the deletion times).
+function canon(x){ return JSON.stringify(x,(k,v)=>v&&typeof v==='object'&&!Array.isArray(v)?Object.keys(v).sort().reduce((o,kk)=>(o[kk]=v[kk],o),{}):v); }
+const same=(a,b)=>canon(a)===canon(b);
+const clone=x=>x===undefined?undefined:JSON.parse(JSON.stringify(x));
+function pick3(b,o,t){ if(same(o,t)) return o; if(b!==undefined&&same(o,b)) return t; return o; }   // a true clash keeps ours
+function mergeOrder(b,o,t){   // lists of ids: keep both sides' additions and removals
+  if(same(o,t)) return o.slice(); if(b&&same(o,b)) return t.slice(); if(b&&same(t,b)) return o.slice();
+  const B=new Set(b||[]), T=new Set(t), out=o.filter(id=>!(B.has(id)&&!T.has(id)));
+  t.forEach((id,i)=>{ if(out.includes(id)||B.has(id)) return; let j=i-1; while(j>=0&&!out.includes(t[j])) j--; out.splice(j<0?0:out.indexOf(t[j])+1,0,id); });
+  return out;
+}
+function recName(p,id,m){
+  if(p==='sc') return (m.scenes[id]||{}).title; if(p==='en') return (m.ents[id]||{}).name;
+  const l={tl:'tls',ol:'ols',nt:'nts',rm:'rms',ft:'fts'}[p]; if(l) return ((m[l]||[]).find(x=>x.id===id)||{}).name;
+  if(p==='ch') return ((m.chapters||[]).find(x=>x.id===id)||{}).title+' notes';
+  return '';
+}
+function mergeRecords(p,b,o,t,goneO,goneT,rep,mo,mt){
+  const out={};
+  new Set([...Object.keys(o),...Object.keys(t)]).forEach(id=>{
+    const k=p+'_'+id, x=o[id], y=t[id], z=b?b[id]:undefined;
+    if(x&&y){
+      if(same(x,y)) out[id]=x;
+      else if(z&&same(x,z)){ out[id]=y; rep.add(p,id,y,mt); }
+      else if(z&&same(y,z)) out[id]=x;
+      else { const theirs=(+y._m||0)>(+x._m||0); out[id]=theirs?y:x; if(theirs) rep.add(p,id,y,mt); rep.clash.push({p,id,win:theirs?y:x,lose:theirs?x:y,name:recName(p,id,theirs?mt:mo)}); }
+    } else if(x){ if((+goneT[k]||0)>(+x._m||0)) rep.del(p,id,mo); else out[id]=x; }   // they deleted it after our last change to it
+    else if(!((+goneO[k]||0)>=(+y._m||0))){ out[id]=y; rep.add(p,id,y,mt); }   // new from them (unless we deleted it since)
+  });
+  return out;
+}
+function mergeMeta(b,o,t){
+  b=b||{}; const out=clone(o), newer=!b._m||(+t._m||0)>(+b._m||0);
+  const SKIP=['scenes','ents','chapters','tls','ols','nts','rms','fts','gone','saved','writers','_m','_dev','_by','v'].concat(PERSONAL);
+  if(newer) new Set([...Object.keys(o),...Object.keys(t)]).forEach(f=>{ if(SKIP.includes(f)) return; const v=pick3(b[f],o[f],t[f]); if(v===undefined) delete out[f]; else out[f]=clone(v); });
+  out.gone=Object.assign({},t.gone||{}); Object.keys(o.gone||{}).forEach(k=>{ out.gone[k]=Math.max(+o.gone[k]||0,+out.gone[k]||0); });
+  out.saved=Math.max(+o.saved||0,+t.saved||0);
+  out.writers=clone(t.writers||{}); Object.keys(o.writers||{}).forEach(k=>{ const a=o.writers[k], c=out.writers[k]; if(k===myKey()||!c||(+a.at||0)>=(+c.at||0)) out.writers[k]=clone(a); });
+  ['scenes','ents'].forEach(f=>{ const B=b[f]||{}, O=o[f]||{}, T=t[f]||{}, r={};
+    new Set([...Object.keys(O),...Object.keys(T)]).forEach(id=>{ r[id]=clone(O[id]&&T[id]?(newer?pick3(B[id],O[id],T[id]):O[id]):(O[id]||T[id])); }); out[f]=r; });
+  ['tls','ols','nts','rms','fts'].forEach(f=>{ const O=o[f]||[], T=t[f]||[], B=b[f];
+    out[f]=mergeOrder(B&&B.map(x=>x.id),O.map(x=>x.id),T.map(x=>x.id)).map(id=>{ const x=O.find(q=>q.id===id), y=T.find(q=>q.id===id), z=B&&B.find(q=>q.id===id); return clone(x&&y?(newer?pick3(z,x,y):x):(x||y)); }); });
+  const O=o.chapters||[], T=t.chapters||[], B=b.chapters;
+  out.chapters=mergeOrder(B&&B.map(c=>c.id),O.map(c=>c.id),T.map(c=>c.id)).map(id=>{
+    const x=O.find(c=>c.id===id), y=T.find(c=>c.id===id), z=B&&B.find(c=>c.id===id);
+    if(!x||!y) return clone(x||y);
+    return {id,title:newer?pick3(z&&z.title,x.title,y.title):x.title,open:x.open,scenes:mergeOrder(z&&z.scenes,x.scenes,y.scenes)};
+  });
+  return out;
+}
+function fixMerged(out,o,t){   // the indexes in meta follow the records that survived
+  const m=out.meta, seen=new Set();
+  Object.keys(m.scenes).forEach(id=>{ if(!out.sc[id]) delete m.scenes[id]; });
+  Object.keys(out.sc).forEach(id=>{ if(!m.scenes[id]) m.scenes[id]=clone(t.meta.scenes[id]||o.meta.scenes[id]||{title:'Untitled scene',status:'draft',words:0}); });
+  m.chapters.forEach(c=>{ c.scenes=c.scenes.filter(id=>out.sc[id]&&!seen.has(id)&&seen.add(id)); });
+  Object.keys(out.sc).forEach(id=>{ if(seen.has(id)) return; seen.add(id);
+    const home=[t.meta,o.meta].map(mm=>(mm.chapters||[]).find(c=>c.scenes.includes(id))).find(c=>c&&m.chapters.some(x=>x.id===c.id));
+    const ch=home?m.chapters.find(x=>x.id===home.id):m.chapters[m.chapters.length-1];
+    if(!ch){ m.chapters.push({id:uid('c_'),title:'Chapter',open:true,scenes:[id]}); return; }
+    const src=home?home.scenes:[], i=src.indexOf(id); let j=i-1; while(j>=0&&!ch.scenes.includes(src[j])) j--;
+    ch.scenes.splice(j>=0?ch.scenes.indexOf(src[j])+1:(i<0?ch.scenes.length:0),0,id); });
+  Object.keys(m.ents).forEach(id=>{ if(!out.en[id]) delete m.ents[id]; });
+  Object.keys(out.en).forEach(id=>{ if(m.ents[id]) return; const e=t.meta.ents[id]||o.meta.ents[id]; if(e) m.ents[id]=clone(e); else delete out.en[id]; });
+  [['tls','tl','Timeline'],['ols','ol','Outline'],['nts','nt','Notes'],['rms','rm','Relationship map'],['fts','ft','Family tree']].forEach(([f,p,def])=>{
+    m[f]=(m[f]||[]).filter(x=>out[p][x.id]);
+    Object.keys(out[p]).forEach(id=>{ if(!m[f].some(x=>x.id===id)) m[f].push(clone((t.meta[f]||[]).find(y=>y.id===id)||(o.meta[f]||[]).find(y=>y.id===id)||{id,name:def})); });
+  });
+  Object.keys(m.gone).forEach(k=>{ const p=k.slice(0,2); if(out[p]&&out[p][k.slice(3)]) delete m.gone[k]; });
+}
+// base: the common ancestor (null for a sync service's conflicted copy); ours and theirs: normalized projects.
+function mergeProjects(base,ours,theirs){
+  const rep={items:[],dels:0,clash:[],by:new Set(),
+    add(p,id,rec,m){ this.items.push({p,id,name:recName(p,id,m)}); if(rec._by&&nameKey(rec._by)!==myKey()) this.by.add(rec._by); },
+    del(){ this.dels++; }};
+  const goneO=ours.meta.gone||{}, goneT=theirs.meta.gone||{};
+  const out={meta:mergeMeta(base&&base.meta,ours.meta,theirs.meta)};
+  DOCS.forEach(p=>{ out[p]=mergeRecords(p,base&&base[p]||null,ours[p]||{},theirs[p]||{},goneO,goneT,rep,ours.meta,theirs.meta); });
+  rep.clash.forEach(c=>{   // both changed the same scene: the other text becomes a snapshot of that scene
+    if(c.p!=='sc'||!out.sc[c.id]||!String(c.lose.text||'').trim()||c.lose.text===c.win.text) return;
+    const id=uid('n_'); c.snap=id;
+    out.sn[id]={scene:c.id,at:Date.now(),name:(c.lose._by?c.lose._by+'’s version':'The other version').slice(0,80),text:c.lose.text,words:wc(c.lose.text),auto:'merge',_m:Date.now(),_dev:DEVICE};
+  });
+  fixMerged(out,ours,theirs);
+  return {out,rep};
+}
+const PROJ_SKIP=new Set(PERSONAL.concat(['saved']));
+function sameProject(a,b){   // ignoring the per-device copies of personal stats at the top of meta
+  const strip=x=>{ const o=Object.assign({},x,{meta:Object.assign({},x.meta)}); PROJ_SKIP.forEach(f=>delete o.meta[f]); return o; };
+  return canon(strip(a))===canon(strip(b));
+}
+// Personal stats live in meta.writers[name]; the copies at the top of meta are this device's working view.
+function stampMine(st){
+  if(!DESK||!st||!st.meta) return; const m=st.meta, k=myKey(), w=m.writers[k];
+  const cur={name:ME.name,days:m.days,pet:m.pet,mark:m.mark,goal:m.goal,pomo:m.pomo,devs:Array.from(new Set(((w&&w.devs)||[]).concat(DEVICE))).slice(-10)};
+  if(!w||canon(Object.assign({},w,{at:0}))!==canon(Object.assign({},cur,{at:0}))) m.writers[k]=Object.assign(clone(cur),{at:Date.now()});
+}
+function adoptMine(st){
+  const m=st.meta, wr=m.writers||{}; let w=wr[myKey()];
+  if(!w){ const k=Object.keys(wr).find(k=>(wr[k].devs||[]).includes(DEVICE)); if(k) w=wr[k]; }   // this computer under an earlier name
+  if(w) PERSONAL.forEach(f=>{ if(w[f]!==undefined) m[f]=clone(w[f]); });
+  else if(Object.keys(wr).length){ m.days={}; m.pet={name:'Inky',total:0}; m.mark=null; }   // someone else's project: your own pet and goals start fresh
+}
+// Puts merged data into the live state, keeping every object that did not change (open screens hold references to them).
+function patchState(ns){
+  const patch=(cur,nx,depth)=>{
+    Object.keys(cur).forEach(k=>{ if(!(k in nx)) delete cur[k]; });
+    Object.keys(nx).forEach(k=>{ const a=cur[k], b=nx[k];
+      if(depth>0&&a&&b&&typeof a==='object'&&typeof b==='object'&&!Array.isArray(a)&&!Array.isArray(b)) patch(a,b,depth-1);
+      else if(canon(a)!==canon(b)) cur[k]=b; });
+  };
+  patch(S.meta,ns.meta,2);
+  DOCS.forEach(p=>{ S[p]=S[p]||{}; const cur=S[p], nx=ns[p]||{};
+    Object.keys(cur).forEach(id=>{ if(!nx[id]) delete cur[id]; });
+    Object.keys(nx).forEach(id=>{ if(!cur[id]||canon(cur[id])!==canon(nx[id])) cur[id]=nx[id]; }); });
+}
+function viewSig(v){
+  if(!v) return ''; const m=S.meta;
+  if(v.k==='scene') return canon([S.sc[v.id]&&S.sc[v.id].text,m.scenes[v.id]]);
+  if(v.k==='ent') return canon([S.en[v.id],m.ents[v.id]]);
+  if(['tl','nt','ol','rm','ft'].includes(v.k)) return canon(S[v.k][v.id]);
+  if(v.k==='snap') return canon([S.sc[v.id]&&S.sc[v.id].text,Object.keys(S.sn).length]);
+  if(v.k==='prefs'||v.k==='help'||v.k==='find') return v.k;
+  return canon([m.chapters,m.scenes,Object.keys(S.ss).length]);
+}
+function mergeIn(theirs,strays){
+  const ours=clone(snapshot(S));
+  let r=mergeProjects(PJ.base,ours,theirs); const rep=r.rep;
+  strays.forEach(x=>{ const r2=mergeProjects(null,r.out,x); r=r2; rep.items.push(...r2.rep.items); rep.clash.push(...r2.rep.clash); r2.rep.by.forEach(b=>rep.by.add(b)); });
+  const ns=normalize(r.out);
+  PERSONAL.forEach(f=>{ ns.meta[f]=clone(S.meta[f]); });   // your pet and goals stay as they are on this computer
+  const v=ui.view, before=viewSig(v), ed=$('#ed'), caret=ed&&document.activeElement===ed?caretOffset(ed):null;
+  patchState(ns); linker=buildLinker();
+  if(!viewValid(v)){ ui.view=firstView(); ui.hist=ui.hist.filter(viewValid); renderAll(); }
+  else {
+    ui.hist=ui.hist.filter(viewValid);
+    const t=$('#projTitle'); if(t&&document.activeElement!==t) t.value=S.meta.title;
+    renderBinder(); renderInspector(); updateStats();
+    if(viewSig(v)!==before){ const main=$('#main'), top=main?main.scrollTop:0; renderMain(); if(main) main.scrollTop=top;
+      const e2=$('#ed'); if(e2&&caret!=null){ e2.focus(); setCaret(e2,Math.min(caret,getText(e2).length)); } }
+  }
+  return {rep,mine:!sameProject(snapshot(S),theirs)};
+}
+// project.json changed on disk (another computer saved through the sync folder): merge it with ours and save the result.
+async function deskSync(){
+  for(let i=0;i<4;i++){
+    const r=await DESK.read(PJ.id); if(!r||r.data==null) return;
+    let theirs; try{ theirs=normalize(JSON.parse(r.data)); }
+    catch(e){ if(e&&e.code==='newer'){ lockNewer(e.v); return; } toast('The shared copy of this project could not be read, so Inkling left it alone. Your work is safe on this computer.',{plain:true}); throw e; }
+    const strays=[]; (r.strays||[]).forEach(x=>{ try{ strays.push(normalize(JSON.parse(x.data))); }catch(e){} });
+    const res=mergeIn(theirs,strays);
+    if(!res.mine&&!strays.length){ await DESK.adopt(PJ.id,r.token); PJ.base=theirs; announceMerge(res.rep); return; }
+    const json=JSON.stringify(snapshot()), w=await DESK.save(PJ.id,json,deskInfo(),{token:r.token});
+    if(w&&w.conflict) continue;   // they saved again in the meantime: merge once more
+    PJ.base=JSON.parse(json);
+    if(r.strays&&r.strays.length) await DESK.clearStrays(PJ.id,r.strays.map(x=>x.name));
+    announceMerge(res.rep); setStatus('disk'); return;
+  }
+  throw new Error('the shared folder keeps changing; trying again shortly');
+}
+async function syncCheck(){
+  if(!PJ.id||ui.locked||P.busy) return;
+  try{ if(!await DESK.changed(PJ.id)||P.busy) return; }catch(e){ return; }
+  P.busy=true;
+  try{ await deskSync(); }catch(e){}
+  finally{ P.busy=false; if(P.again||P.dirty.size){ P.again=false; schedule(300); } }
+}
+function announceMerge(rep){
+  const who=[...rep.by].join(' and ')||'another computer', names=[...new Set(rep.items.map(x=>x.name).filter(Boolean))];
+  if(names.length||rep.dels) toast('Brought in changes from '+who+': '+(names.length?names.slice(0,3).join(', ')+(names.length>3?' and '+(names.length-3)+' more':''):'')+(rep.dels?(names.length?', ':'')+rep.dels+' deleted':'')+'.',{plain:true});
+  const clashes=rep.clash.filter(c=>c.snap); if(!clashes.length) return;
+  let bar=$('#mergeBar'); if(!bar){ bar=document.createElement('div'); bar.id='mergeBar'; bar.className='upd-bar merge-bar'; bar.setAttribute('role','status'); document.body.appendChild(bar);
+    bar.addEventListener('click',e=>{ const b=e.target.closest('[data-mb]'); if(!b) return; if(b.dataset.mb==='x') bar.remove(); else if(b.dataset.mb==='help') go({k:'help'}); else { ui.snSel=b.dataset.snap; go({k:'snap',id:b.dataset.mb}); bar.remove(); } }); }
+  const c=clashes[0];
+  bar.innerHTML=ico('note',16)+'<span>'+(clashes.length>1?clashes.length+' scenes were':'“'+esc(c.name||'A scene')+'” was')+' changed on two computers at once. The newer text is in the scene; the other is saved as a snapshot.</span>'
+    +'<button class="btn sm pri" data-mb="'+c.id+'" data-snap="'+c.snap+'">Compare</button><button class="btn sm" data-mb="help">How this works</button><button class="ibtn" data-mb="x" aria-label="Dismiss">'+ico('x',14)+'</button>';
+}
+
+/* ---------- shared projects: who else is here ---------- */
+const whoName=o=>o.name||o.host||'Someone';
+async function hereTick(){
+  if(!DESK||!PJ.id) return; const v=ui.view, sc=v&&v.k==='scene'&&S.meta.scenes[v.id];
+  try{ ui.others=await DESK.here(PJ.id,{name:ME.name,scene:sc?v.id:'',sceneTitle:sc?sc.title:''})||[]; }catch(e){ ui.others=[]; }
+  paintHere();
+}
+function hereSoon(){ if(!DESK) return; clearTimeout(ui.hereT); ui.hereT=setTimeout(hereTick,400); }
+function paintHere(){
+  const others=ui.others||[]; let chip=$('#hereChip');
+  if(!chip){ chip=document.createElement('button'); chip.id='hereChip'; chip.className='chip here-chip'; chip.hidden=true; $('#saveSt').after(chip);
+    chip.addEventListener('click',e=>{ e.stopPropagation(); const pop=$('#herePop'); if(pop){ pop.remove(); return; } openHerePop(); }); }
+  chip.hidden=!others.length;
+  chip.innerHTML=others.slice(0,3).map(o=>'<i class="av" style="--h:'+hue(whoName(o))+'">'+esc(whoName(o).slice(0,1).toUpperCase())+'</i>').join('')+'<span>'+(others.length===1?esc(whoName(others[0]))+' is here':others.length+' others here')+'</span>';
+  chip.setAttribute('aria-label',others.map(o=>whoName(o)+(o.sceneTitle?' in '+o.sceneTitle:'')).join(', ')+' also in this project');
+  const v=ui.view, ban=$('#hereBan');
+  if(ban){ const w=others.filter(o=>v.k==='scene'&&o.scene===v.id);
+    ban.hidden=!w.length; ban.innerHTML=w.length?ico('pen',14)+'<span><b>'+esc(w.map(whoName).join(' and '))+'</b> '+(w.length>1?'are':'is')+' in this scene too. If you both change it, the newer text is kept and the other is saved as a snapshot.</span>':''; }
+  document.querySelectorAll('#binder .here').forEach(x=>x.remove());
+  others.forEach(o=>{ if(!o.scene) return; const row=document.querySelector('#binder .sc-btn[data-id="'+o.scene+'"]'); if(!row) return;
+    const d=document.createElement('i'); d.className='here av'; d.style.setProperty('--h',hue(whoName(o))); d.title=whoName(o)+' is here'; d.textContent=whoName(o).slice(0,1).toUpperCase(); row.querySelector('.wc').before(d); });
+  const old=others.find(o=>o.version&&o.version!==APP_VERSION);
+  if(old&&ui.verWarned!==old.version+whoName(old)){ ui.verWarned=old.version+whoName(old); toast(whoName(old)+' is using Inkling '+old.version+' and you have '+APP_VERSION+'. Shared projects work best when everyone has the same version: Help › Check for updates.',{plain:true}); }
+}
+const hue=n=>{ let h=0; for(const c of String(n)) h=(h*31+c.charCodeAt(0))%360; return h; };
+function openHerePop(){
+  const pop=document.createElement('div'); pop.id='herePop'; pop.className='pop here-pop';
+  pop.innerHTML='<div class="pt">Also in this project</div>'+(ui.others||[]).map(o=>'<div class="here-row"><i class="av" style="--h:'+hue(whoName(o))+'">'+esc(whoName(o).slice(0,1).toUpperCase())+'</i><span><b>'+esc(whoName(o))+'</b>'
+      +(o.name&&o.host?' <span class="muted">on '+esc(o.host)+'</span>':'')+'<br><span class="muted">'+(o.sceneTitle?'In “'+esc(o.sceneTitle)+'”':'Looking around')+(o.version&&o.version!==APP_VERSION?' · Inkling '+esc(o.version):'')+'</span></span></div>').join('')
+    +(ME.name?'':'<p class="fine">Add your name in Settings so co-writers see who you are.</p>')
+    +'<button class="btn sm" data-hp="help">How sharing works</button>';
+  document.body.appendChild(pop); const r=$('#hereChip').getBoundingClientRect();
+  pop.style.top=(r.bottom+6)+'px'; pop.style.left=Math.max(8,Math.min(innerWidth-288,r.left))+'px';
+  pop.addEventListener('click',e=>{ if(e.target.closest('[data-hp]')){ pop.remove(); go({k:'help'}); } });
+  setTimeout(()=>document.addEventListener('click',function off(e){ if(!pop.contains(e.target)){ pop.remove(); document.removeEventListener('click',off); } }),0);
+}
+
+/* ---------- shared projects: setting up ---------- */
+async function openShare(id){
+  id=id||PJ.id; if(!DESK||!id) return; await deskFlush();
+  const draw=async()=>{
+    const w=await DESK.where(id), cur=(await DESK.list()).find(x=>x.id===id)||{title:S.meta.title};
+    ov.innerHTML='<div class="pj-dlg share" role="dialog" aria-modal="true" aria-labelledby="shH"><header><h2 id="shH">'+ico('users',20)+'Share “'+esc(cur.title)+'”</h2><button class="ibtn" data-sh="close" aria-label="Close">'+ico('x')+'</button></header>'
+      +'<p class="muted pj-sub">Co-writers share the project’s folder through Dropbox, Google Drive, OneDrive or iCloud Drive, and each opens it in Inkling. Inkling merges everyone’s changes. <button class="lnk" data-sh="help">How sharing works</button></p>'
+      +'<ol class="sh-steps">'
+      +'<li class="'+(w.synced||w.shared?'done':'')+'"><b>Put the project in a folder that syncs.</b>'
+        +(w.synced||w.shared?'<p>It is in <code>'+esc(w.path)+'</code>.</p><div class="ts-row"><button class="btn sm" data-sh="reveal">Show this folder</button>'+(w.synced?'':'<button class="btn sm" data-sh="move">Move it somewhere else…</button>')+'</div>'
+          :'<p>Right now it is only on this computer, in <code>'+esc(w.path)+'</code>. Choose a folder inside Dropbox, Google Drive, OneDrive or iCloud Drive and Inkling moves the project there (it checks the copy before removing the original).</p><div class="ts-row"><button class="btn sm pri" data-sh="move">Move to a shared folder…</button></div>')+'</li>'
+      +'<li><b>Share the folder “'+esc(w.folder)+'” with your co-writers.</b><p>Use your sync service’s Share button on that folder and give them permission to <b>edit</b>. In Dropbox: right-click the folder › Share. In Google Drive: right-click › Share (they then add it to their My Drive, or use “Add shortcut to Drive”). In OneDrive: right-click › Share. In iCloud Drive (Mac): right-click › Share › Share Folder.</p></li>'
+      +'<li><b>They open it in Inkling.</b><p>Each co-writer installs Inkling, waits for the folder to finish syncing, then chooses <b>File › Open a shared project…</b> (or <b>Open a shared project</b> in Projects) and picks the folder.</p></li>'
+      +'<li class="'+(ME.name?'done':'')+'"><b>Everyone sets their name.</b><p>It shows co-writers who is where, and keeps each writer’s pet, daily goal and word history separate.</p><label class="f">Your name on this computer<input id="shName" value="'+esc(ME.name)+'" maxlength="60" placeholder="For example, Mary"></label></li>'
+      +'</ol><div class="ask-btns"><button class="btn pri" data-sh="close">Done</button></div></div>';
+    const ni=$('#shName',ov); ni.addEventListener('change',()=>{ setMyName(ni.value); draw(); });
+  };
+  const ov=document.createElement('div'); ov.className='pj-ov share-ov'; document.body.appendChild(ov);
+  const close=()=>{ ov.remove(); document.removeEventListener('keydown',key,true); };
+  const key=e=>{ if(e.key==='Escape'){ e.stopPropagation(); close(); } };
+  document.addEventListener('keydown',key,true);
+  ov.addEventListener('click',async e=>{
+    if(e.target===ov) return close(); const b=e.target.closest('[data-sh]'); if(!b) return; const a=b.dataset.sh;
+    if(a==='close') close(); else if(a==='help'){ close(); closeProjects(); go({k:'help'}); } else if(a==='reveal') DESK.reveal(id);
+    else if(a==='move'){ try{ pmHalt(); await deskFlush(); const r=await DESK.shareMove(id); if(!r) return;
+      if(r.error==='exists'){ toast('There is already a folder called that in the place you chose. Pick another place, or remove that folder first.',{plain:true}); return; }
+      toast('Moved. The project now lives in '+r.path,{plain:true}); if(ui.pj) ui.pj.list=await DESK.list(); drawProjects(); draw(); }
+      catch(x){ toast('Could not move the project: '+((x&&x.message)||x),{plain:true}); } }
+  });
+  await draw(); const f=$('[data-sh]',ov); if(f) f.focus();
+}
+async function openSharedPick(){
+  try{ pmHalt(); await deskFlush(); const r=await DESK.openShared(); if(!r) return;
+    if(r.error){ toast('That folder has no Inkling project in it. Pick the project’s own folder, the one that contains project.json.',{plain:true}); return; }
+    closeProjects(); if(await deskOpen(r.id)) toast(r.added?'Opened the shared project. It is now on your Projects list too.':'Opened.',{plain:true});
+  }catch(e){ toast('Could not open that folder: '+((e&&e.message)||e),{plain:true}); }
+}
+function setMyName(n){
+  const old=myKey(); ME.name=String(n||'').trim().slice(0,60); try{ localStorage.setItem('inkling:me',JSON.stringify({name:ME.name})); }catch(e){}
+  const wr=S.meta.writers; if(wr&&wr[old]&&old!==myKey()){ if(!wr[myKey()]) wr[myKey()]=wr[old]; delete wr[old]; }
+  dirty('meta'); hereSoon();
+}
+function helpShareHtml(){
+  const sec=(t,b)=>'<section class="pf hs"><h2>'+t+'</h2>'+b+'</section>';
+  return '<div class="pf-wrap">'
+    +(DESK?'':'<p class="banner-note">Sharing works in the Inkling desktop app for Windows, Mac and Linux. In a browser or in Claude, a project is yours alone; you can still back it up and import it into the desktop app.</p>')
+    +sec('What sharing is','<p>Two or more people can work on the same novel, each in Inkling on their own computer. The project lives in a folder that a sync service keeps the same on every computer: Dropbox, Google Drive, OneDrive or iCloud Drive. Inkling has no server and no accounts; your sync service carries the files, and Inkling merges everyone’s changes.</p><p>It is not live like Google Docs: changes arrive when the sync service delivers them, usually within a few seconds to a minute. It works best when co-writers work on different scenes, or take turns.</p>')
+    +sec('Setting it up','<ol><li>Open the project and choose <b>Share this project…</b> (in the File menu, or <b>Share</b> on the Projects screen).</li><li>Move it into a folder inside Dropbox, Google Drive, OneDrive or iCloud Drive. Inkling copies it, checks the copy, then moves the original to the trash.</li><li>In your sync service, share that project folder with your co-writers, with permission to edit.</li><li>Each co-writer installs Inkling, waits for the folder to sync, and chooses <b>File › Open a shared project…</b>, then picks the folder. It joins their Projects list.</li><li>Everyone types their name in <b>Settings › You</b>.</li></ol>')
+    +sec('Working at the same time','<ul><li><b>Who is here.</b> A chip at the top shows who else has the project open, and a letter beside a scene shows who is in it. A note appears above a scene when someone else is in it too.</li><li><b>Different things merge.</b> If you change one scene and your co-writer changes another, or adds a character, a timeline card or a chapter, both changes are kept. Inkling checks for new changes every few seconds and whenever you come back to the window, and says what came in.</li><li><b>The same scene.</b> If you both change the same scene before the sync catches up, the newer change is kept in the scene and the other text is saved as a <b>snapshot</b> of that scene, named after whoever wrote it. A note appears with a <b>Compare</b> button, so you can copy anything back. Nothing is thrown away.</li><li><b>Other pages.</b> For a story page, timeline, outline, note, map or tree that you both changed, the newer change is kept. The project’s Backups have earlier versions.</li><li><b>Deleting.</b> Deleting something removes it for everyone, unless someone changed it after it was deleted; then it comes back.</li><li><b>Chapter order and titles</b> merge too: scenes one person adds or moves appear in place for everyone.</li></ul>')
+    +sec('What stays yours','<p>Your Inkling pet, daily goal, word history chart, focus timer settings and writing sessions belong to you, under the name you set. Appearance settings (theme, font, spacing) are per computer. Everything else (the text, story pages, timelines, outlines, notes, maps, trees, chapter notes, snapshots and export settings) is shared.</p><p>Use the same name on each of your own computers so your pet follows you.</p>')
+    +sec('Good habits','<ul><li>Agree who is writing which chapters or scenes.</li><li>Before you start, check the sync service has finished syncing (its icon shows a tick).</li><li>Keep everyone on the same version of Inkling (Help › Check for updates). Inkling warns you when a co-writer has a different version.</li><li>Make the folder “available offline” or “always keep on this device” (Google Drive: right-click › Offline access; OneDrive: Always keep on this device; iCloud: Download Now). Online-only files can make Inkling wait.</li><li>Take a <b>snapshot</b> of a scene before a big rewrite.</li></ul>')
+    +sec('If something looks wrong','<ul><li><b>A co-writer’s changes have not arrived.</b> Check that their sync service is running and finished. Switching back to Inkling, or waiting a few seconds, brings in anything that has arrived.</li><li><b>Text you expected is missing from a scene.</b> Open the scene’s <b>Snapshots</b>: the other version from a clash is there, named after its writer.</li><li><b>Files called “conflicted copy”, “(1)” or with a computer’s name.</b> Sync services make these when two saves cross. Inkling merges them in automatically and moves them into the project’s backups folder.</li><li><b>Going back to an earlier state.</b> Projects › Backups lists copies made every 10 minutes; opening one makes a separate project, so nothing is overwritten.</li><li><b>Stopping sharing.</b> In your sync service, stop sharing the folder. To take a shared project off your own list without affecting anyone, use <b>Remove from list</b> on the Projects screen.</li></ul>')
+    +sec('Privacy','<p>The project is stored by your sync service and anyone you share the folder with can read and change all of it. Inkling itself sends nothing anywhere. Remove someone’s access in your sync service to stop sharing with them.</p>')
+    +'</div>';
+}
+function renderHelp(el){
+  el.innerHTML='<div class="main-head">'+backBtn()+'<span class="kind">'+ico('users',16)+'</span><h1 class="mh-title">How sharing works</h1>'+(DESK&&PJ.id?'<button class="btn pri" data-hs="share">Share this project…</button>':'')+'</div>'+helpShareHtml();
+  el.onclick=e=>{ if(e.target.closest('[data-hs="share"]')) openShare(); };
+}
+
 /* ---------- dialog ---------- */
 // ask(title, html, [[value,label,style]]) resolves with the chosen value ('' when closed with Escape).
 function ask(title,html,buttons){
@@ -3614,30 +3937,21 @@ function ask(title,html,buttons){
 
 /* ---------- desktop projects ---------- */
 const deskInfo=st=>{ st=st||S; return {title:st.meta.title,words:Object.values(st.meta.scenes).reduce((a,x)=>a+(x.words||0),0),sample:!!st.meta.sample}; };
-// project.json changed on disk since this computer last read it: a sync service brought in another computer's edits.
-async function deskConflict(){
-  if(ui.conflict) return; ui.conflict=true;
-  try{
-    const c=await ask('This project changed on another computer','“'+esc(S.meta.title)+'” was saved somewhere else (through your sync folder) after you opened it here. Your version from this computer is kept in the project’s Backups either way.',
-      [['theirs','Use the other computer’s version','pri'],['mine','Keep this computer’s version']]);
-    if(c==='mine'){ await DESK.save(PJ.id,JSON.stringify(snapshot()),deskInfo(),true); setStatus('disk'); toast('Kept this computer’s version.',{plain:true}); }
-    else { P.dirty.clear(); P.gone.clear(); await deskOpen(PJ.id,true); toast('Loaded the other computer’s version. Yours is in Projects → Backups.',{plain:true}); }
-  } finally { ui.conflict=false; }
-}
 async function deskFlush(){ clearTimeout(P.timer); for(let i=0;i<60&&P.busy;i++) await new Promise(r=>setTimeout(r,100)); if(P.dirty.size||P.gone.size) await flush(); }
-async function deskOpen(id,force){
-  let r=await DESK.load(id,!!force);
-  if(r&&r.other){
-    const c=await ask('This project is open on another computer','“'+esc(r.other.host)+'” had it open '+esc(ago(r.other.at))+'. Writing in two places at once through a sync folder can lose work. Close it there first, or open it here anyway.',[['open','Open it anyway','danger'],['cancel','Cancel']]);
-    if(c!=='open') return false; r=await DESK.load(id,true);
-  }
-  const raw=r&&r.data; if(raw==null){ toast('That project could not be found.',{plain:true}); return false; }
+async function deskOpen(id){
+  const r=await DESK.load(id);
+  const raw=r&&r.data; if(raw==null){ toast('That project could not be found. If it is a shared project, check that its folder has finished syncing.',{plain:true}); return false; }
   let o, ns; try{ o=JSON.parse(raw); }catch(e){ toast('This project file is damaged. Open its Backups in Projects to get back a recent copy.',{plain:true}); return false; }
   try{ ns=normalize(o); }catch(e){ toast(e.code==='newer'?'“'+((o.meta||{}).title||'This project')+'” was saved by a newer version of Inkling. Update Inkling to open it.':'This project could not be opened: '+e.message,{plain:true}); return false; }
   clearTimeout(P.timer); P.dirty.clear(); P.gone.clear(); P.keys.clear();
-  S=ns; PJ.id=id; linker=buildLinker();
-  Object.assign(ui,{view:firstView(),hist:[],touched:false,mood:'',confirm:null,menu:false,tlFor:null,tlSide:null,cvFor:null,cvSel:null,relabel:null});
-  renderAll(); setStatus('disk'); document.title=S.meta.title+' – Inkling'; DESK.setTitle(document.title); return true;
+  PJ.base=clone(ns); adoptMine(ns);
+  S=ns; PJ.id=id; linker=buildLinker(); ui.locked=0;
+  Object.assign(ui,{view:firstView(),hist:[],touched:false,mood:'',confirm:null,menu:false,tlFor:null,tlSide:null,cvFor:null,cvSel:null,relabel:null,others:r.others||[]});
+  ['#mergeBar','#herePop'].forEach(q=>{ const x=$(q); if(x) x.remove(); });
+  renderAll(); setStatus('disk'); document.title=S.meta.title+' – Inkling'; DESK.setTitle(document.title); paintHere(); hereSoon();
+  if(ui.others.length) toast(ui.others.map(whoName).join(' and ')+(ui.others.length>1?' have':' has')+' this project open too. Inkling merges your changes; see Help › How sharing works.',{plain:true});
+  setTimeout(syncCheck,800);   // conflicted copies a sync service left behind
+  return true;
 }
 async function deskCreate(np,imgs){
   np.meta.saved=Date.now(); const id=await DESK.create(np.meta.title);
@@ -3652,13 +3966,11 @@ async function deskImport(text){
 }
 async function deskImportPick(){ try{ const t=await DESK.openFile(); if(t!=null){ await deskImport(t); closeProjects(); } }catch(e){ toast('Could not open that file.',{plain:true}); } }
 async function deskBoot(){
-  DESK.onMenu(a=>{ if(a==='new'||a==='projects') openProjects(); else if(a==='backup') doBackup(); else if(a==='export') openExport(); else if(a==='find') openFind(); else if(a==='prefs') go({k:'prefs'}); else if(a==='tour') startTour(true); else if(a==='updcheck') checkUpdatesNow(); else if(a==='snapshots'){ if(ui.view.k==='scene') go({k:'snap',id:ui.view.id}); else toast('Open a scene first, then choose Scene snapshots.',{plain:true}); } else if(a==='import') deskImportPick(); else if(a==='sessions') go({k:'ss'}); else if(a==='timer'){ if(T.running) pmPause(); else pmStart(); } });
+  DESK.onMenu(a=>{ if(a==='new'||a==='projects') openProjects(); else if(a==='backup') doBackup(); else if(a==='export') openExport(); else if(a==='find') openFind(); else if(a==='prefs') go({k:'prefs'}); else if(a==='tour') startTour(true); else if(a==='updcheck') checkUpdatesNow(); else if(a==='share') openShare(); else if(a==='openShared') openSharedPick(); else if(a==='helpShare') go({k:'help'}); else if(a==='snapshots'){ if(ui.view.k==='scene') go({k:'snap',id:ui.view.id}); else toast('Open a scene first, then choose Scene snapshots.',{plain:true}); } else if(a==='import') deskImportPick(); else if(a==='sessions') go({k:'ss'}); else if(a==='timer'){ if(T.running) pmPause(); else pmStart(); } });
   DESK.onClosing(async()=>{ try{ pmHalt(); await deskFlush(); }catch(e){} DESK.closeReady(); });
   DESK.onUpdate(showUpdate);
-  DESK.onFocus(async()=>{   // pick up edits a sync folder brought in while Inkling was in the background
-    if(!PJ.id||P.dirty.size||P.busy||ui.conflict) return;
-    try{ if(await DESK.changed(PJ.id)){ const v=ui.view; if(await deskOpen(PJ.id,true)){ if(viewValid(v)) go(v,{push:false}); toast('Updated with changes from another computer.',{plain:true}); } } }catch(e){}
-  });
+  DESK.onFocus(()=>{ syncCheck(); hereTick(); });   // bring in what the sync folder delivered while Inkling was in the background
+  setInterval(syncCheck,8000); setInterval(hereTick,30000);
   const b=document.createElement('button'); b.className='ibtn'; b.id='pjBtn'; b.title='Projects'; b.setAttribute('aria-label','Projects'); b.innerHTML=ico('folder',18);
   b.addEventListener('click',()=>openProjects()); $('#projTitle').before(b);
   try{
@@ -3710,11 +4022,13 @@ function drawProjects(){
   const ov=$('#pj'), st=ui.pj; if(!ov||!st) return;
   ov.innerHTML='<div class="pj-dlg" role="dialog" aria-modal="true" aria-labelledby="pjH"><header><h2 id="pjH">'+ico('folder',20)+'Your projects</h2>'+(PJ.id?'<button class="ibtn" data-pj="close" aria-label="Close">'+ico('x')+'</button>':'')+'</header>'
     +'<p class="muted pj-sub">Each project is a separate novel with its own story pages, timelines, maps and Inkling. Everything saves on this computer as you write.</p>'
-    +'<div class="pj-new"><button class="btn pri" data-pj="blank">'+ico('plus')+'<span>New blank project</span></button><button class="btn" data-pj="sample">New copy of the sample</button><button class="btn" data-pj="import">'+ico('upload')+'<span>Import a backup…</span></button></div>'
-    +'<ul class="pj-list">'+(st.list.length?st.list.map(x=>{ const cur=x.id===PJ.id, cf=st.confirm==='del'+x.id;
-      return '<li class="pj-row'+(cur?' cur':'')+'"><div class="pj-top"><button class="pj-open" data-pj="open" data-id="'+esc(x.id)+'"><b>'+esc(x.title||'Untitled novel')+'</b><span>'+fmt(x.words)+' words · saved '+esc(ago(x.saved))+(cur?' · <em>open now</em>':'')+'</span></button>'
-        +'<span class="pj-acts"><button class="btn sm" data-pj="dup" data-id="'+esc(x.id)+'">'+ico('copy',14)+'<span>Duplicate</span></button><button class="btn sm" data-pj="bk" data-id="'+esc(x.id)+'" aria-expanded="'+(st.bk===x.id)+'">Backups</button>'
-        +'<button class="btn sm" data-pj="reveal" data-id="'+esc(x.id)+'">Show folder</button><button class="btn sm danger" data-pj="del" data-id="'+esc(x.id)+'">'+ico('trash',14)+'<span>'+(cf?'Move to trash?':'Delete')+'</span></button></span></div>'
+    +'<div class="pj-new"><button class="btn pri" data-pj="blank">'+ico('plus')+'<span>New blank project</span></button><button class="btn" data-pj="sample">New copy of the sample</button><button class="btn" data-pj="import">'+ico('upload')+'<span>Import a backup…</span></button><button class="btn" data-pj="openShared">'+ico('users')+'<span>Open a shared project…</span></button></div>'
+    +'<ul class="pj-list">'+(st.list.length?st.list.map(x=>{ const cur=x.id===PJ.id, cf=st.confirm==='del'+x.id, others=(x.others||[]).map(whoName);
+      if(x.missing) return '<li class="pj-row"><div class="pj-top"><span class="pj-open"><b>'+esc(x.title)+'</b><span>Shared project not found at <code>'+esc(x.path)+'</code>. Its folder may have been moved, or not synced to this computer yet.</span></span><span class="pj-acts"><button class="btn sm" data-pj="unlink" data-id="'+esc(x.id)+'">Remove from list</button></span></div></li>';
+      return '<li class="pj-row'+(cur?' cur':'')+'"><div class="pj-top"><button class="pj-open" data-pj="open" data-id="'+esc(x.id)+'"><b>'+esc(x.title||'Untitled novel')+(x.shared||x.synced?' <span class="pj-tag">'+ico('users',12)+'Shared folder</span>':'')+'</b><span>'+fmt(x.words)+' words · saved '+esc(ago(x.saved))+(cur?' · <em>open now</em>':'')+(others.length?' · open by '+esc(others.join(', ')):'')+'</span></button>'
+        +'<span class="pj-acts"><button class="btn sm" data-pj="share" data-id="'+esc(x.id)+'">'+ico('users',14)+'<span>Share</span></button><button class="btn sm" data-pj="dup" data-id="'+esc(x.id)+'">'+ico('copy',14)+'<span>Duplicate</span></button><button class="btn sm" data-pj="bk" data-id="'+esc(x.id)+'" aria-expanded="'+(st.bk===x.id)+'">Backups</button>'
+        +'<button class="btn sm" data-pj="reveal" data-id="'+esc(x.id)+'">Show folder</button>'
+        +(x.shared?'<button class="btn sm" data-pj="unlink" data-id="'+esc(x.id)+'">'+(st.confirm==='un'+x.id?'Remove? Co-writers keep it':'Remove from list')+'</button>':'<button class="btn sm danger" data-pj="del" data-id="'+esc(x.id)+'">'+ico('trash',14)+'<span>'+(cf?'Move to trash?':'Delete')+'</span></button>')+'</span></div>'
         +(st.bk===x.id?'<div class="pj-bks">'+(st.bks.length?'<p class="fine">Automatic copies, made at most every 10 minutes while you write. Opening one makes a new project, so nothing is overwritten.</p>'+st.bks.map(n=>'<div class="pj-bk"><span class="mono">'+esc(n.replace('.json','').replace(/^(\d{4}-\d\d-\d\d)-(\d\d)-(\d\d)-(\d\d)$/,'$1 $2:$3'))+'</span><button class="btn sm" data-pj="rb" data-id="'+esc(x.id)+'" data-name="'+esc(n)+'">Open as a copy</button></div>').join(''):'<p class="fine">No automatic backups yet. They are made as you write, at most every 10 minutes.</p>')+'</div>':'')+'</li>'; }).join('')
       :'<li class="muted">No projects yet.</li>')+'</ul>'
     +'<footer><span>Projects folder: <code>'+esc(st.dir)+'</code></span><button class="btn sm" data-pj="root">Open folder</button></footer></div>';
@@ -3726,6 +4040,16 @@ async function pjAct(a,id,name){
     else if(a==='open'){ if(id!==PJ.id){ pmHalt(); await deskFlush(); if(!await deskOpen(id)) return; } closeProjects(); }
     else if(a==='blank'||a==='sample'){ await deskNew(a); closeProjects(); if(a==='blank'){ const t=$('#projTitle'); t.focus(); t.select(); } }
     else if(a==='import') await deskImportPick();
+    else if(a==='openShared') await openSharedPick();
+    else if(a==='share') openShare(id);
+    else if(a==='unlink'){
+      const missing=(st.list.find(x=>x.id===id)||{}).missing;
+      if(!missing&&st.confirm!=='un'+id){ st.confirm='un'+id; drawProjects(); clearTimeout(ui.pjt); ui.pjt=setTimeout(()=>{ if(st.confirm==='un'+id){ st.confirm=null; drawProjects(); } },3500); return; }
+      st.confirm=null; const wasOpen=id===PJ.id; if(wasOpen){ pmHalt(); await deskFlush(); PJ.id=null; }
+      await DESK.unlink(id); st.list=await DESK.list();
+      if(wasOpen){ const next=st.list.find(x=>!x.missing); if(next) await deskOpen(next.id); else await deskNew('blank'); st.list=await DESK.list(); }
+      drawProjects(); toast('Removed from your list. The shared folder and your co-writers’ copies are untouched.',{plain:true});
+    }
     else if(a==='dup'){ await deskFlush(); await DESK.duplicate(id); await refresh(); toast('Duplicated. The copy is at the top of the list.',{plain:true}); }
     else if(a==='bk'){ st.bk=st.bk===id?null:id; st.bks=st.bk?await DESK.backups(id):[]; drawProjects(); }
     else if(a==='rb'){ await deskFlush(); await DESK.restoreBackup(id,name); st.bk=null; await refresh(); toast('Added the backup as a new project at the top of the list.',{plain:true}); }
