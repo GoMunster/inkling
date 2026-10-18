@@ -87,7 +87,7 @@ button{cursor:pointer}
 
 .cols{display:grid;grid-template-columns:272px minmax(0,1fr) 308px;grid-template-rows:minmax(0,1fr);min-height:0}
 .pane{overflow:auto;min-height:0;min-width:0}
-.pane-binder{background:var(--panel);border-right:1px solid var(--line)}
+.pane-binder{background:var(--panel);border-right:1px solid var(--line);overflow-x:hidden}
 .pane-insp{background:var(--panel);border-left:1px solid var(--line)}
 .pane-main{background:var(--bg);position:relative}
 #app.focus .pane-binder,#app.focus .pane-insp{display:none}
@@ -538,6 +538,28 @@ label.f input:focus,label.f textarea:focus,.ta:focus{border-color:var(--accent);
 dl.fam{display:grid;grid-template-columns:auto 1fr;gap:6px 10px} dl.fam dt{color:var(--muted);font-weight:600;font-size:12px} dl.fam dd{margin:0}
 .lrow .nm.sym{flex:0 0 42px;text-align:center}
 
+/* desktop projects */
+.pj-ov{position:fixed;inset:0;z-index:70;background:rgba(13,18,26,.55);display:grid;place-items:center;padding:16px}
+.pj-dlg{width:min(760px,100%);max-height:calc(100vh - 32px);overflow:auto;background:var(--panel);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow);padding:18px 22px 20px}
+.pj-dlg header{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.pj-dlg h2{display:flex;align-items:center;gap:10px;margin:0;font-family:var(--f-prose);font-size:22px}
+.pj-sub{margin:6px 0 0;font-size:13px}
+.pj-new{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0 16px}
+.pj-list{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.pj-row{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:8px 12px}
+.pj-row.cur{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent)}
+.pj-top{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.pj-open{flex:1 1 220px;min-width:0;text-align:left;border:0;background:transparent;padding:4px 0;border-radius:8px}
+.pj-open b{display:block;font-family:var(--f-prose);font-size:17px;overflow-wrap:anywhere}
+.pj-open span{color:var(--muted);font-size:12.5px} .pj-open em{color:var(--accent);font-style:normal;font-weight:600}
+.pj-open:hover b{color:var(--accent)}
+.pj-acts{display:flex;gap:6px;flex-wrap:wrap}
+.pj-bks{margin-top:8px;border-top:1px solid var(--line);padding-top:6px;display:grid;gap:4px;max-height:240px;overflow:auto}
+.pj-bk{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:13px}
+.pj-dlg footer{margin-top:16px;font-size:12.5px;color:var(--muted);display:flex;gap:8px;align-items:center;flex-wrap:wrap;justify-content:space-between}
+.pj-dlg code{font-family:var(--f-mono);font-size:12px;overflow-wrap:anywhere;color:var(--ink)}
+#pjBtn{flex:none}
+
 /* tab layout */
 @media (max-width:1079px){
   :root{--tabh:58px}
@@ -612,7 +634,7 @@ const ICO={plus:'M12 5v14M5 12h14',down:'M6 9l6 6 6-6',right:'M9 6l6 6-6 6',up:'
   pen:'M4 20l1-4L16 5l3 3L8 19l-4 1z',focus:'M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5',link:'M10 14a4 4 0 005.7 0l3-3a4 4 0 00-5.7-5.7l-1 1M14 10a4 4 0 00-5.7 0l-3 3a4 4 0 005.7 5.7l1-1',
   spark:'M12 3l2 6 6 2-6 2-2 6-2-6-6-2 6-2z',x:'M6 6l12 12M18 6L6 18',
   note:'M6 3h9l4 4v14H6zM14 3v5h5M9 13h7M9 17h5',list:'M9 6h11M9 12h11M9 18h11M4 6h.01M4 12h.01M4 18h.01',bulb:'M9 18h6M10 21h4M12 3a6 6 0 00-4 10.5c.7.7 1 1.5 1 2.5h6c0-1 .3-1.8 1-2.5A6 6 0 0012 3z',
-  image:'M4 5h16v14H4zM4 16l5-5 4 4 3-3 4 4M15 9h.01',indent:'M4 6h16M10 12h10M10 18h10M4 10l3 2-3 2',outdent:'M4 6h16M10 12h10M10 18h10M7 10l-3 2 3 2',upload:'M12 16V4M7 9l5-5 5 5M4 20h16',web:'M8 7a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0zM21 7a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0zM14.5 18a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0zM8 7h8M6.5 9l4.5 7M17.5 9L13 16',tree:'M9 3h6v4H9zM3 17h6v4H3zM15 17h6v4h-6zM12 7v5M6 12h12M6 12v5M18 12v5',heart:'M12 20s-7-4.5-7-10a4 4 0 017-2.6A4 4 0 0119 10c0 5.5-7 10-7 10z',
+  image:'M4 5h16v14H4zM4 16l5-5 4 4 3-3 4 4M15 9h.01',indent:'M4 6h16M10 12h10M10 18h10M4 10l3 2-3 2',outdent:'M4 6h16M10 12h10M10 18h10M7 10l-3 2 3 2',upload:'M12 16V4M7 9l5-5 5 5M4 20h16',folder:'M3 7a2 2 0 012-2h4l2 2h8a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z',web:'M8 7a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0zM21 7a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0zM14.5 18a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0zM8 7h8M6.5 9l4.5 7M17.5 9L13 16',tree:'M9 3h6v4H9zM3 17h6v4H3zM15 17h6v4h-6zM12 7v5M6 12h12M6 12v5M18 12v5',heart:'M12 20s-7-4.5-7-10a4 4 0 017-2.6A4 4 0 0119 10c0 5.5-7 10-7 10z',
   time:'M3 12h18M7 12V7M12 12v5M17 12V7',sliders:'M4 7h9M17 7h3M4 17h3M11 17h9M15 5v4M9 15v4',minus:'M5 12h14',
   grip:'M9 6h.01M15 6h.01M9 12h.01M15 12h.01M9 18h.01M15 18h.01',copy:'M8 8h11v11H8zM5 16V5h11',fit:'M4 12h16M4 12l4-4M4 12l4 4M20 12l-4-4M20 12l-4 4'};
 const ico=(n,s)=>'<svg class="ico" width="'+(s||16)+'" height="'+(s||16)+'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="'+ICO[n]+'"/></svg>';
@@ -635,7 +657,10 @@ const stageOf=t=>{let i=0;STAGES.forEach((s,j)=>{if(t>=s.at)i=j});return i};
 /* ---------- state ---------- */
 let S=null;          // {meta, sc:{id:{text,synopsis,notes}}, en:{id:{fields,pic}}, tl:{id:timeline}, ch:{id:{notes}}, nt:{id:{text,ideas}}, ol:{id:{num,showNotes,items}}}
 const DOCS=['sc','en','tl','ch','nt','ol','rm','ft'];   // each record of these maps is its own saved doc, '<prefix>_<id>'
-const snapshot=()=>{ const o={meta:S.meta}; DOCS.forEach(p=>{ o[p]=S[p]; }); return o; };
+const snapshot=st=>{ st=st||S; const o={meta:st.meta}; DOCS.forEach(p=>{ o[p]=st[p]; }); return o; };
+// The desktop app (desktop/) provides window.inklingDesktop: each project is a folder on the computer. Elsewhere it is null.
+const DESK=window.inklingDesktop||null;
+const PJ={id:null};   // the desktop project that is open
 let linker=null;
 const ui={view:null,hist:[],cork:'all',rename:null,confirm:null,menu:false,tab:'write',focus:false,openSec:{ol:true,nt:true,tl:true,rm:true,ft:true,char:true,place:true,thing:true},say:'',sayAt:0,mood:'',touched:false,sel:'',focusName:false,fs:18,
   relabel:null,ntAdd:false,binderCfg:false,cvFor:null,cvSel:null,cvPop:false,ftGen:{},imgOpts:false,imgBusy:null,tlFor:null,tlSel:null,tlSide:null,tlSideKey:'',tlQ:'',tlEnt:'',tlR:null,tlDragged:false};
@@ -805,28 +830,51 @@ function normTl(t){
 
 /* ---------- story page pictures ---------- */
 // In the Claude artifact a picture is uploaded with the `assets` capability and only its id is saved.
-// Elsewhere (a plain browser) a resized copy lives in localStorage under its own key, outside the project record.
+// In the desktop app it is a file in the project's pictures folder (`f`). In a plain browser a resized copy lives
+// in localStorage under its own key, outside the project record.
 const PIC_SHAPES=[['','Auto'],['portrait','Portrait'],['square','Square'],['wide','Wide'],['natural','Original']];
 const PIC_SIZES=[['s','Small'],['m','Medium'],['l','Banner']];
 const PIC_DEF_SHAPE={char:'portrait',place:'wide',thing:'square'};
 function normPic(p){
   p=p&&typeof p==='object'?p:{};
-  return {a:/^[0-9a-f]{32}$/i.test(p.a||'')?p.a:'',l:!!p.l,cap:String(p.cap||'').slice(0,200),
+  return {a:/^[0-9a-f]{32}$/i.test(p.a||'')?p.a:'',l:!!p.l,f:/^[a-z0-9][a-z0-9_.-]{0,80}$/i.test(p.f||'')?p.f:'',cap:String(p.cap||'').slice(0,200),
     shape:PIC_SHAPES.some(x=>x[0]===p.shape)?p.shape:'',size:PIC_SIZES.some(x=>x[0]===p.size)?p.size:'m',fit:p.fit==='contain'?'contain':'cover'};
 }
 const LOCAL_PIC='inkling:img:';
 function picSrc(eid){
   const p=S.en[eid]&&S.en[eid].pic; if(!p) return '';
+  if(p.f) return DESK&&PJ.id?'inkpic://p/'+encodeURIComponent(PJ.id)+'/'+encodeURIComponent(p.f):'';
   if(p.a) return '/_blob/'+p.a;
   if(p.l){ try{ return localStorage.getItem(LOCAL_PIC+eid)||''; }catch(e){ return ''; } }
   return '';
 }
 async function getAssets(){ try{ return window.claude&&window.claude.use?await window.claude.use('assets'):null; }catch(e){ return null; } }
-function localImages(){ const o={}; Object.keys(S.en).forEach(id=>{ if(S.en[id].pic.l){ const d=picSrc(id); if(d) o[id]=d; } }); return o; }
-function restoreLocalImages(imgs){ if(!imgs||typeof imgs!=='object') return; Object.keys(imgs).forEach(id=>{ if(/^data:image\//.test(imgs[id])) try{ localStorage.setItem(LOCAL_PIC+id,imgs[id]); }catch(e){} }); }
+// Backups carry every picture as a data URL (imgs), wherever it was stored, so a backup moves between the
+// Claude artifact, a browser and the desktop app with its pictures.
+async function collectImages(){
+  const o={};
+  for(const id of Object.keys(S.en)){ const p=S.en[id].pic; try{
+    if(p.f&&DESK&&PJ.id) o[id]=await DESK.picRead(PJ.id,p.f);
+    else if(p.l){ const d=localStorage.getItem(LOCAL_PIC+id); if(d) o[id]=d; }
+    else if(p.a){ const r=await fetch('/_blob/'+p.a); if(r.ok) o[id]=await toDataUrl(await r.blob()); }
+  }catch(e){} }
+  return o;
+}
+async function adoptImages(np,imgs,deskId){
+  imgs=imgs&&typeof imgs==='object'?imgs:{}; const inClaude=!!(window.claude&&window.claude.use);
+  for(const id of Object.keys(np.en)){
+    const p=np.en[id].pic, d=imgs[id], ok=typeof d==='string'&&/^data:image\/[\w+.-]+;base64,/.test(d);
+    if(deskId){ p.a=''; p.l=false; p.f=''; if(ok) try{ const b=await (await fetch(d)).blob(); p.f=await DESK.picSave(deskId,new Uint8Array(await b.arrayBuffer()),b.type); }catch(e){} continue; }
+    p.f='';
+    if(p.a&&inClaude) continue;   // the artifact still holds this picture
+    if(ok){ try{ localStorage.setItem(LOCAL_PIC+id,d); p.l=true; p.a=''; }catch(e){ p.l=false; } }
+    else if(!inClaude) p.a='';
+  }
+}
 async function dropPic(eid){
   const p=S.en[eid]&&S.en[eid].pic; if(!p) return;
   if(p.l){ try{ localStorage.removeItem(LOCAL_PIC+eid); }catch(e){} }
+  if(p.f&&DESK&&PJ.id) DESK.picDelete(PJ.id,p.f).catch(()=>{});
   if(p.a){ const as=await getAssets(); if(as) try{ await as.delete(p.a); }catch(e){} }
 }
 function loadImg(file){ return new Promise((ok,bad)=>{ const u=URL.createObjectURL(file), im=new Image(); im.onload=()=>{ URL.revokeObjectURL(u); ok(im); }; im.onerror=()=>{ URL.revokeObjectURL(u); bad({code:'unreadable'}); }; im.src=u; }); }
@@ -843,10 +891,13 @@ const toDataUrl=b=>new Promise(r=>{ const f=new FileReader(); f.onload=()=>r(f.r
 async function setPic(eid,file){
   if(!file||!/^image\/(png|jpeg|gif|webp|svg\+xml|avif|bmp)$/.test(file.type)){ toast('Choose an image file: JPG, PNG, WebP or GIF.',{plain:true}); return; }
   ui.imgBusy=eid; refreshPic();
-  const p=S.en[eid].pic, old={a:p.a,l:p.l};
+  const p=S.en[eid].pic, old={a:p.a,l:p.l,f:p.f};
   try{
-    const as=await getAssets();
-    if(as){
+    const as=DESK?null:await getAssets();
+    if(DESK){
+      const b=await shrink(file,2400,.9), name=await DESK.picSave(PJ.id,new Uint8Array(await b.arrayBuffer()),b.type||'image/webp');
+      p.f=name; p.a=''; p.l=false; if(old.f&&old.f!==name) DESK.picDelete(PJ.id,old.f).catch(()=>{});
+    } else if(as){
       const b=await shrink(file,2000,.88), r=await as.upload(b,{type:b.type});
       p.a=r.id; p.l=false; if(old.l) try{ localStorage.removeItem(LOCAL_PIC+eid); }catch(e){}
       if(old.a&&old.a!==r.id) as.delete(old.a).catch(()=>{});
@@ -863,7 +914,7 @@ async function setPic(eid,file){
   ui.imgBusy=null; refreshPic(); renderBinder();
 }
 async function removePic(eid){
-  await dropPic(eid); const p=S.en[eid].pic; p.a=''; p.l=false; p.cap=''; dirty('en_'+eid); refreshPic(); renderBinder();
+  await dropPic(eid); const p=S.en[eid].pic; p.a=''; p.l=false; p.f=''; p.cap=''; dirty('en_'+eid); refreshPic(); renderBinder();
 }
 function picHtml(e){
   const p=S.en[e.id].pic, src=picSrc(e.id), busy=ui.imgBusy===e.id;
@@ -995,7 +1046,7 @@ function relinkEditor(force){
 /* ---------- persistence ---------- */
 function setStatus(k){
   const el=$('#saveSt'); if(!el) return; el.dataset.s=k;
-  el.lastChild.textContent={saving:'Saving…',saved:'Saved to your account',local:'Saved on this device',error:'Could not save, retrying'}[k]||'Saved';
+  el.lastChild.textContent={saving:'Saving…',saved:'Saved to your account',local:'Saved on this device',disk:'Saved on this computer',error:'Could not save, retrying'}[k]||'Saved';
 }
 function dirty(){
   ui.touched=true;
@@ -1010,6 +1061,7 @@ function docData(k){
   return null;
 }
 function mirrorLocal(){
+  if(DESK) return;
   try{ const s=JSON.stringify(snapshot()); if(s.length<4500000) localStorage.setItem('inkling:project',s); }catch(e){}
 }
 async function flush(){
@@ -1017,7 +1069,10 @@ async function flush(){
   P.busy=true; const keys=[...P.dirty]; P.dirty.clear();
   setStatus('saving'); mirrorLocal();
   try{
-    if(P.db){
+    if(DESK){
+      if(PJ.id) await DESK.save(PJ.id,JSON.stringify(snapshot()),deskInfo());
+      P.gone.clear(); P.fails=0; setStatus('disk');
+    } else if(P.db){
       const col=P.db.collection(P.base);
       for(const k of keys){ const d=docData(k); if(d==null) continue; await col.doc(k).set(d); P.keys.add(k); }
       const del=[...P.gone]; P.gone.clear();
@@ -1026,6 +1081,7 @@ async function flush(){
     } else setStatus('local');
   }catch(e){
     keys.forEach(k=>P.dirty.add(k)); P.fails++; setStatus('error');
+    if(DESK&&P.fails===1) toast('Could not save to this computer: '+((e&&e.message)||'unknown error')+'. Retrying.',{plain:true});
     if(P.fails<=4) schedule(4000*P.fails);
   }finally{
     P.busy=false;
@@ -1437,7 +1493,7 @@ function renderScene(el,v){
     +'<div class="tools"><div class="mk-wrap"><button class="btn" id="mkBtn" title="Select a name in your text, then link it to a new page">'+ico('link')+'<span>Link selection</span></button><div class="pop" id="mkPop" hidden></div></div>'
     +'<button class="ibtn" id="fsDn" aria-label="Smaller text" style="width:auto;padding:0 8px;font-weight:600">A−</button><button class="ibtn" id="fsUp" aria-label="Larger text" style="width:auto;padding:0 8px;font-weight:600">A+</button>'
     +'<button class="btn" id="focusBtn" aria-pressed="'+(ui.focus?'true':'false')+'">'+ico('focus')+'<span>'+(ui.focus?'Exit focus':'Focus')+'</span></button></div></div>'
-    +(m.sample?'<div class="banner"><span>This is a sample project, so you can try the links and the pet. Open the menu and choose <b>Start a blank project</b> when you are ready for your own.</span><button class="btn sm" id="bnX">Dismiss</button></div>':'')
+    +(m.sample?'<div class="banner"><span>This is a sample project, so you can try the links and the pet. '+(DESK?'Choose <b>File → New project</b> when you are ready for your own.':'Open the menu and choose <b>Start a blank project</b> when you are ready for your own.')+'</span><button class="btn sm" id="bnX">Dismiss</button></div>':'')
     +'<div class="sheet"><div id="ed" class="editor" role="textbox" aria-multiline="true" aria-label="Scene text" spellcheck="true" data-ph="Start writing. Names you have pages for will link automatically."></div></div>'
     +'<p class="hint">Highlighted names are linked. Click one to open its page, or move through it with the arrow keys to edit.</p>';
   const ed=$('#ed'); ed.innerHTML=renderText(d.text);
@@ -2608,12 +2664,17 @@ function renderInspector(){
 /* ---------- menu, export, restore ---------- */
 function slug(s){ return (s||'novel').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'')||'novel'; }
 async function saveFile(name,data){
+  if(DESK){ try{ const at=await DESK.saveFile(name,data); if(at) toast('Saved to '+at,{plain:true}); }catch(e){ toast('Could not save the file.',{plain:true}); } return; }
   try{
     const dl=window.claude&&window.claude.use?await window.claude.use('downloads'):null;
-    if(!dl){ toast('Downloading is not available in this view.',{plain:true}); return; }
-    await dl.save({filename:name,data});
-  }catch(e){ if(!e||e.code!=='declined') toast('Could not save the file.',{plain:true}); }
+    if(dl){ await dl.save({filename:name,data}); return; }
+  }catch(e){ if(!e||e.code!=='declined') toast('Could not save the file.',{plain:true}); return; }
+  // a plain browser: an ordinary download
+  const u=URL.createObjectURL(new Blob([data],{type:'application/octet-stream'})), a=document.createElement('a');
+  a.href=u; a.download=name; document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(u),5000);
 }
+async function doBackup(){ const imgs=await collectImages(); saveFile(slug(S.meta.title)+'-backup.json',JSON.stringify(Object.assign({app:'inkling',v:1},snapshot(),{imgs}),null,1)); }
+const doExport=()=>saveFile(slug(S.meta.title)+'.md',manuscriptMd());
 function manuscriptMd(){
   const m=S.meta; let out='# '+m.title+'\n\n'+(m.author?'by '+m.author+'\n\n':'');
   m.chapters.forEach(c=>{ out+='## '+c.title+'\n\n'+c.scenes.map(id=>(S.sc[id].text||'').trim()).filter(Boolean).join('\n\n* * *\n\n')+'\n\n'; });
@@ -2621,6 +2682,7 @@ function manuscriptMd(){
 }
 function renderMenu(){
   const cf=ui.confirm, el=$('#menu');
+  if(DESK){ el.innerHTML='<button data-m="projects">Projects…</button><button data-m="projects">New project…</button><hr><button data-m="md">Export manuscript (.md)</button><button data-m="json">Back up this project (.json)</button><button data-m="import">Import a backup as a new project…</button><button data-m="reveal">Show projects folder</button><small>Saved on this computer as you write. Each project folder also keeps automatic backups.</small>'; return; }
   el.innerHTML='<button data-m="md">Export manuscript (.md)</button><button data-m="json">Back up project (.json)</button><button data-m="restore">Restore from a backup…</button><hr>'
     +'<button class="warn" data-m="sample">'+(cf==='m-sample'?'Replace everything with the sample? Click again':'Load the sample project')+'</button>'
     +'<button class="warn" data-m="blank">'+(cf==='m-blank'?'Replace everything with a blank project? Click again':'Start a blank project')+'</button>'
@@ -2631,8 +2693,11 @@ function bindMenu(){
   $('#menuBtn').addEventListener('click',e=>{ e.stopPropagation(); ui.menu=!ui.menu; ui.confirm=null; $('#menu').hidden=!ui.menu; if(ui.menu) renderMenu(); });
   $('#menu').addEventListener('click',e=>{
     const b=e.target.closest('[data-m]'); if(!b) return; const a=b.dataset.m;
-    if(a==='md'){ closeMenu(); saveFile(slug(S.meta.title)+'.md',manuscriptMd()); }
-    else if(a==='json'){ closeMenu(); saveFile(slug(S.meta.title)+'-backup.json',JSON.stringify(Object.assign({app:'inkling',v:1},snapshot(),{imgs:localImages()}),null,1)); }
+    if(a==='md'){ closeMenu(); doExport(); }
+    else if(a==='json'){ closeMenu(); doBackup(); }
+    else if(a==='projects'){ closeMenu(); openProjects(); }
+    else if(a==='import'){ closeMenu(); deskImportPick(); }
+    else if(a==='reveal'){ closeMenu(); DESK.reveal(); }
     else if(a==='restore'){ closeMenu(); $('#fileIn').value=''; $('#fileIn').click(); }
     else if(a==='sample') confirmDo('m-sample',()=>{ closeMenu(); replaceProject(normalize(sampleProject()),true); },renderMenu);
     else if(a==='blank') confirmDo('m-blank',()=>{ closeMenu(); replaceProject(normalize(blankProject()),true); },renderMenu);
@@ -2640,11 +2705,91 @@ function bindMenu(){
   $('#fileIn').addEventListener('change',e=>{
     const f=e.target.files&&e.target.files[0]; if(!f) return;
     const r=new FileReader();
-    r.onload=()=>{ try{ const o=JSON.parse(r.result); if(!o||!o.meta||!Array.isArray(o.meta.chapters)) throw 0; const np=normalize(o); restoreLocalImages(o.imgs); replaceProject(np,false); toast('Backup restored.',{plain:true}); }catch(x){ toast('That file is not an Inkling backup.',{plain:true}); } };
+    r.onload=async()=>{ let o, np; try{ o=JSON.parse(r.result); if(!o||!o.meta||!Array.isArray(o.meta.chapters)) throw 0; np=normalize(o); }catch(x){ toast('That file is not an Inkling backup.',{plain:true}); return; }
+      await adoptImages(np,o.imgs,null); replaceProject(np,false); toast('Backup restored.',{plain:true}); };
     r.readAsText(f);
   });
 }
 function closeMenu(){ ui.menu=false; ui.confirm=null; $('#menu').hidden=true; }
+
+/* ---------- desktop projects ---------- */
+const deskInfo=st=>{ st=st||S; return {title:st.meta.title,words:Object.values(st.meta.scenes).reduce((a,x)=>a+(x.words||0),0),sample:!!st.meta.sample}; };
+async function deskFlush(){ clearTimeout(P.timer); for(let i=0;i<60&&P.busy;i++) await new Promise(r=>setTimeout(r,100)); if(P.dirty.size||P.gone.size) await flush(); }
+async function deskOpen(id){
+  const raw=await DESK.load(id); if(raw==null){ toast('That project could not be found.',{plain:true}); return false; }
+  let o; try{ o=JSON.parse(raw); }catch(e){ toast('This project file is damaged. Open its Backups in Projects to get back a recent copy.',{plain:true}); return false; }
+  clearTimeout(P.timer); P.dirty.clear(); P.gone.clear(); P.keys.clear();
+  S=normalize(o); PJ.id=id; linker=buildLinker();
+  Object.assign(ui,{view:firstView(),hist:[],touched:false,mood:'',confirm:null,menu:false,tlFor:null,tlSide:null,cvFor:null,cvSel:null,relabel:null});
+  renderAll(); setStatus('disk'); document.title=S.meta.title+' – Inkling'; DESK.setTitle(document.title); return true;
+}
+async function deskCreate(np,imgs){
+  np.meta.saved=Date.now(); const id=await DESK.create(np.meta.title);
+  if(imgs!==undefined) await adoptImages(np,imgs,id);
+  await DESK.save(id,JSON.stringify(snapshot(np)),deskInfo(np)); return id;
+}
+async function deskNew(kind){ await deskFlush(); const id=await deskCreate(normalize(kind==='sample'?sampleProject():blankProject())); await deskOpen(id); return id; }
+async function deskImport(text){
+  let o, np; try{ o=JSON.parse(text); if(!o||!o.meta||!Array.isArray(o.meta.chapters)) throw 0; np=normalize(o); }catch(e){ toast('That file is not an Inkling backup.',{plain:true}); return; }
+  await deskFlush(); const id=await deskCreate(np,o.imgs||{}); await deskOpen(id);
+  toast('Imported “'+np.meta.title+'” as a new project. Your other projects are unchanged.',{plain:true}); return id;
+}
+async function deskImportPick(){ try{ const t=await DESK.openFile(); if(t!=null){ await deskImport(t); closeProjects(); } }catch(e){ toast('Could not open that file.',{plain:true}); } }
+async function deskBoot(){
+  DESK.onMenu(a=>{ if(a==='new'||a==='projects') openProjects(); else if(a==='backup') doBackup(); else if(a==='export') doExport(); else if(a==='import') deskImportPick(); });
+  DESK.onClosing(async()=>{ try{ await deskFlush(); }catch(e){} DESK.closeReady(); });
+  const b=document.createElement('button'); b.className='ibtn'; b.id='pjBtn'; b.title='Projects'; b.setAttribute('aria-label','Projects'); b.innerHTML=ico('folder',18);
+  b.addEventListener('click',()=>openProjects()); $('#projTitle').before(b);
+  try{
+    let id=await DESK.last(); if(!id){ const l=await DESK.list(); id=l.length?l[0].id:null; }
+    if(id){ if(!await deskOpen(id)) openProjects(); return; }
+    await deskNew('sample');
+  }catch(e){ toast('Inkling could not open your projects folder: '+((e&&e.message)||e),{plain:true}); }
+}
+const ago=t=>{ const s=(Date.now()-t)/1000; if(s<60) return 'just now'; if(s<3600) return Math.round(s/60)+' min ago'; if(s<86400) return Math.round(s/3600)+' h ago'; if(s<86400*7) return Math.round(s/86400)+' days ago'; return new Date(t).toLocaleDateString(); };
+async function openProjects(){
+  if(!DESK) return; await deskFlush();
+  let ov=$('#pj');
+  if(!ov){ ov=document.createElement('div'); ov.id='pj'; ov.className='pj-ov'; document.body.appendChild(ov);
+    ov.addEventListener('click',e=>{ if(e.target===ov){ if(PJ.id) closeProjects(); return; } const b=e.target.closest('[data-pj]'); if(b) pjAct(b.dataset.pj,b.dataset.id,b.dataset.name); }); }
+  ui.pj={list:await DESK.list(),dir:await DESK.dir(),bk:null,bks:[],confirm:null}; ov.hidden=false; drawProjects();
+  const f=$('.pj-dlg [data-pj]',ov); if(f) f.focus();
+}
+function closeProjects(){ const ov=$('#pj'); if(ov) ov.hidden=true; }
+function drawProjects(){
+  const ov=$('#pj'), st=ui.pj; if(!ov||!st) return;
+  ov.innerHTML='<div class="pj-dlg" role="dialog" aria-modal="true" aria-labelledby="pjH"><header><h2 id="pjH">'+ico('folder',20)+'Your projects</h2>'+(PJ.id?'<button class="ibtn" data-pj="close" aria-label="Close">'+ico('x')+'</button>':'')+'</header>'
+    +'<p class="muted pj-sub">Each project is a separate novel with its own story pages, timelines, maps and Inkling. Everything saves on this computer as you write.</p>'
+    +'<div class="pj-new"><button class="btn pri" data-pj="blank">'+ico('plus')+'<span>New blank project</span></button><button class="btn" data-pj="sample">New copy of the sample</button><button class="btn" data-pj="import">'+ico('upload')+'<span>Import a backup…</span></button></div>'
+    +'<ul class="pj-list">'+(st.list.length?st.list.map(x=>{ const cur=x.id===PJ.id, cf=st.confirm==='del'+x.id;
+      return '<li class="pj-row'+(cur?' cur':'')+'"><div class="pj-top"><button class="pj-open" data-pj="open" data-id="'+esc(x.id)+'"><b>'+esc(x.title||'Untitled novel')+'</b><span>'+fmt(x.words)+' words · saved '+esc(ago(x.saved))+(cur?' · <em>open now</em>':'')+'</span></button>'
+        +'<span class="pj-acts"><button class="btn sm" data-pj="dup" data-id="'+esc(x.id)+'">'+ico('copy',14)+'<span>Duplicate</span></button><button class="btn sm" data-pj="bk" data-id="'+esc(x.id)+'" aria-expanded="'+(st.bk===x.id)+'">Backups</button>'
+        +'<button class="btn sm" data-pj="reveal" data-id="'+esc(x.id)+'">Show folder</button><button class="btn sm danger" data-pj="del" data-id="'+esc(x.id)+'">'+ico('trash',14)+'<span>'+(cf?'Move to trash?':'Delete')+'</span></button></span></div>'
+        +(st.bk===x.id?'<div class="pj-bks">'+(st.bks.length?'<p class="fine">Automatic copies, made at most every 10 minutes while you write. Opening one makes a new project, so nothing is overwritten.</p>'+st.bks.map(n=>'<div class="pj-bk"><span class="mono">'+esc(n.replace('.json','').replace(/^(\d{4}-\d\d-\d\d)-(\d\d)-(\d\d)-(\d\d)$/,'$1 $2:$3'))+'</span><button class="btn sm" data-pj="rb" data-id="'+esc(x.id)+'" data-name="'+esc(n)+'">Open as a copy</button></div>').join(''):'<p class="fine">No automatic backups yet. They are made as you write, at most every 10 minutes.</p>')+'</div>':'')+'</li>'; }).join('')
+      :'<li class="muted">No projects yet.</li>')+'</ul>'
+    +'<footer><span>Projects folder: <code>'+esc(st.dir)+'</code></span><button class="btn sm" data-pj="root">Open folder</button></footer></div>';
+}
+async function pjAct(a,id,name){
+  const st=ui.pj, refresh=async()=>{ st.list=await DESK.list(); drawProjects(); };
+  try{
+    if(a==='close') closeProjects();
+    else if(a==='open'){ if(id!==PJ.id){ await deskFlush(); if(!await deskOpen(id)) return; } closeProjects(); }
+    else if(a==='blank'||a==='sample'){ await deskNew(a); closeProjects(); if(a==='blank'){ const t=$('#projTitle'); t.focus(); t.select(); } }
+    else if(a==='import') await deskImportPick();
+    else if(a==='dup'){ await deskFlush(); await DESK.duplicate(id); await refresh(); toast('Duplicated. The copy is at the top of the list.',{plain:true}); }
+    else if(a==='bk'){ st.bk=st.bk===id?null:id; st.bks=st.bk?await DESK.backups(id):[]; drawProjects(); }
+    else if(a==='rb'){ await deskFlush(); await DESK.restoreBackup(id,name); st.bk=null; await refresh(); toast('Added the backup as a new project at the top of the list.',{plain:true}); }
+    else if(a==='reveal') DESK.reveal(id);
+    else if(a==='root') DESK.reveal();
+    else if(a==='del'){
+      if(st.confirm!=='del'+id){ st.confirm='del'+id; drawProjects(); clearTimeout(ui.pjt); ui.pjt=setTimeout(()=>{ if(st.confirm==='del'+id){ st.confirm=null; drawProjects(); } },3500); return; }
+      st.confirm=null; const wasOpen=id===PJ.id; if(wasOpen){ clearTimeout(P.timer); P.dirty.clear(); PJ.id=null; }
+      await DESK.trash(id); st.list=await DESK.list();
+      if(wasOpen){ if(st.list.length) await deskOpen(st.list[0].id); else await deskNew('blank'); st.list=await DESK.list(); }
+      drawProjects(); toast('Moved to your computer’s trash. You can still get it back from there.',{plain:true});
+    }
+  }catch(e){ toast('Something went wrong: '+((e&&e.message)||e),{plain:true}); }
+}
 
 /* ---------- boot ---------- */
 function renderAll(){
@@ -2654,13 +2799,13 @@ function renderAll(){
 function init(){
   try{ const f=+localStorage.getItem('inkling:fs'); if(f>=14&&f<=28) ui.fs=f; }catch(e){}
   let local=null;
-  try{ const raw=localStorage.getItem('inkling:project'); if(raw) local=normalize(JSON.parse(raw)); }catch(e){}
+  if(!DESK) try{ const raw=localStorage.getItem('inkling:project'); if(raw) local=normalize(JSON.parse(raw)); }catch(e){}
   S=local||normalize(sampleProject());
   linker=buildLinker(); ui.view=firstView();
   $('#tabs').innerHTML=[['binder','Binder','book'],['write','Write','pen'],['pet','Inkling','spark']].map(t=>'<button role="tab" data-tab="'+t[0]+'" aria-selected="false">'+ico(t[2],20)+'<span>'+t[1]+'</span></button>').join('');
   $('#tabs').addEventListener('click',e=>{ const b=e.target.closest('button[data-tab]'); if(!b) return; ui.tab=b.dataset.tab; syncTab(); });
   $('#goalChip').addEventListener('click',()=>{ ui.tab='pet'; syncTab(); const i=$('#insp'); if(i) i.scrollTop=0; });
-  $('#projTitle').addEventListener('input',e=>{ S.meta.title=e.target.value||'Untitled novel'; dirty('meta'); });
+  $('#projTitle').addEventListener('input',e=>{ S.meta.title=e.target.value||'Untitled novel'; dirty('meta'); if(DESK){ document.title=S.meta.title+' – Inkling'; DESK.setTitle(document.title); } });
   bindBinder(); bindMenu();
   $('#main').addEventListener('click',e=>{
     const b=e.target.closest('[data-a="back"]'); if(b) goBack();
@@ -2676,13 +2821,13 @@ function init(){
     if(ui.menu&&!path.includes($('#menu'))&&!path.includes($('#menuBtn'))) closeMenu();
     const pop=$('#mkPop'); if(pop&&!pop.hidden&&!e.target.closest('.mk-wrap')) pop.hidden=true;
   });
-  document.addEventListener('keydown',e=>{ if(e.key==='Escape'){ if(ui.menu) closeMenu(); else if((ui.view.k==='rm'||ui.view.k==='ft')&&(ui.cvSel||ui.cvPop)){ ui.cvSel=null; ui.cvPop=false; ui.confirm=null; cvRefresh(); } else if(ui.view.k==='tl'&&ui.tlSide){ ui.tlSide=null; ui.confirm=null; drawSide(); drawTl(); } else if(ui.focus){ ui.focus=false; syncTab(); renderMain(); } } });
+  document.addEventListener('keydown',e=>{ if(e.key==='Escape'){ const pj=$('#pj'); if(pj&&!pj.hidden){ if(PJ.id) closeProjects(); } else if(ui.menu) closeMenu(); else if((ui.view.k==='rm'||ui.view.k==='ft')&&(ui.cvSel||ui.cvPop)){ ui.cvSel=null; ui.cvPop=false; ui.confirm=null; cvRefresh(); } else if(ui.view.k==='tl'&&ui.tlSide){ ui.tlSide=null; ui.confirm=null; drawSide(); drawTl(); } else if(ui.focus){ ui.focus=false; syncTab(); renderMain(); } } });
   let rz; window.addEventListener('resize',()=>{ clearTimeout(rz); rz=setTimeout(()=>{ if(ui.view&&ui.view.k==='tl') drawTl(); },150); });
   document.addEventListener('visibilitychange',()=>{ if(document.hidden&&P.dirty.size) flush(); });
   window.addEventListener('pagehide',()=>{ if(P.dirty.size) mirrorLocal(); });
   setInterval(()=>{ if(!document.hidden&&Date.now()-ui.sayAt>40000) say(line(curMood())); },15000);
-  renderAll(); setStatus('local');
-  connectDb(!!local);
+  renderAll();
+  if(DESK) deskBoot(); else { setStatus('local'); connectDb(!!local); }
 }
 init();
 })();

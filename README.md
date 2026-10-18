@@ -19,6 +19,10 @@ A novel-writing app inspired by Scrivener, with a virtual pet that cheers you on
 - **Inky, the pet:** reacts to your daily goal (25/50/75/100%, bonus words, streaks) and grows from Blot to Inkling, Scribe, Bard and Laureate as lifetime words add up.
 - **Export and backup:** manuscript as Markdown, project as JSON (restore from the menu).
 
+## Desktop app
+
+Inkling also comes as a downloadable app for Windows, macOS and Linux that needs no Claude account or internet, and keeps several projects on the computer, each in its own folder with automatic backups. See [desktop/README.md](desktop/README.md) for installing, building and releasing it.
+
 ## Run it
 
 It is a single static file with no build step.

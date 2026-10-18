@@ -2,6 +2,8 @@
 
 Single-file app: `index.html` holds markup, CSS and one IIFE of vanilla JS. No dependencies or build step. Only external requests are Google Fonts (Instrument Sans, Literata, IBM Plex Mono).
 
+The same file runs in three places: the Claude artifact, a plain browser, and the Electron desktop app in `desktop/` (see `desktop/README.md`). Keep `index.html` working in all three; never fork it for the desktop.
+
 ## Data model
 
 State `S = { meta, sc, en, tl, ch, nt, ol, rm, ft }`. Every map except `meta` is listed in `DOCS`; each record saves as its own doc, so a new kind of record only needs adding there:
@@ -19,6 +21,10 @@ State `S = { meta, sc, en, tl, ch, nt, ol, rm, ft }`. Every map except `meta` is
 
 `flush()` writes dirty docs. In the original Claude artifact it used the artifact `db` capability, one doc per `meta` and `<prefix>_<id>` for each `DOCS` prefix (`sc`, `en`, `tl`, `ch`, `nt`, `ol`, `rm`, `ft`), under `data/users/<id>`. Outside that environment `window.claude` is absent, so it falls back to `localStorage` key `inkling:project` (mirrored on every save either way). Keep scene text in its own doc/key so no single record gets large. The artifact declares `db`, `user`, `downloads` and `assets` (pictures); never put image bytes in a doc.
 
+Desktop (`window.inklingDesktop`, kept in `DESK`): `desktop/main.js` stores each project as a folder (`project.json`, `info.json`, `pictures/`, `backups/`) under Documents/Inkling Projects. `flush()` sends the whole `snapshot()` to `DESK.save` (atomic write plus a timed backup); `PJ.id` is the open project. Pictures are files (`pic.f`) shown through the `inkpic://p/<project>/<file>` protocol. Projects UI: `openProjects()`, `deskOpen()`, `deskNew()`, `deskImport()`. The window waits for `deskFlush()` before closing. The page talks to the computer only through the fixed list in `desktop/preload.js`; main validates every id and file name. `desktop/scripts/prepare.js` builds `desktop/app/` from `index.html` (bundled fonts, strict CSP, no network), so a desktop change that needs network access will fail there.
+
+Backups (`doBackup`) carry every picture as a data URL in `imgs`, whatever its storage (`collectImages`); restoring places them where that environment keeps pictures (`adoptImages`).
+
 ## Key behaviours
 
 - Name links: `buildLinker()` makes one case-sensitive regex from every entity name and alias. `relinkEditor()` re-renders spans only when the link set changes, and restores the caret by text offset. The editor is `contenteditable="plaintext-only"` with a fallback to `true`.
@@ -29,4 +35,4 @@ State `S = { meta, sc, en, tl, ch, nt, ol, rm, ft }`. Every map except `meta` is
 
 ## Ideas not built yet
 
-Drag-and-drop in the binder and on the brainstorm board, several pictures per story page, linking timeline cards to each other, a vertical timeline layout, word-count history chart, Word/PDF export, per-scene snapshots, find and replace, mention counts in the binder.
+Desktop: code signing, auto-update, choosing a different projects folder (e.g. Dropbox). Drag-and-drop in the binder and on the brainstorm board, several pictures per story page, linking timeline cards to each other, a vertical timeline layout, word-count history chart, Word/PDF export, per-scene snapshots, find and replace, mention counts in the binder.
