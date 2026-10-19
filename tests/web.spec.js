@@ -258,3 +258,75 @@ test('the Room button opens and closes the room, and a new project gets a new In
   const p = await waitSaved(page, p => !p.meta.sample);
   expect(p.meta.pet.total).toBe(0); expect(Object.keys(p.meta.pet.got)).toEqual([]);
 });
+
+test('bold, italic and smart quotes in the editor, kept as markers and exported to Word', async ({ page }) => {
+  await openApp(page);
+  await page.click('.sc-btn'); await page.click('#ed', { position: { x: 3, y: 3 } }); await page.keyboard.press('Control+End');
+  await page.keyboard.press('Enter'); await page.keyboard.type('She said "yes" -- ');
+  await page.keyboard.press('Control+b'); await page.keyboard.type('loudly'); await page.keyboard.press('Control+b');
+  await page.keyboard.type(' and '); await page.click('[data-fmt="italic"]'); await page.keyboard.type('fast'); await page.click('[data-fmt="italic"]'); await page.keyboard.type('.');
+  const p = await waitSaved(page, p => Object.values(p.sc).some(s => s.text.includes('**loudly**')));
+  expect(Object.values(p.sc).find(s => s.text.includes('**loudly**')).text).toContain('She said “yes” — **loudly** and *fast*.');
+  await page.reload(); await page.waitForSelector('#ed');
+  await expect(page.locator('#ed b')).toHaveText(['loudly']); await expect(page.locator('#ed i')).toHaveText(['fast']);
+  await expect(page.locator('#ed')).not.toContainText('**');
+  await page.click('#menuBtn'); await page.click('[data-m="export"]'); await page.click('[data-fmt="docx"]');
+  const [dl] = await Promise.all([page.waitForEvent('download'), page.click('[data-x="go"]')]);
+  const doc = unzip(require('fs').readFileSync(await dl.path()))['word/document.xml'].toString();
+  expect(doc).toContain('<w:rPr><w:b/></w:rPr><w:t xml:space="preserve">loudly');
+  expect(doc).toContain('<w:rPr><w:i/></w:rPr><w:t xml:space="preserve">fast');
+});
+
+test('the continuity check finds facts that disagree and names that look misspelled', async ({ page }) => {
+  await openApp(page);
+  await page.click('[data-a="open-e"][data-id="e_ilsa"]');
+  await page.fill('.facts textarea', 'eyes: grey\nage: 29'); await page.locator('.facts textarea').blur();
+  await expect(page.locator('.ct-seen')).toContainText('First seen in');
+  await page.click('.sc-btn'); await page.click('#ed', { position: { x: 3, y: 3 } }); await page.keyboard.press('Control+End');
+  await page.keyboard.type(' Ilsa Verrin narrowed her blue eyes. Later Ilsa Verin left.');
+  await page.click('#menuBtn'); await page.click('[data-m="cont"]');
+  await expect(page.locator('.ct-item.k-fact')).toContainText('“blue” here, but the page says “grey”');
+  await expect(page.locator('.ct-item.k-spell')).toContainText('Verin');
+  await page.click('.ct-item.k-fact [data-ct="go"]');
+  expect(await page.evaluate(() => getSelection().toString())).toBe('blue eyes');
+  await page.click('#menuBtn'); await page.click('[data-m="cont"]');
+  await page.click('.ct-item.k-spell [data-ct="ign"]');
+  await expect(page.locator('.ct-item.k-spell')).toHaveCount(0);
+  await expect(page.locator('[data-a="open-e"][data-id="e_ilsa"] .wc')).not.toHaveText('0');
+});
+
+test('drag to reorder scenes, chapters, outline lines and brainstorm ideas', async ({ page }) => {
+  await openApp(page);
+  const drag = async (from, to, dy = -4) => { const a = await page.locator(from).boundingBox(), b = await page.locator(to).boundingBox();
+    const ox = Math.min(20, a.width / 2);
+    await page.mouse.move(a.x + ox, a.y + a.height / 2); await page.mouse.down();
+    await page.mouse.move(a.x + ox + 6, a.y + a.height / 2 + 10, { steps: 3 }); await page.mouse.move(b.x + 20, b.y + (dy < 0 ? 4 : b.height - 4), { steps: 6 }); await page.mouse.up(); };
+  const ids = await page.locator('.sc-row').evaluateAll(a => a.map(x => x.dataset.sid));
+  await drag('.sc-row[data-sid="' + ids[0] + '"]', '.sc-row[data-sid="' + ids[2] + '"]');   // first scene into chapter 2, above its scene
+  let p = await waitSaved(page, p => p.meta.chapters[1].scenes[0] === ids[0]);
+  expect(p.meta.chapters[0].scenes).not.toContain(ids[0]);
+  const chs = p.meta.chapters.map(c => c.id);
+  await drag('.ch-block[data-ch="' + chs[1] + '"] .ch-row', '.ch-block[data-ch="' + chs[0] + '"] .ch-row');
+  p = await waitSaved(page, p => p.meta.chapters[0].id === chs[1]);
+  await page.click('[data-a="open-ol"] >> nth=0');
+  const rows = await page.locator('.ol-row').evaluateAll(a => a.map(x => x.dataset.i));
+  await page.locator('.ol-row').last().hover();
+  await drag('.ol-row[data-i="' + rows[rows.length - 1] + '"] .ol-grip', '.ol-row[data-i="' + rows[0] + '"]');
+  p = await waitSaved(page, p => Object.values(p.ol).some(o => o.items[0].id === rows[rows.length - 1]));
+  await page.click('[data-a="open-nt"] >> nth=1');
+  const ideas = await page.locator('.idea').evaluateAll(a => a.map(x => x.dataset.id));
+  const a = await page.locator('.idea[data-id="' + ideas[2] + '"] footer').boundingBox(), b = await page.locator('.idea[data-id="' + ideas[0] + '"]').boundingBox();
+  await page.mouse.move(a.x + a.width - 6, a.y + 6); await page.mouse.down(); await page.mouse.move(a.x + a.width - 20, a.y + 20, { steps: 3 });
+  await page.mouse.move(b.x + 10, b.y + b.height / 2, { steps: 6 }); await page.mouse.up();
+  await waitSaved(page, p => Object.values(p.nt).some(n => n.ideas.length && n.ideas[0].id === ideas[2]));
+});
+
+test('Inky’s rank follows the novel length goal and never goes back', async ({ page }) => {
+  await openApp(page, { project: { meta: { v: 2, title: 'Small', target: 1000, chapters: [{ id: 'c1', title: 'One', open: true, scenes: ['s1'] }], scenes: { s1: { title: 'S', status: 'draft', words: 0 } }, ents: {}, pet: { name: 'Inky', total: 0 }, days: {} }, sc: { s1: { text: '', synopsis: '', notes: '' } }, en: {} } });
+  await expect(page.locator('#stageTag')).toHaveText('Blot');
+  await page.click('.sc-btn'); await page.click('#ed'); await page.keyboard.type('word '.repeat(55));
+  await expect(page.locator('#stageTag')).toHaveText('Inkling');
+  await expect(page.locator('#evoTxt')).toContainText('25% of your 1,000-word goal');
+  await page.fill('#tgtIn', '100000'); await page.press('#tgtIn', 'Tab');
+  await expect(page.locator('#stageTag')).toHaveText('Inkling');
+});

@@ -412,7 +412,7 @@ function buildMenu() {
       ...(mac ? [] : [{ label: 'Settings…', accelerator: 'CmdOrCtrl+,', click: () => send('prefs') }, { type: 'separator' }, { role: 'quit' }])
     ] },
     { label: 'Edit', submenu: [{ role: 'undo' }, { role: 'redo' }, { type: 'separator' }, { role: 'cut' }, { role: 'copy' }, { role: 'paste' }, { role: 'selectAll' }, { type: 'separator' },
-      { label: 'Find and replace…', accelerator: 'CmdOrCtrl+Shift+F', click: () => send('find') }, { label: 'Scene snapshots…', click: () => send('snapshots') }] },
+      { label: 'Find and replace…', accelerator: 'CmdOrCtrl+Shift+F', click: () => send('find') }, { label: 'Continuity check', click: () => send('cont') }, { label: 'Scene snapshots…', click: () => send('snapshots') }] },
     { label: 'View', submenu: [{ label: 'Writing sessions', accelerator: 'CmdOrCtrl+Shift+H', click: () => send('sessions') }, { label: 'Start or pause the focus timer', accelerator: 'CmdOrCtrl+Shift+T', click: () => send('timer') }, { type: 'separator' }, { role: 'zoomIn' }, { role: 'zoomOut' }, { role: 'resetZoom' }, { type: 'separator' }, { role: 'togglefullscreen' }, { type: 'separator' }, { role: 'toggleDevTools', label: 'Developer tools' }] },
     { role: 'windowMenu' },
     { role: 'help', submenu: [

@@ -145,6 +145,8 @@ select{border:1px solid var(--line);background:var(--paper);border-radius:8px;pa
 .pop button:hover{background:var(--panel2)}
 .sheet{max-width:var(--ed-w,780px);margin:24px auto;background:var(--paper);border:1px solid var(--line);border-radius:6px;box-shadow:var(--shadow);padding:52px 64px;min-width:0}
 .pane-main > .sheet{width:calc(100% - 32px)}
+.fmt-btns{display:inline-flex;gap:2px;margin-right:4px} .fb{width:30px;font-family:var(--f-prose);font-size:15px}
+.editor b{font-weight:700} .editor u{text-decoration-thickness:1px;text-underline-offset:3px}
 .editor{min-height:52vh;font-family:var(--ed-font,var(--f-prose));font-size:var(--fs);line-height:var(--ed-lh,1.8);white-space:pre-wrap;word-wrap:break-word;overflow-wrap:anywhere;outline:none;caret-color:var(--accent);font-variation-settings:'opsz' 18}
 .editor:empty::before{content:attr(data-ph);color:var(--muted);pointer-events:none}
 .ent{cursor:pointer;border-bottom:2px solid currentColor;border-radius:2px;background:color-mix(in srgb,currentColor 11%,transparent);padding:0 1px}
@@ -674,6 +676,26 @@ dl.fam{display:grid;grid-template-columns:auto 1fr;gap:6px 10px} dl.fam dt{color
 .tour-ring{position:fixed;z-index:84;pointer-events:none;border:2px solid var(--accent);border-radius:12px;box-shadow:0 0 0 4000px rgba(13,18,26,.28);transition:all .2s}
 @media (prefers-reduced-motion:reduce){.tour-ring{transition:none}}
 
+/* drag and drop */
+.drag-ghost{position:fixed;z-index:90;pointer-events:none;opacity:.88;box-shadow:0 12px 30px rgba(13,18,26,.28);margin:0}
+.dragging{opacity:.35}
+.drop-bar{position:fixed;z-index:91;background:var(--accent);border-radius:3px;pointer-events:none;display:none}
+body.dnd,body.dnd *{cursor:grabbing!important;user-select:none}
+.card header{cursor:grab} .idea{cursor:grab} .idea textarea{cursor:text}
+.ol-grip{flex:none;display:grid;place-items:center;width:16px;color:var(--muted);opacity:0;cursor:grab;touch-action:none}
+.ol-row:hover .ol-grip,.ol-row:focus-within .ol-grip{opacity:.8}
+@media (hover:none){.ol-grip{opacity:.6}}
+/* continuity */
+.facts{margin:6px 0 18px;padding:12px 14px;border:1px solid var(--line);border-radius:12px;background:var(--bg)}
+.facts h3{margin:0 0 2px;font-size:14px} .facts textarea{width:100%;margin-top:6px;border:1px solid var(--line);border-radius:8px;background:var(--paper);padding:8px 10px;font:inherit;font-size:14px;color:var(--ink);resize:vertical}
+.ct-list{margin-top:8px;display:grid;gap:6px}
+.ct-item{display:flex;gap:10px;align-items:flex-start;justify-content:space-between;border:1px solid var(--line);border-left:4px solid var(--thing);border-radius:8px;padding:8px 10px;background:var(--paper);margin-top:6px;font-size:13.5px}
+.ct-item.k-fact{border-left-color:var(--danger)} .ct-item.k-unused,.ct-item.k-gap,.ct-item.k-gone{border-left-color:var(--muted)}
+.ct-t{min-width:0;line-height:1.45} .ct-q{display:block;color:var(--muted);font-family:var(--f-prose);font-size:13px;margin-top:2px}
+.ct-a{display:flex;gap:4px;flex:none;align-items:center}
+.ct-none{color:var(--muted);font-size:13px}
+.ct-chip{margin-top:8px} .ct-chip.warn{border-color:var(--thing);color:var(--ink)}
+
 /* Inky's room */
 .pet-stage{position:relative;overflow:hidden;aspect-ratio:300/190;padding:0;place-items:end center}
 .pet-stage .room,.den-stage .room{position:absolute;inset:0;display:flex;align-items:flex-end}
@@ -864,7 +886,12 @@ const LP=t=>((S&&S.meta.labels[t])||{}).p||SEC_DEF[t][0];   // section title, us
 const LS=t=>((S&&S.meta.labels[t])||{}).s||SEC_DEF[t][1];   // one item of that section
 const STATUS={draft:'Draft',revised:'Revised',final:'Final'};
 const STAGES=[{n:'Blot',at:0},{n:'Inkling',at:1000},{n:'Scribe',at:10000},{n:'Bard',at:30000},{n:'Laureate',at:60000}];
-const stageOf=t=>{let i=0;STAGES.forEach((s,j)=>{if(t>=s.at)i=j});return i};
+// Ranks follow the novel length goal: Inkling at 5%, Scribe at 25%, Bard at 50%, Laureate at 100% of meta.target
+// (words written in this project). A rank once reached is kept in pet.rank, so raising the goal never shrinks Inky.
+const STAGE_FR=[0,.05,.25,.5,1];
+const stageAt=i=>i?Math.max(i*50,Math.round(((typeof S!=='undefined'&&S&&S.meta&&S.meta.target)||80000)*STAGE_FR[i])):0;
+const stageOf=t=>{ let i=0; for(let j=1;j<STAGES.length;j++) if(t>=stageAt(j)) i=j; return i; };
+const petStage=()=>Math.max(stageOf(S.meta.pet.total),S.meta.pet.rank||0);
 
 /* ---------- state ---------- */
 let S=null;          // {meta, sc:{id:{text,synopsis,notes}}, en:{id:{fields,pic}}, tl:{id:timeline}, ch:{id:{notes}}, nt:{id:{text,ideas}}, ol:{id:{num,showNotes,items}}}
@@ -873,7 +900,7 @@ const ADD_DOCS=[];   // (raw, out) => out.<prefix> = normalized records, for doc
 const snapshot=st=>{ if(!st) stampMine(S); st=st||S; const o={meta:st.meta}; DOCS.forEach(p=>{ o[p]=st[p]; }); return o; };
 // The desktop app (desktop/) provides window.inklingDesktop: each project is a folder on the computer. Elsewhere it is null.
 const DESK=window.inklingDesktop||null;
-const APP_VERSION='1.3.0';   // the desktop build replaces this with desktop/package.json's version
+const APP_VERSION='1.4.0';   // the desktop build replaces this with desktop/package.json's version
 // Saved-format version. When the shape of saved data changes: bump FORMAT and add MIGRATE[old] that upgrades a raw
 // project one step (it runs before normalize()). A project from a newer FORMAT is never loaded or overwritten.
 const FORMAT=2;
@@ -1265,35 +1292,98 @@ function findLinks(text){
   while((m=re.exec(text))){ const id=linker.map.get(m[0]); if(id) out.push({s:m.index,e:m.index+m[0].length,id}); if(m[0].length===0) re.lastIndex++; }
   return out;
 }
+/* ---------- formatting: **bold**, *italic*, __underline__ ---------- */
+// Scene text is plain text with these markers (the older _italic_ still reads as italic). The editor shows the
+// formatting and hides the markers: fmtParse() gives the visible text, a style bitmask per visible character
+// (1 bold, 2 italic, 4 underline) and where each visible character sits in the stored text.
+function fmtTokens(line){
+  const toks=[];
+  for(let i=0;i<line.length;){
+    const c=line[i];
+    if(c==='*'&&line[i+1]==='*'){ toks.push({pos:i,len:2,t:1}); i+=2; }
+    else if(c==='_'&&line[i+1]==='_'){ toks.push({pos:i,len:2,t:4}); i+=2; }
+    else if(c==='*'){ toks.push({pos:i,len:1,t:2}); i++; }
+    else if(c==='_'){ toks.push({pos:i,len:1,t:2,u:1}); i++; }
+    else i++;
+  }
+  const open={}, keep=new Set(), W=/[\p{L}\p{N}]/u;
+  toks.forEach((k,n)=>{
+    const before=line[k.pos-1]||' ', after=line[k.pos+k.len]||' ', key=k.t+(k.u?'u':'');
+    const canOpen=/\S/.test(after)&&(!k.u||!W.test(before)), canClose=/\S/.test(before)&&(!k.u||!W.test(after));
+    if(canClose&&open[key]!=null){ keep.add(open[key]); keep.add(n); toks[open[key]].open=true; open[key]=null; }
+    else if(canOpen) open[key]=n;
+  });
+  return toks.filter((k,n)=>keep.has(n));   // a marker without a partner is just a character
+}
+function fmtParse(text){
+  text=String(text||'');
+  if(!/[*_]/.test(text)){ const n=text.length; return {vis:text,flags:null,map:null}; }
+  let vis='', base=0; const flags=[], map=[];
+  text.split('\n').forEach((line,li)=>{
+    if(li){ vis+='\n'; flags.push(0); map.push(base-1); }
+    const at={}, cnt={1:0,2:0,4:0}; fmtTokens(line).forEach(k=>at[k.pos]=k);
+    for(let i=0;i<line.length;){
+      const k=at[i]; if(k){ cnt[k.t]+=k.open?1:-1; i+=k.len; continue; }
+      vis+=line[i]; flags.push((cnt[1]>0?1:0)|(cnt[2]>0?2:0)|(cnt[4]>0?4:0)); map.push(base+i); i++;
+    }
+    base+=line.length+1;
+  });
+  return {vis,flags,map};
+}
+const plainText=t=>fmtParse(t).vis;
+const rawAt=(P,i)=>P.map?(i<P.map.length?P.map[i]:(P.map.length?P.map[P.map.length-1]+1:0)):i;   // visible offset → stored offset
+const rawEnd=(P,e)=>P.map?(e>0?P.map[e-1]+1:0):e;
+// Characters with their styles back to stored text; spaces at the edges of a styled run stay outside the markers.
+function fmtSerialize(chars){
+  let out='';
+  for(let i=0;i<chars.length;){
+    if(chars[i][0]==='\n'){ out+='\n'; i++; continue; }
+    const f=chars[i][1]; let j=i; while(j<chars.length&&chars[j][1]===f&&chars[j][0]!=='\n') j++;
+    const t=chars.slice(i,j).map(c=>c[0]).join('');
+    if(!f||!t.trim()) out+=t;
+    else { const lead=t.match(/^\s*/)[0], trail=t.match(/\s*$/)[0], core=t.slice(lead.length,t.length-trail.length);
+      out+=lead+(f&1?'**':'')+(f&4?'__':'')+(f&2?'*':'')+core+(f&2?'*':'')+(f&4?'__':'')+(f&1?'**':'')+trail; }
+    i=j;
+  }
+  return out;
+}
+function fmtHtml(vis,flags,s,e){
+  if(!flags) return esc(vis.slice(s,e));
+  let h=''; for(let i=s;i<e;){ const f=flags[i]; let j=i; while(j<e&&flags[j]===f) j++;
+    let t=esc(vis.slice(i,j)); if(f&4) t='<u>'+t+'</u>'; if(f&2) t='<i>'+t+'</i>'; if(f&1) t='<b>'+t+'</b>'; h+=t; i=j; }
+  return h;
+}
 function renderText(text){
-  let h='',i=0;
-  findLinks(text).forEach(l=>{
+  const P=fmtParse(text), vis=P.vis; let h='',i=0;
+  findLinks(vis).forEach(l=>{
     const e=S.meta.ents[l.id]; if(!e) return;
-    h+=esc(text.slice(i,l.s))+'<span class="ent t-'+e.type+'" data-ent="'+l.id+'" title="'+esc(e.name+' · '+LS(e.type)+' page')+'">'+esc(text.slice(l.s,l.e))+'</span>';
+    h+=fmtHtml(vis,P.flags,i,l.s)+'<span class="ent t-'+e.type+'" data-ent="'+l.id+'" title="'+esc(e.name+' · '+LS(e.type)+' page')+'">'+fmtHtml(vis,P.flags,l.s,l.e)+'</span>';
     i=l.e;
   });
-  return h+esc(text.slice(i));
+  return h+fmtHtml(vis,P.flags,i,vis.length);
 }
 
 /* ---------- editor text + caret ---------- */
-function getText(el){
-  let out='';
-  (function walk(n){
+function getText(el){   // the editor's content as stored text (formatting as markers)
+  const chars=[];
+  (function walk(n,f){
     n.childNodes.forEach(c=>{
-      if(c.nodeType===3) out+=c.nodeValue;
-      else if(c.nodeName==='BR') out+='\n';
-      else if(c.nodeType===1){ if(/^(DIV|P)$/.test(c.nodeName)&&out&&!out.endsWith('\n')) out+='\n'; walk(c); }
+      if(c.nodeType===3){ const v=c.nodeValue; for(let i=0;i<v.length;i++) chars.push([v[i],v[i]==='\n'?0:f]); }
+      else if(c.nodeName==='BR') chars.push(['\n',0]);
+      else if(c.nodeType===1){
+        if(/^(DIV|P)$/.test(c.nodeName)&&chars.length&&chars[chars.length-1][0]!=='\n') chars.push(['\n',0]);
+        const tn=c.nodeName, st=c.style||{}; let g=f;
+        if(tn==='B'||tn==='STRONG'||st.fontWeight==='bold'||+st.fontWeight>=600) g|=1;
+        if(tn==='I'||tn==='EM'||st.fontStyle==='italic') g|=2;
+        if(tn==='U'||/underline/.test((st.textDecoration||'')+(st.textDecorationLine||''))) g|=4;
+        walk(c,g);
+      }
     });
-  })(el);
-  return out;
+  })(el,0);
+  return fmtSerialize(chars);
 }
-function domSig(el){
-  let acc=0; const sig=[];
-  el.childNodes.forEach(c=>{
-    const t=c.textContent||'';
-    if(c.nodeType===1&&c.classList&&c.classList.contains('ent')) sig.push(acc+':'+t.length+':'+c.dataset.ent);
-    acc+=t.length;
-  });
+function domSig(el){   // where the name links are, by visible offset
+  const sig=[]; el.querySelectorAll('.ent').forEach(x=>{ const r=document.createRange(); r.selectNodeContents(el); r.setEndBefore(x); sig.push(r.toString().length+':'+x.textContent.length+':'+x.dataset.ent); });
   return sig.join('|');
 }
 function caretOffset(el){
@@ -1316,7 +1406,7 @@ function setCaret(el,off){
 function relinkEditor(force){
   const ed=$('#ed'); if(!ed) return;
   const text=getText(ed);
-  const want=findLinks(text).map(l=>l.s+':'+(l.e-l.s)+':'+l.id).join('|');
+  const want=findLinks(plainText(text)).map(l=>l.s+':'+(l.e-l.s)+':'+l.id).join('|');
   if(!force&&want===domSig(ed)){ updateSceneChips(); return; }
   const focused=document.activeElement===ed, off=focused?caretOffset(ed):null;
   ed.innerHTML=renderText(text);
@@ -1423,8 +1513,8 @@ function streak(){
 function curMood(){ const w=todayWords(), g=S.meta.goal; if(w>=g) return 'party'; if(w>=g*.5) return 'hype'; if(w>0) return 'happy'; return 'sleepy'; }
 function orderedScenes(){ const out=[]; S.meta.chapters.forEach(c=>c.scenes.forEach(id=>out.push({id,ch:c}))); return out; }
 function firstView(){ const s=orderedScenes()[0]; return s?{k:'scene',id:s.id}:{k:'cork'}; }
-function viewValid(v){ if(!v) return false; if(v.k==='scene') return !!S.meta.scenes[v.id]; if(v.k==='ent') return !!S.meta.ents[v.id]; if(v.k==='tl') return !!(S.tl[v.id]&&S.meta.tls.some(x=>x.id===v.id)); if(v.k==='nt') return !!(S.nt[v.id]&&S.meta.nts.some(x=>x.id===v.id)); if(v.k==='ol') return !!(S.ol[v.id]&&S.meta.ols.some(x=>x.id===v.id)); if(v.k==='rm'||v.k==='ft') return !!(S[v.k][v.id]&&S.meta[v.k+'s'].some(x=>x.id===v.id)); if(v.k==='snap') return !!S.meta.scenes[v.id]; return v.k==='cork'||v.k==='ss'||v.k==='prefs'||v.k==='find'||v.k==='help'||v.k==='den'; }
-function viewName(v){ if(v.k==='scene') return S.meta.scenes[v.id].title; if(v.k==='ent') return S.meta.ents[v.id].name; if(v.k==='tl') return S.meta.tls.find(x=>x.id===v.id).name; if(v.k==='nt') return S.meta.nts.find(x=>x.id===v.id).name; if(v.k==='ol') return S.meta.ols.find(x=>x.id===v.id).name; if(v.k==='rm'||v.k==='ft') return S.meta[v.k+'s'].find(x=>x.id===v.id).name; if(v.k==='ss') return 'Writing sessions'; if(v.k==='prefs') return 'Settings'; if(v.k==='find') return 'Find and replace'; if(v.k==='help') return 'How sharing works'; if(v.k==='den') return S.meta.pet.name+'’s room'; if(v.k==='snap') return 'Snapshots: '+S.meta.scenes[v.id].title; return 'Corkboard'; }
+function viewValid(v){ if(!v) return false; if(v.k==='scene') return !!S.meta.scenes[v.id]; if(v.k==='ent') return !!S.meta.ents[v.id]; if(v.k==='tl') return !!(S.tl[v.id]&&S.meta.tls.some(x=>x.id===v.id)); if(v.k==='nt') return !!(S.nt[v.id]&&S.meta.nts.some(x=>x.id===v.id)); if(v.k==='ol') return !!(S.ol[v.id]&&S.meta.ols.some(x=>x.id===v.id)); if(v.k==='rm'||v.k==='ft') return !!(S[v.k][v.id]&&S.meta[v.k+'s'].some(x=>x.id===v.id)); if(v.k==='snap') return !!S.meta.scenes[v.id]; return v.k==='cork'||v.k==='ss'||v.k==='prefs'||v.k==='find'||v.k==='help'||v.k==='den'||v.k==='cont'; }
+function viewName(v){ if(v.k==='scene') return S.meta.scenes[v.id].title; if(v.k==='ent') return S.meta.ents[v.id].name; if(v.k==='tl') return S.meta.tls.find(x=>x.id===v.id).name; if(v.k==='nt') return S.meta.nts.find(x=>x.id===v.id).name; if(v.k==='ol') return S.meta.ols.find(x=>x.id===v.id).name; if(v.k==='rm'||v.k==='ft') return S.meta[v.k+'s'].find(x=>x.id===v.id).name; if(v.k==='ss') return 'Writing sessions'; if(v.k==='prefs') return 'Settings'; if(v.k==='find') return 'Find and replace'; if(v.k==='help') return 'How sharing works'; if(v.k==='den') return S.meta.pet.name+'’s room'; if(v.k==='cont') return 'Continuity'; if(v.k==='snap') return 'Snapshots: '+S.meta.scenes[v.id].title; return 'Corkboard'; }
 
 /* ---------- pet ---------- */
 function petSVG(m,stage,look){
@@ -1484,7 +1574,7 @@ function bump(){
 function toast(msg,o){
   const t=$('#toast'), withPet=!(o&&o.plain);
   t.className='toast'+(withPet?'':' plain');
-  t.innerHTML=(withPet?'<span class="tpet m-'+curMood()+'">'+petSVG(curMood(),stageOf(S.meta.pet.total))+'</span>':'')+'<span>'+esc(msg)+'</span>';
+  t.innerHTML=(withPet?'<span class="tpet m-'+curMood()+'">'+petSVG(curMood(),petStage())+'</span>':'')+'<span>'+esc(msg)+'</span>';
   t.hidden=false; void t.offsetWidth; t.classList.add('show');
   clearTimeout(ui.tt); clearTimeout(ui.tt2);
   ui.tt=setTimeout(()=>{t.classList.remove('show'); ui.tt2=setTimeout(()=>{t.hidden=true},300);},4300);
@@ -1509,7 +1599,7 @@ function credit(delta){
   const m=S.meta, k=todayKey(), g=Math.max(1,m.goal), before=m.days[k]||0;
   m.days[k]=before+delta; const after=m.days[k];
   const keysAll=Object.keys(m.days); if(keysAll.length>420){ keysAll.sort().slice(0,keysAll.length-400).forEach(x=>delete m.days[x]); }
-  const sb=stageOf(m.pet.total); m.pet.total+=delta; const sa=stageOf(m.pet.total);
+  const sb=petStage(); m.pet.total+=delta; const now=stageOf(m.pet.total); if(now>(m.pet.rank||0)) m.pet.rank=now; const sa=petStage();
   if(!m.mark||m.mark.d!==k) m.mark={d:k,hit:{},over:0};
   const hit=m.mark.hit, name=m.pet.name; let msg=null,big=false,top=null;
   [['q25',.25],['q50',.5],['q75',.75],['goal',1]].forEach(a=>{ if(after>=g*a[1]&&!hit[a[0]]){ hit[a[0]]=1; top=a[0]; } });
@@ -1536,7 +1626,8 @@ function normPet(p){
   const wear={}; ['head','face','neck','hand'].forEach(k=>{ const v=String((p.wear||{})[k]||'auto'); wear[k]=/^[a-z]{2,12}$/.test(v)?v:'auto'; });
   const got={}; Object.keys(p.got||{}).forEach(k=>{ if(/^[a-z0-9]{2,16}$/.test(k)) got[k]=+p.got[k]||Date.now(); });
   return {name:String(p.name||'Inky').slice(0,40),total:Math.max(0,+p.total||0),color:PET_COLORS.some(c=>c[0]===p.color)?p.color:'teal',wear,got,
-    flags:{early:!!(p.flags||{}).early,night:!!(p.flags||{}).night}};
+    flags:{early:!!(p.flags||{}).early,night:!!(p.flags||{}).night},
+    rank:p.rank!=null?Math.max(0,Math.min(4,Math.round(+p.rank||0))):[0,1000,10000,30000,60000].filter(x=>(+p.total||0)>=x).length-1};   // older projects keep the rank they had
 }
 const petStyle=look=>{ const c=PET_COLORS.find(x=>x[0]===(look&&look.color)); return c&&c[2]?' style="--pet:'+c[2][0]+';--pet-deep:'+c[2][1]+';--pet-ink:'+c[2][2]+'"':''; };
 // Extra things to wear, drawn in the pet's 160x160 space.
@@ -1566,12 +1657,12 @@ function petStats(){
     sprints:mySs().filter(x=>x.done).length,pages:Object.keys(m.ents).length,
     polished:Object.values(m.scenes).filter(x=>x.status!=='draft').length,
     chDone:m.chapters.filter(c=>c.scenes.length&&c.scenes.every(id=>m.scenes[id]&&m.scenes[id].status==='final')).length,
-    early:+m.pet.flags.early,night:+m.pet.flags.night};
+    early:+m.pet.flags.early,night:+m.pet.flags.night,stage:petStage()};
 }
 // [id, name, how to earn it, reward, stat, target]
 const ACH=[
   ['first','First words','Write 100 words.','mug','total',100],
-  ['inkling','Inkling','Write 1,000 words.','quill','total',1000],
+  ['inkling','Inkling','Become an Inkling (5% of your novel length goal).','quill','stage',1],
   ['goal1','Goal getter','Reach your daily goal.','beret','goalDays',1],
   ['streak3','Three in a row','Reach your goal 3 days running.','scarf','best',3],
   ['rug','Settling in','Write 5,000 words.','rug','total',5000],
@@ -1580,7 +1671,7 @@ const ACH=[
   ['sprint1','First sprint','Finish a focus session.','lamp','sprints',1],
   ['pages5','World builder','Make 5 story pages.','mapframe','pages',5],
   ['streak7','A week of words','Reach your goal 7 days running.','flower','best',7],
-  ['scribe','Scribe','Write 10,000 words.','glasses','total',10000],
+  ['scribe','Scribe','Become a Scribe (25% of your novel length goal).','glasses','stage',2],
   ['party','Ten thousand','Write 10,000 words. Party!','partyhat','total',10000],
   ['bigday','Marathon','Write 2,000 words in one day.','shades','bigDay',2000],
   ['polish','Polisher','Mark 10 scenes Revised or Final.','monocle','polished',10],
@@ -1590,7 +1681,7 @@ const ACH=[
   ['sprint25','Time keeper','Finish 25 focus sessions.','hourglass','sprints',25],
   ['chair','Comfy now','Write 25,000 words.','armchair','total',25000],
   ['streak30','Month of ink','Reach your goal 30 days running.','crown','best',30],
-  ['laureate','Laureate','Write 60,000 words.','laurel','total',60000]
+  ['laureate','Laureate','Reach your novel length goal.','laurel','stage',4]
 ];
 const owns=id=>{ const a=ACH.find(x=>x[3]===id); return !a||!!S.meta.pet.got[a[0]]; };
 // Marks newly earned achievements. quiet: at startup, catch up without a fanfare for each one.
@@ -1651,12 +1742,12 @@ function pmJoin(end,who){
   T.phase='focus'; T.left=left; pmStart(); say('Sprinting with '+who+'! Same finish line.'); hereSoon();
 }
 function renderDen(el){
-  const p=S.meta.pet, st=petStats(), stg=stageOf(p.total), md=curMood(), unlockedItem=id=>{ if(id==='quill') return stg>=1||owns('quill'); if(id==='glasses') return stg>=2||owns('glasses'); if(id==='beret') return stg>=3||owns('beret'); if(id==='laurel') return stg>=4||owns('laurel'); return owns(id); };
+  const p=S.meta.pet, st=petStats(), stg=petStage(), md=curMood(), unlockedItem=id=>{ if(id==='quill') return stg>=1||owns('quill'); if(id==='glasses') return stg>=2||owns('glasses'); if(id==='beret') return stg>=3||owns('beret'); if(id==='laurel') return stg>=4||owns('laurel'); return owns(id); };
   const slots=[['head','On the head'],['face','Eyes'],['neck','Neck'],['hand','In hand']];
   const opt=(slot,id,label,ok,hint)=>{ const on=(p.wear[slot]||'auto')===id, look={color:p.color,wear:{head:'none',face:'none',neck:'none',hand:'none',[slot]:id}};
     return '<button class="wd'+(on?' on':'')+(ok?'':' locked')+'" data-wear="'+slot+'" data-v="'+id+'"'+(ok?'':' disabled')+' title="'+esc(ok?label:hint)+'" aria-pressed="'+on+'">'
       +(id==='auto'?'<span class="wd-auto">Auto</span>':id==='none'?'<span class="wd-auto">None</span>':petSVG('happy',0,look))+(id==='auto'||id==='none'?'':'<small>'+esc(ok?label:'🔒 '+((ACH.find(x=>x[3]===id)||[])[1]||'Locked'))+'</small>')+'</button>'; };
-  const hintFor=id=>{ const a=ACH.find(x=>x[3]===id); return a?a[2]:{quill:'Write 1,000 words.',glasses:'Write 10,000 words.',beret:'Reach your daily goal.',laurel:'Write 60,000 words.'}[id]||''; };
+  const hintFor=id=>{ const a=ACH.find(x=>x[3]===id); return a?a[2]:{beret:'Reach your daily goal.'}[id]||''; };
   el.innerHTML='<div class="main-head">'+backBtn()+'<span class="kind">'+ico('spark',16)+'</span><h1 class="mh-title">'+esc(p.name)+'’s room</h1></div><div class="den">'
     +'<section class="den-hero"><div class="den-stage"><div class="room">'+roomSVG()+'</div><span class="den-pet">'+petSVG(md,stg)+'</span></div>'
     +'<div class="den-side"><div class="den-name"><b>'+esc(p.name)+'</b><span class="stage-tag">'+STAGES[stg].n+'</span></div>'
@@ -1664,6 +1755,7 @@ function renderDen(el){
     +'<span class="sec-l">Colour</span><div class="swatches">'+PET_COLORS.map(c=>'<button class="sw'+(p.color===c[0]?' on':'')+'" data-color="'+c[0]+'" aria-label="'+c[1]+'" title="'+c[1]+'"'+(c[2]?' style="--c:'+c[2][0]+'"':'')+'></button>').join('')+'</div>'
     +'<span class="sec-l">How chatty</span><div class="seg">'+[['chatty','Chatty'],['quiet','Only big moments'],['off','Quiet']].map(o=>'<button data-talk="'+o[0]+'"'+((LOOK.petTalk||'chatty')===o[0]?' class="on"':'')+'>'+o[1]+'</button>').join('')+'</div>'
     +'<label class="ck"><input type="checkbox" id="denConf"'+(LOOK.confetti!==false?' checked':'')+'>Confetti for big moments</label>'
+    +'<p class="fine">Ranks follow this project’s novel length goal ('+fmt(S.meta.target)+' words): Inkling at 5%, Scribe at 25%, Bard at 50%, Laureate at 100%. A rank, once reached, stays.</p>'
     +'<p class="fine">'+esc(p.name)+' and everything earned belong to you'+(DESK?', on every project you share':'')+'. Chattiness and confetti are set per '+(DESK?'computer':'browser')+'.</p></div></section>'
     +'<section class="pf"><h2>Wardrobe</h2><p class="fine">“Auto” follows '+esc(p.name)+'’s rank. Earn more by writing.</p>'
     +slots.map(([k,label])=>{ const ids=Object.keys(PET_ITEMS).filter(id=>PET_ITEMS[id][0]===k);
@@ -1680,7 +1772,153 @@ function renderDen(el){
   };
   $('#denConf',el).addEventListener('change',e=>{ LOOK.confetti=e.target.checked; saveLook(); });
 }
-function updatePetArt(){ const a=$('#petArt'); if(a) a.innerHTML=petSVG(curMood(),stageOf(S.meta.pet.total)); const r=$('#petRoom'); if(r) r.innerHTML=roomSVG(); }
+function updatePetArt(){ const a=$('#petArt'); if(a) a.innerHTML=petSVG(curMood(),petStage()); const r=$('#petRoom'); if(r) r.innerHTML=roomSVG(); }
+
+/* ---------- drag to reorder ---------- */
+// dragSort(root, {item, handle?, zones?, grid?, drop(el, beforeEl|null, zoneEl)}): mouse drags after a few pixels,
+// touch after a short press and hold, so lists still scroll. A bar shows where the item will land.
+function dragSort(root,o){
+  if(root['_ds'+o.item]) return; root['_ds'+o.item]=1;
+  root.addEventListener('pointerdown',e=>{
+    if(e.button!==0) return; const it=e.target.closest(o.item); if(!it||!root.contains(it)) return;
+    if(e.target.closest('input,textarea,select,[contenteditable],.no-drag')||(o.handle&&!e.target.closest(o.handle))) return;
+    const touch=e.pointerType!=='mouse', x0=e.clientX, y0=e.clientY, r0=it.getBoundingClientRect(); let on=false, ghost=null, bar=null, tgt=null, timer=null, raf=0, last=null;
+    const zonesOf=()=>o.zones?[...root.querySelectorAll(o.zones)]:[root];
+    const start=()=>{ on=true; it.classList.add('dragging'); document.body.classList.add('dnd');
+      ghost=it.cloneNode(true); ghost.classList.add('drag-ghost'); Object.assign(ghost.style,{width:r0.width+'px',left:r0.left+'px',top:r0.top+'px'}); document.body.appendChild(ghost);
+      bar=document.createElement('div'); bar.className='drop-bar'+(o.grid?' v':''); document.body.appendChild(bar); };
+    const find=(x,y)=>{
+      const under=document.elementFromPoint(x,y); let zone=under&&(o.zones?under.closest(o.zones):(root.contains(under)?root:null));
+      if(zone&&!root.contains(zone)) zone=null; if(!zone) return null;
+      const items=[...zone.querySelectorAll(o.item)].filter(x2=>x2!==it&&(o.zones?x2.parentElement.closest(o.zones)===zone:true)&&!it.contains(x2));
+      for(const x2 of items){ const r=x2.getBoundingClientRect();
+        if(o.grid){ if(y<r.top||(y<=r.bottom&&x<r.left+r.width/2)) return {zone,ref:x2,r}; }
+        else if(y<r.top+r.height/2) return {zone,ref:x2,r}; }
+      const lastEl=items[items.length-1]; return {zone,ref:null,r:lastEl?lastEl.getBoundingClientRect():zone.getBoundingClientRect(),end:!!lastEl};
+    };
+    const paint=()=>{ raf=0; if(!last) return; const {x,y}=last; ghost.style.transform='translate('+(x-x0)+'px,'+(y-y0)+'px) rotate(1deg)';
+      tgt=find(x,y); if(!tgt){ bar.style.display='none'; return; } const r=tgt.r; bar.style.display='block';
+      if(o.grid) Object.assign(bar.style,{left:((tgt.ref?r.left:r.right)-3)+'px',top:r.top+'px',height:r.height+'px',width:'4px'});
+      else Object.assign(bar.style,{left:r.left+'px',width:r.width+'px',top:((tgt.ref?r.top:(tgt.end?r.bottom:r.top+4))-2)+'px',height:'4px'});
+      const sc=o.scroll?o.scroll():root, sr=sc.getBoundingClientRect(); if(y<sr.top+40) sc.scrollTop-=12; else if(y>sr.bottom-40) sc.scrollTop+=12; };
+    const move=m=>{ if(!on){ const d=Math.hypot(m.clientX-x0,m.clientY-y0); if(touch){ if(d>10) end(); return; } if(d<6) return; start(); }
+      m.preventDefault(); last={x:m.clientX,y:m.clientY}; if(!raf) raf=requestAnimationFrame(paint); };
+    const tm=ev=>{ if(on) ev.preventDefault(); };
+    const end=()=>{ clearTimeout(timer); document.removeEventListener('pointermove',move); document.removeEventListener('pointerup',up); document.removeEventListener('pointercancel',end); document.removeEventListener('touchmove',tm);
+      if(raf) cancelAnimationFrame(raf); if(ghost) ghost.remove(); if(bar) bar.remove(); it.classList.remove('dragging'); document.body.classList.remove('dnd'); };
+    const up=()=>{ const was=on, t=tgt; end(); if(!was) return;
+      document.addEventListener('click',ev=>{ ev.stopPropagation(); ev.preventDefault(); },{capture:true,once:true}); setTimeout(()=>document.dispatchEvent(new Event('click')),0);
+      if(t) o.drop(it,t.ref,t.zone); };
+    if(touch) timer=setTimeout(()=>{ start(); last={x:x0,y:y0}; paint(); if(navigator.vibrate) navigator.vibrate(8); },330);
+    document.addEventListener('pointermove',move); document.addEventListener('pointerup',up); document.addEventListener('pointercancel',end); document.addEventListener('touchmove',tm,{passive:false});
+  });
+}
+function moveSceneTo(id,chId,beforeId){
+  const cs=S.meta.chapters, to=cs.find(c=>c.id===chId); if(!to||id===beforeId) return;
+  cs.forEach(c=>{ const i=c.scenes.indexOf(id); if(i>=0) c.scenes.splice(i,1); });
+  const j=beforeId?to.scenes.indexOf(beforeId):-1; to.scenes.splice(j<0?to.scenes.length:j,0,id); to.open=true;
+  dirty('meta'); renderBinder(); if(ui.view.k==='cork') renderMain();
+}
+function moveInList(arr,id,beforeId,key){ key=key||(x=>x.id); const i=arr.findIndex(x=>key(x)===id); if(i<0||id===beforeId) return false; const [x]=arr.splice(i,1); const j=beforeId?arr.findIndex(y=>key(y)===beforeId):-1; arr.splice(j<0?arr.length:j,0,x); return true; }
+
+/* ---------- continuity ---------- */
+// Checks the scenes against the story pages: facts that disagree (eyes, hair, age), names that look misspelled,
+// characters who drop out of the story, and pages never mentioned. Results are cached for a few seconds.
+const CONT_COLORS='blue green brown hazel grey gray black amber violet red auburn blond blonde brunette ginger silver white golden gold dark fair copper chestnut raven pale yellow purple pink orange'.split(' ');
+const CONT_NUMS={one:1,two:2,three:3,four:4,five:5,six:6,seven:7,eight:8,nine:9,ten:10,eleven:11,twelve:12,thirteen:13,fourteen:14,fifteen:15,sixteen:16,seventeen:17,eighteen:18,nineteen:19,twenty:20,thirty:30,forty:40,fifty:50,sixty:60,seventy:70,eighty:80,ninety:90};
+function parseFacts(t){ const f={}; String(t||'').split('\n').forEach(l=>{ const m=l.match(/^\s*([^:=]{2,30})\s*[:=]\s*(.+?)\s*$/); if(!m) return;
+  const k=m[1].toLowerCase().trim(), v=m[2].toLowerCase().trim(); const key=/\beyes?\b/.test(k)?'eyes':/\bhair\b/.test(k)?'hair':/\bage\b|\bhow old\b/.test(k)?'age':k; f[key]=v; }); return f; }
+const ageNum=w=>{ w=String(w).toLowerCase(); if(/^\d+$/.test(w)) return +w; const p=w.split(/[- ]/); return p.reduce((a,x)=>a+(CONT_NUMS[x]||0),0)||null; };
+function lev1(a,b){ if(a===b) return false; if(Math.abs(a.length-b.length)>1) return false; let i=0; while(i<a.length&&a[i]===b[i]) i++;
+  if(a.length===b.length){ if(a.slice(i+1)===b.slice(i+1)) return true; return a[i]===b[i+1]&&a[i+1]===b[i]&&a.slice(i+2)===b.slice(i+2); }
+  const [s2,l2]=a.length<b.length?[a,b]:[b,a]; return s2.slice(i)===l2.slice(i+1); }
+const contKey=x=>[x.kind,x.ent||'',x.scene||'',x.word||x.said||''].join(':');
+function contCheck(force){
+  if(!force&&ui.cont&&Date.now()-ui.cont.at<4000&&ui.cont.v===S.meta.saved) return ui.cont.list;
+  const m=S.meta, ents=Object.values(m.ents), scenes=orderedScenes(), out=[], facts={}, ign=m.contIgnore||{};
+  ents.forEach(e=>{ const f=parseFacts(((S.en[e.id]||{}).fields||{}).facts); if(Object.keys(f).length) facts[e.id]=f; });
+  const chIdx={}; m.chapters.forEach((c,i)=>chIdx[c.id]=i);
+  const seen={}, nameWords=new Set(), cand={};
+  ents.forEach(e=>[e.name].concat(e.aliases||[]).forEach(n=>String(n).split(/\s+/).forEach(w=>{ w=w.replace(/[^\p{L}'’-]/gu,''); if(w) nameWords.add(w); })));
+  const cv='('+CONT_COLORS.join('|')+')', eyeRe=new RegExp('\\b'+cv+'(?:[- ]\\w+)?[- ]eyed\\b|\\b'+cv+'(?:[- ]\\w+)?\\s+eyes?\\b|\\beyes?\\s+(?:were|was|are|is|of|gone|now)?\\s*(?:a\\s+)?(?:\\w+\\s+)?'+cv+'\\b','gi');
+  const hairRe=new RegExp('\\b'+cv+'(?:[- ]\\w+)?[- ]haired\\b|\\b'+cv+'(?:[- ]\\w+)?\\s+(?:hair|curls|braids?|locks|ponytail)\\b|\\bhair\\s+(?:was|were|is|now|gone|turned)?\\s*(?:\\w+\\s+)?'+cv+'\\b','gi');
+  const ageRe=/\b(\d{1,3}|(?:twenty|thirty|forty|fifty|sixty|seventy|eighty|ninety|one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|thirteen|fourteen|fifteen|sixteen|seventeen|eighteen|nineteen)(?:[- ](?:one|two|three|four|five|six|seven|eight|nine))?)[- ]years?[- ]old\b/gi;
+  scenes.forEach(o=>{
+    const vis=plainText(S.sc[o.id].text), links=findLinks(vis);
+    links.forEach(l=>{ const s2=seen[l.id]||(seen[l.id]={n:0,first:null,last:null,chs:new Set()}); s2.n++; if(!s2.first) s2.first={scene:o.id,s:l.s,e:l.e}; s2.last={scene:o.id,s:l.s,e:l.e}; s2.chs.add(chIdx[o.ch.id]); });
+    if(Object.keys(facts).length){
+      const sre=/[^.!?\n]+[.!?]*/g; let sm, li=0;
+      while((sm=sre.exec(vis))){
+        const s0=sm.index, e0=s0+sm[0].length; while(li<links.length&&links[li].e<=s0) li++;
+        const inS=[]; for(let k=li;k<links.length&&links[k].s<e0;k++) inS.push(links[k]); if(!inS.length) continue;
+        const owner=p=>{ let best=null; inS.forEach(l=>{ if(l.s<p) best=l; }); return best||inS[0]; };
+        [['eyes',eyeRe],['hair',hairRe]].forEach(([attr,re])=>{ re.lastIndex=0; let mm;
+          while((mm=re.exec(sm[0]))){ const said=(mm[1]||mm[2]||mm[3]||'').toLowerCase(), p=s0+mm.index, ow=owner(p), f=facts[ow.id];
+            if(!f||!f[attr]||!said||f[attr].includes(said)||(said==='grey'&&f[attr].includes('gray'))||(said==='gray'&&f[attr].includes('grey'))) continue;
+            out.push({kind:'fact',ent:ow.id,scene:o.id,s:p,e:p+mm[0].length,attr,said,fact:f[attr],text:sm[0].trim()}); } });
+        ageRe.lastIndex=0; let am;
+        while((am=ageRe.exec(sm[0]))){ const p=s0+am.index, ow=owner(p), f=facts[ow.id]; if(!f||!f.age) continue; const a=ageNum(am[1]), fa=ageNum(f.age.match(/[\w-]+/)[0]);
+          if(a&&fa&&a!==fa) out.push({kind:'fact',ent:ow.id,scene:o.id,s:p,e:p+am[0].length,attr:'age',said:String(a),fact:f.age,text:sm[0].trim()}); }
+      }
+    }
+    const wre=/\b\p{Lu}[\p{Ll}'’]{3,}\b/gu; let wm;
+    while((wm=wre.exec(vis))){ const w=wm[0].replace(/['’].*$/,''); if(w.length<4||nameWords.has(w)) continue; const c=cand[w]||(cand[w]={n:0,scene:o.id,s:wm.index,e:wm.index+w.length}); c.n++; }
+  });
+  Object.keys(cand).forEach(w=>{ for(const nw of nameWords){ if(nw.length>=4&&nw[0]===w[0]&&lev1(w,nw)){ const c=cand[w]; out.push({kind:'spell',word:w,likely:nw,n:c.n,scene:c.scene,s:c.s,e:c.e}); break; } } });
+  const nch=m.chapters.length;
+  ents.forEach(e=>{ const s2=seen[e.id];
+    if(!s2){ out.push({kind:'unused',ent:e.id}); return; }
+    if(e.type!=='char'||s2.n<2||nch<5) return;
+    const idx=[...s2.chs].sort((a,b)=>a-b), lastCh=idx[idx.length-1];
+    if(nch-1-lastCh>=3) out.push({kind:'gone',ent:e.id,since:lastCh,left:nch-1-lastCh,scene:s2.last.scene,s:s2.last.s,e:s2.last.e});
+    else for(let k=1;k<idx.length;k++) if(idx[k]-idx[k-1]>=5){ out.push({kind:'gap',ent:e.id,from:idx[k-1],to:idx[k]}); break; }
+  });
+  const list=out.filter(x=>!ign[contKey(x)]);
+  ui.cont={at:Date.now(),v:S.meta.saved,list,seen}; return list;
+}
+const contCount=()=>contCheck().filter(x=>x.kind==='fact'||x.kind==='spell').length;
+function contLabel(x){
+  const m=S.meta, e=x.ent&&m.ents[x.ent], nm=e?e.name:'', ch=i=>(m.chapters[i]||{}).title||'chapter '+(i+1);
+  if(x.kind==='fact') return '<b>'+esc(nm)+'</b>: '+esc({eyes:'eyes',hair:'hair',age:'age'}[x.attr]||x.attr)+' are “'+esc(x.said)+'” here, but the page says “'+esc(x.fact)+'”.';
+  if(x.kind==='spell') return '“<b>'+esc(x.word)+'</b>” ('+x.n+'×) looks like “'+esc(x.likely)+'”. A typo?';
+  if(x.kind==='gone') return '<b>'+esc(nm)+'</b> has not appeared since '+esc(ch(x.since))+' ('+x.left+' chapter'+(x.left===1?'':'s')+' ago).';
+  if(x.kind==='gap') return '<b>'+esc(nm)+'</b> disappears between '+esc(ch(x.from))+' and '+esc(ch(x.to))+'.';
+  if(x.kind==='unused') return '<b>'+esc(nm)+'</b> is not mentioned in any scene yet.';
+  return '';
+}
+function contItem(x){
+  const sc=x.scene&&S.meta.scenes[x.scene];
+  return '<div class="ct-item k-'+x.kind+'"><div class="ct-t">'+contLabel(x)+(x.text?'<span class="ct-q">“'+esc(trunc(x.text,160))+'”</span>':'')+'</div><div class="ct-a">'
+    +(sc?'<button class="btn sm" data-ct="go" data-sc="'+x.scene+'" data-s="'+x.s+'" data-e="'+x.e+'">'+esc(trunc(sc.title,26))+'</button>':'')
+    +(x.ent?'<button class="btn sm" data-ct="page" data-id="'+x.ent+'">Page</button>':'')
+    +'<button class="ibtn" data-ct="ign" data-k="'+esc(contKey(x))+'" title="Not a problem: hide this" aria-label="Hide this">'+ico('x',14)+'</button></div></div>';
+}
+function contClick(e){
+  const b=e.target.closest('[data-ct]'); if(!b) return false; const a=b.dataset.ct;
+  if(a==='go'){ ui.findSel={id:b.dataset.sc,s:+b.dataset.s,e:+b.dataset.e}; go({k:'scene',id:b.dataset.sc}); }
+  else if(a==='page') go({k:'ent',id:b.dataset.id});
+  else if(a==='ign'){ S.meta.contIgnore=S.meta.contIgnore||{}; S.meta.contIgnore[b.dataset.k]=1; dirty('meta'); contCheck(true); renderMain(); renderInspector(); }
+  return true;
+}
+function renderCont(el){
+  const list=contCheck(true), g=k=>list.filter(x=>x.kind===k), nIgn=Object.keys(S.meta.contIgnore||{}).length;
+  const sec=(t,sub,items,empty)=>'<section class="pf"><h2>'+t+' <span class="muted">'+items.length+'</span></h2><p class="fine">'+sub+'</p>'+(items.length?items.map(contItem).join(''):'<p class="ct-none">'+empty+'</p>')+'</section>';
+  el.innerHTML='<div class="main-head">'+backBtn()+'<span class="kind">'+ico('search',16)+'</span><h1 class="mh-title">Continuity</h1>'+(nIgn?'<button class="btn" data-ct="unign">Show '+nIgn+' hidden</button>':'')+'</div><div class="pf-wrap">'
+    +sec('Facts that disagree','Add key facts to a story page (like <b>eyes: green</b>, <b>hair: auburn</b>, <b>age: 34</b>) and Inkling checks every scene against them.',[...g('fact')],'No disagreements found.')
+    +sec('Possible typos in names','Words that differ by one letter from a name or alias.',g('spell'),'No look-alike names found.')
+    +sec('Characters who drop out','Characters mentioned more than once who vanish for several chapters (books with 5 or more chapters).',[...g('gone'),...g('gap')],'Everyone keeps turning up.')
+    +sec('Pages not mentioned yet','Story pages whose name or aliases do not appear in any scene.',g('unused'),'Every page is mentioned somewhere.')+'</div>';
+  el.onclick=e=>{ if(e.target.closest('[data-ct="unign"]')){ S.meta.contIgnore={}; dirty('meta'); renderCont(el); return; } contClick(e); };
+}
+function entContHtml(e){
+  const list=contCheck(), mine=list.filter(x=>x.ent===e.id&&x.kind!=='unused'), s2=(ui.cont.seen||{})[e.id], m=S.meta;
+  const chName=id=>{ const c=m.chapters.find(c2=>c2.scenes.includes(id)); return c?c.title:''; };
+  return '<section class="facts"><h3>Key facts</h3><p class="sub">One per line, like <b>eyes: green</b>, <b>hair: auburn</b>, <b>age: 34</b>. Inkling checks your scenes against these.</p>'
+    +'<textarea data-k="facts" rows="3" placeholder="eyes: green&#10;hair: auburn&#10;age: 34">'+esc(((S.en[e.id]||{}).fields||{}).facts||'')+'</textarea>'
+    +(s2?'<p class="sub ct-seen">First seen in <b>'+esc(m.scenes[s2.first.scene].title)+'</b> ('+esc(chName(s2.first.scene))+'), last seen in <b>'+esc(m.scenes[s2.last.scene].title)+'</b> ('+esc(chName(s2.last.scene))+'). '+s2.n+' mention'+(s2.n===1?'':'s')+'.</p>':'')
+    +(mine.length?'<div class="ct-list">'+mine.map(contItem).join('')+'</div>':'')+'</section>';
+}
+function mentionCounts(){ contCheck(); const out={}, sn=(ui.cont&&ui.cont.seen)||{}; Object.keys(sn).forEach(k=>out[k]=sn[k].n); return out; }
 
 /* ---------- header / stats ---------- */
 function updateStats(){
@@ -1693,9 +1931,9 @@ function updateStats(){
   const tot=totalWords(); set('#totNum',fmt(tot)); set('#totOf',fmt(m.target));
   const tb=$('#totBar'); if(tb) tb.style.width=Math.min(100,tot/Math.max(1,m.target)*100)+'%';
   const s=streak(), sc=$('#streakChip'); if(sc){ sc.textContent=s>0?s+'-day streak':'No streak yet'; sc.classList.toggle('hot',s>0); }
-  const st=stageOf(m.pet.total), nx=STAGES[st+1];
-  set('#evoTxt',nx?fmt(nx.at-m.pet.total)+' words until '+m.pet.name+' becomes a '+nx.n:m.pet.name+' has reached the top rank.');
-  const eb=$('#evoBar'); if(eb&&nx) eb.style.width=Math.min(100,(m.pet.total-STAGES[st].at)/(nx.at-STAGES[st].at)*100)+'%';
+  const st=petStage(), nx=STAGES[st+1];
+  set('#evoTxt',nx?fmt(Math.max(0,stageAt(st+1)-m.pet.total))+' words until '+m.pet.name+' becomes a '+nx.n+' ('+Math.round(STAGE_FR[st+1]*100)+'% of your '+fmt(m.target)+'-word goal)':m.pet.name+' is a Laureate: you reached your novel length goal!');
+  const eb=$('#evoBar'); if(eb&&nx) eb.style.width=Math.max(0,Math.min(100,(m.pet.total-stageAt(st))/Math.max(1,stageAt(st+1)-stageAt(st))*100))+'%';
   set('#stageTag',STAGES[st].n);
   const md=curMood();
   if(md!==ui.mood||st!==ui.stage){
@@ -1835,9 +2073,10 @@ function renderBinder(){ renderBinder0(); if(ui.others&&ui.others.length) paintH
 function renderBinder0(){
   const m=S.meta, cur=ui.view, el=$('#binder'), cf=ui.confirm;
   let h='<div class="pane-head"><h2>Binder</h2><div class="row"><button class="btn sm" data-a="cork-all">'+ico('card',14)+'<span>Corkboard</span></button><button class="btn sm" data-a="addch">'+ico('plus',14)+'<span>Chapter</span></button></div></div><div class="tree">';
+  h+='<div class="chs">';
   m.chapters.forEach((c,ci)=>{
     const words=c.scenes.reduce((a,id)=>a+(m.scenes[id]?m.scenes[id].words:0),0);
-    h+='<div class="ch-row"><button class="tw" data-a="toggle" data-id="'+c.id+'" aria-expanded="'+(c.open?'true':'false')+'" aria-label="Expand or collapse '+esc(c.title)+'">'+ico(c.open?'down':'right',14)+'</button>';
+    h+='<div class="ch-block" data-ch="'+c.id+'"><div class="ch-row"><button class="tw" data-a="toggle" data-id="'+c.id+'" aria-expanded="'+(c.open?'true':'false')+'" aria-label="Expand or collapse '+esc(c.title)+'">'+ico(c.open?'down':'right',14)+'</button>';
     if(ui.rename===c.id) h+='<input class="rn" id="rn" data-id="'+c.id+'" value="'+esc(c.title)+'" maxlength="80" aria-label="Chapter name">';
     else h+='<button class="ch-title" data-a="cork-ch" data-id="'+c.id+'" title="Open this chapter on the corkboard">'+esc(c.title)+'</button>';
     h+='<span class="wc">'+fmt(words)+'</span><span class="acts"><button class="ibtn" data-a="addsc" data-id="'+c.id+'" aria-label="Add scene">'+ico('plus',14)+'</button><button class="ibtn" data-a="ren" data-id="'+c.id+'" aria-label="Rename chapter">'+ico('edit',14)+'</button>'
@@ -1846,31 +2085,35 @@ function renderBinder0(){
       +'<button class="ibtn'+(cf==='ch'+c.id?' on':'')+'" data-a="delch" data-id="'+c.id+'" aria-label="Delete chapter">'+(cf==='ch'+c.id?'Delete?':ico('trash',14))+'</button></span></div>';
     if(c.open) c.scenes.forEach((id,si)=>{
       const s=m.scenes[id]; if(!s) return; const on=cur.k==='scene'&&cur.id===id;
-      h+='<div class="sc-row'+(on?' on':'')+'"><button class="sc-btn" data-a="open-sc" data-id="'+id+'"><i class="dot st-'+s.status+'" title="'+STATUS[s.status]+'"></i><span class="t">'+esc(s.title)+'</span><span class="wc" data-wc="'+id+'">'+fmt(s.words)+'</span></button><span class="acts"><button class="ibtn" data-a="scup" data-id="'+id+'" aria-label="Move scene up">'+ico('up',14)+'</button><button class="ibtn" data-a="scdn" data-id="'+id+'" aria-label="Move scene down">'+ico('down',14)+'</button><button class="ibtn'+(cf==='sc'+id?' on':'')+'" data-a="delsc" data-id="'+id+'" aria-label="Delete scene">'+(cf==='sc'+id?'Delete?':ico('trash',14))+'</button></span></div>';
+      h+='<div class="sc-row'+(on?' on':'')+'" data-sid="'+id+'"><button class="sc-btn" data-a="open-sc" data-id="'+id+'"><i class="dot st-'+s.status+'" title="'+STATUS[s.status]+'"></i><span class="t">'+esc(s.title)+'</span><span class="wc" data-wc="'+id+'">'+fmt(s.words)+'</span></button><span class="acts"><button class="ibtn" data-a="scup" data-id="'+id+'" aria-label="Move scene up">'+ico('up',14)+'</button><button class="ibtn" data-a="scdn" data-id="'+id+'" aria-label="Move scene down">'+ico('down',14)+'</button><button class="ibtn'+(cf==='sc'+id?' on':'')+'" data-a="delsc" data-id="'+id+'" aria-label="Delete scene">'+(cf==='sc'+id?'Delete?':ico('trash',14))+'</button></span></div>';
     });
     if(c.open&&!c.scenes.length) h+='<div class="empty-s">No scenes yet.</div>';
+    h+='</div>';
   });
+  h+='</div>';
   h+='<div class="ch-row" style="margin-top:20px"></div>';
   const secHead=(t,n,add)=>'<div class="bsec"><button class="lbl" data-a="sec" data-t="'+t+'" aria-expanded="'+(ui.openSec[t]?'true':'false')+'">'+ico(ui.openSec[t]?'down':'right',14)+'<span>'+esc(LP(t))+'</span><span class="n">'+n+'</span></button><button class="ibtn" data-a="relabel" data-t="'+t+'" aria-label="Rename this section" title="Rename this section">'+ico('edit',14)+'</button><button class="ibtn" data-a="'+add+'" aria-label="Add '+esc(LS(t).toLowerCase())+'">'+ico('plus',14)+'</button></div>'+relabelForm(t);
   const docRow=(k,x,icon,count)=>{ const on=cur.k===k&&cur.id===x.id; return '<div class="e-row'+(on?' on':'')+'"><button class="e-btn" data-a="open-'+k+'" data-id="'+x.id+'">'+ico(icon,14)+'<span class="t">'+esc(x.name)+'</span><span class="wc">'+count+'</span></button><span class="acts"><button class="ibtn'+(cf===k+x.id?' on':'')+'" data-a="del'+k+'" data-id="'+x.id+'" aria-label="Delete">'+(cf===k+x.id?'Delete?':ico('trash',14))+'</button></span></div>'; };
   if(secOn('ol')) h+=secHead('ol',m.ols.length,'addol');
-  if(secOn('ol')&&ui.openSec.ol){ m.ols.forEach(x=>{ const it=S.ol[x.id].items; h+=docRow('ol',x,'list',it.filter(i=>i.done).length+'/'+it.length); }); if(!m.ols.length) h+='<div class="empty-s">No outline yet. Press + to start one.</div>'; }
+  if(secOn('ol')&&ui.openSec.ol){ h+='<div class="doc-list" data-list="ols">'; m.ols.forEach(x=>{ const it=S.ol[x.id].items; h+=docRow('ol',x,'list',it.filter(i=>i.done).length+'/'+it.length); }); h+='</div>'; if(!m.ols.length) h+='<div class="empty-s">No outline yet. Press + to start one.</div>'; }
   if(secOn('nt')) h+=secHead('nt',m.nts.length,'addnt');
   if(secOn('nt')&&ui.ntAdd) h+='<div class="nt-add"><button class="btn sm" data-a="addnt-page">'+ico('note',14)+'<span>Notes page</span></button><button class="btn sm" data-a="addnt-board">'+ico('bulb',14)+'<span>Brainstorm board</span></button></div>';
-  if(secOn('nt')&&ui.openSec.nt){ m.nts.forEach(x=>{ const d=S.nt[x.id]; h+=docRow('nt',x,x.kind==='board'?'bulb':'note',x.kind==='board'?d.ideas.length:fmt(wc(d.text))); }); if(!m.nts.length) h+='<div class="empty-s">No notes yet. Press + to add a page or a board.</div>'; }
+  if(secOn('nt')&&ui.openSec.nt){ h+='<div class="doc-list" data-list="nts">'; m.nts.forEach(x=>{ const d=S.nt[x.id]; h+=docRow('nt',x,x.kind==='board'?'bulb':'note',x.kind==='board'?d.ideas.length:fmt(wc(d.text))); }); h+='</div>'; if(!m.nts.length) h+='<div class="empty-s">No notes yet. Press + to add a page or a board.</div>'; }
   if(secOn('tl')) h+='<div class="bsec"><button class="lbl" data-a="sec" data-t="tl" aria-expanded="'+(ui.openSec.tl?'true':'false')+'">'+ico(ui.openSec.tl?'down':'right',14)+'<span>'+esc(LP('tl'))+'</span><span class="n">'+m.tls.length+'</span></button><button class="ibtn" data-a="relabel" data-t="tl" aria-label="Rename this section" title="Rename this section">'+ico('edit',14)+'</button><button class="ibtn" data-a="addtl" aria-label="Add '+esc(LS('tl').toLowerCase())+'">'+ico('plus',14)+'</button></div>'+relabelForm('tl');
   if(secOn('tl')&&ui.openSec.tl){
+    h+='<div class="doc-list" data-list="tls">';
     m.tls.forEach(x=>{
       const on=cur.k==='tl'&&cur.id===x.id, n=Object.keys(S.tl[x.id].cards).length;
       h+='<div class="e-row'+(on?' on':'')+'"><button class="e-btn" data-a="open-tl" data-id="'+x.id+'">'+ico('time',14)+'<span class="t">'+esc(x.name)+'</span><span class="wc">'+n+'</span></button><span class="acts"><button class="ibtn'+(cf==='tl'+x.id?' on':'')+'" data-a="deltl" data-id="'+x.id+'" aria-label="Delete timeline">'+(cf==='tl'+x.id?'Delete?':ico('trash',14))+'</button></span></div>';
     });
-    if(!m.tls.length) h+='<div class="empty-s">No timelines yet. Press + to start one.</div>';
+    h+='</div>'; if(!m.tls.length) h+='<div class="empty-s">No timelines yet. Press + to start one.</div>';
   }
   [['rm','web',x=>S.rm[x.id].edges.length],['ft','tree',x=>S.ft[x.id].people.length]].forEach(r=>{
     const k=r[0]; if(!secOn(k)) return;
     h+=secHead(k,m[k+'s'].length,'add'+k);
-    if(ui.openSec[k]){ m[k+'s'].forEach(x=>{ h+=docRow(k,x,r[1],r[2](x)); }); if(!m[k+'s'].length) h+='<div class="empty-s">Nothing here yet. Press + to start one.</div>'; }
+    if(ui.openSec[k]){ h+='<div class="doc-list" data-list="'+k+'s">'; m[k+'s'].forEach(x=>{ h+=docRow(k,x,r[1],r[2](x)); }); h+='</div>'; if(!m[k+'s'].length) h+='<div class="empty-s">Nothing here yet. Press + to start one.</div>'; }
   });
+  const mc=mentionCounts();
   TYPE_ORDER.forEach(t=>{
     if(!secOn(t)) return;
     const list=Object.values(m.ents).filter(e=>e.type===t).sort((a,b)=>a.name.localeCompare(b.name));
@@ -1879,7 +2122,7 @@ function renderBinder0(){
       list.forEach(e=>{
         const on=cur.k==='ent'&&cur.id===e.id;
         const ps=picSrc(e.id);
-        h+='<div class="e-row'+(on?' on':'')+'"><button class="e-btn" data-a="open-e" data-id="'+e.id+'" title="'+esc(e.tag||LS(t)+' page')+'">'+(ps?'<img class="bav t-'+t+'" src="'+esc(ps)+'" alt="" style="'+picStyle(e.id)+'">':'<i class="pip t-'+t+'"></i>')+'<span class="t">'+esc(e.name||'Untitled')+'</span></button><span class="acts"><button class="ibtn'+(cf==='en'+e.id?' on':'')+'" data-a="dele" data-id="'+e.id+'" aria-label="Delete page">'+(cf==='en'+e.id?'Delete?':ico('trash',14))+'</button></span></div>';
+        h+='<div class="e-row'+(on?' on':'')+'"><button class="e-btn" data-a="open-e" data-id="'+e.id+'" title="'+esc(e.tag||LS(t)+' page')+'">'+(ps?'<img class="bav t-'+t+'" src="'+esc(ps)+'" alt="" style="'+picStyle(e.id)+'">':'<i class="pip t-'+t+'"></i>')+'<span class="t">'+esc(e.name||'Untitled')+'</span><span class="wc" title="Mentions in your scenes">'+(mc[e.id]||0)+'</span></button><span class="acts"><button class="ibtn'+(cf==='en'+e.id?' on':'')+'" data-a="dele" data-id="'+e.id+'" aria-label="Delete page">'+(cf==='en'+e.id?'Delete?':ico('trash',14))+'</button></span></div>';
       });
       if(!list.length) h+='<div class="empty-s">None yet. Press + or select a name in your text.</div>';
     }
@@ -1889,6 +2132,10 @@ function renderBinder0(){
     +OPT_SECS.map(k=>'<label class="ck"><input type="checkbox" data-sec="'+k+'"'+(secOn(k)?' checked':'')+'>'+esc(LP(k))+'</label>').join('')
     +'<label class="ck"><input type="checkbox" checked disabled>'+esc(LP('char'))+' <span class="muted">(always on)</span></label></div>';
   el.innerHTML=h+'</div></div>';
+  dragSort(el,{item:'.sc-row',zones:'.ch-block',drop:(it,ref,zone)=>moveSceneTo(it.dataset.sid,zone.dataset.ch,ref&&ref.dataset.sid)});
+  dragSort(el,{item:'.ch-block',handle:'.ch-row',zones:'.chs',drop:(it,ref)=>{ if(moveInList(S.meta.chapters,it.dataset.ch,ref&&ref.dataset.ch)){ dirty('meta'); renderBinder(); if(ui.view.k==='cork') renderMain(); } }});
+  dragSort(el,{item:'.doc-list>.e-row',zones:'.doc-list',drop:(it,ref,zone)=>{ const arr=S.meta[zone.dataset.list], id=$('.e-btn',it).dataset.id; if(it.parentElement!==zone) return;
+    if(moveInList(arr,id,ref&&$('.e-btn',ref).dataset.id)){ dirty('meta'); renderBinder(); } }});
   el.querySelectorAll('[data-sec]').forEach(c=>c.addEventListener('change',()=>{
     const k=c.dataset.sec; S.meta.secs[k]=c.checked; dirty('meta');
     if(c.checked&&(k==='rm'||k==='ft')&&!S.meta[k+'s'].length){ ui.binderCfg=false; addDocItem(k); return; }
@@ -1947,7 +2194,7 @@ function renderMain(){
   if(!viewValid(v)){ ui.view=firstView(); return renderMain(); }
   const key=v.k+':'+(v.id||''), reset=key!==ui.lastKey; ui.lastKey=key;
   const keep=el.scrollTop;
-  if(v.k==='ent') renderEnt(el,v); else if(v.k==='cork') renderCork(el); else if(v.k==='tl') renderTl(el,v); else if(v.k==='nt') renderNt(el,v); else if(v.k==='ol') renderOl(el,v); else if(v.k==='rm'||v.k==='ft') renderCv(el,v); else if(v.k==='ss') renderSs(el); else if(v.k==='prefs') renderPrefs(el); else if(v.k==='snap') renderSnap(el,v); else if(v.k==='find') renderFind(el); else if(v.k==='help') renderHelp(el); else if(v.k==='den') renderDen(el); else renderScene(el,v);
+  if(v.k==='ent') renderEnt(el,v); else if(v.k==='cork') renderCork(el); else if(v.k==='tl') renderTl(el,v); else if(v.k==='nt') renderNt(el,v); else if(v.k==='ol') renderOl(el,v); else if(v.k==='rm'||v.k==='ft') renderCv(el,v); else if(v.k==='ss') renderSs(el); else if(v.k==='prefs') renderPrefs(el); else if(v.k==='snap') renderSnap(el,v); else if(v.k==='find') renderFind(el); else if(v.k==='help') renderHelp(el); else if(v.k==='den') renderDen(el); else if(v.k==='cont') renderCont(el); else renderScene(el,v);
   el.scrollTop=reset?0:keep;
 }
 function renderScene(el,v){
@@ -1956,7 +2203,7 @@ function renderScene(el,v){
     +'<input id="sceneTitle" class="title-in" value="'+esc(sc.title)+'" maxlength="100" aria-label="Scene title">'
     +'<select id="sceneStatus" aria-label="Scene status">'+Object.keys(STATUS).map(k=>'<option value="'+k+'"'+(sc.status===k?' selected':'')+'>'+STATUS[k]+'</option>').join('')+'</select>'
     +'<span class="mono muted" id="sceneWc">'+fmt(sc.words)+' words</span>'
-    +'<div class="tools"><div class="mk-wrap"><button class="btn" id="mkBtn" title="Select a name in your text, then link it to a new page">'+ico('link')+'<span>Link selection</span></button><div class="pop" id="mkPop" hidden></div></div>'
+    +'<div class="tools"><span class="fmt-btns" role="group" aria-label="Formatting"><button class="ibtn fb" data-fmt="bold" title="Bold (Ctrl+B)" aria-label="Bold"><b>B</b></button><button class="ibtn fb" data-fmt="italic" title="Italic (Ctrl+I)" aria-label="Italic"><i>I</i></button><button class="ibtn fb" data-fmt="underline" title="Underline (Ctrl+U)" aria-label="Underline"><u>U</u></button></span><div class="mk-wrap"><button class="btn" id="mkBtn" title="Select a name in your text, then link it to a new page">'+ico('link')+'<span>Link selection</span></button><div class="pop" id="mkPop" hidden></div></div>'
     +'<button class="ibtn" id="fsDn" aria-label="Smaller text" style="width:auto;padding:0 8px;font-weight:600">A−</button><button class="ibtn" id="fsUp" aria-label="Larger text" style="width:auto;padding:0 8px;font-weight:600">A+</button>'
     +'<button class="btn" id="snBtn" title="Saved versions of this scene">'+ico('time')+'<span>Snapshots</span></button>'
     +'<button class="btn" id="focusBtn" aria-pressed="'+(ui.focus?'true':'false')+'">'+ico('focus')+'<span>'+(ui.focus?'Exit focus':'Focus')+'</span></button></div></div>'
@@ -1965,23 +2212,41 @@ function renderScene(el,v){
     +'<div class="sheet"><div id="ed" class="editor" role="textbox" aria-multiline="true" aria-label="Scene text" spellcheck="'+(LOOK.spell?'true':'false')+'" data-ph="Start writing. Names you have pages for will link automatically."></div></div>'
     +'<p class="hint">Highlighted names are linked. Click one to open its page, or move through it with the arrow keys to edit.</p>';
   const ed=$('#ed'); ed.innerHTML=renderText(d.text);
-  ed.setAttribute('contenteditable','plaintext-only'); if(ed.contentEditable!=='plaintext-only') ed.setAttribute('contenteditable','true');
+  ed.setAttribute('contenteditable','true');
+  try{ document.execCommand('styleWithCSS',false,false); }catch(e){}
   ed.style.fontSize=ui.fs+'px';
   let comp=false;
   const typed=()=>{ if(comp) return; onType(v.id,ed); };
   ed.addEventListener('input',typed);
   ed.addEventListener('compositionstart',()=>{comp=true;});
   ed.addEventListener('compositionend',()=>{comp=false; typed();});
-  ed.addEventListener('paste',e=>{
-    e.preventDefault(); const t=(e.clipboardData||window.clipboardData).getData('text/plain');
-    if(!document.execCommand('insertText',false,t)){ const s=getSelection(); if(s.rangeCount){ const r=s.getRangeAt(0); r.deleteContents(); r.insertNode(document.createTextNode(t)); r.collapse(false); } }
+  ed.addEventListener('paste',e=>{   // pasted text arrives plain, line by line (Enter makes a line break, never a new block)
+    e.preventDefault(); const t=(e.clipboardData||window.clipboardData).getData('text/plain').replace(/\r\n?/g,'\n');
+    t.split('\n').forEach((ln,i)=>{ if(i) document.execCommand('insertLineBreak'); if(ln) document.execCommand('insertText',false,ln); });
     typed();
+  });
+  ed.addEventListener('keydown',e=>{
+    if(e.key==='Enter'&&!e.isComposing){ e.preventDefault(); document.execCommand('insertLineBreak'); return; }
+    const k=(e.ctrlKey||e.metaKey)&&!e.altKey&&!e.shiftKey?{b:'bold',i:'italic',u:'underline'}[e.key.toLowerCase()]:null;
+    if(k){ e.preventDefault(); fmtCmd(k); }
+  });
+  ed.addEventListener('beforeinput',e=>{   // smart quotes and dashes
+    if(LOOK.smart===false||e.inputType!=='insertText'||!e.data||e.data.length!==1) return;
+    const sel=getSelection(); if(!sel.rangeCount||!ed.contains(sel.anchorNode)) return;
+    const pre=document.createRange(); pre.selectNodeContents(ed); pre.setEnd(sel.getRangeAt(0).startContainer,sel.getRangeAt(0).startOffset);
+    const before=pre.toString().slice(-1), opening=!before||/[\s(\[{\u2014\u2013-]/.test(before);
+    let rep=null;
+    if(e.data==='"') rep=opening?'\u201C':'\u201D';
+    else if(e.data==="'") rep=opening?'\u2018':'\u2019';
+    else if(e.data==='-'&&before==='-'&&sel.isCollapsed){ e.preventDefault(); document.execCommand('delete'); document.execCommand('insertText',false,'\u2014'); return; }
+    if(rep){ e.preventDefault(); document.execCommand('insertText',false,rep); }
   });
   ed.addEventListener('click',e=>{ const t=e.target.closest('.ent'); if(t&&getSelection().isCollapsed) go({k:'ent',id:t.dataset.ent}); });
   const tt=$('#sceneTitle'); tt.addEventListener('input',()=>{ S.meta.scenes[v.id].title=tt.value||'Untitled scene'; dirty('meta'); renderBinder(); });
   $('#sceneStatus').addEventListener('change',e=>{ S.meta.scenes[v.id].status=e.target.value; dirty('meta'); renderBinder(); if(e.target.value==='final') sceneFinal(v.id); else checkAch(); });
   $('#focusBtn').addEventListener('click',()=>{ ui.focus=!ui.focus; syncTab(); renderMain(); });
   $('#snBtn').addEventListener('click',()=>go({k:'snap',id:v.id}));
+  el.querySelectorAll('.fb').forEach(b=>{ b.addEventListener('mousedown',e=>e.preventDefault()); b.addEventListener('click',()=>{ if(document.activeElement!==ed) ed.focus(); fmtCmd(b.dataset.fmt); }); });
   const fs=n=>{ ui.fs=Math.max(14,Math.min(28,ui.fs+n)); ed.style.fontSize=ui.fs+'px'; try{localStorage.setItem('inkling:fs',ui.fs);}catch(e){} };
   $('#fsDn').addEventListener('click',()=>fs(-1)); $('#fsUp').addEventListener('click',()=>fs(1));
   const bn=$('#bnX'); if(bn) bn.addEventListener('click',()=>{ m.sample=false; dirty('meta'); renderMain(); });
@@ -2006,6 +2271,7 @@ function renderScene(el,v){
   const fsel=ui.findSel; ui.findSel=null;
   if(fsel&&fsel.id===v.id){ ed.focus(); selectRange(ed,fsel.s,fsel.e); }
 }
+function fmtCmd(cmd){ document.execCommand(cmd); const ed=$('#ed'); if(ed) ed.dispatchEvent(new Event('input',{bubbles:true})); }
 function selectRange(el,s,e){
   const w=document.createTreeWalker(el,NodeFilter.SHOW_TEXT), r=document.createRange(); let n,acc=0,ok=0;
   while((n=w.nextNode())){ const l=n.nodeValue.length;
@@ -2030,7 +2296,7 @@ function onType(id,ed){
 }
 function updateSceneChips(){
   const box=$('#sceneChips'); if(!box||ui.view.k!=='scene') return;
-  const ed=$('#ed'), text=ed?getText(ed):(S.sc[ui.view.id]||{}).text||'';
+  const ed=$('#ed'), text=plainText(ed?getText(ed):(S.sc[ui.view.id]||{}).text||'');
   const seen=[]; findLinks(text).forEach(l=>{ if(!seen.includes(l.id)) seen.push(l.id); });
   box.innerHTML=seen.length?seen.map(id=>{const e=S.meta.ents[id]; return '<button class="cl t-'+e.type+'" data-ent="'+id+'"><i class="pip"></i><span class="nm">'+esc(e.name)+'</span></button>';}).join(''):'<span class="muted" style="font-size:12.5px">No linked names in this scene yet.</span>';
 }
@@ -2039,7 +2305,7 @@ function updateSceneChips(){
 function mentionsOf(e){
   const re=makeRe([e.name].concat(e.aliases||[])); const out=[]; if(!re) return out;
   orderedScenes().forEach(o=>{
-    const text=S.sc[o.id].text; re.lastIndex=0; let m,n=0,first=null;
+    const text=plainText(S.sc[o.id].text); re.lastIndex=0; let m,n=0,first=null;
     while((m=re.exec(text))){ n++; if(!first) first={i:m.index,l:m[0].length}; if(!m[0].length) re.lastIndex++; }
     if(n) out.push({id:o.id,ch:o.ch,n,first,text});
   });
@@ -2071,11 +2337,14 @@ function renderEnt(el,v){
         return '<button class="ap" data-sc="'+x.id+'"><b><span>'+esc(m.scenes[x.id].title)+'</span><span class="mono muted">'+x.n+'×</span></b><span class="muted" style="font-size:12px">'+esc(x.ch.title)+'</span><span class="sn">'+sn+'</span></button>'; }).join('')
       :'<p class="sub">Not mentioned yet. Write this name in a scene and it will link here automatically.</p>')
     +'</section>'+relHtml(e)+tlMentionsHtml(e)+'</article>';
+  el.querySelector('.fields').insertAdjacentHTML('beforebegin',entContHtml(e));
   el.querySelectorAll('textarea').forEach(t=>{
     ag(t);
     t.addEventListener('input',()=>{ ag(t); body.fields[t.dataset.k]=t.value; dirty('en_'+v.id); });
   });
   bindPic(el,e);
+  el.onclick=ev=>{ if(ev.target.closest('.facts')) contClick(ev); };
+  const fa=$('.facts textarea',el); if(fa) fa.addEventListener('change',()=>{ contCheck(true); const box=$('.facts',el); if(box){ const at=document.activeElement===fa; box.outerHTML=entContHtml(e); const nf=$('.facts textarea',el); ag(nf); nf.addEventListener('input',()=>{ ag(nf); body.fields.facts=nf.value; dirty('en_'+v.id); }); } });
   const nm=$('#entName',el);
   nm.addEventListener('input',()=>{ e.name=nm.value; dirty('meta'); linker=buildLinker(); renderBinder(); });
   nm.addEventListener('blur',()=>{ if(!nm.value.trim()){ e.name='Untitled'; nm.value='Untitled'; dirty('meta'); linker=buildLinker(); renderBinder(); } });
@@ -2100,10 +2369,10 @@ function renderCork(el){
     if(one) h+='<section class="ch-notes'+(ui.chNotesHide?' shut':'')+'"><div class="chn-head"><button class="chn-tog" data-ca="chntog" aria-expanded="'+(!ui.chNotesHide)+'">'+ico(ui.chNotesHide?'right':'down',14)+'<span>Chapter notes</span></button><span class="muted mono" id="chnWc">'+fmt(wc(nt))+' words</span></div>'
       +(ui.chNotesHide?'':'<textarea class="chn-ta" id="chNotes" data-id="'+c.id+'" aria-label="Notes for '+esc(c.title)+'" placeholder="Goals for this chapter, threads to pick up, research, what has to change by the end…">'+esc(nt)+'</textarea><div class="chiplinks" id="chNames"></div>')+'</section>';
     else if(nt.trim()) h+='<button class="chn-peek" data-ca="chopen" data-id="'+c.id+'" title="Open this chapter and its notes">'+ico('edit',12)+'<span>'+esc(nt.trim().replace(/\s+/g,' ').slice(0,220))+(nt.trim().length>220?'…':'')+'</span></button>';
-    h+='<div class="cards">';
+    h+='<div class="cards" data-ch="'+c.id+'">';
     c.scenes.forEach(id=>{
       const s=m.scenes[id], d=S.sc[id];
-      h+='<article class="card"><header><button class="card-t" data-ca="open" data-id="'+id+'">'+esc(s.title)+'</button><span class="st st-'+s.status+'">'+STATUS[s.status]+'</span></header><textarea class="syn" data-id="'+id+'" rows="4" aria-label="Synopsis for '+esc(s.title)+'" placeholder="Synopsis: what happens in this scene?">'+esc(d.synopsis)+'</textarea><footer><span class="mono">'+fmt(s.words)+' words</span><span class="acts on"><button class="ibtn" data-ca="mvup" data-id="'+id+'" aria-label="Move earlier">'+ico('back',14)+'</button><button class="ibtn" data-ca="mvdn" data-id="'+id+'" aria-label="Move later">'+ico('right',14)+'</button></span></footer></article>';
+      h+='<article class="card" data-sid="'+id+'"><header title="Drag to move this scene"><button class="card-t" data-ca="open" data-id="'+id+'">'+esc(s.title)+'</button><span class="st st-'+s.status+'">'+STATUS[s.status]+'</span></header><textarea class="syn" data-id="'+id+'" rows="4" aria-label="Synopsis for '+esc(s.title)+'" placeholder="Synopsis: what happens in this scene?">'+esc(d.synopsis)+'</textarea><footer><span class="mono">'+fmt(s.words)+' words</span><span class="acts on"><button class="ibtn" data-ca="mvup" data-id="'+id+'" aria-label="Move earlier">'+ico('back',14)+'</button><button class="ibtn" data-ca="mvdn" data-id="'+id+'" aria-label="Move later">'+ico('right',14)+'</button></span></footer></article>';
     });
     if(!c.scenes.length) h+='<p class="muted">No scenes in this chapter yet.</p>';
     h+='</div>';
@@ -2112,6 +2381,7 @@ function renderCork(el){
   el.innerHTML=h+'</div>';
   el.querySelectorAll('.syn').forEach(t=>{ ag(t); t.addEventListener('input',()=>{ ag(t); S.sc[t.dataset.id].synopsis=t.value; dirty('sc_'+t.dataset.id); }); });
   $('#corkSel',el).addEventListener('change',ev=>{ ui.cork=ev.target.value; renderCork(el); });
+  dragSort(el,{item:'.card',handle:'header',zones:'.cards',grid:true,scroll:()=>$('#main'),drop:(it,ref,zone)=>moveSceneTo(it.dataset.sid,zone.dataset.ch,ref&&ref.dataset.sid)});
   const cn=$('#chNotes',el);
   if(cn){
     const names=()=>{ const box=$('#chNames',el); if(!box) return; const seen=[]; findLinks(cn.value).forEach(l=>{ if(!seen.includes(l.id)) seen.push(l.id); });
@@ -2162,6 +2432,7 @@ function renderNt(el,v){
   };
   const add=()=>{ const q=$('#ntQuick',el), t=q.value.trim(); d.ideas.unshift({id:uid('i_'),text:t,color:NT_COLORS[d.ideas.length%NT_COLORS.length]}); q.value=''; dirty('nt_'+v.id); draw(); renderBinder(); if(!t){ const f=$('#ideas textarea',el); if(f) f.focus(); } else q.focus(); };
   draw();
+  dragSort($('#ideas',el),{item:'.idea',grid:true,scroll:()=>$('#main'),drop:(it,ref)=>{ if(moveInList(d.ideas,it.dataset.id,ref&&ref.dataset.id)){ dirty('nt_'+v.id); draw(); } }});
   $('#ntQuick',el).addEventListener('keydown',ev=>{ if(ev.key==='Enter'){ ev.preventDefault(); add(); } });
   el.onclick=ev=>{
     const b=ev.target.closest('[data-n]'); if(!b||b.tagName==='TEXTAREA') return; const a=b.dataset.n;
@@ -2310,6 +2581,7 @@ function renderOl(el,v){
   });
   if(ui.olUndo&&ui.olUndo.id!==v.id) ui.olUndo=null;
   drawOl(); olUndoBtn();
+  dragSort($('#olList',el),{item:'.ol-row',handle:'.ol-grip',scroll:()=>$('#main'),drop:(it,ref)=>olDrop(it.dataset.i,ref&&ref.dataset.i)});
   if(ui.focusName){ ui.focusName=false; nm.focus(); nm.select(); }
 }
 function olUndoBtn(){ const b=$('#olUndo'); if(b) b.hidden=!(ui.olUndo&&ui.olUndo.id===ui.view.id); }
@@ -2324,12 +2596,20 @@ function olOp(a,i,keep){
   else ok=false;
   if(!ok) return; dirty('ol_'+ui.view.id); drawOl(keep?x.id:null);
 }
+function olDrop(id,beforeId){   // move a line and everything under it before another line, at that line's depth
+  const o=curOl(), it=o.items, i=it.findIndex(x=>x.id===id); if(i<0) return; const e=olEnd(it,i);
+  if(beforeId&&it.slice(i,e).some(x=>x.id===beforeId)) return;
+  const blk=it.splice(i,e-i); let j=beforeId?it.findIndex(x=>x.id===beforeId):it.length; if(j<0) j=it.length;
+  const want=beforeId?it[j].depth:0, prev=j>0?it[j-1].depth:-1, d=Math.min(want,prev+1)-blk[0].depth;
+  blk.forEach(x=>{ x.depth=Math.max(0,Math.min(OL_MAX,x.depth+d)); });
+  it.splice(j,0,...blk); dirty('ol_'+ui.view.id); drawOl();
+}
 function drawOl(focusId){
   const list=$('#olList'), o=curOl(); if(!list||!o) return;
   const it=o.items, nums=olNumbers(o), vis=olVisible(it), done=it.filter(y=>y.done).length, cf=ui.confirm;
   const scOpts=sel=>'<option value="">No linked scene</option>'+S.meta.chapters.map(ch=>'<optgroup label="'+esc(ch.title)+'">'+ch.scenes.map(id=>'<option value="'+id+'"'+(sel===id?' selected':'')+'>'+esc(S.meta.scenes[id].title)+'</option>').join('')+'</optgroup>').join('');
   list.innerHTML=vis.map(i=>{ const y=it[i], kids=olHasKids(it,i), showN=y.noteOpen||(o.showNotes&&y.note), sc=y.scene&&S.meta.scenes[y.scene];
-    return '<div class="ol-row'+(y.done?' done':'')+(y.depth===0?' lvl0':'')+'" data-i="'+y.id+'" style="--d:'+y.depth+'">'
+    return '<div class="ol-row'+(y.done?' done':'')+(y.depth===0?' lvl0':'')+'" data-i="'+y.id+'" style="--d:'+y.depth+'"><span class="ol-grip" title="Drag to move (with everything under it)" aria-hidden="true">'+ico('dots',14)+'</span>'
       +(kids?'<button class="ol-tw" data-o="tog" aria-expanded="'+y.open+'" aria-label="Show or hide what is under this line">'+ico(y.open?'down':'right',14)+'</button>':'<span class="ol-tw"></span>')
       +(o.num==='none'?'':'<span class="ol-num">'+nums[i]+'</span>')
       +'<input type="checkbox" data-o="done"'+(y.done?' checked':'')+' aria-label="Done">'
@@ -3251,12 +3531,12 @@ function renderSnap(el,v){
   const sel=list.find(x=>x.id===ui.snSel), mode=ui.snMode==='text'?'text':'diff';
   let main='<div class="sn-empty"><p>No snapshots of this scene yet.</p><p class="fine">Save one before a big rewrite. Inkling also keeps one automatically each day you change the scene, and before find and replace changes it.</p></div>';
   if(sel){
-    const d=mode==='diff'?diffHtml(sel.text,cur):null, same=sel.text===cur;
+    const d=mode==='diff'?diffHtml(plainText(sel.text),plainText(cur)):null, same=sel.text===cur;
     main='<div class="sn-head"><div><h2>'+esc(snLabel(sel))+'</h2><p class="fine">'+esc(snWhen(sel.at))+' · '+fmt(sel.words)+' words'+(sel.name&&sel.auto?'':'')+'</p></div>'
       +'<div class="ts-row" style="margin:0"><button class="btn pri" data-sn="restore"'+(same?' disabled':'')+'>Restore this version</button><button class="btn danger" data-sn="del">'+ico('trash',14)+'<span>Delete</span></button></div></div>'
       +'<div class="seg" role="tablist"><button data-sn="diff"'+(mode==='diff'?' class="on"':'')+'>Changes since then</button><button data-sn="text"'+(mode==='text'?' class="on"':'')+'>Snapshot text</button></div>'
       +(mode==='diff'?(same?'<p class="fine">The scene is the same as this snapshot.</p>':'<p class="fine sn-sum"><ins>+'+fmt(d.add)+' words</ins> added and <del>−'+fmt(d.del)+' words</del> removed since this snapshot.</p>')+'<div class="sn-text df">'+(same?'':d.html)+'</div>'
-        :'<div class="sn-text">'+sel.text.split('\n').filter(x=>x.trim()).map(x=>'<p>'+esc(x)+'</p>').join('')+'</div>');
+        :'<div class="sn-text">'+sel.text.split('\n').filter(x=>x.trim()).map(x=>{ const P=fmtParse(x); return '<p>'+fmtHtml(P.vis,P.flags,0,P.vis.length)+'</p>'; }).join('')+'</div>');
   }
   el.innerHTML='<div class="main-head">'+backBtn()+'<span class="kind">'+ico('time',16)+'</span><h1 class="mh-title">Snapshots</h1>'+((ui.hist[ui.hist.length-1]||{}).id===sid?'':'<button class="btn" data-sn="open">'+ico('pen',14)+'<span>'+esc(trunc(sc.title,40))+'</span></button>')+'</div>'
     +'<div class="sn-wrap"><aside class="sn-list"><form class="sn-new" id="snForm"><input id="snName" maxlength="80" placeholder="Name this version (optional)" aria-label="Snapshot name"><button class="btn pri" type="submit">'+ico('plus',14)+'<span>Save snapshot</span></button></form>'
@@ -3284,8 +3564,8 @@ function findRe(f){
 function findAll(f){
   const re=findRe(f), out=[]; if(!re) return out;
   S.meta.chapters.forEach(c=>{ if(f.scope!=='all'&&f.scope!==c.id) return;
-    c.scenes.forEach(id=>{ const t=S.sc[id].text, hits=[]; re.lastIndex=0; let m;
-      while((m=re.exec(t))){ if(!m[0].length){ re.lastIndex++; continue; } hits.push({s:m.index,e:m.index+m[0].length}); }
+    c.scenes.forEach(id=>{ const P=fmtParse(S.sc[id].text), t=P.vis, hits=[]; re.lastIndex=0; let m;
+      while((m=re.exec(t))){ if(!m[0].length){ re.lastIndex++; continue; } const s0=m.index, e0=s0+m[0].length; hits.push({s:s0,e:e0,rs:rawAt(P,s0),re:rawEnd(P,e0)}); }
       if(hits.length) out.push({id,ch:c,hits}); }); });
   return out;
 }
@@ -3303,7 +3583,7 @@ function renderFind(el){
     if(!f.q){ box.innerHTML='<p class="fine">Searches the text of every scene. Click a result to open it in the scene.</p>'; return; }
     box.innerHTML='<div class="fd-bar"><b>'+(n?fmt(n)+' match'+(n===1?'':'es')+' in '+res.length+' scene'+(res.length===1?'':'s'):'No matches')+'</b>'
       +(n?'<button class="btn" data-fd="all">Replace all</button>':'')+'</div>'
-      +res.map(x=>{ const t=S.sc[x.id].text;
+      +res.map(x=>{ const t=plainText(S.sc[x.id].text);
         return '<section class="fd-sc"><h3><button class="lnk" data-open="'+x.id+'">'+esc(x.ch.title)+' › '+esc(S.meta.scenes[x.id].title)+'</button><span class="muted">'+x.hits.length+'</span></h3>'
           +x.hits.map((h,i)=>{ if(++shown>400) return ''; const a=Math.max(0,h.s-50), b=Math.min(t.length,h.e+70);
             return '<div class="fd-hit"><button class="fd-go" data-id="'+x.id+'" data-i="'+i+'">'+(a?'…':'')+esc(t.slice(a,h.s)).replace(/\n/g,' ⏎ ')+'<mark>'+esc(t.slice(h.s,h.e))+'</mark>'+esc(t.slice(h.e,b)).replace(/\n/g,' ⏎ ')+(b<t.length?'…':'')+'</button>'
@@ -3315,7 +3595,7 @@ function renderFind(el){
   const replaceIn=(id,hits)=>{   // hits from one scene, replaced from the end so offsets stay right
     const old=S.sc[id].text; let t=old;
     if(!S.sn||!snList(id).some(x=>x.auto==='replace'&&Date.now()-x.at<6e5)) snTake(id,'','replace');
-    hits.slice().sort((a,b)=>b.s-a.s).forEach(h=>{ t=t.slice(0,h.s)+f.r+t.slice(h.e); });
+    hits.slice().sort((a,b)=>b.rs-a.rs).forEach(h=>{ t=t.slice(0,h.rs)+f.r+t.slice(h.re); });
     setSceneText(id,t);
   };
   el.onclick=async e=>{
@@ -3404,6 +3684,8 @@ async function renderPrefs(el){
     +'<span class="sec-l">Page width</span>'+seg('width',Object.keys(WIDTHS).map(k=>[k,WIDTHS[k][0]]))
     +'<p class="pf-sample" id="pfSample">Ilsa Verrin stepped off the ferry with one bag, one coat, and no plan she was willing to say aloud.</p></section>'
     +'<section class="pf"><h2>Writing</h2><label class="ck"><input type="checkbox" data-look="spell"'+(LOOK.spell?' checked':'')+'>Check spelling as I type</label>'
+    +'<label class="ck"><input type="checkbox" data-look="smart"'+(LOOK.smart!==false?' checked':'')+'>Curly quotes and em dashes as I type (“ ” ‘ ’ and -- becomes —)</label>'
+    +'<p class="fine">Bold, italic and underline: the B, I and U buttons above a scene, or Ctrl+B, Ctrl+I, Ctrl+U (⌘ on a Mac).</p>'
     +(pf&&pf.spellLangs&&pf.spellLangs.length?'<label class="f">Spelling language<select data-pf="spell">'+pf.spellLangs.map(l=>'<option value="'+esc(l)+'"'+(pf.spell===l?' selected':'')+'>'+esc(l)+'</option>').join('')+'</select></label>':'')
     +(pf&&pf.platform==='darwin'?'<p class="fine">On a Mac, spelling uses your system language settings.</p>':'')+'</section>'
     +(pf?'<section class="pf"><h2>Projects folder</h2><p><code>'+esc(pf.dir)+'</code></p>'
@@ -3636,20 +3918,21 @@ function drawWcBox(box){
 
 /* ---------- inspector ---------- */
 function renderInspector(){
-  const m=S.meta, p=m.pet, st=stageOf(p.total), nx=STAGES[st+1], md=curMood(), v=ui.view;
+  const m=S.meta, p=m.pet, st=petStage(), nx=STAGES[st+1], md=curMood(), v=ui.view;
   ui.mood=md; ui.stage=st;
   let h='<section class="pet-card m-'+md+'"><div class="pet-stage"><div class="room" id="petRoom" aria-hidden="true">'+roomSVG()+'</div><div class="pals" id="petPals"></div>'
     +'<button class="pet-btn" id="petBtn" aria-label="Cheer with '+esc(p.name)+'"><span id="petArt">'+petSVG(md,st)+'</span></button>'
     +'<button class="btn sm den-btn" id="denBtn" aria-pressed="'+(v.k==='den')+'">'+(v.k==='den'?ico('back',13)+'<span>Close room</span>':ico('spark',13)+'<span>Room</span>')+(ui.newThings&&v.k!=='den'?'<i class="dot-new" aria-label="new things"></i>':'')+'</button></div>'
     +'<div class="bubble" id="bubble">'+esc(ui.say||line(md))+'</div>'
     +'<div class="pet-meta"><input class="pet-name" id="petName" maxlength="18" value="'+esc(p.name)+'" aria-label="Pet name"><span class="stage-tag" id="stageTag">'+STAGES[st].n+'</span></div>'
-    +'<div class="evo">'+(nx?'<div class="bar"><i id="evoBar" style="width:'+Math.min(100,(p.total-STAGES[st].at)/(nx.at-STAGES[st].at)*100)+'%"></i></div>':'')+'<small id="evoTxt"></small></div></section>'+pomoHtml();
+    +'<div class="evo">'+(nx?'<div class="bar"><i id="evoBar" style="width:'+Math.max(0,Math.min(100,(p.total-stageAt(st))/Math.max(1,stageAt(st+1)-stageAt(st))*100))+'%"></i></div>':'')+'<small id="evoTxt"></small></div></section>'+pomoHtml();
   h+='<section class="psec"><h3>Today</h3><div class="big"><b class="mono" id="goalNum">0</b><span>of <span class="mono" id="goalOf">0</span> new words</span></div><div class="bar lg"><i id="goalBar" style="width:0"></i></div>'
     +'<div class="chips"><span class="chip2" id="streakChip"></span></div>'
     +'<div class="two"><label class="f">Daily goal<input id="goalIn" type="number" inputmode="numeric" min="50" max="20000" step="50" value="'+m.goal+'"></label><label class="f">Novel length goal<input id="tgtIn" type="number" inputmode="numeric" min="1000" max="1000000" step="1000" value="'+m.target+'"></label></div>'
     +'<p class="fine">Only new words count. Pasted blocks over 600 words are treated as imports.</p></section>';
   h+='<section class="psec"><h3>Manuscript</h3><div class="big"><b class="mono" id="totNum" style="font-size:26px">0</b><span>of <span class="mono" id="totOf">0</span> words</span></div><div class="bar proj"><i id="totBar" style="width:0"></i></div>'
-    +'<p class="fine">'+m.chapters.length+' chapter'+(m.chapters.length===1?'':'s')+', '+Object.keys(m.scenes).length+' scenes, '+Object.keys(m.ents).length+' story pages.</p></section>';
+    +'<p class="fine">'+m.chapters.length+' chapter'+(m.chapters.length===1?'':'s')+', '+Object.keys(m.scenes).length+' scenes, '+Object.keys(m.ents).length+' story pages.</p>'
+    +(n=>'<button class="btn sm ct-chip'+(n?' warn':'')+'" id="contBtn">'+ico('search',13)+'<span>'+(n?n+' continuity thing'+(n===1?'':'s')+' to check':'Continuity check')+'</span></button>')(contCount())+'</section>';
   if(v.k==='scene'&&m.scenes[v.id]){
     const d=S.sc[v.id];
     h+='<section class="psec"><h3>This scene</h3><label class="sec-l" for="synIn" style="margin-top:0">Synopsis</label><textarea class="ta" id="synIn" rows="3" placeholder="One or two lines on what happens.">'+esc(d.synopsis)+'</textarea>'
@@ -3658,11 +3941,14 @@ function renderInspector(){
   }
   const el=$('#insp'); el.innerHTML=h; updateStats(); updateSceneChips(); bindPomo(); pmPaint();
   $('#petBtn').addEventListener('click',()=>{ bump(); say(line(curMood())); });
+  $('#contBtn').addEventListener('click',()=>go({k:'cont'}));
   $('#denBtn').addEventListener('click',()=>{ ui.newThings=0; if(ui.view.k==='den') goBack(); else go({k:'den'}); });
   paintPals();
   $('#petName').addEventListener('input',e=>{ p.name=e.target.value.trim()||'Inky'; dirty('meta'); });
   $('#goalIn').addEventListener('change',e=>{ m.goal=Math.max(50,Math.min(20000,Math.round(+e.target.value||500))); e.target.value=m.goal; dirty('meta'); updateStats(); });
-  $('#tgtIn').addEventListener('change',e=>{ m.target=Math.max(1000,Math.min(1000000,Math.round(+e.target.value||80000))); e.target.value=m.target; dirty('meta'); updateStats(); });
+  $('#tgtIn').addEventListener('change',e=>{ m.target=Math.max(1000,Math.min(1000000,Math.round(+e.target.value||80000))); e.target.value=m.target;
+    const was=p.rank||0, now=stageOf(p.total); if(now>was){ p.rank=now; cheer(p.name+' grew into a '+STAGES[now].n+'!',true); }
+    dirty('meta'); updateStats(); checkAch(); });
   const si=$('#synIn'); if(si){ si.addEventListener('input',()=>{ S.sc[v.id].synopsis=si.value; dirty('sc_'+v.id); }); $('#noteIn').addEventListener('input',e=>{ S.sc[v.id].notes=e.target.value; dirty('sc_'+v.id); }); }
 }
 
@@ -3694,10 +3980,10 @@ function expBook(scope){
   return S.meta.chapters.filter(c=>scope==='all'||c.id===scope).map(c=>({title:c.title,
     scenes:c.scenes.map(id=>String(S.sc[id].text||'').split('\n').map(l=>l.trim()).filter(Boolean)).filter(x=>x.length)}));
 }
-function runs(p){
-  const out=[], re=/\*([^*\n]+)\*|(?<!\w)_([^_\n]+)_(?!\w)/g; let i=0, m;
-  while((m=re.exec(p))){ if(m.index>i) out.push([p.slice(i,m.index),0]); out.push([m[1]||m[2],1]); i=re.lastIndex; }
-  if(i<p.length) out.push([p.slice(i),0]); return out;
+function runs(p){   // one line of stored text → [[text, styles]] (1 bold, 2 italic, 4 underline)
+  const P=fmtParse(p); if(!P.flags) return P.vis?[[P.vis,0]]:[];
+  const out=[]; for(let i=0;i<P.vis.length;){ const f=P.flags[i]; let j=i; while(j<P.vis.length&&P.flags[j]===f) j++; out.push([P.vis.slice(i,j),f]); i=j; }
+  return out;
 }
 const xe=s=>String(s).replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F]/g,'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const roundWords=n=>n<1000?Math.max(100,Math.round(n/100)*100):n<10000?Math.round(n/500)*500:Math.round(n/1000)*1000;
@@ -3733,7 +4019,7 @@ function zip(files){
 function expDocx(scope){
   const I=expInfo(scope), o=I.o, a4=o.page==='a4', pw=a4?11906:12240, ph=a4?16838:15840, tw=pw-2880;
   const W='xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"';
-  const run=(t,i)=>'<w:r>'+(i?'<w:rPr><w:i/></w:rPr>':'')+'<w:t xml:space="preserve">'+xe(t)+'</w:t></w:r>';
+  const run=(t,f)=>'<w:r>'+(f?'<w:rPr>'+(f&1?'<w:b/>':'')+(f&2?'<w:i/>':'')+(f&4?'<w:u w:val="single"/>':'')+'</w:rPr>':'')+'<w:t xml:space="preserve">'+xe(t)+'</w:t></w:r>';
   const para=(t,pp)=>'<w:p>'+(pp?'<w:pPr>'+pp+'</w:pPr>':'')+runs(t).map(r=>run(r[0],r[1])).join('')+'</w:p>';
   const flat='<w:spacing w:line="240" w:lineRule="auto"/><w:ind w:firstLine="0"/>', mid='<w:jc w:val="center"/><w:ind w:firstLine="0"/>';
   const sect=(first)=>'<w:sectPr>'+(first?'':'<w:headerReference w:type="default" r:id="rIdH"/>')+'<w:pgSz w:w="'+pw+'" w:h="'+ph+'"/><w:pgMar w:top="1440" w:right="1440" w:bottom="1440" w:left="1440" w:header="720" w:footer="720" w:gutter="0"/>'+(first?'':o.title?'<w:pgNumType w:start="1"/>':'')+'</w:sectPr>';
@@ -3767,7 +4053,7 @@ function expDocx(scope){
     ['word/_rels/document.xml.rels','<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rIdS" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/><Relationship Id="rIdH" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/header" Target="header1.xml"/></Relationships>'],
     ['word/document.xml',doc],['word/styles.xml',styles],['word/header1.xml',header]]);
 }
-const htmlRuns=l=>runs(l).map(r=>r[1]?'<em>'+xe(r[0])+'</em>':xe(r[0])).join('');
+const htmlRuns=l=>runs(l).map(r=>{ let t=xe(r[0]); if(r[1]&4) t='<u>'+t+'</u>'; if(r[1]&2) t='<em>'+t+'</em>'; if(r[1]&1) t='<strong>'+t+'</strong>'; return t; }).join('');
 function expPdfHtml(scope){
   const I=expInfo(scope), o=I.o, fam=I.font==='Courier New'?"'Courier New',Courier,monospace":"'Times New Roman',Times,serif";
   let h='<!doctype html><html><head><meta charset="utf-8"><title>'+xe(I.title)+'</title><style>@page{size:'+(o.page==='a4'?'A4':'letter')+';margin:1in}'
@@ -3809,7 +4095,7 @@ function manuscriptMd(scope){
 }
 function manuscriptTxt(scope){
   const I=expInfo(scope); let out=I.title+'\n'+(I.byline?'by '+I.byline+'\n':'')+'\n\n';
-  I.book.forEach(c=>{ out+=c.title+'\n\n'+c.scenes.map(x=>x.join('\n\n')).join('\n\n'+(I.o.brk||'#')+'\n\n')+'\n\n\n'; });
+  I.book.forEach(c=>{ out+=c.title+'\n\n'+c.scenes.map(x=>x.map(plainText).join('\n\n')).join('\n\n'+(I.o.brk||'#')+'\n\n')+'\n\n\n'; });
   return out.trim()+'\n';
 }
 async function printHtml(html){   // the browser's print window; the writer chooses "Save as PDF"
@@ -3848,7 +4134,7 @@ function openExport(){
         +'<div><span class="sec-l">Page size</span><div class="seg"><button data-o="page" data-v="letter"'+(o.page==='letter'?' class="on"':'')+'>Letter</button><button data-o="page" data-v="a4"'+(o.page==='a4'?' class="on"':'')+'>A4</button></div></div></div>':'')
       +(o.fmt==='md'||o.fmt==='txt'?'':'<label class="ck"><input type="checkbox" data-e="title"'+(o.title?' checked':'')+'>Title page'+(ms?' with word count (about '+roundWords(words).toLocaleString()+')':'')+'</label>')
       +(ms?'<label class="ck"><input type="checkbox" data-e="chNew"'+(o.chNew?' checked':'')+'>Start each chapter on a new page</label>':'')
-      +'<p class="fine">Each line you type is a paragraph. Put *asterisks* or _underscores_ around words to make them italic.</p>'
+      +'<p class="fine">Bold, italics and underlining from your scenes come through in Word, PDF and EPUB. Each line you type is a paragraph.</p>'
       +'<div class="ask-btns" style="margin-top:14px"><button class="btn" data-x="close">Cancel</button><button class="btn pri" data-x="go">'+ico('down',14)+'<span>Export '+EXP_FMTS[o.fmt][0]+'</span></button></div></div>';
   };
   ov.addEventListener('click',e=>{
@@ -3870,10 +4156,10 @@ function renderMenu(){
   const cf=ui.confirm, el=$('#menu');
   const item=(m,label,cls)=>'<button data-m="'+m+'"'+(cls?' class="'+cls+'"':'')+'>'+label+'</button>';
   if(DESK){ el.innerHTML=item('save','Save')+item('projects','Projects…')+item('share','Share this project…')+'<hr>'+item('export','Export… (Word, PDF, EPUB)')+item('json','Back up this project (.json)')+item('import','Import a backup as a new project…')+'<hr>'
-    +item('find','Find and replace…')+item('sessions','Writing sessions')+item('prefs','Settings')+item('help','How sharing works')+item('tour','Show the tour')+'<hr>'+item('reveal','Show projects folder')
+    +item('find','Find and replace…')+item('cont','Continuity check')+item('sessions','Writing sessions')+item('prefs','Settings')+item('help','How sharing works')+item('tour','Show the tour')+'<hr>'+item('reveal','Show projects folder')
     +'<small>Saved on this computer as you write. Each project folder also keeps automatic backups.</small>'; return; }
   el.innerHTML=item('save','Save now')+'<hr>'+item('export','Export… (Word, PDF, EPUB)')+item('json','Back up project (.json)')+item('restore','Restore from a backup…')+'<hr>'
-    +item('find','Find and replace…')+item('sessions','Writing sessions')+item('prefs','Settings')+item('help','How sharing works')+item('tour','Show the tour')+'<hr>'
+    +item('find','Find and replace…')+item('cont','Continuity check')+item('sessions','Writing sessions')+item('prefs','Settings')+item('help','How sharing works')+item('tour','Show the tour')+'<hr>'
     +item('sample',cf==='m-sample'?'Replace everything with the sample? Click again':'Load the sample project','warn')
     +item('blank',cf==='m-blank'?'Replace everything with a blank project? Click again':'Start a blank project','warn')
     +'<small>'+(P.db?'Your project saves automatically to your Claude account, private to you. A new project comes with its own Inky; your daily goal and timer settings carry over.':'Your project saves on this device only. Back it up from here when you can.')+'</small>';
@@ -3888,6 +4174,7 @@ function bindMenu(){
     else if(a==='prefs'){ closeMenu(); go({k:'prefs'}); }
     else if(a==='tour'){ closeMenu(); startTour(true); }
     else if(a==='save'){ closeMenu(); saveNow(); }
+    else if(a==='cont'){ closeMenu(); go({k:'cont'}); }
     else if(a==='share'){ closeMenu(); openShare(); }
     else if(a==='help'){ closeMenu(); go({k:'help'}); }
     else if(a==='json'){ closeMenu(); doBackup(); }
@@ -4102,7 +4389,7 @@ function announceMerge(rep){
 const whoName=o=>o.name||o.host||'Someone';
 async function hereTick(){
   if(!DESK||!PJ.id) return; const v=ui.view, sc=v&&v.k==='scene'&&S.meta.scenes[v.id];
-  try{ ui.others=await DESK.here(PJ.id,{name:ME.name,scene:sc?v.id:'',sceneTitle:sc?sc.title:'',sprint:T.running&&T.phase==='focus'?T.endAt:0,pet:{c:S.meta.pet.color,st:stageOf(S.meta.pet.total),n:S.meta.pet.name}})||[]; }catch(e){ ui.others=[]; }
+  try{ ui.others=await DESK.here(PJ.id,{name:ME.name,scene:sc?v.id:'',sceneTitle:sc?sc.title:'',sprint:T.running&&T.phase==='focus'?T.endAt:0,pet:{c:S.meta.pet.color,st:petStage(),n:S.meta.pet.name}})||[]; }catch(e){ ui.others=[]; }
   paintHere();
 }
 function hereSoon(){ if(!DESK) return; clearTimeout(ui.hereT); ui.hereT=setTimeout(hereTick,400); }
@@ -4246,7 +4533,7 @@ async function deskImport(text){
 }
 async function deskImportPick(){ try{ const t=await DESK.openFile(); if(t!=null){ await deskImport(t); closeProjects(); } }catch(e){ toast('Could not open that file.',{plain:true}); } }
 async function deskBoot(){
-  DESK.onMenu(a=>{ if(a==='new'||a==='projects') openProjects(); else if(a==='backup') doBackup(); else if(a==='export') openExport(); else if(a==='find') openFind(); else if(a==='prefs') go({k:'prefs'}); else if(a==='tour') startTour(true); else if(a==='updcheck') checkUpdatesNow(); else if(a==='save') saveNow(); else if(a==='share') openShare(); else if(a==='openShared') openSharedPick(); else if(a==='helpShare') go({k:'help'}); else if(a==='snapshots'){ if(ui.view.k==='scene') go({k:'snap',id:ui.view.id}); else toast('Open a scene first, then choose Scene snapshots.',{plain:true}); } else if(a==='import') deskImportPick(); else if(a==='sessions') go({k:'ss'}); else if(a==='timer'){ if(T.running) pmPause(); else pmStart(); } });
+  DESK.onMenu(a=>{ if(a==='new'||a==='projects') openProjects(); else if(a==='backup') doBackup(); else if(a==='export') openExport(); else if(a==='find') openFind(); else if(a==='prefs') go({k:'prefs'}); else if(a==='tour') startTour(true); else if(a==='updcheck') checkUpdatesNow(); else if(a==='save') saveNow(); else if(a==='cont') go({k:'cont'}); else if(a==='share') openShare(); else if(a==='openShared') openSharedPick(); else if(a==='helpShare') go({k:'help'}); else if(a==='snapshots'){ if(ui.view.k==='scene') go({k:'snap',id:ui.view.id}); else toast('Open a scene first, then choose Scene snapshots.',{plain:true}); } else if(a==='import') deskImportPick(); else if(a==='sessions') go({k:'ss'}); else if(a==='timer'){ if(T.running) pmPause(); else pmStart(); } });
   DESK.onClosing(async()=>{ try{ pmHalt(); await deskFlush(); }catch(e){} DESK.closeReady(); });
   DESK.onUpdate(showUpdate);
   DESK.onFocus(()=>{ syncCheck(); hereTick(); });   // bring in what the sync folder delivered while Inkling was in the background
