@@ -6,6 +6,7 @@ A novel-writing app inspired by Scrivener, with a virtual pet that cheers you on
 
 - **Binder:** chapters and scenes with reordering, status (Draft / Revised / Final) and word counts.
 - **Editor:** distraction-free page with focus mode and adjustable text size; bold, italics and underline (buttons or Ctrl+B/I/U), and curly quotes and em dashes as you type.
+- **Sticky notes:** stick notes to yourself beside the page of a scene. Drag them up and down or across to the other margin, recolour, edit and delete them. On a narrow screen they fold into coloured tabs on the page edge.
 - **Continuity check:** give a story page key facts (eyes: green, hair: auburn, age: 34) and Inkling flags scenes that disagree. It also spots names that look misspelled, characters who drop out of the story, and pages never mentioned; each page shows where its name is first and last seen, and the binder shows how often each name appears.
 - **Drag and drop:** rearrange scenes and chapters in the binder, cards on the corkboard, outline lines (with everything under them), brainstorm ideas, and the order of timelines, outlines and notes.
 - **Corkboard:** index cards with editable synopses, per chapter or for the whole book. Each chapter has its own notes above its cards.

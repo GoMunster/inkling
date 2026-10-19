@@ -330,3 +330,31 @@ test('Inky’s rank follows the novel length goal and never goes back', async ({
   await page.fill('#tgtIn', '100000'); await page.press('#tgtIn', 'Tab');
   await expect(page.locator('#stageTag')).toHaveText('Inkling');
 });
+
+test('sticky notes beside the page: add, write, move to the other side, recolour, delete', async ({ page }) => {
+  await page.setViewportSize({ width: 1900, height: 1000 });   // wide enough for notes in the margins
+  const errors = await openApp(page);
+  await page.click('.sc-btn');
+  await page.click('#stkBtn');
+  const note = page.locator('#stkLayer .stk').first();
+  await expect(note).toBeVisible(); await expect(note).not.toHaveClass(/tab/);
+  await page.keyboard.type('Check the tide tables.');
+  let p = await waitSaved(page, p => Object.values(p.sc).some(s => (s.stickies || []).some(n => n.text === 'Check the tide tables.')));
+  const startSide = Object.values(p.sc).flatMap(s => s.stickies || [])[0].side;
+  const h = await note.locator('.stk-h').boundingBox(), sheet = await page.locator('.sheet').boundingBox();
+  const tx = startSide === 'r' ? sheet.x - 90 : sheet.x + sheet.width + 90;
+  await page.mouse.move(h.x + 30, h.y + 8); await page.mouse.down(); await page.mouse.move(tx, h.y + 120, { steps: 8 }); await page.mouse.up();
+  p = await waitSaved(page, p => Object.values(p.sc).flatMap(s => s.stickies || []).some(n => n.side !== startSide && n.y > 60));
+  await note.hover(); await page.click('#stkLayer .stk .sw.c-char');
+  await waitSaved(page, p => Object.values(p.sc).flatMap(s => s.stickies || []).some(n => n.color === 'char'));
+  await page.reload(); await page.waitForSelector('#stkLayer .stk');
+  await expect(page.locator('#stkLayer textarea')).toHaveValue('Check the tide tables.');
+  await page.click('#stkLayer [data-sk="del"]'); await page.click('#stkLayer [data-sk="del"]');
+  await expect(page.locator('#stkLayer .stk')).toHaveCount(0);
+  await page.setViewportSize({ width: 1300, height: 900 });   // narrow: notes fold into tabs on the page edge
+  await page.click('#stkBtn'); await page.keyboard.type('Folded');
+  await page.click('#ed', { position: { x: 3, y: 3 } });
+  await expect(page.locator('#stkLayer .stk.tab')).toHaveCount(1);
+  await page.click('#stkLayer .stk-tab'); await expect(page.locator('#stkLayer textarea')).toHaveValue('Folded');
+  expect(errors).toEqual([]);
+});
