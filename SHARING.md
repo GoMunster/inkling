@@ -15,7 +15,7 @@ Sharing works in the **Inkling desktop app** (Windows, Mac and Linux). The same 
 - When a co-writer's changes arrive, Inkling **merges** them with yours, piece by piece. Your new scene and their
   edited character page both survive.
 - You can see **who else is in the project**, and which scene they are in.
-- Your **pet, daily goal, word history and focus timer** stay yours. The story is shared.
+- Your **pet, daily goal, to-do list, word history and focus timer** stay yours. The story is shared.
 - It is **not live typing** like Google Docs. Changes arrive when the sync service delivers them, usually within a
   few seconds to a minute. It works best when co-writers write different scenes, or take turns.
 
@@ -86,10 +86,11 @@ you need, or restore it.
 
 ### What stays yours
 
-- **Yours alone:** your Inkling pet, your daily goal and today's words, your word history chart, your focus timer
-  settings and your writing sessions. They are kept under the name you set, so use the **same name on each of your
+- **Yours alone:** your Inkling pet, your daily goal and today's words, your to-do list, your word history chart, your
+  focus timer settings and your writing sessions. They are kept under the name you set, so use the **same name on each of your
   own computers** and your pet follows you.
-- **Per computer:** appearance settings (theme, font, text size, spacing, page width, spellcheck).
+- **Per computer:** appearance settings (theme, font, text size, spacing, page width, side panel widths, spellcheck)
+  and whether Inky reads over your shoulder.
 - **Shared by everyone:** all the writing and planning (scenes, chapter notes, story pages and pictures,
   timelines, outlines, notes and brainstorms, relationship maps, family trees, snapshots) and the export settings.
 

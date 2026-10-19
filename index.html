@@ -85,7 +85,7 @@ button{cursor:pointer}
 .menu hr{border:0;border-top:1px solid var(--line);margin:4px 0;width:100%}
 .menu small{color:var(--muted);padding:4px 10px 6px;font-size:12px}
 
-.cols{display:grid;grid-template-columns:272px minmax(0,1fr) 308px;grid-template-rows:minmax(0,1fr);min-height:0}
+.cols{display:grid;grid-template-columns:var(--bw,272px) minmax(0,1fr) var(--iw,308px);grid-template-rows:minmax(0,1fr);min-height:0;position:relative}
 .pane{overflow:auto;min-height:0;min-width:0}
 .pane-binder{background:var(--panel);border-right:1px solid var(--line);overflow-x:hidden}
 .pane-insp{background:var(--panel);border-left:1px solid var(--line)}
@@ -812,10 +812,110 @@ body.dnd,body.dnd *{cursor:grabbing!important;user-select:none}
 .pf-row{display:flex;align-items:center;gap:10px}
 .pf-sample{margin-top:14px!important;padding:14px 16px;border:1px dashed var(--line);border-radius:10px;font-family:var(--ed-font,var(--f-prose));line-height:var(--ed-lh,1.8)}
 
+/* sidebar edges: drag to widen */
+.sizer{position:absolute;top:0;bottom:0;width:10px;z-index:6;cursor:col-resize;touch-action:none}
+.sizer::after{content:"";position:absolute;top:0;bottom:0;left:4px;width:2px;background:var(--accent);opacity:0;transition:opacity .15s}
+.sizer:hover::after,.sizer.on::after,.sizer:focus-visible::after{opacity:.55}
+.sizer:focus-visible{outline:none}
+#szL{left:calc(var(--bw,272px) - 5px)} #szR{right:calc(var(--iw,308px) - 5px)}
+#app.focus .sizer{display:none}
+body.sizing,body.sizing *{cursor:col-resize!important;user-select:none}
+
+/* today's to-do list */
+.todo h3{display:flex;align-items:center;justify-content:space-between}
+.td-n{font-size:12px;letter-spacing:0;text-transform:none;color:var(--muted);font-weight:500}
+.td-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:2px}
+.td{display:flex;align-items:center;gap:6px;border-radius:8px;padding:2px 2px 2px 0}
+.td:hover,.td:focus-within{background:var(--panel2)}
+.td-grip{flex:none;display:grid;place-items:center;width:14px;color:var(--muted);opacity:0;cursor:grab;touch-action:none}
+.td:hover .td-grip,.td:focus-within .td-grip{opacity:.8}
+@media (hover:none){.td-grip{opacity:.6}}
+.td-ck{flex:none;width:17px;height:17px;margin:0;accent-color:var(--pet-deep)}
+.td-t{flex:1;min-width:0;border:1px solid transparent;background:transparent;border-radius:6px;padding:4px 6px;font-size:13.5px;color:var(--ink)}
+.td-t:focus{border-color:var(--accent);background:var(--paper);outline:none}
+.td.done .td-t{text-decoration:line-through;color:var(--muted)}
+.td-auto{flex:none;font-size:10.5px;font-weight:600;color:var(--pet-deep);background:color-mix(in srgb,var(--pet) 16%,transparent);border-radius:999px;padding:1px 7px;white-space:nowrap}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .td-auto{color:var(--pet)}}
+:root[data-theme="dark"] .td-auto{color:var(--pet)}
+.td-old{flex:none;width:6px;height:6px;border-radius:50%;background:var(--thing)}
+.td .ibtn{flex:none;width:24px;height:24px;opacity:0}
+.td:hover .ibtn,.td:focus-within .ibtn{opacity:.8}
+@media (hover:none){.td .ibtn{opacity:.6}}
+.td-new{display:block;width:100%;margin-top:6px;border:1px dashed var(--line);border-radius:8px;background:transparent;padding:7px 10px;font-size:13.5px;color:var(--ink)}
+.td-new:focus{border-style:solid;border-color:var(--accent);background:var(--paper);outline:none}
+.td-ideas{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.td-idea{border:1px solid var(--line);background:var(--paper);border-radius:999px;padding:3px 10px;font-size:12px;color:var(--muted)}
+.td-idea:hover{color:var(--ink);border-color:var(--accent)}
+.td-foot{display:flex;justify-content:flex-end;margin-top:6px}
+@media (prefers-reduced-motion:no-preference){.td.just .td-ck{animation:hop .5s ease-out}}
+
+/* Inky reading over your shoulder: faces, things to hold, the story's weather in the window */
+.petsvg .eyew{fill:#fff;stroke:var(--pet-ink);stroke-width:2.5}
+.petsvg .teeth{fill:#fff;stroke:var(--pet-ink);stroke-width:2.5} .petsvg .tline{fill:none;stroke:var(--pet-ink);stroke-width:1.6}
+.petsvg .tear,.petsvg .sweat{fill:#9AD7F5;stroke:#3F8DB5;stroke-width:1}
+.petsvg .heye,.petsvg .hrt{fill:var(--char)} .petsvg .cheek.hot{opacity:.75}
+.petsvg .steamp path{fill:none;stroke:var(--muted);stroke-width:3;stroke-linecap:round;opacity:.7}
+.petsvg .tis{fill:#fff;stroke:#AEB9C6;stroke-width:1.5} .petsvg .tis2{fill:none;stroke:#AEB9C6;stroke-width:1.5}
+.petsvg .ckie{fill:#C98B4B} .petsvg .ckc{fill:#5A3A1E} .petsvg .icing{fill:#F6B8CF} .petsvg .candle{stroke:var(--accent);stroke-width:3} .petsvg .flame{fill:#FFB703}
+.petsvg .env{fill:#F4EFD8;stroke:#9B7A45;stroke-width:1.5} .petsvg .envf{fill:none;stroke:#9B7A45;stroke-width:1.5}
+.petsvg .pcb{fill:#fff;stroke:#D64545;stroke-width:1.5} .petsvg .pcs{stroke:#D64545;stroke-width:4} .petsvg .pck{fill:#FFF3C4;stroke:#E8C66A;stroke-width:1}
+.petsvg .mgh{stroke:#7A5A2E;stroke-width:5;stroke-linecap:round} .petsvg .mgl{fill:rgba(191,227,245,.45);stroke:#7A5A2E;stroke-width:3.5}
+.petsvg .wnd{stroke:var(--pet-ink);stroke-width:3.5;stroke-linecap:round} .petsvg .wst{fill:var(--thing)}
+.petsvg .umbs{fill:none;stroke:#5B4A3A;stroke-width:3;stroke-linecap:round} .petsvg .umbc{fill:var(--accent);stroke:rgba(0,0,0,.25);stroke-width:1.5}
+.petsvg .mark{font-family:var(--f-prose);font-weight:800;font-size:30px;fill:var(--accent)}
+.roomsvg .rain path{stroke:#E6F0FA;stroke-width:1.2;stroke-linecap:round;opacity:.85}
+.roomsvg .snow circle{fill:#fff}
+.roomsvg .fogb{fill:#fff;opacity:.5}
+.roomsvg .windl{fill:none;stroke:#fff;stroke-width:1.4;stroke-linecap:round;opacity:.75}
+.roomsvg .cloud{fill:#6B7A8F} .roomsvg .bolt{fill:#FFE66B}
+.roomsvg .flash{fill:#fff;opacity:0;pointer-events:none}
+.roomsvg .tint{pointer-events:none}
+.roomsvg .t-sad{fill:#3A5A8C;opacity:.16} .roomsvg .t-fear{fill:#0B1020;opacity:.3} .roomsvg .t-action{fill:#E2554B;opacity:.1}
+.roomsvg .t-love{fill:#F28CB1;opacity:.16} .roomsvg .t-anger{fill:#C0392B;opacity:.13} .roomsvg .t-mystery{fill:#5B3E8C;opacity:.16}
+.roomsvg .t-calm,.roomsvg .t-sleepy{fill:#FFB74D;opacity:.1} .roomsvg .t-joy,.roomsvg .t-funny{fill:#FFE082;opacity:.14}
+.peek{display:none;position:fixed;right:14px;bottom:calc(var(--tabh,0px) + 8px);z-index:20;pointer-events:none}
+.peek-pet{pointer-events:auto;border:0;background:transparent;padding:0;display:block;margin-left:auto}
+.peek-pet svg{width:60px;height:60px;display:block;overflow:visible;transform:translateY(12px)}
+.peek-b{pointer-events:auto;max-width:min(260px,70vw);margin-bottom:4px;background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:8px 11px;font-size:13px;line-height:1.35;box-shadow:var(--shadow)}
+#app.focus .peek{display:block}
+@media (prefers-reduced-motion:no-preference){
+  .m-scared .petsvg,.petsvg.shiver{animation:shiver .16s linear infinite alternate;transform-origin:50% 92%}
+  .m-tense .petsvg{animation:shiver .4s linear infinite alternate;transform-origin:50% 92%}
+  .m-sad .petsvg{animation:breathe 5s ease-in-out infinite;transform-origin:50% 92%}
+  .m-love .petsvg,.m-glee .petsvg,.m-cozy .petsvg{animation:bob 2.4s ease-in-out infinite;transform-origin:50% 92%}
+  .m-laugh .petsvg{animation:dance .45s ease-in-out infinite alternate;transform-origin:50% 92%}
+  .m-angry .petsvg{animation:shiver .3s ease-in-out infinite alternate;transform-origin:50% 92%}
+  .m-curious .petsvg{animation:tilt 3s ease-in-out infinite;transform-origin:50% 92%}
+  .petsvg .tear:not(.joy){animation:drip 2.2s ease-in infinite}
+  .petsvg .hearts,.petsvg .steamp{animation:floatup 2s ease-in-out infinite}
+  .petsvg .wst{animation:twinkle .9s ease-in-out infinite alternate;transform-box:fill-box;transform-origin:center}
+  .reading .petsvg .blink,.reading .petsvg .eyesw{animation:read 1.3s ease-in-out}
+  .roomsvg .rain{animation:rainfall .45s linear infinite}
+  .roomsvg .snow{animation:snowfall 3.2s linear infinite} .roomsvg .snow.s2{animation-duration:4.6s}
+  .roomsvg .fogb{animation:drift 9s ease-in-out infinite alternate}
+  .roomsvg .windl{animation:windy 2.4s linear infinite}
+  .roomsvg .flash{animation:lflash 6s infinite} .roomsvg .bolt{animation:bolt 6s infinite}
+  .peek-b{animation:toastIn .25s ease-out}
+}
+@keyframes shiver{from{transform:translateX(-1.2px)}to{transform:translateX(1.2px)}}
+@keyframes tilt{0%,100%{transform:rotate(0)}50%{transform:rotate(-5deg)}}
+@keyframes drip{0%{transform:translateY(0);opacity:1}80%{transform:translateY(12px);opacity:0}100%{opacity:0}}
+@keyframes floatup{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+@keyframes twinkle{from{transform:scale(.8)}to{transform:scale(1.15)}}
+@keyframes read{0%,100%{transform:translateX(0)}30%{transform:translateX(-3px)}70%{transform:translateX(3px)}}
+@keyframes rainfall{from{transform:translate(0,0)}to{transform:translate(-3px,12px)}}
+@keyframes snowfall{from{transform:translateY(0)}to{transform:translateY(16px)}}
+@keyframes drift{from{transform:translateX(-8px)}to{transform:translateX(8px)}}
+@keyframes windy{0%{transform:translateX(-30px);opacity:0}30%{opacity:.8}100%{transform:translateX(40px);opacity:0}}
+@keyframes lflash{0%,88%,94%,100%{opacity:0}90%{opacity:.35}92%{opacity:.1}}
+@keyframes bolt{0%,87%,95%,100%{opacity:0}89%,93%{opacity:1}}
+
 /* tab layout */
 @media (max-width:1079px){
   :root{--tabh:58px}
   .cols{grid-template-columns:minmax(0,1fr)}
+  .sizer{display:none}
+  .peek{display:block}
   .pane{display:none}
   #app[data-tab="binder"] .pane-binder,#app[data-tab="write"] .pane-main,#app[data-tab="pet"] .pane-insp{display:block}
   .pane-binder,.pane-insp{border:0}
@@ -856,6 +956,8 @@ body.dnd,body.dnd *{cursor:grabbing!important;user-select:none}
     <aside id="binder" class="pane pane-binder" aria-label="Binder"></aside>
     <section id="main" class="pane pane-main" aria-label="Workspace"></section>
     <aside id="insp" class="pane pane-insp" aria-label="Inkling and goals"></aside>
+    <div class="sizer" id="szL" role="separator" aria-orientation="vertical" aria-label="Binder width" tabindex="0" title="Drag to widen the binder. Double-click to reset."></div>
+    <div class="sizer" id="szR" role="separator" aria-orientation="vertical" aria-label="Inkling panel width" tabindex="0" title="Drag to widen this panel. Double-click to reset."></div>
   </main>
   <nav class="tabs" id="tabs" role="tablist" aria-label="Sections"></nav>
 </div>
@@ -918,7 +1020,7 @@ const ADD_DOCS=[];   // (raw, out) => out.<prefix> = normalized records, for doc
 const snapshot=st=>{ if(!st) stampMine(S); st=st||S; const o={meta:st.meta}; DOCS.forEach(p=>{ o[p]=st[p]; }); return o; };
 // The desktop app (desktop/) provides window.inklingDesktop: each project is a folder on the computer. Elsewhere it is null.
 const DESK=window.inklingDesktop||null;
-const APP_VERSION='1.5.0';   // the desktop build replaces this with desktop/package.json's version
+const APP_VERSION='1.6.0';   // the desktop build replaces this with desktop/package.json's version
 // Saved-format version. When the shape of saved data changes: bump FORMAT and add MIGRATE[old] that upgrades a raw
 // project one step (it runs before normalize()). A project from a newer FORMAT is never loaded or overwritten.
 const FORMAT=2;
@@ -939,7 +1041,7 @@ const DEVICE=(()=>{ try{ let d=localStorage.getItem('inkling:device'); if(!d){ d
 const ME={name:''}; try{ ME.name=String(JSON.parse(localStorage.getItem('inkling:me')||'{}').name||'').slice(0,60); }catch(e){}
 const nameKey=n=>String(n||'').trim().toLowerCase();
 const myKey=()=>nameKey(ME.name);
-const PERSONAL=['days','pet','mark','goal','pomo'];
+const PERSONAL=['days','pet','mark','goal','pomo','todo'];
 const PJ={id:null,base:null};   // the desktop project that is open, and the version of it last read from or written to disk
 let linker=null;
 const ui={view:null,hist:[],cork:'all',rename:null,confirm:null,menu:false,tab:'write',focus:false,openSec:{ol:true,nt:true,tl:true,rm:true,ft:true,char:true,place:true,thing:true},say:'',sayAt:0,mood:'',touched:false,sel:'',focusName:false,fs:18,
@@ -1036,11 +1138,11 @@ function normalize(o){
   Object.keys(gn).filter(k=>+gn[k]>cut).sort((a,b)=>gn[b]-gn[a]).slice(0,2000).forEach(k=>{ meta.gone[k]=+gn[k]; }); meta.title=meta.title||'Untitled novel'; meta.goal=+meta.goal||500; meta.target=+meta.target||80000;
   meta.chapters=Array.isArray(meta.chapters)?meta.chapters:[]; meta.scenes=meta.scenes||{}; meta.ents=meta.ents||{};
   meta.pet=normPet(meta.pet);
-  meta.days=meta.days||{}; meta.saved=+meta.saved||0; meta.pomo=normPomo(meta.pomo); meta.exp=normExp(meta.exp); meta.author=String(meta.author||'');
+  meta.days=meta.days||{}; meta.saved=+meta.saved||0; meta.pomo=normPomo(meta.pomo); meta.todo=normTodo(meta.todo); meta.exp=normExp(meta.exp); meta.author=String(meta.author||'');
   const wr=meta.writers&&typeof meta.writers==='object'?meta.writers:{}; meta.writers={};
   Object.keys(wr).slice(0,60).forEach(k=>{ const w=wr[k]; if(!w||typeof w!=='object') return;
     meta.writers[String(k).slice(0,60)]={name:String(w.name||'').slice(0,60),days:w.days&&typeof w.days==='object'?w.days:{},pet:normPet(w.pet),
-      mark:w.mark||null,goal:+w.goal||500,pomo:normPomo(w.pomo),devs:(Array.isArray(w.devs)?w.devs:[]).filter(x=>typeof x==='string').slice(-10),at:+w.at||0}; });
+      mark:w.mark||null,goal:+w.goal||500,pomo:normPomo(w.pomo),...(w.todo?{todo:normTodo(w.todo)}:{}),devs:(Array.isArray(w.devs)?w.devs:[]).filter(x=>typeof x==='string').slice(-10),at:+w.at||0}; });
   const sx=meta.secs&&typeof meta.secs==='object'?meta.secs:{rm:false,ft:false}; meta.secs={};
   OPT_SECS.forEach(k=>{ meta.secs[k]=sx[k]===undefined?!(k==='rm'||k==='ft'):!!sx[k]; });
   const lb=meta.labels&&typeof meta.labels==='object'?meta.labels:{}; meta.labels={};
@@ -1535,26 +1637,76 @@ function viewValid(v){ if(!v) return false; if(v.k==='scene') return !!S.meta.sc
 function viewName(v){ if(v.k==='scene') return S.meta.scenes[v.id].title; if(v.k==='ent') return S.meta.ents[v.id].name; if(v.k==='tl') return S.meta.tls.find(x=>x.id===v.id).name; if(v.k==='nt') return S.meta.nts.find(x=>x.id===v.id).name; if(v.k==='ol') return S.meta.ols.find(x=>x.id===v.id).name; if(v.k==='rm'||v.k==='ft') return S.meta[v.k+'s'].find(x=>x.id===v.id).name; if(v.k==='ss') return 'Writing sessions'; if(v.k==='prefs') return 'Settings'; if(v.k==='find') return 'Find and replace'; if(v.k==='help') return 'How sharing works'; if(v.k==='den') return S.meta.pet.name+'’s room'; if(v.k==='cont') return 'Continuity'; if(v.k==='snap') return 'Snapshots: '+S.meta.scenes[v.id].title; return 'Corkboard'; }
 
 /* ---------- pet ---------- */
+const PET_ARMS={sleepy:['M34 108 q-10 8 -8 22','M126 108 q10 8 8 22'],happy:['M34 106 q-14 2 -16 16','M126 106 q14 2 16 16'],hype:['M34 102 q-18 -6 -18 -28','M126 106 q14 2 16 16'],party:['M34 100 q-20 -8 -18 -32','M126 100 q20 -8 18 -32'],
+  scared:['M34 104 q-4 -16 12 -22','M126 104 q4 -16 -12 -22'],tense:['M34 106 q10 12 26 10','M126 106 q-10 12 -26 10'],sad:['M34 110 q-6 12 -2 26','M126 110 q6 12 2 26'],
+  love:['M34 106 q12 14 32 8','M126 106 q-12 14 -32 8'],angry:['M34 104 q-16 4 -14 20','M126 104 q16 4 14 20'],curious:['M34 108 q-10 8 -8 22','M126 106 q-2 10 -24 8'],
+  glee:['M34 102 q-18 -6 -18 -28','M126 102 q18 -6 18 -28'],laugh:['M34 106 q8 16 28 14','M126 106 q-8 16 -28 14'],cozy:['M34 108 q-10 8 -8 22','M126 108 q10 8 8 22']};
+const PET_FEEL={sleepy:'sleepy',party:'ecstatic',hype:'excited',happy:'happy',scared:'scared',tense:'tense',sad:'sad',love:'smitten',angry:'cross',curious:'curious',glee:'delighted',laugh:'in fits of laughter',cozy:'cosy'};
+// Things Inky holds or shows while reading over your shoulder (look.react): right hand, left hand, or floating.
+const REACT_R=['umbrella','popcorn','magnifier','wand'], REACT_L=['tissue','cookie','letter','cake'];
+const REACT_ART={
+  tissue:'<g class="pr"><path class="tis" d="M10 116 q6 -10 13 -4 q7 -7 13 2 l-3 18 h-20z"/><path class="tis2" d="M16 112 q4 -8 8 -2"/></g>',
+  cookie:'<g class="pr"><circle class="ckie" cx="22" cy="122" r="11"/><circle class="ckc" cx="18" cy="118" r="2"/><circle class="ckc" cx="26" cy="121" r="2"/><circle class="ckc" cx="21" cy="127" r="2"/></g>',
+  cake:'<g class="pr"><rect class="ckie" x="8" y="114" width="28" height="18" rx="3"/><rect class="icing" x="8" y="114" width="28" height="6" rx="3"/><path class="candle" d="M22 114 v-10"/><path class="flame" d="M22 103 q-3 -4 0 -8 q3 4 0 8z"/></g>',
+  letter:'<g class="pr"><rect class="env" x="6" y="112" width="32" height="22" rx="2"/><path class="envf" d="M6 112 l16 12 l16 -12"/></g>',
+  popcorn:'<g class="pr"><path class="pcb" d="M122 114 h30 l-4 30 h-22z"/><path class="pcs" d="M131 114 l2 30 M142 114 l-1 30"/><circle class="pck" cx="127" cy="112" r="5"/><circle class="pck" cx="136" cy="109" r="5.5"/><circle class="pck" cx="146" cy="112" r="5"/><circle class="pck" cx="141" cy="104" r="4"/></g>',
+  magnifier:'<g class="pr"><path class="mgh" d="M140 71 L135 86"/><circle class="mgl" cx="148" cy="62" r="12"/></g>',
+  wand:'<g class="pr"><path class="wnd" d="M142 82 L156 54"/><path class="wst" d="M156 39 l3 7 7 1 -5 5 1 7 -6 -3 -6 3 1 -7 -5 -5 7 -1z"/></g>',
+  umbrella:'<g class="pr" transform="rotate(-18 140 100)"><path class="umbs" d="M140 -4 V100 q0 8 -7 8"/><path class="umbc" d="M88 -4 Q140 -58 192 -4 Q179 -12 166 -4 Q153 -12 140 -4 Q127 -12 114 -4 Q101 -12 88 -4Z"/></g>',
+  hearts:'<g class="hearts"><path class="hrt" d="M26 46 l-7 -7 a4 4 0 0 1 7 -4.5 a4 4 0 0 1 7 4.5z"/><path class="hrt" d="M138 34 l-9 -9 a5 5 0 0 1 9 -6 a5 5 0 0 1 9 6z"/></g>',
+  sweat:'<path class="sweat" d="M128 58 q7 11 0 15 q-7 -4 0 -15z"/>',
+  excl:'<text class="mark" x="14" y="48">!</text>',
+  qmark:'<text class="mark" x="10" y="48">?</text>'
+};
 function petSVG(m,stage,look){
   look=look||(S&&S.meta&&S.meta.pet)||{}; const wear=look.wear||{}, slot=k=>wear[k]&&wear[k]!=='auto'?wear[k]:'auto';
-  const arms={sleepy:['M34 108 q-10 8 -8 22','M126 108 q10 8 8 22'],happy:['M34 106 q-14 2 -16 16','M126 106 q14 2 16 16'],hype:['M34 102 q-18 -6 -18 -28','M126 106 q14 2 16 16'],party:['M34 100 q-20 -8 -18 -32','M126 100 q20 -8 18 -32']}[m];
+  const rx=look.react||[], has=k=>rx.includes(k), busyR=REACT_R.some(has), busyL=REACT_L.some(has);
+  const arms=(PET_ARMS[m]||PET_ARMS.happy).slice();
+  if(busyL) arms[0]='M34 108 q-8 4 -12 12';
+  if(has('umbrella')) arms[1]='M126 104 q8 -2 14 -4'; else if(has('popcorn')) arms[1]='M126 108 q10 4 8 14'; else if(has('magnifier')) arms[1]='M126 104 q12 -6 12 -20'; else if(has('wand')) arms[1]='M126 102 q14 -6 16 -22';
   const pomL=(m==='hype'||m==='party')?'<g class="pomg"><circle class="pom" cx="16" cy="'+(m==='party'?66:70)+'" r="9"/><circle class="pom2" cx="12" cy="'+(m==='party'?62:66)+'" r="4"/></g>':'';
   const pomR=m==='party'?'<g class="pomg"><circle class="pom" cx="144" cy="66" r="9"/><circle class="pom2" cx="148" cy="62" r="4"/></g>':'';
-  let eyes,mouth,cheeks='<ellipse class="cheek" cx="44" cy="103" rx="7" ry="4.5"/><ellipse class="cheek" cx="116" cy="103" rx="7" ry="4.5"/>',zz='';
+  const ck=c=>'<ellipse class="cheek'+(c||'')+'" cx="44" cy="103" rx="7" ry="4.5"/><ellipse class="cheek'+(c||'')+'" cx="116" cy="103" rx="7" ry="4.5"/>';
+  const open=(ry,cy)=>'<g class="blink"><ellipse class="eye" cx="59" cy="'+(cy||90)+'" rx="7" ry="'+ry+'"/><ellipse class="eye" cx="101" cy="'+(cy||90)+'" rx="7" ry="'+ry+'"/><circle class="hl" cx="61.5" cy="'+((cy||90)-3.5)+'" r="2.4"/><circle class="hl" cx="103.5" cy="'+((cy||90)-3.5)+'" r="2.4"/></g>';
+  let eyes,mouth,cheeks=ck(),zz='',brow='',extra='';
   if(m==='sleepy'){
     eyes='<path class="pe" d="M50 90 q9 7 18 0 M92 90 q9 7 18 0"/>'; mouth='<path class="pe" d="M73 109 q7 3 14 0"/>'; cheeks='';
     zz='<g class="zz"><text x="116" y="38">z</text><text x="130" y="22">z</text></g>';
-  } else if(m==='party'){
+  } else if(m==='party'||m==='glee'){
     eyes='<path class="pe" d="M50 92 q9 -13 18 0 M92 92 q9 -13 18 0"/>';
-    mouth='<path class="pm" d="M65 102 q15 26 30 0 z"/><path class="tongue" d="M73 113 q7 8 14 0 q-7 -4 -14 0z"/>';
+    mouth=m==='party'?'<path class="pm" d="M65 102 q15 26 30 0 z"/><path class="tongue" d="M73 113 q7 8 14 0 q-7 -4 -14 0z"/>':'<path class="pm" d="M66 102 q14 20 28 0 z"/>';
+  } else if(m==='scared'||m==='tense'){
+    const r=m==='scared'?10.5:9, dx=m==='tense'?-3:0;
+    eyes='<g class="eyesw"><circle class="eyew" cx="59" cy="90" r="'+r+'"/><circle class="eyew" cx="101" cy="90" r="'+r+'"/><circle class="eye" cx="'+(59+dx)+'" cy="91" r="4.2"/><circle class="eye" cx="'+(101+dx)+'" cy="91" r="4.2"/></g>';
+    brow=m==='scared'?'<path class="pe" d="M47 74 q10 -7 20 -3 M93 71 q10 -4 20 3"/>':'<path class="pe" d="M48 75 l18 4 M112 75 l-18 4"/>';
+    mouth=m==='scared'?'<path class="pe" d="M66 111 q4 -5 7 0 q4 5 7 0 q4 -5 7 0 q4 5 7 0"/>':'<rect class="teeth" x="67" y="103" width="26" height="10" rx="3"/><path class="tline" d="M67 108 h26 M75.7 103 v10 M84.3 103 v10"/>';
+    cheeks='';
+  } else if(m==='sad'){
+    eyes='<g class="blink"><ellipse class="eye" cx="59" cy="92" rx="6.5" ry="6.5"/><ellipse class="eye" cx="101" cy="92" rx="6.5" ry="6.5"/><circle class="hl" cx="61" cy="89.5" r="2.2"/><circle class="hl" cx="103" cy="89.5" r="2.2"/></g>';
+    brow='<path class="pe" d="M48 80 L67 74 M112 80 L93 74"/>'; mouth='<path class="pe" d="M70 113 q10 -9 20 0"/>'; extra='<path class="tear" d="M53 100 q-5 9 0 12 q5 -3 0 -12z"/>'; cheeks='';
+  } else if(m==='love'){
+    const h=x=>'<path class="heye" d="M'+x+' 98 l-8.5 -8.5 a4.8 4.8 0 0 1 8.5 -5.5 a4.8 4.8 0 0 1 8.5 5.5z"/>';
+    eyes=h(59)+h(101); mouth='<path class="pe" d="M70 105 q10 9 20 0"/>'; cheeks=ck(' hot');
+  } else if(m==='angry'){
+    eyes=open(6); brow='<path class="pe" d="M47 76 L68 83 M113 76 L92 83"/>'; mouth='<path class="pe" d="M70 111 q10 -7 20 0"/>'; cheeks=ck(' hot');
+    extra='<g class="steamp"><path d="M22 58 q-6 -8 0 -16 q6 -8 0 -16"/><path d="M138 58 q6 -8 0 -16 q-6 -8 0 -16"/></g>';
+  } else if(m==='curious'){
+    eyes='<g class="blink"><ellipse class="eye" cx="59" cy="91" rx="6" ry="6"/><ellipse class="eye" cx="101" cy="90" rx="7.5" ry="9"/><circle class="hl" cx="61" cy="88.5" r="2"/><circle class="hl" cx="103.5" cy="86.5" r="2.4"/></g>';
+    brow='<path class="pe" d="M49 81 h18 M92 74 q10 -9 20 -3"/>'; mouth='<ellipse class="pm" cx="82" cy="109" rx="4.5" ry="5"/>';
+  } else if(m==='laugh'){
+    eyes='<path class="pe" d="M50 85 l14 6 l-14 6 M110 85 l-14 6 l14 6"/>';
+    mouth='<path class="pm" d="M64 102 q16 28 32 0 z"/><path class="tongue" d="M73 114 q7 7 14 0 q-7 -4 -14 0z"/>';
+    extra='<path class="tear joy" d="M43 93 q-5 7 0 10 q5 -3 0 -10z"/><path class="tear joy" d="M117 93 q-5 7 0 10 q5 -3 0 -10z"/>';
+  } else if(m==='cozy'){
+    eyes='<path class="pe" d="M50 92 q9 -8 18 0 M92 92 q9 -8 18 0"/>'; mouth='<path class="pe" d="M71 105 q9 7 18 0"/>';
   } else {
-    const ry=m==='hype'?9:7.5;
-    eyes='<g class="blink"><ellipse class="eye" cx="59" cy="90" rx="7" ry="'+ry+'"/><ellipse class="eye" cx="101" cy="90" rx="7" ry="'+ry+'"/><circle class="hl" cx="61.5" cy="86.5" r="2.4"/><circle class="hl" cx="103.5" cy="86.5" r="2.4"/></g>';
+    eyes=open(m==='hype'?9:7.5);
     mouth=m==='hype'?'<path class="pm" d="M68 104 q12 18 24 0 z"/>':'<path class="pe" d="M70 105 q10 9 20 0"/>';
   }
   const hd=slot('head'), fc=slot('face'), hn=slot('hand'), nk=slot('neck');
   const tuft=(hd==='auto'?stage<3:hd==='none')?'<path class="tuft" d="M80 26 C76 12 90 6 96 14"/>':'';
-  const glass=(fc==='auto'?stage>=2:fc==='glasses')?'<g class="glass"><circle cx="59" cy="90" r="13"/><circle cx="101" cy="90" r="13"/><path d="M72 90 h16"/></g>':(fc!=='auto'&&fc!=='none'&&PET_ART[fc]?PET_ART[fc]:'');
+  let glass=(fc==='auto'?stage>=2:fc==='glasses')?'<g class="glass"><circle cx="59" cy="90" r="13"/><circle cx="101" cy="90" r="13"/><path d="M72 90 h16"/></g>':(fc!=='auto'&&fc!=='none'&&PET_ART[fc]?PET_ART[fc]:'');
+  if(has('shades')&&!glass) glass=PET_ART.shades;
   let hat='';
   if(stage===3) hat='<path class="beret" d="M42 46 C40 12 120 12 118 46 C100 38 60 38 42 46 Z"/><circle class="beret" cx="80" cy="14" r="3.5"/>';
   if(stage>=4){
@@ -1567,15 +1719,17 @@ function petSVG(m,stage,look){
     hat='<g class="laurel"><path d="M46 46 Q80 14 114 46"/>'+leaves+'</g>';
   }
   if(hd!=='auto'){ const l=hat.indexOf('class="laurel"')>=0?hat:''; hat=hd==='laurel'?(l||hat):hd==='beret'?'<path class="beret" d="M42 46 C40 12 120 12 118 46 C100 38 60 38 42 46 Z"/><circle class="beret" cx="80" cy="14" r="3.5"/>':(PET_ART[hd]||''); }
-  const quill=(hn==='auto'?stage>=1:hn==='quill')?'<path class="quill" d="M110 34 C120 14 140 8 154 12 C152 28 130 40 112 38 Z"/><path class="qstem" d="M110 36 L152 12"/>':(hn!=='auto'&&hn!=='none'&&PET_ART[hn]?PET_ART[hn]:'');
-  const neck=nk!=='auto'&&nk!=='none'&&PET_ART[nk]?PET_ART[nk]:'';
-  return '<svg class="petsvg"'+petStyle(look)+' viewBox="0 0 160 160" role="img" aria-label="Your Inkling looks '+(m==='party'?'ecstatic':m==='hype'?'excited':m==='happy'?'happy':'sleepy')+'">'
+  const quill=busyR?'':(hn==='auto'?stage>=1:hn==='quill')?'<path class="quill" d="M110 34 C120 14 140 8 154 12 C152 28 130 40 112 38 Z"/><path class="qstem" d="M110 36 L152 12"/>':(hn!=='auto'&&hn!=='none'&&PET_ART[hn]?PET_ART[hn]:'');
+  let neck=nk!=='auto'&&nk!=='none'&&PET_ART[nk]?PET_ART[nk]:'';
+  if(has('scarf')&&!neck) neck=PET_ART.scarf;
+  const props=rx.filter(k=>k!=='umbrella'&&REACT_ART[k]).map(k=>REACT_ART[k]).join('')+(has('umbrella')?REACT_ART.umbrella:'');
+  return '<svg class="petsvg'+(has('shiver')?' shiver':'')+'"'+petStyle(look)+' viewBox="0 0 160 160" role="img" aria-label="Your Inkling looks '+(PET_FEEL[m]||'happy')+'">'
     +'<ellipse class="shadow" cx="80" cy="150" rx="40" ry="6"/>'
     +'<path class="arm" d="'+arms[0]+'"/><path class="arm" d="'+arms[1]+'"/>'+pomL+pomR
     +'<ellipse class="pdeep" cx="62" cy="141" rx="13" ry="7"/><ellipse class="pdeep" cx="98" cy="141" rx="13" ry="7"/>'
     +'<path class="pbody" d="M80 24 C112 24 134 52 134 90 C134 124 112 142 80 142 C48 142 26 124 26 90 C26 52 48 24 80 24 Z"/>'
     +'<path class="shine" d="M50 58 q8 -14 24 -17"/>'
-    +neck+tuft+cheeks+eyes+glass+mouth+hat+quill+zz+'</svg>';
+    +neck+tuft+cheeks+brow+eyes+glass+mouth+extra+hat+quill+zz+props+'</svg>';
 }
 const LINES={
   sleepy:['Zzz… write a sentence and I will wake up.','I am resting my ink. Say hello with a few words?','Quiet page, quiet me. Type something!'],
@@ -1584,7 +1738,7 @@ const LINES={
   party:['Goal smashed! Everything from here is a bonus.','Today\'s pages are in the bag!','I am so proud I could spill.']
 };
 const line=m=>pick(LINES[m]);
-function say(msg){ ui.say=msg; ui.sayAt=Date.now(); const b=$('#bubble'); if(b) b.textContent=msg; }
+function say(msg){ ui.say=msg; ui.sayAt=Date.now(); ui.sayKind=''; const b=$('#bubble'); if(b) b.textContent=msg; }
 function bump(){
   const w=$('#petBtn'); if(!w) return; const card=w.closest('.pet-card'); if(!card) return;
   card.classList.remove('hop'); void card.offsetWidth; card.classList.add('hop'); setTimeout(()=>card.classList.remove('hop'),700);
@@ -1632,6 +1786,7 @@ function credit(delta){
   if(!msg&&hr>=4&&hr<7&&!fl.early){ fl.early=1; msg=pick(['Early bird! The page is fresh and so are you.','Writing before sunrise? I brought the lamp.']); }
   else if(!msg&&(hr>=23||hr<4)&&!fl.night){ fl.night=1; msg=pick(['Writing by moonlight. I will keep the lamp on.','Night owl hours! The best ideas come out after dark.']); }
   if(msg) cheer(msg,big);
+  if(after>=g) todoTick('goal');
   checkAch();
 }
 
@@ -1644,7 +1799,7 @@ function normPet(p){
   const wear={}; ['head','face','neck','hand'].forEach(k=>{ const v=String((p.wear||{})[k]||'auto'); wear[k]=/^[a-z]{2,12}$/.test(v)?v:'auto'; });
   const got={}; Object.keys(p.got||{}).forEach(k=>{ if(/^[a-z0-9]{2,16}$/.test(k)) got[k]=+p.got[k]||Date.now(); });
   return {name:String(p.name||'Inky').slice(0,40),total:Math.max(0,+p.total||0),color:PET_COLORS.some(c=>c[0]===p.color)?p.color:'teal',wear,got,
-    flags:{early:!!(p.flags||{}).early,night:!!(p.flags||{}).night},
+    flags:{early:!!(p.flags||{}).early,night:!!(p.flags||{}).night},tasks:Math.max(0,Math.round(+p.tasks||0)),
     rank:p.rank!=null?Math.max(0,Math.min(4,Math.round(+p.rank||0))):[0,1000,10000,30000,60000].filter(x=>(+p.total||0)>=x).length-1};   // older projects keep the rank they had
 }
 const petStyle=look=>{ const c=PET_COLORS.find(x=>x[0]===(look&&look.color)); return c&&c[2]?' style="--pet:'+c[2][0]+';--pet-deep:'+c[2][1]+';--pet-ink:'+c[2][2]+'"':''; };
@@ -1660,10 +1815,11 @@ const PET_ART={
   scarf:'<g class="it"><path class="c1" d="M32 112 Q80 134 128 112 L128 124 Q80 146 32 124Z"/><path class="c1" d="M96 128 l4 26 l12 -3 l-4 -24Z"/><path class="c3" d="M44 118 l0 8 M58 123 l0 8 M72 126 l0 8 M88 126 l0 8 M104 123 l0 8 M118 118 l0 8" stroke-width="3"/></g>',
   bowtie:'<g class="it"><path class="c2" d="M80 122 L62 112 L62 134Z M80 122 L98 112 L98 134Z"/><circle class="c2" cx="80" cy="122" r="5"/></g>',
   medal:'<g class="it"><path class="c2" d="M66 106 L80 126 L94 106" fill="none" stroke-width="6"/><circle class="gold" cx="80" cy="132" r="9"/><path class="star" d="M80 126 l2 4 4 .5 -3 3 1 4 -4 -2 -4 2 1 -4 -3 -3 4 -.5Z"/></g>',
+  clipboard:'<g class="it"><rect class="c3" x="126" y="92" width="24" height="32" rx="3"/><rect class="gold" x="132" y="88" width="12" height="7" rx="2"/><path class="chain" d="M131 104 h14 M131 111 h14 M131 118 h9"/></g>',
   mug:'<g class="it"><path class="steam" d="M134 98 q-4 -6 0 -12 M142 98 q-4 -6 0 -12"/><rect class="c3" x="128" y="102" width="20" height="22" rx="4"/><path class="c3" d="M148 108 q8 0 8 6 q0 6 -8 6" fill="none" stroke-width="4"/><rect class="c1" x="128" y="108" width="20" height="5"/></g>'
 };
 const PET_ITEMS={   // id: [slot, name]
-  quill:['hand','Quill'],mug:['hand','Mug of ink'],glasses:['face','Reading glasses'],monocle:['face','Monocle'],shades:['face','Sunglasses'],
+  quill:['hand','Quill'],mug:['hand','Mug of ink'],clipboard:['hand','Clipboard'],glasses:['face','Reading glasses'],monocle:['face','Monocle'],shades:['face','Sunglasses'],
   beret:['head','Beret'],nightcap:['head','Nightcap'],sunhat:['head','Sun hat'],flower:['head','Flower'],partyhat:['head','Party hat'],crown:['head','Crown'],laurel:['head','Laurel wreath'],
   scarf:['neck','Scarf'],bowtie:['neck','Bow tie'],medal:['neck','Medal'],
   lamp:['room','Desk lamp'],rug:['room','Rug'],armchair:['room','Armchair'],mapframe:['room','Map on the wall'],shelf:['room','Bookshelf'],hourglass:['room','Hourglass']
@@ -1675,7 +1831,7 @@ function petStats(){
     sprints:mySs().filter(x=>x.done).length,pages:Object.keys(m.ents).length,
     polished:Object.values(m.scenes).filter(x=>x.status!=='draft').length,
     chDone:m.chapters.filter(c=>c.scenes.length&&c.scenes.every(id=>m.scenes[id]&&m.scenes[id].status==='final')).length,
-    early:+m.pet.flags.early,night:+m.pet.flags.night,stage:petStage()};
+    early:+m.pet.flags.early,night:+m.pet.flags.night,tasks:m.pet.tasks||0,stage:petStage()};
 }
 // [id, name, how to earn it, reward, stat, target]
 const ACH=[
@@ -1695,6 +1851,7 @@ const ACH=[
   ['polish','Polisher','Mark 10 scenes Revised or Final.','monocle','polished',10],
   ['chapter','Chapter done','Mark every scene in a chapter Final.','shelf','chDone',1],
   ['sprint10','Ten sprints','Finish 10 focus sessions.','bowtie','sprints',10],
+  ['tasks25','List maker','Tick off 25 tasks on your to-do list.','clipboard','tasks',25],
   ['goal10','Ten good days','Reach your daily goal on 10 days.','medal','goalDays',10],
   ['sprint25','Time keeper','Finish 25 focus sessions.','hourglass','sprints',25],
   ['chair','Comfy now','Write 25,000 words.','armchair','total',25000],
@@ -1719,7 +1876,7 @@ function sceneFinal(id){
   const m=S.meta, ch=m.chapters.find(c=>c.scenes.includes(id)), sc=m.scenes[id];
   if(ch&&ch.scenes.every(x=>m.scenes[x].status==='final')) cheer('“'+ch.title+'” is finished! Every scene is final.',true);
   else say(pick(['“'+sc.title+'” is final. Polished to a shine!','Another scene done. '+m.pet.name+' approves.']));
-  checkAch();
+  todoTick('fin',id); checkAch();
 }
 function greet(){   // said once when a project opens
   const d=S.meta.days, ks=Object.keys(d).filter(k=>d[k]>0).sort(), last=ks[ks.length-1]; if(!last) return;
@@ -1728,14 +1885,51 @@ function greet(){   // said once when a project opens
   else if(gap===1&&streak()>0) say('Back for day '+(streak()+1)+'? Let us keep the streak going.');
 }
 // The room behind the pet: a window that follows the time of day, a plant that grows with the streak, and what was earned.
+// While Inky reads a scene, the window shows the story instead: its time of day, weather and setting, and the room
+// takes on the scene's mood.
+let WIN_ID=0;
+function winView(place,night){
+  const dk=(a,b)=>night?b:a;
+  if(place==='sea') return '<rect x="20" y="54" width="62" height="16" fill="'+dk('#3C82B5','#1B3552')+'"/><path d="M20 58 q4 -3 8 0 t8 0 t8 0 t8 0 t8 0 t8 0 t8 0 t8 0" fill="none" stroke="#fff" stroke-opacity=".7" stroke-width="1.2"/>'
+    +'<path d="M44 54 h14 l-3 3 h-8z" fill="#5B4A3A"/><path d="M51 53 v-12 l7 10z" fill="#F4EFD8"/>';
+  if(place==='forest'){ let h=''; for(let i=0;i<7;i++){ const x=16+i*10+(i%2)*3, t=14+(i*7)%10; h+='<path d="M'+x+' 70 l6 -'+t+' l6 '+t+'z" fill="'+dk(i%2?'#2F6B45':'#3D7F52','#1E3A2A')+'"/>'; } return h; }
+  if(place==='city'){ let h=''; [[20,40,10],[29,30,9],[37,46,8],[44,26,10],[53,38,9],[61,34,11],[71,44,11]].forEach(([x,t,w],i)=>{ h+='<rect x="'+x+'" y="'+t+'" width="'+w+'" height="'+(70-t)+'" fill="'+dk('#7C8AA0','#2A2F45')+'"/>';
+      for(let y=t+4;y<66;y+=6) for(let xx=x+2;xx<x+w-2;xx+=4) if((xx+y+i)%3) h+='<rect x="'+xx+'" y="'+y+'" width="2" height="2.4" fill="'+dk('#C9D6E3','#FFD86B')+'"/>'; }); return h; }
+  if(place==='mountain') return '<path d="M20 70 L34 42 L42 52 L56 30 L70 50 L76 44 L82 54 V70Z" fill="'+dk('#8492A6','#3A4258')+'"/><path d="M52 37 L56 30 L60 37 L57.5 35 L55 38Z M32 46 L34 42 L36 46Z" fill="#fff"/>';
+  if(place==='desert') return '<path d="M20 60 Q34 52 48 60 T82 58 V70 H20Z" fill="'+dk('#E2B66B','#8A6A3A')+'"/><path d="M20 66 Q40 58 60 66 T100 64 V70 H20Z" fill="'+dk('#C9954A','#6E5230')+'"/><path d="M70 66 v-10 M70 61 h-3 v-3 M70 59 h3 v-4" stroke="#4C7A2E" stroke-width="2.4" fill="none" stroke-linecap="round"/>';
+  if(place==='space') return '<circle cx="64" cy="44" r="7" fill="#C77DDB"/><ellipse cx="64" cy="44" rx="12" ry="3" fill="none" stroke="#F4EFD8" stroke-width="1.4"/><circle cx="34" cy="58" r="3" fill="#9AD7F5"/>';
+  if(place==='castle') return '<path d="M30 70 V46 h4 v-4 h3 v4 h3 v-4 h3 v4 h4 V54 h12 V42 h4 v-4 h3 v4 h3 v-4 h3 v4 h4 V70Z" fill="'+dk('#9AA3B2','#3A4258')+'"/><path d="M63 38 v-9 l7 2.5 -7 2.5" fill="#E0607E" stroke="'+dk('#5B4A3A','#9AA3B2')+'" stroke-width=".8"/><rect x="47" y="60" width="6" height="10" rx="3" fill="#5B4A3A"/>';
+  if(place==='cave') return '<path d="M20 18 H82 V70 H20Z M28 70 Q24 50 34 36 Q44 26 56 30 Q72 32 76 48 Q80 60 74 70Z" fill="#3B3430" fill-rule="evenodd"/>';
+  return '';
+}
+function winWeather(w){
+  let h='';
+  if(w==='rain'||w==='storm'){
+    h+='<g class="cloud"><ellipse cx="34" cy="22" rx="16" ry="7"/><ellipse cx="56" cy="20" rx="18" ry="8"/><ellipse cx="76" cy="24" rx="12" ry="6"/></g>';
+    if(w==='storm') h+='<path class="bolt" d="M58 24 l-6 14 h6 l-5 13 l12 -17 h-6 l5 -10z"/>';
+    let d=''; for(let k=0;k<8;k++) for(let i=0;i<13;i++){ const x=20+i*7-3*k+12, y=-18+k*12; d+='M'+x+' '+y+' l-1.6 5 '; }
+    h+='<g class="rain"><path d="'+d+'"/></g>';
+  }
+  if(w==='snow') for(let s=0;s<2;s++){ let c=''; for(let k=0;k<6;k++) for(let i=0;i<6;i++){ const x=22+i*11+((i*5+s*7)%6), y=-14+k*16+((i*3+s*5)%8); c+='<circle cx="'+x+'" cy="'+y+'" r="'+(s?1.1:1.6)+'"/>'; } h+='<g class="snow'+(s?' s2':'')+'">'+c+'</g>'; }
+  if(w==='fog') h+='<rect class="fogb" x="12" y="34" width="80" height="9" rx="4.5"/><rect class="fogb" x="8" y="50" width="84" height="12" rx="6"/>';
+  if(w==='wind') h+='<path class="windl" d="M22 32 q14 -6 26 0 t22 -2"/><path class="windl" d="M28 48 q12 -5 24 0 t18 -1" style="animation-delay:.8s"/><ellipse cx="40" cy="40" rx="3" ry="1.6" fill="#6FA34A" class="windl" style="animation-delay:1.4s;stroke:none;fill:#6FA34A"/>';
+  return h;
+}
 function roomSVG(){
-  const st=petStats(), hr=new Date().getHours(), night=hr<6||hr>=20, dusk=hr>=17&&hr<20;
-  const sky=night?'#1F2B4D':dusk?'#F2B27A':'#A8D8F5';
-  let h='<svg viewBox="0 0 300 190" preserveAspectRatio="xMidYMax meet" class="roomsvg">'
+  const st=petStats(), hr=new Date().getHours(), rd=peekNow();
+  const t=rd&&rd.time||(hr<6||hr>=20?'night':hr>=17?'dusk':'day'), night=t==='night', dusk=t==='dusk'||t==='dawn';
+  const wx=rd&&rd.weather, place=rd&&rd.place, cloudy=wx==='rain'||wx==='storm'||wx==='fog'||wx==='snow';
+  let sky=night?'#1F2B4D':t==='dawn'?'#F7C9A8':dusk?'#F2B27A':'#A8D8F5';
+  if(wx==='storm') sky=night?'#1A2030':'#4A5568'; else if(wx==='rain') sky=night?'#26314A':'#8EA0B5'; else if(wx==='snow') sky=night?'#3A4660':'#D5DEE8'; else if(wx==='fog') sky='#C9CED4';
+  if(place==='space') sky='#0B1026'; else if(place==='cave') sky='#1A1614';
+  const cid='winc'+(++WIN_ID);
+  let h='<svg viewBox="0 0 300 190" preserveAspectRatio="xMidYMax meet" class="roomsvg"'+(rd?' data-read="'+esc([t,wx||'',place||'',rd.mood||''].join(' '))+'"':'')+'>'
     +'<rect class="floor" x="0" y="152" width="300" height="38"/>'
-    +'<g class="win"><rect x="20" y="18" width="62" height="52" rx="4" fill="'+sky+'"/>'
-    +(night?'<circle cx="64" cy="32" r="7" fill="#F4EFD8"/><circle cx="34" cy="28" r="1.4" fill="#fff"/><circle cx="44" cy="50" r="1.2" fill="#fff"/><circle cx="72" cy="56" r="1.2" fill="#fff"/>':'<circle cx="'+(dusk?40:66)+'" cy="'+(dusk?58:32)+'" r="8" fill="'+(dusk?'#F06C3B':'#FFD86B')+'"/>')
-    +'<path class="frame" d="M20 18h62v52h-62z M51 18v52 M20 44h62"/></g>';
+    +'<defs><clipPath id="'+cid+'"><rect x="20" y="18" width="62" height="52" rx="4"/></clipPath></defs>'
+    +'<g class="win"><rect x="20" y="18" width="62" height="52" rx="4" fill="'+sky+'"/><g clip-path="url(#'+cid+')">';
+  if(place==='space'||(night&&!cloudy)) h+='<circle cx="34" cy="28" r="1.4" fill="#fff"/><circle cx="44" cy="50" r="1.2" fill="#fff"/><circle cx="72" cy="56" r="1.2" fill="#fff"/><circle cx="28" cy="46" r="1" fill="#fff"/><circle cx="54" cy="24" r="1" fill="#fff"/>';
+  if(!cloudy&&place!=='space'&&place!=='cave') h+=night?'<circle cx="64" cy="32" r="7" fill="#F4EFD8"/>':'<circle cx="'+(dusk?40:66)+'" cy="'+(dusk?58:32)+'" r="'+(wx==='sun'?10:8)+'" fill="'+(dusk?'#F06C3B':'#FFD86B')+'"/>';
+  h+=winView(place,night)+winWeather(wx)+'</g><path class="frame" d="M20 18h62v52h-62z M51 18v52 M20 44h62"/></g>';
   const gd=Math.min(12,st.goalDays); for(let i=0;i<gd;i++) h+='<path class="wstar" transform="translate('+(102+i*12)+' '+(16+(i%2)*6)+') scale(.55)" d="M8 0 l2.4 5 5.6.8 -4 4 1 5.6 -5 -2.6 -5 2.6 1 -5.6 -4 -4 5.6 -.8Z"/>';
   if(owns('mapframe')) h+='<g class="mapf"><rect x="214" y="22" width="64" height="44" rx="2"/><path d="M222 54 q10 -18 20 -6 t18 -14 t12 6" fill="none"/><circle cx="252" cy="40" r="2.5"/></g>';
   if(owns('shelf')){ h+='<g class="shelf"><rect x="10" y="98" width="78" height="5"/>'; const n=Math.max(1,Math.min(9,st.chDone)); for(let i=0;i<n;i++) h+='<rect class="book b'+(i%4)+'" x="'+(13+i*8)+'" y="'+(74+(i%3)*3)+'" width="7" height="'+(24-(i%3)*3)+'" rx="1"/>'; h+='</g>'; }
@@ -1747,7 +1941,295 @@ function roomSVG(){
   h+='<g class="plant"><path class="stem" d="M276 158 v-'+ph+'"/>'+(s>=1?'<ellipse class="leaf" cx="'+(270)+'" cy="'+(156-ph*.5)+'" rx="7" ry="3.5" transform="rotate(-30 270 '+(156-ph*.5)+')"/><ellipse class="leaf" cx="282" cy="'+(154-ph*.7)+'" rx="7" ry="3.5" transform="rotate(30 282 '+(154-ph*.7)+')"/>':'')
     +(s>=3?'<ellipse class="leaf" cx="269" cy="'+(156-ph*.9)+'" rx="8" ry="4" transform="rotate(-40 269 '+(156-ph*.9)+')"/>':'')+(s>=7?'<circle class="bloom" cx="276" cy="'+(158-ph)+'" r="6"/><circle class="bloomc" cx="276" cy="'+(158-ph)+'" r="2.5"/>':'')
     +'<path class="pot" d="M264 156 h24 l-3 18 h-18Z"/></g>';
+  if(rd&&rd.mood) h+='<rect class="tint t-'+rd.mood+'" x="0" y="0" width="300" height="190"/>';
+  if(wx==='storm') h+='<rect class="flash" x="0" y="0" width="300" height="190"/>';
   return h+'</svg>';
+}
+/* ---------- Inky reads over your shoulder ---------- */
+// While you write a scene, Inky reads the passage around the caret (in the page: nothing is sent anywhere) and reacts:
+// a face and something to hold for the mood or what just happened, the story's weather, time of day and setting in the
+// room's window, and now and then a remark that uses the names in the passage. readPage() reads, peekRun() reacts.
+// Word lists: a trailing * matches any ending; :n is a weight (default 1).
+const PK_MOOD={
+  fear:'afraid fear fears feared fearful terrified terror terrifying scared scary scream* shriek* shiver* trembl* panic* dread* horror horrible horrified nightmare* creep* creak* lurk* eerie ominous gasp* monster* haunt* menac* sinister danger:.7 dangerous:.8 threat*:.7 shadow*:.5 dark:.3 darkness:.5 footsteps:.6 hiding:.5 frozen:.3 trapped:.8 doom*:.8 pounding:.6 heartbeat:.5 cold:.2',
+  action:'run:.6 ran:.7 running:.7 sprint* chase* chasing fight* fought punch* kick* sword* blade* dagger* stab* slash* swung gun gunfire shot:.6 shoot* explod* explosion* crash* attack* slam*:.6 lunge* dodg* struggl* battle* wound* escap* hurl* charg*:.4 leap*:.6 leapt:.6 jump*:.5 grab*:.6 tackl* rush*:.6 faster:.6 racing:.6 duel*',
+  sad:'sad sadly sadness cry cried cries crying tears weep* wept sob sobs sobbed sobbing grief griev* mourn* funeral* lonely loneliness loss lost:.4 sorrow* heartbr* goodbye* farewell* empty:.4 ache:.6 aching:.6 regret* hopeless* despair* broken:.5 grave:.5 died:.8 dead:.5 death:.6 miss:.3 missed:.4 alone:.5 numb:.6 hollow:.6 sigh*:.3',
+  joy:'smil* grin*:.8 joy joyful joyous happy happily happiness delight* cheer* celebrat* danc* beam*:.6 thrill* glee* wonderful bright:.3 hug* festival* party:.7 feast:.6 sunshine:.3 grateful glad excit* hooray yay laugh*:.4',
+  funny:'joke* joking laugh*:.6 snort* chuckl* giggl* ridiculous absurd silly hilarious funny teas* wink*:.6 prank*',
+  love:'love loved loves loving lover* kiss* embrac* caress* blush* darling sweetheart beloved tender* romanc* romantic longing desire* lips:.6 flirt* ador* heart:.3 cheek:.3 cheeks:.3 gaze*:.4 swoon*',
+  anger:'anger angry angrily furious fury rage raging snarl* snapped:.6 shout*:.6 yell* glare* seeth* hiss*:.5 clench*:.7 curs*:.6 damn:.5 hate hated hatred resent* bitter* scowl* growl*:.7 livid',
+  mystery:'secret* mystery mysterious strange* odd:.5 clue* puzzl* wonder*:.4 hidden:.6 riddle* unknown cipher* suspicious* suspect* locked:.5 vanish* disappear* missing:.6 whisper*:.4 hint*:.5 cryptic',
+  calm:'quiet:.6 quietly:.5 calm* peace* gentle gently softly:.5 warm:.5 warmth:.6 tea:.5 cocoa blanket* hearth* fireplace cosy cozy serene* breeze:.4 meadow*:.5 purr*',
+  sleepy:'sleepy asleep:.8 slept:.6 yawn* drows* nap:.6 napping tired:.6 exhausted:.6 pillow*:.5 sleep:.6'
+};
+const PK_WEATHER={
+  rain:'rain rains rained raining rainy rainfall raindrop* drizzl* downpour puddle* umbrella* drench* soaked damp:.5 wet:.4',
+  storm:'storm stormy storms thunder* lightning gale* tempest* hurricane* squall*',
+  snow:'snow* sleet blizzard* frost*:.7 icy:.5 ice:.4 frozen:.4 winter:.5',
+  fog:'fog foggy mist misty mists haze:.6 hazy:.6 murk*',
+  wind:'wind:.8 windy gust* howling:.5 blustery',
+  sun:'sunny sunlight sunshine sunbeam* heat:.5 hot:.4 summer:.5 blazing:.5 scorching sweltering sun:.6'
+};
+const PK_TIME={
+  night:'night nights nighttime tonight midnight moon moonlight moonlit stars:.7 starlight starry:.7 dark:.3 candle*:.4 lantern*:.3',
+  dawn:'dawn sunrise daybreak morning:.8 sunup',
+  dusk:'dusk sunset twilight evening:.8 sundown nightfall:.6',
+  day:'noon midday afternoon daylight daytime lunchtime'
+};
+const PK_PLACE={
+  sea:'sea seas ocean* tide* ship ships harbo* dock docks docked sail sails sailed sailing sailor* deck:.5 shore* beach* quay* boat* mast* gull* waves:.6 salt:.4 port:.4 anchor*:.6 lighthouse* wharf*',
+  forest:'forest* woods:.8 tree:.5 trees:.6 pine* oak:.6 oaks:.6 moss* glade* thicket* grove* branches:.4 undergrowth woodland* fern*',
+  city:'city cities street* alley* traffic sidewalk* pavement:.5 taxi* subway* skyscraper* apartment* neon downtown crowd*:.4 market*:.4 car:.4 cars:.5 bus:.5',
+  mountain:'mountain* peak*:.6 cliff* ridge* summit* valley*:.5 slope*:.5 crag* boulder*:.5',
+  desert:'desert* dune* sand:.6 sands:.6 cactus cacti oasis',
+  space:'spaceship* starship* planet* galax* orbit* asteroid* airlock* cosmos nebula* spacecraft astronaut*',
+  castle:'castle* throne* king:.5 queen:.5 knight* courtyard*:.5 battlement* drawbridge* tower:.3 banquet*:.5 palace*',
+  cave:'cave caves cavern* tunnel* underground crypt* dungeon* cellar* catacomb*'
+};
+// Things that happen: [key, pattern, face, something to hold, how big a moment it is]. Only the last two sentences count.
+const PK_EV=[
+  ['kiss',/\bkiss(?:ed|es|ing)?\b/i,'love','hearts',3],
+  ['death',/\b(?:died|dies|dying|killed|murder(?:ed|s)?|corpse|last breath|funeral|(?:is|was|were|lay|fell) dead|dead body)\b/i,'sad','tissue',3],
+  ['gun',/\b(?:gunshots?|gunfire|pistol|rifle|revolver|fired (?:a|the|again|twice)|shots? rang)\b/i,'scared','excl',3],
+  ['boom',/\b(?:explo(?:ded|sion|sions|ding)|boom|kaboom)\b/i,'scared','excl',3],
+  ['scream',/\b(?:scream(?:ed|s|ing)?|shriek(?:ed|s|ing)?)\b/i,'scared','excl',2.5],
+  ['fight',/\b(?:punch(?:ed|es)?|stab(?:bed|s)?|fought|fighting|duel(?:led)?|swords?|blades?|daggers?|brawl)\b/i,'tense','popcorn',2],
+  ['chase',/\b(?:chas(?:e|ed|es|ing)|fled|flee(?:ing|s)?|ran for|running for|raced after)\b/i,'tense','popcorn',2],
+  ['blood',/\b(?:blood(?:y|ied)?|bleed(?:ing|s)?|bled)\b/i,'scared','sweat',2],
+  ['dragon',/\bdragons?\b/i,'scared','excl',2.5],
+  ['ghost',/\b(?:ghosts?|ghostly|phantom|spectre|specter)\b/i,'scared','sweat',2],
+  ['fire',/\b(?:on fire|in flames|caught fire|ablaze|burning down)\b/i,'scared','sweat',2.5],
+  ['betray',/\bbetray(?:ed|al|s|ing)?\b/i,'angry','',2.5],
+  ['cry',/\b(?:cried|cry|cries|crying|sobb(?:ed|ing)|sobs?|wept|weep(?:ing|s)?|tears)\b/i,'sad','tissue',2],
+  ['door',/\b(?:knock(?:ed|ing|s)?|doorbell|door (?:creaked|burst|slammed|swung|flew))\b/i,'curious','qmark',1.5],
+  ['phone',/\b(?:phone (?:rang|buzzed)|the phone rang)\b/i,'curious','qmark',1.5],
+  ['letter',/\b(?:letter|envelope|telegram)\b/i,'curious','letter',1],
+  ['secret',/\bsecrets?\b/i,'curious','magnifier',1.5],
+  ['wedding',/\b(?:wedding|marry me|proposed)\b/i,'love','hearts',2],
+  ['birthday',/\bbirthday\b/i,'glee','cake',1.5],
+  ['magic',/\b(?:magic(?:al)?|spell(?:s|book)?|wand|enchant(?:ed|ment)?|sorcer(?:y|er|ess)|wizard|witch|runes?)\b/i,'glee','wand',1.5],
+  ['laugh',/\b(?:laugh(?:ed|s|ing|ter)?|giggl(?:ed|es|ing)|chuckl(?:ed|es|ing))\b/i,'laugh','',1.2],
+  ['food',/\b(?:ate|eating|dinner|supper|breakfast|feast|bread|soup|cake|pie|stew|biscuits?|cookies?|pastr(?:y|ies))\b/i,'happy','cookie',1],
+  ['asleep',/\b(?:fell asleep|yawn(?:ed|s|ing)?|dozed off)\b/i,'sleepy','',1],
+  ['cat',/\b(?:cat|cats|kitten|kittens)\b/i,'glee','',1],
+  ['dog',/\b(?:dog|dogs|puppy|puppies)\b/i,'glee','',1],
+  ['horse',/\b(?:horse|horses|pony|stallion)\b/i,'happy','',1]
+];
+const PK_NEG=new Set(['not','no','never','nothing','without','nobody','hardly','barely','nor','cannot']);
+const PK_AMP=new Set(['very','so','too','utterly','completely','deeply','terribly','really','truly','totally','incredibly']);
+const PK_FACE={fear:'scared',action:'tense',sad:'sad',joy:'glee',funny:'laugh',love:'love',anger:'angry',mystery:'curious',calm:'cozy',sleepy:'sleepy'};
+const PK_HOLD={fear:'sweat',action:'popcorn',love:'hearts',mystery:'magnifier'};
+const PK_STOP=new Set('about above after again against along always among another around away back because been before behind being below beside between could didn down every first from going great have having here into just later like little looked looking might more most much never next nothing once only other over perhaps really right said says shall should since some something still such than that their them then there these they thing things think this those though thought through toward towards under until upon very want wanted well were what when where which while whole with within without would your'.split(' '));
+let PK_LEX=null;
+function pkLex(){
+  if(PK_LEX) return PK_LEX;
+  const build=groups=>{ const ex=new Map(), st=new Map();
+    Object.keys(groups).forEach(cat=>groups[cat].split(/\s+/).forEach(w=>{ if(!w) return; let [t,wt]=w.split(':'); const star=t.endsWith('*'); if(star) t=t.slice(0,-1);
+      const m=star?st:ex; if(!m.has(t)) m.set(t,[]); m.get(t).push([cat,wt?+wt:1]); }));
+    return {ex,st}; };
+  return PK_LEX={mood:build(PK_MOOD),weather:build(PK_WEATHER),time:build(PK_TIME),place:build(PK_PLACE)};
+}
+function pkHits(L,w){
+  let out=L.ex.get(w)||[];
+  for(let i=Math.min(w.length,14);i>=3;i--){ const s=L.st.get(w.slice(0,i)); if(s){ out=out.concat(s); break; } }
+  return out;
+}
+function pkTop(o,min,lead){ let k=null,v=0,v2=0; Object.keys(o).forEach(c=>{ if(o[c]>v){ v2=v; v=o[c]; k=c; } else if(o[c]>v2) v2=o[c]; }); return v>=min&&v>=v2*(lead||1.15)?k:null; }
+// Reads the scene's visible text up to the end of the line the caret is on. Recent sentences count most: the mood
+// comes from the last dozen or so, weather, time and setting remember much further back.
+function readPage(vis,at){
+  if(at==null||at>vis.length) at=vis.length;
+  let end=vis.indexOf('\n',at); if(end<0) end=vis.length;
+  const base=Math.max(0,end-8000), txt=vis.slice(base,end), sents=[], sre=/[^.!?…\n]+(?:[.!?…]+["”’')\]]*)?/g; let m;
+  while((m=sre.exec(txt))){ if(/\p{L}/u.test(m[0])) sents.push({s:base+m.index,t:m[0]}); }
+  const n=sents.length, R={mood:null,weather:null,time:null,place:null,placeName:'',ev:null,evs:[],who:'',lead:'',cast:[],dlg:0,pace:'',echo:'',fact:null,words:wc(vis.slice(0,end)),n};
+  if(!n) return R;
+  const L=pkLex(), mood={}, wx={}, tm={}, pl={}, add=(o,k,v)=>{ o[k]=(o[k]||0)+v; };
+  sents.forEach((x,i)=>{
+    const j=n-1-i, wm=Math.pow(.5,j/3), wl=Math.pow(.5,j/14), wt=Math.pow(.5,j/8), bang=/!/.test(x.t)?1.25:1;
+    if(j>60) return;
+    const toks=x.t.toLowerCase().replace(/’/g,"'").match(/[\p{L}']+/gu)||[];
+    toks.forEach((w,k)=>{
+      const neg=toks.slice(Math.max(0,k-3),k).some(p=>PK_NEG.has(p)||/n't$/.test(p)), amp=k&&PK_AMP.has(toks[k-1])?1.5:1;
+      if(neg) return;
+      if(j<14) pkHits(L.mood,w).forEach(([c,v])=>add(mood,c,v*wm*amp*bang));
+      pkHits(L.weather,w).forEach(([c,v])=>add(wx,c,v*wl)); pkHits(L.time,w).forEach(([c,v])=>add(tm,c,v*wt)); pkHits(L.place,w).forEach(([c,v])=>add(pl,c,v*wl));
+    });
+  });
+  if((mood.funny||0)>=(mood.joy||0)*.8&&mood.funny) { mood.funny+=(mood.joy||0)*.5; delete mood.joy; }
+  if(wx.storm&&wx.rain) wx.storm+=wx.rain*.6;
+  R.mood=pkTop(mood,.9,1.2); R.weather=pkTop(wx,.8); R.time=pkTop(tm,.7); R.place=pkTop(pl,1.1);
+  // who is in it: name links to character pages, the most recent first; the last place page named
+  const ents=S.meta.ents, links=findLinks(vis).filter(l=>l.s>=base&&l.e<=end), recent=sents[Math.max(0,n-12)].s, near=sents[Math.max(0,n-3)].s;
+  const chars=links.filter(l=>(ents[l.id]||{}).type==='char'), named=l=>vis.slice(l.s,l.e);
+  chars.filter(l=>l.s>=recent).reverse().forEach(l=>{ const nm=named(l); if(!R.cast.includes(nm)) R.cast.push(nm); });
+  const lastChar=chars.filter(l=>l.s>=near).pop(); R.who=lastChar?named(lastChar):'';
+  R.lead=R.cast[0]||'';
+  const pls=links.filter(l=>(ents[l.id]||{}).type==='place'&&l.s>=sents[Math.max(0,n-40)].s); if(pls.length) R.placeName=named(pls[pls.length-1]);
+  // what just happened (the last two sentences), and who it happened near
+  sents.slice(-2).forEach((x,i)=>{
+    PK_EV.forEach(([k,re,face,hold,big])=>{ const mm=re.exec(x.t); if(!mm) return;
+      const pre=x.t.slice(Math.max(0,mm.index-24),mm.index).toLowerCase();
+      if(/\b(?:not|no|never|without|nobody|nothing)\b[^.!?]{0,14}$|n['’]t\s+(?:\w+\s+)?$/.test(pre)) return;
+      const p=x.s+mm.index, who=chars.filter(l=>l.s>=x.s&&l.s<p).pop()||chars.filter(l=>l.s>=x.s).shift();
+      R.evs.push({k,face,hold,big,at:p,sig:k+':'+x.s,j:sents.length>1?1-i:0,who:who?named(who):''}); });
+  });
+  // the biggest moment wins, the latest sentence counting more
+  const sc2=e=>e.big*(e.j?.6:1)+e.at/1e9; R.evs.sort((a,b)=>sc2(a)-sc2(b)); R.ev=R.evs[R.evs.length-1]||null;
+  // how it reads: dialogue, pace, a word used again and again
+  const tail=sents.slice(-12).map(x=>x.t).join(' '), q=(tail.match(/[“"][^”"]*[”"]/g)||[]).join('').length; R.dlg=tail.length?q/tail.length:0;
+  const last8=sents.slice(-8).map(x=>wc(x.t)), avg=last8.reduce((a,b)=>a+b,0)/last8.length;
+  if(last8.length>=6) R.pace=avg<7?'fast':avg>30?'slow':'';
+  const names=new Set(); Object.values(ents).forEach(e=>[e.name].concat(e.aliases||[]).forEach(s=>String(s).toLowerCase().split(/\s+/).forEach(w=>names.add(w))));
+  const ws=(sents.slice(-10).map(x=>x.t).join(' ').toLowerCase().replace(/’/g,"'").match(/[\p{L}']+/gu)||[]).slice(-160), cnt={};
+  ws.forEach(w=>{ if(w.length>=5&&!PK_STOP.has(w)&&!names.has(w)&&!/'/.test(w)) cnt[w]=(cnt[w]||0)+1; });
+  const echo=Object.keys(cnt).filter(w=>cnt[w]>=3).sort((a,b)=>cnt[b]-cnt[a])[0]; if(echo) R.echo=echo;
+  return R;
+}
+const PK_LINES={
+  ev:{kiss:['A kiss!? I’m covering my eyes. (I’m peeking.)','{who}! A kiss! I need a minute.','Ooh. I did not see that kiss coming. Or did I?'],
+    death:['Oh no. Oh no no no.','I need a moment after that.','{who}… I’m not ready for this.','That one hurt. I’m holding a tissue just in case.'],
+    gun:['A shot! Everybody down!','Was that a gunshot? My ink froze.'],
+    boom:['BOOM! My tuft is still shaking.','An explosion! Is everyone all right in there?'],
+    scream:['AAH! Sorry. That scream made me jump.','Who screamed?! My ink just curdled.','{who}, what is it? What did you see?'],
+    fight:['Duck, {who}!','A fight! I’m watching through my fingers.','Swing, dodge, swing! I’ve got popcorn.'],
+    chase:['Run, {who}, run!','A chase! Faster, faster!','My little legs can’t keep up!'],
+    blood:['Blood! I’m not looking. Tell me when it’s over.','Is that blood? Somebody find a bandage.'],
+    dragon:['A DRAGON. I’m hiding behind the inkpot.','Is the dragon friendly? Asking for me.'],
+    ghost:['A ghost?! I’m sleeping with the lamp on tonight.','Boo! …Sorry. Couldn’t resist.'],
+    fire:['Fire! Somebody fetch a bucket!','It’s getting hot in here. Literally.'],
+    betray:['Betrayal! I knew something was off.','How could they! I’m cross on {who}’s behalf.'],
+    cry:['Oh, {who}. Here, take a tissue.','Someone’s crying. I brought tissues.','My eyes are leaking ink.'],
+    door:['Someone’s at the door. Don’t open it! …Fine, open it.','Who’s there? I have to know.','That door. I don’t trust that door.'],
+    phone:['The phone! Who’s calling?','Answer it, {who}!'],
+    letter:['A letter! Read it out loud, please.','Ooh, a letter. Good news or bad news?','What does it say, {who}?'],
+    secret:['A secret? I won’t tell. Promise.','Ooh, {who} is hiding something.','Secrets! I’ve got my magnifying glass.'],
+    wedding:['A wedding! I’ll bring confetti.','Wedding bells! Do I get cake?'],
+    birthday:['A birthday! Is there cake? I see cake.','Happy birthday, {who}!'],
+    magic:['Magic! Sparkles everywhere.','Ooh, a spell. What does it do?','{who} can do magic? Teach me!'],
+    laugh:['Ha! I’m laughing too.','{who} laughing makes me happy.'],
+    food:['Now I’m hungry. Is there enough for me?','This scene smells delicious.','{who} is eating and I’m jealous.'],
+    asleep:['All this yawning is catching. Yaaawn.','Shh. Someone’s sleeping.'],
+    cat:['A cat! Is it fluffy? Please say it’s fluffy.'],dog:['A dog! Good dog. Very good dog.'],horse:['A horse! Giddy up.']},
+  mood:{fear:['I’m scared. Is it safe to keep reading?','The hairs on my tuft are standing up.','Something’s coming. I can feel it.','Behind you, {who}! …Probably nothing. Probably.'],
+    action:['My heart is pounding!','Go, go, go!','Edge of my seat. Literally. I’m about to fall off.'],
+    sad:['This part is sad. I’m right here.','Poor {who}.','I need a hug after this paragraph.','Sniff.'],
+    joy:['This makes me smile.','Happy scene! I’m doing a little wiggle.','Yay for {who}!'],
+    funny:['Ha! That’s funny.','I snorted ink. Thanks for that.','{who} is a riot.'],
+    love:['Is it getting warm in here? It’s the romance.','{who} is in love. I can tell.','My heart just did a little flip.'],
+    anger:['Uh oh. Someone’s angry.','{who} is fuming. I’m keeping my distance.','The tension! I could cut it with a quill.'],
+    mystery:['Something doesn’t add up. Fetching my magnifying glass.','A clue? I love a clue.','Hmm. What is {who} not telling us?'],
+    calm:['Nice and peaceful. I could nap here.','This feels cosy. Like tea and a blanket.'],
+    sleepy:['All this talk of sleep is making me drowsy.']},
+  weather:{rain:['Rain! I’ve got my umbrella.','Listen to that rain on the window.'],storm:['A storm! I’m holding on to my umbrella.','Thunder! I’m not scared. (I am a bit.)'],
+    snow:['Snow! Look at my window!','Brr. I can feel the cold through the page.'],fog:['Fog everywhere. I can’t see a thing.'],wind:['Hold on to your hats, it’s windy.'],sun:['Sunshine! Where are my sunglasses?','What a bright day.']},
+  time:{night:['Night has fallen. I’ve lit the lamp.','It’s dark out there now.'],dawn:['Morning! The light just changed.'],dusk:['The sun’s going down. Pretty sky.'],day:['Broad daylight. Nowhere to hide.']},
+  place:{sea:['We’re by the sea! I can smell the salt.','Waves! I hope nobody gets seasick.'],forest:['Into the woods. Stay on the path!'],city:['The city! So many lights.'],mountain:['Up in the mountains. Mind the edge!'],
+    desert:['Sand everywhere. I’m thirsty already.'],space:['Space! I’ve always wanted to float.'],castle:['A castle! Do I curtsy?'],cave:['It’s dark in here. Watch your head.']},
+  at:['We’re at {place}!','Off to {place}.','{place}! I like it there.'],
+  enter:['Oh, {who} is here!','Hello, {who}.','{who}! I wondered when you’d turn up.'],
+  echo:['“{word}” three times in a few lines. On purpose?','I keep reading “{word}”. Maybe swap one?'],
+  dlg:['So much talking! I can hear the voices.','Good dialogue. I’m listening in.'],
+  fast:['Short sentences. Quick. Like a heartbeat.','Fast pace! I’m out of breath.'],
+  slow:['Long, winding sentences. Very dreamy.','Ooh, lyrical.'],
+  fact:{eyes:['Wait… I thought {who}’s eyes were {fact}.','Hmm. {who}’s page says {fact} eyes.'],hair:['Wait… isn’t {who}’s hair {fact}?','Hmm. {who}’s page says {fact} hair.'],
+    age:['Hang on, isn’t {who} {fact}?','Hmm. {who}’s page says {fact}.']}
+};
+const PK_WHERE={sea:'by the sea',forest:'in the woods',city:'in the city',mountain:'in the mountains',desert:'in the desert',space:'out in space',castle:'in the castle',cave:'underground'};
+const PK_WHEN={night:'at night',dawn:'at dawn',dusk:'at dusk',day:'by day'}, PK_WX={rain:'in the rain',storm:'in a storm',snow:'in the snow',fog:'in the fog',wind:'in the wind',sun:'in the sun'};
+const PK_FEEL={fear:'Something’s wrong, I can tell.',action:'And it’s all go.',sad:'And it’s sad.',joy:'And everyone’s happy.',funny:'And it’s funny.',love:'And there’s romance.',anger:'And someone’s cross.',mystery:'And there’s a mystery.',calm:'All peaceful.',sleepy:'Sleepily.'};
+function pkFill(list,v){
+  const ok=list.filter(s=>(s.match(/\{(\w+)\}/g)||[]).every(t=>v[t.slice(1,-1)]));
+  return ok.length?pick(ok).replace(/\{(\w+)\}/g,(_,k)=>v[k]):'';
+}
+const peekOn=()=>LOOK.peek!==false&&!!ui.view&&ui.view.k==='scene';
+const peekNow=()=>peekOn()&&ui.peek&&ui.peek.id===ui.view.id?ui.peek.r:null;
+// Inky's face and what it holds, from what it has read (null when it is not reading).
+function peekFace(r){
+  r=r||peekNow(); if(!r) return null;
+  let face=null; const hold=[];
+  const ev=r.ev;   // a big moment shows on the face; a small one only puts something in Inky's hands
+  if(ev&&(ev.big>=2||!r.mood)){ face=ev.face; if(ev.hold) hold.push(ev.hold); }
+  else if(r.mood){ face=PK_FACE[r.mood]; if(ev&&ev.hold) hold.push(ev.hold); else if(PK_HOLD[r.mood]) hold.push(PK_HOLD[r.mood]); }
+  if((r.weather==='rain'||r.weather==='storm')&&!hold.some(k=>REACT_R.includes(k))) hold.push('umbrella');
+  if(r.weather==='snow') hold.push('scarf','shiver');
+  if(r.weather==='sun'&&!face) hold.push('shades');
+  if(!face&&r.time==='night'&&!r.weather) face='cozy';
+  return {m:face,react:hold};
+}
+function petNow(){ const md=curMood(), f=peekFace(); return {m:f&&f.m||md,react:f?f.react:[]}; }
+function petLook(react){ return react&&react.length?Object.assign({},S.meta.pet,{react}):null; }
+// Redraws the pet and the room when what Inky shows has changed.
+function paintPet(force){
+  const f=petNow(), st=petStage(), r=peekNow(), sig=f.m+'|'+st+'|'+f.react.join(',')+'|'+(r?[r.weather,r.time,r.place,r.mood].join(','):'');
+  if(!force&&sig===ui.petSig) return; ui.petSig=sig;
+  const art=$('#petArt'); if(art) art.innerHTML=petSVG(f.m,st,petLook(f.react));
+  const card=$('.pet-card'); if(card) card.className='pet-card m-'+f.m+(card.classList.contains('reading')?' reading':'');
+  const room=$('#petRoom'); if(room) room.innerHTML=roomSVG();
+  const pp=$('#peekPet'); if(pp){ pp.innerHTML=petSVG(f.m,st,petLook(f.react)); pp.className='peek-pet m-'+f.m; }
+}
+function peekSay(msg){
+  say(msg); ui.sayKind='peek'; const pk=ui.peek; if(pk) pk.lineAt=ui.sayAt;
+  const b=$('#peekB'); if(b){ b.textContent=msg; b.hidden=false; clearTimeout(ui.pkB); ui.pkB=setTimeout(()=>{ b.hidden=true; },7000); }
+}
+// mode: 'open' (a scene was just opened: say where we are), 'type' (the writer paused) or 'move' (the caret moved).
+function peekRun(mode){
+  if(!S||!peekOn()) return; const v=ui.view, ed=$('#ed'); if(!ed) return;
+  const vis=plainText(getText(ed)), at=peekCaret(ed), r=readPage(vis,at);
+  let pk=ui.peek; if(!pk||pk.id!==v.id) pk=ui.peek={id:v.id,said:{},seen:new Set(),r:null,lineAt:0};
+  const prev=pk.r; pk.r=r; ui.pkAt=Date.now();
+  r.fact=peekFacts(v.id,at==null?vis.length:at);
+  if(mode==='type'){ const card=$('.pet-card'); if(card){ card.classList.add('reading'); clearTimeout(ui.pkRd); ui.pkRd=setTimeout(()=>card.classList.remove('reading'),1400); } }
+  if(mode!=='type'||!prev){ r.evs.forEach(e=>pk.seen.add(e.sig)); paintPet(); if(mode==='open') peekWhere(r); return; }
+  paintPet();
+  const t=peekLine(r,prev,pk);   // a remark, and how long until a waiting one (something that happened, a fact) can be made
+  if(t.s) peekSay(t.s);
+  if(t.wait){ clearTimeout(ui.pkT); ui.pkT=setTimeout(()=>{ if(ui.view===v) peekRun('type'); },t.wait+100); }
+}
+// The caret's place in the visible text (with line breaks), or null when the editor does not have it.
+function peekCaret(ed){
+  const sel=getSelection(); if(!sel.rangeCount||!ed.contains(sel.focusNode)) return null;
+  const rg=document.createRange(); rg.selectNodeContents(ed); rg.setEnd(sel.focusNode,sel.focusOffset);
+  const d=document.createElement('div'); d.appendChild(rg.cloneContents()); return plainText(getText(d)).length;
+}
+function peekLine(r,prev,pk){
+  const now=Date.now(), since=now-pk.lineAt, cool=k=>now-(pk.said[k]||0)>240000, out=[];
+  const quiet=ui.sayKind!=='peek'?8000-(now-ui.sayAt):0;   // a cheer or milestone was just said
+  if(r.words<25&&!r.evs.length) return {};
+  const fresh=r.evs.filter(e=>!pk.seen.has(e.sig)), ev=fresh[fresh.length-1];   // sorted, biggest last
+  if(ev&&cool('ev:'+ev.k)) out.push(['ev:'+ev.k,PK_LINES.ev[ev.k],{who:ev.who||r.who},5000,()=>fresh.forEach(e=>pk.seen.add(e.sig))]);
+  const f=r.fact; if(f&&cool('fact:'+f.key)) out.push(['fact:'+f.key,PK_LINES.fact[f.attr]||PK_LINES.fact.eyes,{who:f.who,fact:f.fact},10000]);
+  if(r.mood&&r.mood!==prev.mood&&cool('m:'+r.mood)) out.push(['m:'+r.mood,PK_LINES.mood[r.mood],{who:r.who||r.lead},20000]);
+  if(r.weather&&r.weather!==prev.weather&&cool('w:'+r.weather)) out.push(['w:'+r.weather,PK_LINES.weather[r.weather],{},20000]);
+  if(r.placeName&&r.placeName!==prev.placeName&&cool('at:'+r.placeName)) out.push(['at:'+r.placeName,PK_LINES.at,{place:r.placeName},25000]);
+  else if(r.place&&r.place!==prev.place&&cool('s:'+r.place)) out.push(['s:'+r.place,PK_LINES.place[r.place],{},25000]);
+  if(r.time&&r.time!==prev.time&&cool('t:'+r.time)) out.push(['t:'+r.time,PK_LINES.time[r.time],{},25000]);
+  const nw=r.cast.find(c=>!prev.cast.includes(c)); if(nw&&cool('c:'+nw)) out.push(['c:'+nw,PK_LINES.enter,{who:nw},40000]);
+  if(r.echo&&r.echo!==prev.echo&&cool('e:'+r.echo)) out.push(['e:'+r.echo,PK_LINES.echo,{word:r.echo},45000]);
+  if(r.pace&&r.pace!==prev.pace&&cool('pace:'+r.pace)) out.push(['pace:'+r.pace,PK_LINES[r.pace],{},90000]);
+  if(r.dlg>.55&&prev.dlg<=.55&&cool('dlg')) out.push(['dlg',PK_LINES.dlg,{},90000]);
+  let wait=0, said='';
+  const urgent=k=>k.startsWith('ev:')||k.startsWith('fact:');
+  for(const [k,list,vars,gap,done] of out){
+    if(said){ if(urgent(k)) wait=wait||gap; continue; }   // said something: come back for the next waiting remark
+    if(quiet>0||since<gap){ if(urgent(k)) wait=Math.max(wait,quiet,gap-since); continue; }
+    const s=pkFill(list,vars); if(s){ pk.said[k]=now; if(done) done(); said=s; wait=0; } }
+  return {s:said,wait:wait>0&&wait<15000?wait:0};
+}
+// Just after a scene opens: "Where were we? Mara and Tobias, by the sea, at night, in the rain."
+function peekWhere(r){
+  if(r.words<40||Date.now()-ui.sayAt<3000) return;
+  const who=r.cast.slice(0,2).join(' and '), parts=[who,r.placeName?'at '+r.placeName:PK_WHERE[r.place],PK_WHEN[r.time],PK_WX[r.weather]].filter(Boolean);
+  if(parts.length<2&&!(parts.length&&r.mood)) return;
+  let s='Where were we? '+parts.join(', ')+'.'; s=s.replace('? at ','? At ').replace('? by ','? By ').replace('? in ','? In ').replace('? out ','? Out ').replace('? underground','? Underground');
+  if(r.mood&&PK_FEEL[r.mood]) s+=' '+PK_FEEL[r.mood];
+  peekSay(s);
+}
+// Continuity facts close to the caret: Inky notices "green eyes" on someone whose page says blue.
+function peekFacts(id,at){
+  const x=contCheck().find(c=>c.kind==='fact'&&c.scene===id&&c.s<=at&&c.s>=at-400);
+  if(!x) return null; const e=S.meta.ents[x.ent]; if(!e) return null;
+  return {key:contKey(x),who:e.name,attr:x.attr,fact:x.fact};
 }
 // Co-writers' pets, when they are sprinting at the same time as you.
 function paintPals(){
@@ -1773,6 +2255,8 @@ function renderDen(el){
     +'<span class="sec-l">Colour</span><div class="swatches">'+PET_COLORS.map(c=>'<button class="sw'+(p.color===c[0]?' on':'')+'" data-color="'+c[0]+'" aria-label="'+c[1]+'" title="'+c[1]+'"'+(c[2]?' style="--c:'+c[2][0]+'"':'')+'></button>').join('')+'</div>'
     +'<span class="sec-l">How chatty</span><div class="seg">'+[['chatty','Chatty'],['quiet','Only big moments'],['off','Quiet']].map(o=>'<button data-talk="'+o[0]+'"'+((LOOK.petTalk||'chatty')===o[0]?' class="on"':'')+'>'+o[1]+'</button>').join('')+'</div>'
     +'<label class="ck"><input type="checkbox" id="denConf"'+(LOOK.confetti!==false?' checked':'')+'>Confetti for big moments</label>'
+    +'<label class="ck"><input type="checkbox" id="denPeek"'+(LOOK.peek!==false?' checked':'')+'>Reads over your shoulder</label>'
+    +'<p class="fine">While you write, '+esc(p.name)+' reads the lines around the cursor and reacts: the weather, time of day and place show in the window, and the mood and what happens show on '+esc(p.name)+'’s face. The reading happens on this '+(DESK?'computer':'device')+'; nothing is sent anywhere.</p>'
     +'<p class="fine">Ranks follow this project’s novel length goal ('+fmt(S.meta.target)+' words): Inkling at 5%, Scribe at 25%, Bard at 50%, Laureate at 100%. A rank, once reached, stays.</p>'
     +'<p class="fine">'+esc(p.name)+' and everything earned belong to you'+(DESK?', on every project you share':'')+'. Chattiness and confetti are set per '+(DESK?'computer':'browser')+'.</p></div></section>'
     +'<section class="pf"><h2>Wardrobe</h2><p class="fine">“Auto” follows '+esc(p.name)+'’s rank. Earn more by writing.</p>'
@@ -1789,8 +2273,9 @@ function renderDen(el){
     else if(t){ LOOK.petTalk=t.dataset.talk; saveLook(); renderDen(el); }
   };
   $('#denConf',el).addEventListener('change',e=>{ LOOK.confetti=e.target.checked; saveLook(); });
+  $('#denPeek',el).addEventListener('change',e=>{ LOOK.peek=e.target.checked; saveLook(); ui.peek=null; ui.pkOpen=null; paintPet(true); });
 }
-function updatePetArt(){ const a=$('#petArt'); if(a) a.innerHTML=petSVG(curMood(),petStage()); const r=$('#petRoom'); if(r) r.innerHTML=roomSVG(); }
+function updatePetArt(){ paintPet(true); }
 
 /* ---------- drag to reorder ---------- */
 // dragSort(root, {item, handle?, zones?, grid?, drop(el, beforeEl|null, zoneEl)}): mouse drags after a few pixels,
@@ -1955,10 +2440,8 @@ function updateStats(){
   set('#stageTag',STAGES[st].n);
   const md=curMood();
   if(md!==ui.mood||st!==ui.stage){
-    ui.mood=md; ui.stage=st;
-    const art=$('#petArt'); if(art) art.innerHTML=petSVG(md,st);
-    const card=$('.pet-card'); if(card) card.className='pet-card m-'+md;
-    if(Date.now()-ui.sayAt>4500) say(line(md));
+    ui.mood=md; ui.stage=st; paintPet();
+    if(Date.now()-ui.sayAt>4500&&!(peekNow()||{}).mood) say(line(md));
   }
 }
 
@@ -1967,7 +2450,7 @@ function go(v,o){
   o=o||{};
   if(!viewValid(v)) v=firstView();
   if(ui.view&&!(ui.view.k===v.k&&ui.view.id===v.id)&&o.push!==false){ ui.hist.push(ui.view); if(ui.hist.length>40) ui.hist.shift(); }
-  ui.view=v; ui.tab='write'; ui.rename=null; ui.pop=false;
+  ui.view=v; ui.tab='write'; ui.rename=null; ui.pop=false; if(v.k!=='scene') ui.pkOpen=null;
   renderBinder(); renderMain(); renderInspector(); syncTab(); hereSoon();
   if(v.flash){
     const el=document.querySelector('#ed .ent[data-ent="'+v.flash+'"]');
@@ -2229,7 +2712,8 @@ function renderScene(el,v){
     +(m.sample?'<div class="banner"><span>This is a sample project, so you can try the links and the pet. '+(DESK?'Choose <b>File → New project</b> when you are ready for your own.':'Open the menu and choose <b>Start a blank project</b> when you are ready for your own.')+'</span><button class="btn sm" id="bnX">Dismiss</button></div>':'')
     +'<div class="here-ban" id="hereBan" role="status" hidden></div>'
     +'<div class="sheet-wrap" id="sheetWrap"><div class="stk-layer" id="stkLayer"></div><div class="sheet"><div id="ed" class="editor" role="textbox" aria-multiline="true" aria-label="Scene text" spellcheck="'+(LOOK.spell?'true':'false')+'" data-ph="Start writing. Names you have pages for will link automatically."></div></div></div>'
-    +'<p class="hint">Highlighted names are linked. Click one to open its page, or move through it with the arrow keys to edit.</p>';
+    +'<p class="hint">Highlighted names are linked. Click one to open its page, or move through it with the arrow keys to edit.</p>'
+    +(LOOK.peek!==false?'<div class="peek" id="peek"><div class="peek-b" id="peekB" role="status" hidden></div><button class="peek-pet" id="peekPet" aria-label="'+esc(m.pet.name)+' is reading along"></button></div>':'');
   const ed=$('#ed'); ed.innerHTML=renderText(d.text);
   ed.setAttribute('contenteditable','true');
   try{ document.execCommand('styleWithCSS',false,false); }catch(e){}
@@ -2261,6 +2745,10 @@ function renderScene(el,v){
     if(rep){ e.preventDefault(); document.execCommand('insertText',false,rep); }
   });
   ed.addEventListener('click',e=>{ const t=e.target.closest('.ent'); if(t&&getSelection().isCollapsed) go({k:'ent',id:t.dataset.ent}); });
+  const moved=()=>{ clearTimeout(ui.pkM); ui.pkM=setTimeout(()=>peekRun('move'),900); };   // Inky re-reads where the caret now is
+  ed.addEventListener('mouseup',moved); ed.addEventListener('keyup',e=>{ if(/^(Arrow|Page|Home|End)/.test(e.key)) moved(); });
+  const pp=$('#peekPet'); if(pp){ pp.addEventListener('click',()=>{ const b=$('#peekB'); b.textContent=ui.say||line(curMood()); b.hidden=!b.hidden; }); paintPet(true); }
+  const fresh=ui.pkOpen!==v.id; ui.pkOpen=v.id; setTimeout(()=>{ if(ui.view===v) peekRun(fresh?'open':'move'); },350);
   const tt=$('#sceneTitle'); tt.addEventListener('input',()=>{ S.meta.scenes[v.id].title=tt.value||'Untitled scene'; dirty('meta'); renderBinder(); });
   $('#sceneStatus').addEventListener('change',e=>{ S.meta.scenes[v.id].status=e.target.value; dirty('meta'); renderBinder(); if(e.target.value==='final') sceneFinal(v.id); else checkAch(); });
   $('#focusBtn').addEventListener('click',()=>{ ui.focus=!ui.focus; syncTab(); renderMain(); });
@@ -2373,6 +2861,7 @@ function onType(id,ed){
   const bw=document.querySelector('[data-wc="'+id+'"]'); if(bw) bw.textContent=fmt(w);
   credit(delta); updateStats();
   clearTimeout(ui.rl); ui.rl=setTimeout(()=>relinkEditor(false),500);
+  if(LOOK.peek!==false){ clearTimeout(ui.pkM); clearTimeout(ui.pkT); ui.pkT=setTimeout(()=>peekRun('type'),Date.now()-(ui.pkAt||0)>6000?150:1100); }
 }
 function updateSceneChips(){
   const box=$('#sceneChips'); if(!box||ui.view.k!=='scene') return;
@@ -3735,6 +4224,115 @@ function startTour(force){
 }
 function endTour(){ ['#tour','#tourRing'].forEach(q=>{ const x=$(q); if(x) x.remove(); }); if(ui.tourResize){ removeEventListener('resize',ui.tourResize); ui.tourResize=null; } }
 
+/* ---------- today's to-do list ---------- */
+// meta.todo = {d: day, items:[{id, text, done, old, auto, sc, c}]}. Personal, like the daily goal (it follows the
+// writer on a shared project). On a new day finished tasks go and unfinished ones carry over (old: from an earlier day).
+// auto: 'goal' ticks itself when the daily goal is reached, 'sprint' when a focus session ends, 'fin' when scene sc is
+// marked Final. c: already counted towards Inky's List maker achievement.
+const TODO_AUTO={goal:'Ticks itself when you reach today’s goal',sprint:'Ticks itself when a focus session ends',fin:'Ticks itself when the scene is marked Final'};
+function normTodo(t){
+  t=t&&typeof t==='object'?t:{};
+  return {d:/^\d{4}-\d{2}-\d{2}$/.test(t.d||'')?t.d:todayKey(),
+    items:(Array.isArray(t.items)?t.items:[]).filter(x=>x&&x.id).slice(0,40).map(x=>{ const o={id:String(x.id).slice(0,24),text:String(x.text||'').slice(0,200),done:!!x.done};
+      if(x.old) o.old=true; if(TODO_AUTO[x.auto]) o.auto=x.auto; if(x.auto==='fin'&&x.sc) o.sc=String(x.sc); if(x.c) o.c=1; return o; })};
+}
+function todoRoll(){
+  const t=S.meta.todo, k=todayKey(); if(t.d===k) return false;
+  t.items=t.items.filter(x=>!x.done&&!(x.auto==='fin'&&!S.meta.scenes[x.sc])); t.items.forEach(x=>{ x.old=true; }); t.d=k; dirty('meta'); return true;
+}
+function todoDone(x){
+  x.done=true; if(!x.c){ x.c=1; S.meta.pet.tasks=(S.meta.pet.tasks||0)+1; }
+  const it=S.meta.todo.items; if(it.length>=2&&it.every(y=>y.done)) cheer(pick(['Everything on today’s list is done!','To-do list: cleared. '+S.meta.pet.name+' is impressed.','Every task ticked off. What a day!']));
+  checkAch();
+}
+// Ticks the automatic tasks of one kind (called by credit(), pmEnd() and sceneFinal()).
+function todoTick(kind,sc){
+  if(!S||!S.meta.todo) return; todoRoll(); let n=0;
+  S.meta.todo.items.forEach(x=>{ if(!x.done&&x.auto===kind&&(kind!=='fin'||x.sc===sc)){ todoDone(x); n++; } });
+  if(n){ dirty('meta'); drawTodo(n); }
+}
+function todoIdeas(){
+  const m=S.meta, it=m.todo.items, v=ui.view, out=[], has=t=>it.some(x=>x.text.toLowerCase()===t.toLowerCase());
+  if(!it.some(x=>x.auto==='goal')&&todayWords()<m.goal) out.push({text:'Write '+fmt(m.goal)+' words',auto:'goal'});
+  if(!it.some(x=>x.auto==='sprint')) out.push({text:'Do a focus sprint',auto:'sprint'});
+  if(v&&v.k==='scene'&&m.scenes[v.id]&&m.scenes[v.id].status!=='final'&&!it.some(x=>x.auto==='fin'&&x.sc===v.id)) out.push({text:'Finish “'+trunc(m.scenes[v.id].title,30)+'”',auto:'fin',sc:v.id});
+  ['Plan the next scene','Fill in a story page','Read back yesterday’s pages'].forEach(t=>{ if(!has(t)) out.push({text:t}); });
+  return out.slice(0,4);
+}
+function drawTodo(justTicked){
+  const box=$('#tdBox'); if(!box) return; todoRoll();
+  const t=S.meta.todo, done=t.items.filter(x=>x.done).length, ideas=t.items.length<5?todoIdeas():[];
+  if(todayWords()>=S.meta.goal&&t.items.some(x=>!x.done&&x.auto==='goal')){ t.items.forEach(x=>{ if(!x.done&&x.auto==='goal') todoDone(x); }); dirty('meta'); }
+  const n=$('#tdN'); if(n) n.textContent=t.items.length?done+' of '+t.items.length+' done':'';
+  box.innerHTML='<ul class="td-list" id="tdList">'+t.items.map(x=>'<li class="td'+(x.done?' done':'')+'" data-id="'+x.id+'"><span class="td-grip" title="Drag to reorder" aria-hidden="true">'+ico('dots',12)+'</span>'
+      +'<input type="checkbox" class="td-ck"'+(x.done?' checked':'')+' aria-label="Done: '+esc(x.text)+'">'
+      +'<input class="td-t" value="'+esc(x.text)+'" maxlength="200" aria-label="Task">'
+      +(x.old&&!x.done?'<i class="td-old" title="Carried over from an earlier day"></i>':'')+(x.auto&&!x.done?'<span class="td-auto" title="'+esc(TODO_AUTO[x.auto])+'">auto</span>':'')
+      +'<button class="ibtn" data-td="del" aria-label="Delete task" title="Delete task">'+ico('x',13)+'</button></li>').join('')+'</ul>'
+    +'<input class="td-new" id="tdNew" maxlength="200" placeholder="Add a task and press Enter" aria-label="New task">'
+    +(ideas.length?'<div class="td-ideas">'+ideas.map((x,i)=>'<button class="td-idea" data-idea="'+i+'"'+(x.auto?' title="'+esc(TODO_AUTO[x.auto])+'"':'')+'>+ '+esc(x.text)+'</button>').join('')+'</div>':'')
+    +(done?'<div class="td-foot"><button class="btn sm" data-td="clear">Clear finished</button></div>':'');
+  box._ideas=ideas;
+  if(justTicked) box.querySelectorAll('.td.done').forEach(li=>li.classList.add('just'));
+}
+function bindTodo(){
+  const box=$('#tdBox'); if(!box) return; const T2=()=>S.meta.todo, find=el=>{ const li=el.closest('.td'); return li&&T2().items.find(x=>x.id===li.dataset.id); };
+  const add=(o)=>{ const t=T2(); if(t.items.length>=40){ toast('That’s a long list! Finish a few first.',{plain:true}); return false; }
+    t.items.push(Object.assign({id:uid('td_'),text:o.text.slice(0,200),done:false},o.auto?{auto:o.auto}:{},o.sc?{sc:o.sc}:{})); dirty('meta'); return true; };
+  box.addEventListener('change',e=>{ if(!e.target.classList.contains('td-ck')) return; const x=find(e.target); if(!x) return;
+    if(e.target.checked){ todoDone(x); dirty('meta'); drawTodo(); const li=box.querySelector('.td[data-id="'+x.id+'"]'); if(li) li.classList.add('just'); }
+    else { x.done=false; dirty('meta'); drawTodo(); } });
+  box.addEventListener('input',e=>{ if(!e.target.classList.contains('td-t')) return; const x=find(e.target); if(!x) return; x.text=e.target.value.slice(0,200); dirty('meta'); });
+  box.addEventListener('focusout',e=>{ if(!e.target.classList.contains('td-t')) return; const x=find(e.target); if(x&&!x.text.trim()){ T2().items=T2().items.filter(y=>y!==x); dirty('meta'); setTimeout(drawTodo,0); } });
+  box.addEventListener('keydown',e=>{
+    if(e.key!=='Enter') return;
+    if(e.target.id==='tdNew'){ e.preventDefault(); const v=e.target.value.trim(); if(!v) return; if(add({text:v})){ drawTodo(); const nb=$('#tdNew'); if(nb) nb.focus(); } }
+    else if(e.target.classList.contains('td-t')){ e.preventDefault(); const nb=$('#tdNew'); if(nb) nb.focus(); }
+  });
+  box.addEventListener('click',e=>{
+    const b=e.target.closest('[data-td],[data-idea]'); if(!b) return;
+    if(b.dataset.idea!=null){ const o=(box._ideas||[])[+b.dataset.idea]; if(o&&add(o)) drawTodo(); return; }
+    if(b.dataset.td==='del'){ const x=find(b); if(x){ T2().items=T2().items.filter(y=>y!==x); dirty('meta'); drawTodo(); } }
+    else if(b.dataset.td==='clear'){ T2().items=T2().items.filter(y=>!y.done); dirty('meta'); drawTodo(); }
+  });
+  dragSort(box,{item:'.td',handle:'.td-grip',drop:(it,ref)=>{ if(moveInList(T2().items,it.dataset.id,ref&&ref.dataset.id)){ dirty('meta'); drawTodo(); } }});
+}
+
+/* ---------- sidebar widths ---------- */
+// Drag the edge of the binder or of the Inkling panel to widen it (or focus the edge and use the arrow keys);
+// double-click an edge to put it back. Kept per device, like the rest of the appearance (LOOK.bw, LOOK.iw).
+const SIDES={bw:{def:272,min:200,max:620,el:'#szL',dir:1,label:'binder'},iw:{def:308,min:260,max:640,el:'#szR',dir:-1,label:'Inkling panel'}};
+const sideWant=k=>{ const v=+LOOK[k]; return v>0?v:SIDES[k].def; };
+function sideRoom(k){ const o=k==='bw'?'iw':'bw'; return Math.max(SIDES[k].min,Math.min(SIDES[k].max,innerWidth-Math.min(sideWant(o),SIDES[o].max)-440)); }
+const sideW=k=>Math.round(Math.max(SIDES[k].min,Math.min(sideWant(k),sideRoom(k))));
+function applySides(){
+  const r=document.documentElement;
+  Object.keys(SIDES).forEach(k=>{ const w=sideW(k); r.style.setProperty(k==='bw'?'--bw':'--iw',w+'px');
+    const h=$(SIDES[k].el); if(h){ h.setAttribute('aria-valuenow',w); h.setAttribute('aria-valuemin',SIDES[k].min); h.setAttribute('aria-valuemax',sideRoom(k)); } });
+}
+function setSide(k,w){ LOOK[k]=Math.round(Math.max(SIDES[k].min,Math.min(w,sideRoom(k)))); applySides(); }
+function bindSizers(){
+  Object.keys(SIDES).forEach(k=>{
+    const o=SIDES[k], h=$(o.el); if(!h) return;
+    h.addEventListener('pointerdown',e=>{
+      if(e.button!==0) return; e.preventDefault(); const x0=e.clientX, w0=sideW(k);
+      try{ h.setPointerCapture(e.pointerId); }catch(_){}
+      h.classList.add('on'); document.body.classList.add('sizing');
+      const mv=ev=>setSide(k,w0+(ev.clientX-x0)*o.dir);
+      const up=()=>{ h.removeEventListener('pointermove',mv); h.removeEventListener('pointerup',up); h.removeEventListener('pointercancel',up);
+        h.classList.remove('on'); document.body.classList.remove('sizing'); saveLook(); };
+      h.addEventListener('pointermove',mv); h.addEventListener('pointerup',up); h.addEventListener('pointercancel',up);
+    });
+    h.addEventListener('dblclick',()=>{ delete LOOK[k]; saveLook(); });
+    h.addEventListener('keydown',e=>{
+      const d={ArrowLeft:-16,ArrowRight:16}[e.key];
+      if(d){ e.preventDefault(); setSide(k,sideW(k)+d*o.dir); saveLook(); }
+      else if(e.key==='Home'||e.key==='Escape'){ e.preventDefault(); delete LOOK[k]; saveLook(); }
+    });
+  });
+  addEventListener('resize',applySides);
+}
+
 /* ---------- settings ---------- */
 // Appearance is per device (localStorage), not per project: theme, writing font, line spacing, page width, spellcheck.
 const LOOK_DEF={theme:'system',font:'literata',lh:1.8,width:'standard',spell:true};
@@ -3748,6 +4346,7 @@ function applyLook(){
   if(LOOK.theme==='light'||LOOK.theme==='dark') r.dataset.theme=LOOK.theme; else delete r.dataset.theme;
   r.style.setProperty('--ed-font',f[2]); r.style.setProperty('--ed-lh',String(LOOK.lh)); r.style.setProperty('--ed-w',(WIDTHS[LOOK.width]||WIDTHS.standard)[1]+'px');
   const ed=$('#ed'); if(ed) ed.spellcheck=!!LOOK.spell;
+  applySides();
 }
 function saveLook(){ try{ localStorage.setItem('inkling:look',JSON.stringify(LOOK)); }catch(e){} applyLook(); }
 applyLook();
@@ -3762,7 +4361,9 @@ async function renderPrefs(el){
     +'<span class="sec-l">Text size</span><div class="pf-row"><button class="btn sm" data-fs="-1">A−</button><b class="mono" id="pfFs">'+ui.fs+' px</b><button class="btn sm" data-fs="1">A+</button></div>'
     +'<span class="sec-l">Line spacing</span>'+seg('lh',[[1.5,'Tight'],[1.8,'Comfortable'],[2,'Double'],[2.3,'Airy']])
     +'<span class="sec-l">Page width</span>'+seg('width',Object.keys(WIDTHS).map(k=>[k,WIDTHS[k][0]]))
-    +'<p class="pf-sample" id="pfSample">Ilsa Verrin stepped off the ferry with one bag, one coat, and no plan she was willing to say aloud.</p></section>'
+    +'<p class="pf-sample" id="pfSample">Ilsa Verrin stepped off the ferry with one bag, one coat, and no plan she was willing to say aloud.</p>'
+    +'<span class="sec-l">Side panels</span><div class="pf-row"><span class="fine" style="margin:0">Drag the edge of the binder or of the Inkling panel to make it wider or narrower. Double-click an edge to put it back.</span>'
+    +(LOOK.bw||LOOK.iw?'<button class="btn sm" data-pf="sides">Reset widths</button>':'')+'</div></section>'
     +'<section class="pf"><h2>Writing</h2><label class="ck"><input type="checkbox" data-look="spell"'+(LOOK.spell?' checked':'')+'>Check spelling as I type</label>'
     +'<label class="ck"><input type="checkbox" data-look="smart"'+(LOOK.smart!==false?' checked':'')+'>Curly quotes and em dashes as I type (“ ” ‘ ’ and -- becomes —)</label>'
     +'<p class="fine">Bold, italic and underline: the B, I and U buttons above a scene, or Ctrl+B, Ctrl+I, Ctrl+U (⌘ on a Mac).</p>'
@@ -3788,6 +4389,7 @@ async function renderPrefs(el){
     if(a==='check') checkUpdatesNow(); else if(a==='notes') DESK.openReleases(pf.version); else if(a==='reveal') DESK.reveal(); else if(a==='tour') startTour(true);
     else if(a==='dir'||a==='dirdef') changeFolder(a==='dirdef');
     else if(a==='help') go({k:'help'});
+    else if(a==='sides'){ delete LOOK.bw; delete LOOK.iw; saveLook(); renderPrefs(el); }
   };
   el.onchange=async e=>{
     const x=e.target;
@@ -3848,7 +4450,7 @@ function pmTick(){ if(!T.running) return; if(Date.now()>=T.endAt) pmEnd(); else 
 function pmNext(rec){ T.count++; T.phase=T.count%S.meta.pomo.every===0?'long':'short'; return rec; }
 function pmEnd(){
   clearInterval(T.tick); const P2=S.meta.pomo, wasFocus=T.phase==='focus'; let r=null; hereSoon();
-  if(wasFocus) r=pmRecord(true);
+  if(wasFocus){ r=pmRecord(true); if(r) todoTick('sprint'); }
   T.running=false; T.left=null;
   if(wasFocus){ pmNext();
     const msg=(r?'Session done: '+fmt(r.words)+' new word'+(r.words===1?'':'s')+'. ':'Session done. ')+(T.phase==='long'?'Take a long break, you earned it.':'Stretch, sip something, back soon.');
@@ -4000,8 +4602,8 @@ function drawWcBox(box){
 function renderInspector(){
   const m=S.meta, p=m.pet, st=petStage(), nx=STAGES[st+1], md=curMood(), v=ui.view;
   ui.mood=md; ui.stage=st;
-  let h='<section class="pet-card m-'+md+'"><div class="pet-stage"><div class="room" id="petRoom" aria-hidden="true">'+roomSVG()+'</div><div class="pals" id="petPals"></div>'
-    +'<button class="pet-btn" id="petBtn" aria-label="Cheer with '+esc(p.name)+'"><span id="petArt">'+petSVG(md,st)+'</span></button>'
+  let h='<section class="pet-card m-'+md+'"><div class="pet-stage"><div class="room" id="petRoom" aria-hidden="true"></div><div class="pals" id="petPals"></div>'
+    +'<button class="pet-btn" id="petBtn" aria-label="Cheer with '+esc(p.name)+'"><span id="petArt"></span></button>'
     +'<button class="btn sm den-btn" id="denBtn" aria-pressed="'+(v.k==='den')+'">'+(v.k==='den'?ico('back',13)+'<span>Close room</span>':ico('spark',13)+'<span>Room</span>')+(ui.newThings&&v.k!=='den'?'<i class="dot-new" aria-label="new things"></i>':'')+'</button></div>'
     +'<div class="bubble" id="bubble">'+esc(ui.say||line(md))+'</div>'
     +'<div class="pet-meta"><input class="pet-name" id="petName" maxlength="18" value="'+esc(p.name)+'" aria-label="Pet name"><span class="stage-tag" id="stageTag">'+STAGES[st].n+'</span></div>'
@@ -4009,7 +4611,8 @@ function renderInspector(){
   h+='<section class="psec"><h3>Today</h3><div class="big"><b class="mono" id="goalNum">0</b><span>of <span class="mono" id="goalOf">0</span> new words</span></div><div class="bar lg"><i id="goalBar" style="width:0"></i></div>'
     +'<div class="chips"><span class="chip2" id="streakChip"></span></div>'
     +'<div class="two"><label class="f">Daily goal<input id="goalIn" type="number" inputmode="numeric" min="50" max="20000" step="50" value="'+m.goal+'"></label><label class="f">Novel length goal<input id="tgtIn" type="number" inputmode="numeric" min="1000" max="1000000" step="1000" value="'+m.target+'"></label></div>'
-    +'<p class="fine">Only new words count. Pasted blocks over 600 words are treated as imports.</p></section>';
+    +'<p class="fine">Only new words count. Pasted blocks over 600 words are treated as imports.</p></section>'
+    +'<section class="psec todo" id="todo"><h3><span>To do today</span><span class="td-n" id="tdN"></span></h3><div id="tdBox"></div></section>';
   h+='<section class="psec"><h3>Manuscript</h3><div class="big"><b class="mono" id="totNum" style="font-size:26px">0</b><span>of <span class="mono" id="totOf">0</span> words</span></div><div class="bar proj"><i id="totBar" style="width:0"></i></div>'
     +'<p class="fine">'+m.chapters.length+' chapter'+(m.chapters.length===1?'':'s')+', '+Object.keys(m.scenes).length+' scenes, '+Object.keys(m.ents).length+' story pages.</p>'
     +(n=>'<button class="btn sm ct-chip'+(n?' warn':'')+'" id="contBtn">'+ico('search',13)+'<span>'+(n?n+' continuity thing'+(n===1?'':'s')+' to check':'Continuity check')+'</span></button>')(contCount())+'</section>';
@@ -4019,13 +4622,13 @@ function renderInspector(){
       +'<label class="sec-l" for="noteIn">Notes</label><textarea class="ta" id="noteIn" rows="3" placeholder="Reminders, research, loose ends.">'+esc(d.notes)+'</textarea>'
       +'<span class="sec-l">Linked in this scene</span><div class="chiplinks" id="sceneChips"></div></section>';
   }
-  const el=$('#insp'); el.innerHTML=h; updateStats(); updateSceneChips(); bindPomo(); pmPaint();
+  const el=$('#insp'); el.innerHTML=h; paintPet(true); updateStats(); updateSceneChips(); bindPomo(); pmPaint(); drawTodo(); bindTodo();
   $('#petBtn').addEventListener('click',()=>{ bump(); say(line(curMood())); });
   $('#contBtn').addEventListener('click',()=>go({k:'cont'}));
   $('#denBtn').addEventListener('click',()=>{ ui.newThings=0; if(ui.view.k==='den') goBack(); else go({k:'den'}); });
   paintPals();
   $('#petName').addEventListener('input',e=>{ p.name=e.target.value.trim()||'Inky'; dirty('meta'); });
-  $('#goalIn').addEventListener('change',e=>{ m.goal=Math.max(50,Math.min(20000,Math.round(+e.target.value||500))); e.target.value=m.goal; dirty('meta'); updateStats(); });
+  $('#goalIn').addEventListener('change',e=>{ m.goal=Math.max(50,Math.min(20000,Math.round(+e.target.value||500))); e.target.value=m.goal; dirty('meta'); updateStats(); drawTodo(); });
   $('#tgtIn').addEventListener('change',e=>{ m.target=Math.max(1000,Math.min(1000000,Math.round(+e.target.value||80000))); e.target.value=m.target;
     const was=p.rank||0, now=stageOf(p.total); if(now>was){ p.rank=now; cheer(p.name+' grew into a '+STAGES[now].n+'!',true); }
     dirty('meta'); updateStats(); checkAch(); });
@@ -4381,14 +4984,14 @@ function sameProject(a,b){   // ignoring the per-device copies of personal stats
 // Personal stats live in meta.writers[name]; the copies at the top of meta are this device's working view.
 function stampMine(st){
   if(!DESK||!st||!st.meta) return; const m=st.meta, k=myKey(), w=m.writers[k];
-  const cur={name:ME.name,days:m.days,pet:m.pet,mark:m.mark,goal:m.goal,pomo:m.pomo,devs:Array.from(new Set(((w&&w.devs)||[]).concat(DEVICE))).slice(-10)};
+  const cur={name:ME.name,days:m.days,pet:m.pet,mark:m.mark,goal:m.goal,pomo:m.pomo,todo:m.todo,devs:Array.from(new Set(((w&&w.devs)||[]).concat(DEVICE))).slice(-10)};
   if(!w||canon(Object.assign({},w,{at:0}))!==canon(Object.assign({},cur,{at:0}))) m.writers[k]=Object.assign(clone(cur),{at:Date.now()});
 }
 function adoptMine(st){
   const m=st.meta, wr=m.writers||{}; let w=wr[myKey()];
   if(!w){ const k=Object.keys(wr).find(k=>(wr[k].devs||[]).includes(DEVICE)); if(k) w=wr[k]; }   // this computer under an earlier name
   if(w) PERSONAL.forEach(f=>{ if(w[f]!==undefined) m[f]=clone(w[f]); });
-  else if(Object.keys(wr).length){ m.days={}; m.pet=normPet({}); m.mark=null; }   // someone else's project: your own pet and goals start fresh
+  else if(Object.keys(wr).length){ m.days={}; m.pet=normPet({}); m.mark=null; m.todo=normTodo({}); }   // someone else's project: your own pet and goals start fresh
 }
 // Puts merged data into the live state, keeping every object that did not change (open screens hold references to them).
 function patchState(ns){
@@ -4557,7 +5160,7 @@ function helpShareHtml(){
     +sec('What sharing is','<p>Two or more people can work on the same novel, each in Inkling on their own computer. The project lives in a folder that a sync service keeps the same on every computer: Dropbox, Google Drive, OneDrive or iCloud Drive. Inkling has no server and no accounts; your sync service carries the files, and Inkling merges everyone’s changes.</p><p>It is not live like Google Docs: changes arrive when the sync service delivers them, usually within a few seconds to a minute. It works best when co-writers work on different scenes, or take turns.</p>')
     +sec('Setting it up','<ol><li>Open the project and choose <b>Share this project…</b> (in the File menu, or <b>Share</b> on the Projects screen).</li><li>Move it into a folder inside Dropbox, Google Drive, OneDrive or iCloud Drive. Inkling copies it, checks the copy, then moves the original to the trash.</li><li>In your sync service, share that project folder with your co-writers, with permission to edit.</li><li>Each co-writer installs Inkling, waits for the folder to sync, and chooses <b>File › Open a shared project…</b>, then picks the folder. It joins their Projects list.</li><li>Everyone types their name in <b>Settings › You</b>.</li></ol>')
     +sec('Working at the same time','<ul><li><b>Who is here.</b> A chip at the top shows who else has the project open, and a letter beside a scene shows who is in it. A note appears above a scene when someone else is in it too.</li><li><b>Sprint together.</b> When a co-writer starts a focus sprint, the chip at the top says so. Click it and choose <b>Join the sprint</b>: your timer ends at the same moment as theirs, and their Inky sits beside yours.</li><li><b>Different things merge.</b> If you change one scene and your co-writer changes another, or adds a character, a timeline card or a chapter, both changes are kept. Inkling checks for new changes every few seconds and whenever you come back to the window, and says what came in.</li><li><b>The same scene.</b> If you both change the same scene before the sync catches up, the newer change is kept in the scene and the other text is saved as a <b>snapshot</b> of that scene, named after whoever wrote it. A note appears with a <b>Compare</b> button, so you can copy anything back. Nothing is thrown away.</li><li><b>Other pages.</b> For a story page, timeline, outline, note, map or tree that you both changed, the newer change is kept. The project’s Backups have earlier versions.</li><li><b>Deleting.</b> Deleting something removes it for everyone, unless someone changed it after it was deleted; then it comes back.</li><li><b>Chapter order and titles</b> merge too: scenes one person adds or moves appear in place for everyone.</li></ul>')
-    +sec('What stays yours','<p>Your Inkling pet, daily goal, word history chart, focus timer settings and writing sessions belong to you, under the name you set. Appearance settings (theme, font, spacing) are per computer. Everything else (the text, story pages, timelines, outlines, notes, maps, trees, chapter notes, snapshots and export settings) is shared.</p><p>Use the same name on each of your own computers so your pet follows you.</p>')
+    +sec('What stays yours','<p>Your Inkling pet, daily goal, to-do list, word history chart, focus timer settings and writing sessions belong to you, under the name you set. Appearance settings (theme, font, spacing) are per computer. Everything else (the text, story pages, timelines, outlines, notes, maps, trees, chapter notes, snapshots and export settings) is shared.</p><p>Use the same name on each of your own computers so your pet follows you.</p>')
     +sec('Good habits','<ul><li>Agree who is writing which chapters or scenes.</li><li>Before you start, check the sync service has finished syncing (its icon shows a tick).</li><li>Keep everyone on the same version of Inkling (Help › Check for updates). Inkling warns you when a co-writer has a different version.</li><li>Make the folder “available offline” or “always keep on this device” (Google Drive: right-click › Offline access; OneDrive: Always keep on this device; iCloud: Download Now). Online-only files can make Inkling wait.</li><li>Take a <b>snapshot</b> of a scene before a big rewrite.</li></ul>')
     +sec('If something looks wrong','<ul><li><b>A co-writer’s changes have not arrived.</b> Check that their sync service is running and finished. Switching back to Inkling, or waiting a few seconds, brings in anything that has arrived.</li><li><b>Text you expected is missing from a scene.</b> Open the scene’s <b>Snapshots</b>: the other version from a clash is there, named after its writer.</li><li><b>Files called “conflicted copy”, “(1)” or with a computer’s name.</b> Sync services make these when two saves cross. Inkling merges them in automatically and moves them into the project’s backups folder.</li><li><b>Going back to an earlier state.</b> Projects › Backups lists copies made every 10 minutes; opening one makes a separate project, so nothing is overwritten.</li><li><b>Stopping sharing.</b> In your sync service, stop sharing the folder. To take a shared project off your own list without affecting anyone, use <b>Remove from list</b> on the Projects screen.</li></ul>')
     +sec('Privacy','<p>The project is stored by your sync service and anyone you share the folder with can read and change all of it. Inkling itself sends nothing anywhere. Remove someone’s access in your sync service to stop sharing with them.</p>')
@@ -4730,7 +5333,7 @@ function init(){
   const pc=document.createElement('button'); pc.id='pmChip'; pc.className='chip pm-chip'; pc.hidden=true; pc.setAttribute('aria-label','Focus timer'); pc.innerHTML=ico('timer',16)+'<span class="mono"></span>';
   pc.addEventListener('click',()=>{ ui.tab='pet'; syncTab(); const t=$('#pomo'); if(t) t.scrollIntoView({block:'nearest'}); }); $('#goalChip').after(pc);
   $('#projTitle').addEventListener('input',e=>{ S.meta.title=e.target.value||'Untitled novel'; dirty('meta'); if(DESK){ document.title=S.meta.title+' – Inkling'; DESK.setTitle(document.title); } });
-  bindBinder(); bindMenu();
+  bindBinder(); bindMenu(); bindSizers(); applySides();
   $('#main').addEventListener('click',e=>{
     const b=e.target.closest('[data-a="back"]'); if(b) goBack();
     const c=e.target.closest('.cl'); if(c) go({k:'ent',id:c.dataset.ent});
@@ -4749,7 +5352,7 @@ function init(){
   let rz; window.addEventListener('resize',()=>{ clearTimeout(rz); rz=setTimeout(()=>{ if(ui.view&&ui.view.k==='tl') drawTl(); },150); });
   document.addEventListener('visibilitychange',()=>{ if(document.hidden&&P.dirty.size) flush(); });
   window.addEventListener('pagehide',()=>{ if(T.cur) pmRecord(false); if(P.dirty.size){ mirrorLocal(); flush(); } });
-  setInterval(()=>{ if(!document.hidden&&Date.now()-ui.sayAt>40000) say(line(curMood())); },15000);
+  setInterval(()=>{ if(S.meta.todo.d!==todayKey()) drawTodo(); if(!document.hidden&&Date.now()-ui.sayAt>40000&&!(peekNow()||{}).mood) say(line(curMood())); },15000);
   renderAll(); checkAch(true); greet();
   if(newer){ lockNewer(newer); return; }
   if(DESK) deskBoot(); else { setStatus('local'); connectDb(!!local); setTimeout(()=>startTour(),700); }

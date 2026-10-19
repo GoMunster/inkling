@@ -99,9 +99,13 @@ test('two writers share one project through a synced folder', async () => {
   await B.win.click('[data-a="dele"][data-id="' + ent + '"]', { force: true }); await B.win.click('[data-a="dele"][data-id="' + ent + '"]', { force: true });
   expect(await syncUntil(A.app, A.win, async () => (await A.win.locator('[data-a="open-e"][data-id="' + ent + '"]').count()) === 0, 25000)).toBe(true);
 
-  // each writer keeps their own daily words
+  // each writer keeps their own daily words and to-do list
   await expect(A.win.locator('#chipTxt')).toHaveText(/^5 \//);
   await expect(B.win.locator('#chipTxt')).toHaveText(/^7 \//);
+  await A.win.fill('#tdNew', 'Ann’s task'); await A.win.press('#tdNew', 'Enter');
+  expect(await until(() => { const w = JSON.parse(fs.readFileSync(file, 'utf8')).meta.writers; return Object.values(w).some(x => x.name === 'Ann' && x.todo && x.todo.items.length === 1); }, 20000)).toBe(true);
+  await B.win.click('#binder .sc-btn >> nth=0'); await syncUntil(B.app, B.win, async () => true);
+  await expect(B.win.locator('.td')).toHaveCount(0);
 
   // a sync service's conflicted copy is merged in and tidied away
   await new Promise(r => setTimeout(r, 1500));
