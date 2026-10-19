@@ -169,3 +169,21 @@ test('shows the update prompt', async () => {
   await expect(win.locator('#updBar [data-u="install"]')).toHaveText('Restart to update');
   await app.close();
 });
+
+test('the Window menu and Edit › Undo', async () => {
+  const { app, win, errors } = await launch(newHome());
+  const menu = (top, label) => app.evaluate(({ Menu }, [t, l]) => { const m = Menu.getApplicationMenu().items.find(x => x.label === t); m.submenu.items.find(x => x.label === l).click(); }, [top, label]);
+  await menu('Window', 'Show or hide the binder'); await expect(win.locator('#binder')).toBeHidden();
+  await win.waitForTimeout(200);
+  await menu('Window', 'Show or hide the binder'); await expect(win.locator('#binder')).toBeVisible();
+  await menu('Window', 'Project settings…'); await expect(win.locator('#main h1')).toHaveText('Project settings');
+  await win.click('#binder .sc-btn >> nth=0');
+  const before = await win.locator('#ed').textContent();
+  await typeInScene(win, ' Undo me.');
+  await win.waitForTimeout(1100);
+  await menu('Edit', 'Undo');
+  await expect(win.locator('#ed')).toHaveText(before);
+  await menu('Help', 'Keyboard shortcuts'); await expect(win.locator('.ask .keys')).toBeVisible();
+  expect(errors).toEqual([]);
+  await app.close();
+});

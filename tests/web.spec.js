@@ -435,3 +435,96 @@ test('Inky reads over your shoulder: where we are, the weather, what happens, an
   await expect(page.locator('#peek')).toHaveCount(0);
   expect(errors).toEqual([]);
 });
+
+const ONE_SCENE = (text = '') => ({ meta: { v: 2, title: 'Tools', goal: 5000, target: 80000, chapters: [{ id: 'c1', title: 'One', open: true, scenes: ['s1'] }],
+  scenes: { s1: { title: 'S', status: 'draft', words: 0 } }, ents: {}, pet: { name: 'Inky', total: 0 }, days: {} }, sc: { s1: { text, synopsis: '', notes: '' } }, en: {} });
+const stored = page => saved(page).then(p => p && p.sc.s1.text);
+
+test('writing tools: Tab indents, Enter keeps the indent, undo and redo, ellipses, selected words', async ({ page }) => {
+  await page.addInitScript(() => { if (window.speechSynthesis) speechSynthesis.speak = () => {}; });   // no voices in a headless browser
+  const errors = await openApp(page, { project: ONE_SCENE() });
+  await page.click('#ed'); await page.keyboard.press('Tab'); await page.keyboard.type('One two');
+  await page.keyboard.press('Enter'); await page.keyboard.type('Three');
+  await expect.poll(() => stored(page)).toBe('\tOne two\n\tThree');
+  await page.keyboard.press('Control+a'); await page.keyboard.press('Shift+Tab');   // both lines lose their indent
+  await expect.poll(() => stored(page)).toBe('One two\nThree');
+  await page.keyboard.press('Control+a');
+  await expect(page.locator('#sceneWc')).toContainText('3 selected');
+  await page.keyboard.press('Tab');   // with lines selected, Tab indents them all
+  await expect.poll(() => stored(page)).toBe('\tOne two\n\tThree');
+  await page.keyboard.press('Control+z');
+  await expect.poll(() => stored(page)).toBe('One two\nThree');
+  await page.keyboard.press('Control+z');
+  await expect.poll(() => stored(page)).toBe('\tOne two\n\tThree');
+  await page.keyboard.press('Control+y');
+  await expect.poll(() => stored(page)).toBe('One two\nThree');
+  await page.keyboard.press('Control+End'); await page.keyboard.type(' Wait...');
+  await expect.poll(() => stored(page)).toBe('One two\nThree Wait…');
+  await page.waitForTimeout(1100);
+  await page.click('[data-ed="undo"]');
+  await expect.poll(() => stored(page)).toBe('One two\nThree');
+  await page.click('[data-ed="redo"]');
+  await expect.poll(() => stored(page)).toBe('One two\nThree Wait…');
+  if (await page.locator('#raBtn').count()) {   // read aloud, where the browser can speak
+    await page.click('#raBtn'); await expect(page.locator('#raBtn')).toContainText('Stop reading');
+    await page.click('#raBtn'); await expect(page.locator('#raBtn')).toContainText('Read aloud');
+  }
+  await page.click('#menuBtn'); await page.click('[data-m="keys"]');
+  await expect(page.locator('.ask .keys')).toContainText('Shift+Tab');
+  expect(errors).toEqual([]);
+});
+
+test('a writing report with words per minute after the last focus session before a long break', async ({ page }) => {
+  const errors = await openApp(page, { project: ONE_SCENE('Start.'), clock: true });
+  await page.click('[data-pm="set"]');
+  for (const [k, v] of [['focus', '1'], ['short', '1'], ['every', '2']]) { await page.fill('[data-pms="' + k + '"]', v); await page.press('[data-pms="' + k + '"]', 'Tab'); }
+  await page.check('[data-pms="autoFocus"]');
+  await page.click('#pmGo');
+  await page.click('#ed'); await page.keyboard.press('Control+End'); await page.keyboard.type(' ' + 'word '.repeat(20));
+  await page.clock.fastForward(61000);   // first focus session ends, the break starts by itself
+  await expect(page.locator('#pmPhase')).toContainText('Short break');
+  await page.clock.fastForward(61000);   // the break ends and the next focus session starts
+  await expect(page.locator('#pmPhase')).toHaveText('Focus');
+  await page.click('#ed'); await page.keyboard.press('Control+End'); await page.keyboard.type(' ' + 'more '.repeat(30));
+  await page.clock.fastForward(62000);
+  await page.clock.fastForward(1000);
+  await expect(page.locator('.rp h2')).toHaveText('Writing report');
+  await expect(page.locator('.rp-row')).toHaveCount(2);
+  await expect(page.locator('#rpWpm')).toHaveText('25');   // 50 new words in 2 minutes
+  await expect(page.locator('.rp-big')).toContainText('50');
+  await page.click('.rp [data-v="ss"]');
+  await expect(page.locator('#main h1')).toHaveText('Writing sessions');
+  await page.click('[data-ss="rep"]');
+  await expect(page.locator('.rp-row')).toHaveCount(2);
+  expect(errors).toEqual([]);
+});
+
+test('Window › Project settings: choose what shows, reorder the Inkling panel, presets and shortcuts', async ({ page }) => {
+  const errors = await openApp(page);
+  await page.click('#menuBtn'); await page.click('[data-m="layout"]');
+  await expect(page.locator('#main h1')).toHaveText('Project settings');
+  await page.uncheck('[data-lo="goalChip"]'); await expect(page.locator('#goalChip')).toBeHidden();
+  await page.uncheck('#loOrder [data-lo="timer"]'); await expect(page.locator('#pomo')).toHaveCount(0);
+  await page.click('#loOrder .lo-it[data-k="todo"] [data-lo-mv="-1"]');
+  await page.click('#loOrder .lo-it[data-k="todo"] [data-lo-mv="-1"]');
+  const order = () => page.locator('#insp > section').evaluateAll(els => els.map(x => x.id || x.className.split(' ')[0]));
+  expect((await order()).indexOf('todo')).toBe(1);   // right under Inky
+  await page.fill('#loTitle', 'The Renamed Book'); await page.press('#loTitle', 'Tab');
+  await expect(page.locator('#projTitle')).toHaveValue('The Renamed Book');
+  let p = await waitSaved(page, p => p.meta.layout && p.meta.layout.hide.goalChip && p.meta.layout.hide.timer && p.meta.layout.order[1] === 'todo');
+  await page.reload(); await page.waitForSelector('#ed');
+  await expect(page.locator('#goalChip')).toBeHidden(); await expect(page.locator('#pomo')).toHaveCount(0);
+  await page.keyboard.press('Control+Shift+Digit1'); await expect(page.locator('#binder')).toBeHidden(); await page.waitForTimeout(200);
+  await page.keyboard.press('Control+Shift+Digit1'); await expect(page.locator('#binder')).toBeVisible();
+  await page.click('#menuBtn'); await page.click('[data-m="layout"]');
+  await page.click('[data-lo-p="page"]');
+  await expect(page.locator('#binder')).toBeHidden(); await expect(page.locator('#insp')).toBeHidden();
+  await expect(page.locator('#main')).toBeVisible();
+  await page.click('[data-lo-p="standard"]');
+  await expect(page.locator('#binder')).toBeVisible(); await expect(page.locator('#pomo')).toHaveCount(1); await expect(page.locator('#goalChip')).toBeVisible();
+  await page.click('[data-lo-p="calm"]'); await page.click('[data-lo-a="def"]');   // new projects start like this
+  await page.click('#menuBtn'); await page.click('[data-m="blank"]'); await page.click('[data-m="blank"]');
+  p = await waitSaved(page, p => p.meta.title === 'Untitled novel');
+  expect(p.meta.layout.hide.hint).toBe(true); await expect(page.locator('#sceneHint')).toBeHidden();
+  expect(errors).toEqual([]);
+});

@@ -910,6 +910,44 @@ body.sizing,body.sizing *{cursor:col-resize!important;user-select:none}
 @keyframes lflash{0%,88%,94%,100%{opacity:0}90%{opacity:.35}92%{opacity:.1}}
 @keyframes bolt{0%,87%,95%,100%{opacity:0}89%,93%{opacity:1}}
 
+/* editing tools, writing report, project settings */
+.editor{tab-size:4}
+::highlight(inkread){background-color:color-mix(in srgb,var(--thing) 30%,transparent)}
+#app.tw .sheet{margin-bottom:50vh}
+.fmt-btns .fsep{display:inline-block;width:1px;height:18px;background:var(--line);margin:0 3px;vertical-align:middle}
+.keys{display:block;margin-top:4px} .keys b{display:block;margin:12px 0 4px;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.keys .kr{display:flex;justify-content:space-between;gap:16px;padding:4px 0;border-bottom:1px solid var(--line);font-size:13.5px}
+kbd{font-family:var(--f-mono);font-size:12px;border:1px solid var(--line);border-bottom-width:2px;border-radius:5px;padding:1px 6px;background:var(--paper)}
+.rp{max-width:560px;width:calc(100vw - 32px)}
+.rp-top{display:flex;gap:14px;align-items:center} .rp-top h2{margin:0} .rp-top p{margin:4px 0 0}
+.rp-pet svg{width:64px;height:64px;display:block;overflow:visible}
+.rp-big{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:16px 0}
+.rp-big>div{background:var(--panel2);border-radius:12px;padding:12px 14px;display:flex;flex-direction:column;gap:2px}
+.rp-big b{font-size:32px;font-weight:500;line-height:1.1} .rp-big span{color:var(--muted);font-size:12.5px}
+.rp-bars{display:flex;flex-direction:column;gap:8px}
+.rp-row{display:grid;grid-template-columns:76px minmax(0,1fr) 46px;grid-template-rows:auto auto;column-gap:10px;align-items:center;font-size:13px}
+.rp-row small{grid-column:2/4;color:var(--muted);font-size:11.5px} .rp-row b{text-align:right}
+.rp-row.best .bar i{background:var(--thing)}
+.rp-notes{margin:14px 0 6px;padding-left:18px;font-size:13.5px;line-height:1.5} .rp-notes li{margin:3px 0}
+.rp-say{font-style:italic;color:var(--muted);margin:8px 0 0}
+.lo-grp{margin-top:12px}
+.lo-cks{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:2px 12px}
+.lo-ck{margin:4px 0!important}
+.lo-order{list-style:none;margin:6px 0 0;padding:0;display:flex;flex-direction:column;gap:4px;max-width:440px}
+.lo-it{display:flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:10px;background:var(--paper);padding:4px 6px 4px 8px}
+.lo-it .td-grip{opacity:.7} .lo-it .lo-ck{flex:1}
+.lo-mv{display:flex;gap:2px} .lo-mv .ibtn{width:26px;height:26px}
+.lo-empty{padding:16px}
+#app.lo-goalChip #goalChip,#app.lo-saveSt #saveSt,#app.lo-fmt .fmt-btns,#app.lo-link .scene-mk,#app.lo-size .sz-btn,#app.lo-stk #stkBtn,#app.lo-stk #stkLayer,
+#app.lo-snapBtn #snBtn,#app.lo-read #raBtn,#app.lo-status #sceneStatus,#app.lo-swc #sceneWc,#app.lo-hint #sceneHint,#app.lo-bubble #bubble,#app.lo-peek .peek{display:none!important}
+@media (min-width:1080px){
+  #app.lo-binder .pane-binder,#app.lo-binder #szL,#app.lo-insp .pane-insp,#app.lo-insp #szR{display:none}
+  #app.lo-binder .cols{grid-template-columns:minmax(0,1fr) var(--iw,308px)}
+  #app.lo-insp .cols{grid-template-columns:var(--bw,272px) minmax(0,1fr)}
+  #app.lo-binder.lo-insp .cols,#app.focus.focus .cols{grid-template-columns:minmax(0,1fr)}
+  #app.lo-insp .peek,#app.lo-pet .peek{display:block}
+}
+
 /* tab layout */
 @media (max-width:1079px){
   :root{--tabh:58px}
@@ -990,7 +1028,8 @@ const ICO={plus:'M12 5v14M5 12h14',down:'M6 9l6 6 6-6',right:'M9 6l6 6-6 6',up:'
   note:'M6 3h9l4 4v14H6zM14 3v5h5M9 13h7M9 17h5',list:'M9 6h11M9 12h11M9 18h11M4 6h.01M4 12h.01M4 18h.01',bulb:'M9 18h6M10 21h4M12 3a6 6 0 00-4 10.5c.7.7 1 1.5 1 2.5h6c0-1 .3-1.8 1-2.5A6 6 0 0012 3z',
   image:'M4 5h16v14H4zM4 16l5-5 4 4 3-3 4 4M15 9h.01',indent:'M4 6h16M10 12h10M10 18h10M4 10l3 2-3 2',outdent:'M4 6h16M10 12h10M10 18h10M7 10l-3 2 3 2',upload:'M12 16V4M7 9l5-5 5 5M4 20h16',play:'M7 5l12 7-12 7z',pause:'M8 5v14M16 5v14',stop:'M6 6h12v12H6z',skip:'M5 5l10 7-10 7zM19 5v14',timer:'M12 9v4l2.5 2M9 2h6M12 22a8 8 0 100-16 8 8 0 000 16z',folder:'M3 7a2 2 0 012-2h4l2 2h8a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z',web:'M8 7a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0zM21 7a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0zM14.5 18a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0zM8 7h8M6.5 9l4.5 7M17.5 9L13 16',tree:'M9 3h6v4H9zM3 17h6v4H3zM15 17h6v4h-6zM12 7v5M6 12h12M6 12v5M18 12v5',heart:'M12 20s-7-4.5-7-10a4 4 0 017-2.6A4 4 0 0119 10c0 5.5-7 10-7 10z',
   time:'M3 12h18M7 12V7M12 12v5M17 12V7',sliders:'M4 7h9M17 7h3M4 17h3M11 17h9M15 5v4M9 15v4',search:'M11 4a7 7 0 1 0 0 14a7 7 0 1 0 0-14M20 20l-4.2-4.2',users:'M9 11a3.5 3.5 0 1 0 0-7a3.5 3.5 0 1 0 0 7M2.5 20c.6-3.4 3.2-5.5 6.5-5.5s5.9 2.1 6.5 5.5M16 4.3a3.5 3.5 0 0 1 0 6.4M18 14.8c1.9.8 3.2 2.6 3.5 5.2',minus:'M5 12h14',
-  grip:'M9 6h.01M15 6h.01M9 12h.01M15 12h.01M9 18h.01M15 18h.01',copy:'M8 8h11v11H8zM5 16V5h11',fit:'M4 12h16M4 12l4-4M4 12l4 4M20 12l-4-4M20 12l-4 4'};
+  grip:'M9 6h.01M15 6h.01M9 12h.01M15 12h.01M9 18h.01M15 18h.01',copy:'M8 8h11v11H8zM5 16V5h11',fit:'M4 12h16M4 12l4-4M4 12l4 4M20 12l-4-4M20 12l-4 4',
+  undo:'M9 14L4 9l5-5M4 9h10a6 6 0 010 12h-3',redo:'M15 14l5-5-5-5M20 9H10a6 6 0 000 12h3',speak:'M4 9v6h4l5 4V5L8 9zM16 9a4 4 0 010 6M18.5 6.5a8 8 0 010 11',layout:'M4 4h16v16H4zM9 4v16M9 10h11'};
 const ico=(n,s)=>'<svg class="ico" width="'+(s||16)+'" height="'+(s||16)+'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="'+ICO[n]+'"/></svg>';
 
 const TYPES={
@@ -1020,7 +1059,7 @@ const ADD_DOCS=[];   // (raw, out) => out.<prefix> = normalized records, for doc
 const snapshot=st=>{ if(!st) stampMine(S); st=st||S; const o={meta:st.meta}; DOCS.forEach(p=>{ o[p]=st[p]; }); return o; };
 // The desktop app (desktop/) provides window.inklingDesktop: each project is a folder on the computer. Elsewhere it is null.
 const DESK=window.inklingDesktop||null;
-const APP_VERSION='1.6.0';   // the desktop build replaces this with desktop/package.json's version
+const APP_VERSION='1.7.0';   // the desktop build replaces this with desktop/package.json's version
 // Saved-format version. When the shape of saved data changes: bump FORMAT and add MIGRATE[old] that upgrades a raw
 // project one step (it runs before normalize()). A project from a newer FORMAT is never loaded or overwritten.
 const FORMAT=2;
@@ -1041,7 +1080,7 @@ const DEVICE=(()=>{ try{ let d=localStorage.getItem('inkling:device'); if(!d){ d
 const ME={name:''}; try{ ME.name=String(JSON.parse(localStorage.getItem('inkling:me')||'{}').name||'').slice(0,60); }catch(e){}
 const nameKey=n=>String(n||'').trim().toLowerCase();
 const myKey=()=>nameKey(ME.name);
-const PERSONAL=['days','pet','mark','goal','pomo','todo'];
+const PERSONAL=['days','pet','mark','goal','pomo','todo','layout'];
 const PJ={id:null,base:null};   // the desktop project that is open, and the version of it last read from or written to disk
 let linker=null;
 const ui={view:null,hist:[],cork:'all',rename:null,confirm:null,menu:false,tab:'write',focus:false,openSec:{ol:true,nt:true,tl:true,rm:true,ft:true,char:true,place:true,thing:true},say:'',sayAt:0,mood:'',touched:false,sel:'',focusName:false,fs:18,
@@ -1138,11 +1177,11 @@ function normalize(o){
   Object.keys(gn).filter(k=>+gn[k]>cut).sort((a,b)=>gn[b]-gn[a]).slice(0,2000).forEach(k=>{ meta.gone[k]=+gn[k]; }); meta.title=meta.title||'Untitled novel'; meta.goal=+meta.goal||500; meta.target=+meta.target||80000;
   meta.chapters=Array.isArray(meta.chapters)?meta.chapters:[]; meta.scenes=meta.scenes||{}; meta.ents=meta.ents||{};
   meta.pet=normPet(meta.pet);
-  meta.days=meta.days||{}; meta.saved=+meta.saved||0; meta.pomo=normPomo(meta.pomo); meta.todo=normTodo(meta.todo); meta.exp=normExp(meta.exp); meta.author=String(meta.author||'');
+  meta.days=meta.days||{}; meta.saved=+meta.saved||0; meta.pomo=normPomo(meta.pomo); meta.todo=normTodo(meta.todo); meta.layout=normLayout(meta.layout||LOOK.layoutDef); meta.exp=normExp(meta.exp); meta.author=String(meta.author||'');
   const wr=meta.writers&&typeof meta.writers==='object'?meta.writers:{}; meta.writers={};
   Object.keys(wr).slice(0,60).forEach(k=>{ const w=wr[k]; if(!w||typeof w!=='object') return;
     meta.writers[String(k).slice(0,60)]={name:String(w.name||'').slice(0,60),days:w.days&&typeof w.days==='object'?w.days:{},pet:normPet(w.pet),
-      mark:w.mark||null,goal:+w.goal||500,pomo:normPomo(w.pomo),...(w.todo?{todo:normTodo(w.todo)}:{}),devs:(Array.isArray(w.devs)?w.devs:[]).filter(x=>typeof x==='string').slice(-10),at:+w.at||0}; });
+      mark:w.mark||null,goal:+w.goal||500,pomo:normPomo(w.pomo),...(w.todo?{todo:normTodo(w.todo)}:{}),...(w.layout?{layout:normLayout(w.layout)}:{}),devs:(Array.isArray(w.devs)?w.devs:[]).filter(x=>typeof x==='string').slice(-10),at:+w.at||0}; });
   const sx=meta.secs&&typeof meta.secs==='object'?meta.secs:{rm:false,ft:false}; meta.secs={};
   OPT_SECS.forEach(k=>{ meta.secs[k]=sx[k]===undefined?!(k==='rm'||k==='ft'):!!sx[k]; });
   const lb=meta.labels&&typeof meta.labels==='object'?meta.labels:{}; meta.labels={};
@@ -1182,7 +1221,8 @@ function normalize(o){
   const ssi=o.ss&&typeof o.ss==='object'?o.ss:{}, sso={};
   Object.keys(ssi).forEach(id=>{ const x=ssi[id]; if(!x||!isFinite(+x.start)) return;
     sso[id]={start:+x.start,end:isFinite(+x.end)?+x.end:+x.start,planned:Math.max(0,Math.round(num(x.planned,25))),mins:Math.max(0,num(x.mins,0)),words:Math.max(0,Math.round(num(x.words,0))),
-      net:Math.round(num(x.net,0)),done:!!x.done,scenes:(Array.isArray(x.scenes)?x.scenes:[]).filter(y=>typeof y==='string').slice(0,60)}; });
+      net:Math.round(num(x.net,0)),done:!!x.done,scenes:(Array.isArray(x.scenes)?x.scenes:[]).filter(y=>typeof y==='string').slice(0,60)};
+    if(typeof x.cyc==='string'&&x.cyc) sso[id].cyc=x.cyc.slice(0,24); });
   const out={meta,sc,en,tl:tlo,ch:cho,nt:nto,ol:olo,rm:rmo,ft:fto,ss:sso};
   ADD_DOCS.forEach(f=>f(o,out));
   DOCS.forEach(p=>{ const st=stamps[p]||{}, m=out[p]||{}; Object.keys(m).forEach(id=>{ if(st[id]&&m[id]&&typeof m[id]==='object'){ m[id]._m=st[id][0]; m[id]._dev=st[id][1]; if(st[id][2]) m[id]._by=st[id][2]; } }); });
@@ -1633,8 +1673,8 @@ function streak(){
 function curMood(){ const w=todayWords(), g=S.meta.goal; if(w>=g) return 'party'; if(w>=g*.5) return 'hype'; if(w>0) return 'happy'; return 'sleepy'; }
 function orderedScenes(){ const out=[]; S.meta.chapters.forEach(c=>c.scenes.forEach(id=>out.push({id,ch:c}))); return out; }
 function firstView(){ const s=orderedScenes()[0]; return s?{k:'scene',id:s.id}:{k:'cork'}; }
-function viewValid(v){ if(!v) return false; if(v.k==='scene') return !!S.meta.scenes[v.id]; if(v.k==='ent') return !!S.meta.ents[v.id]; if(v.k==='tl') return !!(S.tl[v.id]&&S.meta.tls.some(x=>x.id===v.id)); if(v.k==='nt') return !!(S.nt[v.id]&&S.meta.nts.some(x=>x.id===v.id)); if(v.k==='ol') return !!(S.ol[v.id]&&S.meta.ols.some(x=>x.id===v.id)); if(v.k==='rm'||v.k==='ft') return !!(S[v.k][v.id]&&S.meta[v.k+'s'].some(x=>x.id===v.id)); if(v.k==='snap') return !!S.meta.scenes[v.id]; return v.k==='cork'||v.k==='ss'||v.k==='prefs'||v.k==='find'||v.k==='help'||v.k==='den'||v.k==='cont'; }
-function viewName(v){ if(v.k==='scene') return S.meta.scenes[v.id].title; if(v.k==='ent') return S.meta.ents[v.id].name; if(v.k==='tl') return S.meta.tls.find(x=>x.id===v.id).name; if(v.k==='nt') return S.meta.nts.find(x=>x.id===v.id).name; if(v.k==='ol') return S.meta.ols.find(x=>x.id===v.id).name; if(v.k==='rm'||v.k==='ft') return S.meta[v.k+'s'].find(x=>x.id===v.id).name; if(v.k==='ss') return 'Writing sessions'; if(v.k==='prefs') return 'Settings'; if(v.k==='find') return 'Find and replace'; if(v.k==='help') return 'How sharing works'; if(v.k==='den') return S.meta.pet.name+'’s room'; if(v.k==='cont') return 'Continuity'; if(v.k==='snap') return 'Snapshots: '+S.meta.scenes[v.id].title; return 'Corkboard'; }
+function viewValid(v){ if(!v) return false; if(v.k==='scene') return !!S.meta.scenes[v.id]; if(v.k==='ent') return !!S.meta.ents[v.id]; if(v.k==='tl') return !!(S.tl[v.id]&&S.meta.tls.some(x=>x.id===v.id)); if(v.k==='nt') return !!(S.nt[v.id]&&S.meta.nts.some(x=>x.id===v.id)); if(v.k==='ol') return !!(S.ol[v.id]&&S.meta.ols.some(x=>x.id===v.id)); if(v.k==='rm'||v.k==='ft') return !!(S[v.k][v.id]&&S.meta[v.k+'s'].some(x=>x.id===v.id)); if(v.k==='snap') return !!S.meta.scenes[v.id]; return v.k==='cork'||v.k==='ss'||v.k==='prefs'||v.k==='find'||v.k==='help'||v.k==='den'||v.k==='cont'||v.k==='layout'; }
+function viewName(v){ if(v.k==='scene') return S.meta.scenes[v.id].title; if(v.k==='ent') return S.meta.ents[v.id].name; if(v.k==='tl') return S.meta.tls.find(x=>x.id===v.id).name; if(v.k==='nt') return S.meta.nts.find(x=>x.id===v.id).name; if(v.k==='ol') return S.meta.ols.find(x=>x.id===v.id).name; if(v.k==='rm'||v.k==='ft') return S.meta[v.k+'s'].find(x=>x.id===v.id).name; if(v.k==='ss') return 'Writing sessions'; if(v.k==='prefs') return 'Settings'; if(v.k==='find') return 'Find and replace'; if(v.k==='help') return 'How sharing works'; if(v.k==='den') return S.meta.pet.name+'’s room'; if(v.k==='cont') return 'Continuity'; if(v.k==='layout') return 'Project settings'; if(v.k==='snap') return 'Snapshots: '+S.meta.scenes[v.id].title; return 'Corkboard'; }
 
 /* ---------- pet ---------- */
 const PET_ARMS={sleepy:['M34 108 q-10 8 -8 22','M126 108 q10 8 8 22'],happy:['M34 106 q-14 2 -16 16','M126 106 q14 2 16 16'],hype:['M34 102 q-18 -6 -18 -28','M126 106 q14 2 16 16'],party:['M34 100 q-20 -8 -18 -32','M126 100 q20 -8 18 -32'],
@@ -2450,7 +2490,7 @@ function go(v,o){
   o=o||{};
   if(!viewValid(v)) v=firstView();
   if(ui.view&&!(ui.view.k===v.k&&ui.view.id===v.id)&&o.push!==false){ ui.hist.push(ui.view); if(ui.hist.length>40) ui.hist.shift(); }
-  ui.view=v; ui.tab='write'; ui.rename=null; ui.pop=false; if(v.k!=='scene') ui.pkOpen=null;
+  ui.view=v; ui.tab='write'; ui.rename=null; ui.pop=false; if(v.k!=='scene') ui.pkOpen=null; raStop();
   renderBinder(); renderMain(); renderInspector(); syncTab(); hereSoon();
   if(v.flash){
     const el=document.querySelector('#ed .ent[data-ent="'+v.flash+'"]');
@@ -2695,7 +2735,7 @@ function renderMain(){
   if(!viewValid(v)){ ui.view=firstView(); return renderMain(); }
   const key=v.k+':'+(v.id||''), reset=key!==ui.lastKey; ui.lastKey=key;
   const keep=el.scrollTop;
-  if(v.k==='ent') renderEnt(el,v); else if(v.k==='cork') renderCork(el); else if(v.k==='tl') renderTl(el,v); else if(v.k==='nt') renderNt(el,v); else if(v.k==='ol') renderOl(el,v); else if(v.k==='rm'||v.k==='ft') renderCv(el,v); else if(v.k==='ss') renderSs(el); else if(v.k==='prefs') renderPrefs(el); else if(v.k==='snap') renderSnap(el,v); else if(v.k==='find') renderFind(el); else if(v.k==='help') renderHelp(el); else if(v.k==='den') renderDen(el); else if(v.k==='cont') renderCont(el); else renderScene(el,v);
+  if(v.k==='ent') renderEnt(el,v); else if(v.k==='cork') renderCork(el); else if(v.k==='tl') renderTl(el,v); else if(v.k==='nt') renderNt(el,v); else if(v.k==='ol') renderOl(el,v); else if(v.k==='rm'||v.k==='ft') renderCv(el,v); else if(v.k==='ss') renderSs(el); else if(v.k==='prefs') renderPrefs(el); else if(v.k==='snap') renderSnap(el,v); else if(v.k==='find') renderFind(el); else if(v.k==='help') renderHelp(el); else if(v.k==='den') renderDen(el); else if(v.k==='cont') renderCont(el); else if(v.k==='layout') renderLayout(el); else renderScene(el,v);
   el.scrollTop=reset?0:keep;
 }
 function renderScene(el,v){
@@ -2704,15 +2744,18 @@ function renderScene(el,v){
     +'<input id="sceneTitle" class="title-in" value="'+esc(sc.title)+'" maxlength="100" aria-label="Scene title">'
     +'<select id="sceneStatus" aria-label="Scene status">'+Object.keys(STATUS).map(k=>'<option value="'+k+'"'+(sc.status===k?' selected':'')+'>'+STATUS[k]+'</option>').join('')+'</select>'
     +'<span class="mono muted" id="sceneWc">'+fmt(sc.words)+' words</span>'
-    +'<div class="tools"><span class="fmt-btns" role="group" aria-label="Formatting"><button class="ibtn fb" data-fmt="bold" title="Bold (Ctrl+B)" aria-label="Bold"><b>B</b></button><button class="ibtn fb" data-fmt="italic" title="Italic (Ctrl+I)" aria-label="Italic"><i>I</i></button><button class="ibtn fb" data-fmt="underline" title="Underline (Ctrl+U)" aria-label="Underline"><u>U</u></button></span><div class="mk-wrap"><button class="btn" id="mkBtn" title="Select a name in your text, then link it to a new page">'+ico('link')+'<span>Link selection</span></button><div class="pop" id="mkPop" hidden></div></div>'
-    +'<button class="ibtn" id="fsDn" aria-label="Smaller text" style="width:auto;padding:0 8px;font-weight:600">A−</button><button class="ibtn" id="fsUp" aria-label="Larger text" style="width:auto;padding:0 8px;font-weight:600">A+</button>'
+    +'<div class="tools"><span class="fmt-btns" role="group" aria-label="Formatting"><button class="ibtn fb" data-fmt="bold" title="Bold (Ctrl+B)" aria-label="Bold"><b>B</b></button><button class="ibtn fb" data-fmt="italic" title="Italic (Ctrl+I)" aria-label="Italic"><i>I</i></button><button class="ibtn fb" data-fmt="underline" title="Underline (Ctrl+U)" aria-label="Underline"><u>U</u></button><i class="fsep"></i>'
+      +'<button class="ibtn fb" data-ed="undo" title="Undo ('+MODK+'+Z)" aria-label="Undo">'+ico('undo')+'</button><button class="ibtn fb" data-ed="redo" title="Redo ('+(MODK==='⌘'?'⌘+Shift+Z':'Ctrl+Y')+')" aria-label="Redo">'+ico('redo')+'</button><i class="fsep"></i>'
+      +'<button class="ibtn fb" data-ed="out" title="Remove indent (Shift+Tab)" aria-label="Remove indent">'+ico('outdent')+'</button><button class="ibtn fb" data-ed="in" title="Indent (Tab)" aria-label="Indent">'+ico('indent')+'</button></span><div class="mk-wrap scene-mk"><button class="btn" id="mkBtn" title="Select a name in your text, then link it to a new page">'+ico('link')+'<span>Link selection</span></button><div class="pop" id="mkPop" hidden></div></div>'
+    +'<button class="ibtn sz-btn" id="fsDn" aria-label="Smaller text" style="width:auto;padding:0 8px;font-weight:600">A−</button><button class="ibtn sz-btn" id="fsUp" aria-label="Larger text" style="width:auto;padding:0 8px;font-weight:600">A+</button>'
     +'<button class="btn" id="stkBtn" title="Add a sticky note beside the page (or double-click in the margin)">'+ico('note')+'<span>Sticky note</span></button>'
     +'<button class="btn" id="snBtn" title="Saved versions of this scene">'+ico('time')+'<span>Snapshots</span></button>'
+    +(canSpeak()?'<button class="btn" id="raBtn" aria-pressed="false" title="Hear the selection, or from this paragraph on: a good way to catch mistakes"></button>':'')
     +'<button class="btn" id="focusBtn" aria-pressed="'+(ui.focus?'true':'false')+'">'+ico('focus')+'<span>'+(ui.focus?'Exit focus':'Focus')+'</span></button></div></div>'
     +(m.sample?'<div class="banner"><span>This is a sample project, so you can try the links and the pet. '+(DESK?'Choose <b>File → New project</b> when you are ready for your own.':'Open the menu and choose <b>Start a blank project</b> when you are ready for your own.')+'</span><button class="btn sm" id="bnX">Dismiss</button></div>':'')
     +'<div class="here-ban" id="hereBan" role="status" hidden></div>'
     +'<div class="sheet-wrap" id="sheetWrap"><div class="stk-layer" id="stkLayer"></div><div class="sheet"><div id="ed" class="editor" role="textbox" aria-multiline="true" aria-label="Scene text" spellcheck="'+(LOOK.spell?'true':'false')+'" data-ph="Start writing. Names you have pages for will link automatically."></div></div></div>'
-    +'<p class="hint">Highlighted names are linked. Click one to open its page, or move through it with the arrow keys to edit.</p>'
+    +'<p class="hint" id="sceneHint">Highlighted names are linked. Click one to open its page, or move through it with the arrow keys to edit.</p>'
     +(LOOK.peek!==false?'<div class="peek" id="peek"><div class="peek-b" id="peekB" role="status" hidden></div><button class="peek-pet" id="peekPet" aria-label="'+esc(m.pet.name)+' is reading along"></button></div>':'');
   const ed=$('#ed'); ed.innerHTML=renderText(d.text);
   ed.setAttribute('contenteditable','true');
@@ -2724,24 +2767,31 @@ function renderScene(el,v){
   ed.addEventListener('compositionstart',()=>{comp=true;});
   ed.addEventListener('compositionend',()=>{comp=false; typed();});
   ed.addEventListener('paste',e=>{   // pasted text arrives plain, line by line (Enter makes a line break, never a new block)
-    e.preventDefault(); const t=(e.clipboardData||window.clipboardData).getData('text/plain').replace(/\r\n?/g,'\n');
+    e.preventDefault(); ui.bigEdit=true; const t=(e.clipboardData||window.clipboardData).getData('text/plain').replace(/\r\n?/g,'\n');
     t.split('\n').forEach((ln,i)=>{ if(i) document.execCommand('insertLineBreak'); if(ln) document.execCommand('insertText',false,ln); });
     typed();
   });
   ed.addEventListener('keydown',e=>{
-    if(e.key==='Enter'&&!e.isComposing){ e.preventDefault(); document.execCommand('insertLineBreak'); return; }
+    if(e.key==='Enter'&&!e.isComposing){ e.preventDefault(); let lead='';   // a new line keeps the indent of the one before
+      if(LOOK.keepIndent!==false){ const sl=edSel(ed); if(sl){ const vis=plainText(getText(ed)); lead=(vis.slice(vis.lastIndexOf('\n',sl.s-1)+1).match(/^\t+/)||[''])[0]; } }
+      document.execCommand('insertLineBreak'); if(lead) document.execCommand('insertText',false,lead); return; }
+    if(e.key==='Tab'&&!e.ctrlKey&&!e.metaKey&&!e.altKey){ e.preventDefault(); edIndent(e.shiftKey?-1:1); return; }
+    const mod=(e.ctrlKey||e.metaKey)&&!e.altKey, kk=e.key.toLowerCase();
+    if(mod&&(kk==='z'||kk==='y')){ e.preventDefault(); ui.keyHistAt=Date.now(); edHist(kk==='y'||e.shiftKey); return; }
     const k=(e.ctrlKey||e.metaKey)&&!e.altKey&&!e.shiftKey?{b:'bold',i:'italic',u:'underline'}[e.key.toLowerCase()]:null;
     if(k){ e.preventDefault(); fmtCmd(k); }
   });
-  ed.addEventListener('beforeinput',e=>{   // smart quotes and dashes
+  ed.addEventListener('beforeinput',e=>{   // undo from a menu; smart quotes, dashes and ellipses
+    if(e.inputType==='historyUndo'||e.inputType==='historyRedo'){ e.preventDefault(); if(Date.now()-(ui.keyHistAt||0)>300){ ui.keyHistAt=Date.now(); edHist(e.inputType==='historyRedo'); } return; }
     if(LOOK.smart===false||e.inputType!=='insertText'||!e.data||e.data.length!==1) return;
     const sel=getSelection(); if(!sel.rangeCount||!ed.contains(sel.anchorNode)) return;
     const pre=document.createRange(); pre.selectNodeContents(ed); pre.setEnd(sel.getRangeAt(0).startContainer,sel.getRangeAt(0).startOffset);
-    const before=pre.toString().slice(-1), opening=!before||/[\s(\[{\u2014\u2013-]/.test(before);
+    const pre2=pre.toString().slice(-2), before=pre2.slice(-1), opening=!before||/[\s(\[{\u2014\u2013-]/.test(before);
     let rep=null;
     if(e.data==='"') rep=opening?'\u201C':'\u201D';
     else if(e.data==="'") rep=opening?'\u2018':'\u2019';
     else if(e.data==='-'&&before==='-'&&sel.isCollapsed){ e.preventDefault(); document.execCommand('delete'); document.execCommand('insertText',false,'\u2014'); return; }
+    else if(e.data==='.'&&pre2==='..'&&sel.isCollapsed){ e.preventDefault(); document.execCommand('delete'); document.execCommand('delete'); document.execCommand('insertText',false,'\u2026'); return; }
     if(rep){ e.preventDefault(); document.execCommand('insertText',false,rep); }
   });
   ed.addEventListener('click',e=>{ const t=e.target.closest('.ent'); if(t&&getSelection().isCollapsed) go({k:'ent',id:t.dataset.ent}); });
@@ -2755,7 +2805,11 @@ function renderScene(el,v){
   $('#snBtn').addEventListener('click',()=>go({k:'snap',id:v.id}));
   $('#stkBtn').addEventListener('click',()=>stkAdd(v.id));
   stkBind(v.id);
-  el.querySelectorAll('.fb').forEach(b=>{ b.addEventListener('mousedown',e=>e.preventDefault()); b.addEventListener('click',()=>{ if(document.activeElement!==ed) ed.focus(); fmtCmd(b.dataset.fmt); }); });
+  el.querySelectorAll('.fb').forEach(b=>{ b.addEventListener('mousedown',e=>e.preventDefault()); b.addEventListener('click',()=>{ if(document.activeElement!==ed) ed.focus();
+    const a=b.dataset.ed; if(a==='undo'||a==='redo') edHist(a==='redo'); else if(a) edIndent(a==='in'?1:-1); else fmtCmd(b.dataset.fmt); }); });
+  const ra=$('#raBtn'); if(ra){ raPaint(); ra.addEventListener('mousedown',e=>e.preventDefault()); ra.addEventListener('click',readAloud); }
+  { const h=undoOf(v.id); if(h.cur.text!==d.text){ h.undo.push(h.cur); h.redo=[]; h.cur={text:d.text}; h.big=true; } }   // changed elsewhere (a restore, a co-writer): one more undo step
+  paintSceneWc();
   const fs=n=>{ ui.fs=Math.max(14,Math.min(28,ui.fs+n)); ed.style.fontSize=ui.fs+'px'; try{localStorage.setItem('inkling:fs',ui.fs);}catch(e){} };
   $('#fsDn').addEventListener('click',()=>fs(-1)); $('#fsUp').addEventListener('click',()=>fs(1));
   const bn=$('#bnX'); if(bn) bn.addEventListener('click',()=>{ m.sample=false; dirty('meta'); renderMain(); });
@@ -2780,6 +2834,94 @@ function renderScene(el,v){
   const fsel=ui.findSel; ui.findSel=null;
   if(fsel&&fsel.id===v.id){ ed.focus(); selectRange(ed,fsel.s,fsel.e); }
 }
+/* ---------- editing: undo and redo, indents, reading aloud, typewriter scrolling ---------- */
+// Inkling keeps its own undo history per scene (the editor's own one is lost whenever names are relinked). Typing is
+// grouped into steps at pauses of a second or more; pastes, formatting and indents are steps of their own. Offsets
+// here are in the visible text with its line breaks (edSel); right after renderText() they match the DOM's offsets.
+const UNDO={};
+function undoOf(id){ return UNDO[id]||(UNDO[id]={cur:{text:S.sc[id].text},undo:[],redo:[],at:0,big:false}); }
+function undoNote(id,text,big){
+  const h=undoOf(id), now=Date.now(); if(text===h.cur.text) return;
+  if(big||h.big||now-h.at>1000||Math.abs(text.length-h.cur.text.length)>2){ h.undo.push(h.cur); if(h.undo.length>300) h.undo.shift(); }
+  h.redo=[]; h.cur={text}; h.at=now; h.big=!!big;
+}
+function visAt(ed,node,off){ const rg=document.createRange(); rg.selectNodeContents(ed); rg.setEnd(node,off); const d=document.createElement('div'); d.appendChild(rg.cloneContents()); return plainText(getText(d)).length; }
+function edSel(ed){ const s=getSelection(); if(!s.rangeCount||!ed.contains(s.anchorNode)) return null; const r=s.getRangeAt(0); return {s:visAt(ed,r.startContainer,r.startOffset),e:visAt(ed,r.endContainer,r.endOffset)}; }
+function edHist(redo){
+  const v=ui.view, ed=$('#ed'); if(!v||v.k!=='scene'||!ed) return;
+  const h=undoOf(v.id), now=getText(ed); if(now!==h.cur.text) undoNote(v.id,now,true);
+  const from=redo?h.redo:h.undo, to=redo?h.undo:h.redo;
+  if(!from.length){ toast(redo?'Nothing to redo.':'Nothing more to undo in this scene.',{plain:true}); return; }
+  const old=h.cur.text; to.push(h.cur); h.cur=from.pop(); h.at=0; h.big=true;
+  const a=plainText(old), b=plainText(h.cur.text); let p=0, q=0;   // put the caret at the end of what changed
+  while(p<a.length&&p<b.length&&a[p]===b[p]) p++; while(q<a.length-p&&q<b.length-p&&a[a.length-1-q]===b[b.length-1-q]) q++;
+  setSceneText(v.id,h.cur.text); ed.innerHTML=renderText(h.cur.text); ed.focus(); setCaret(ed,b.length-q);
+  const bw=document.querySelector('[data-wc="'+v.id+'"]'); if(bw) bw.textContent=fmt(S.meta.scenes[v.id].words);
+  paintSceneWc(); updateStats(); updateSceneChips(); clearTimeout(ui.pkM); ui.pkM=setTimeout(()=>peekRun('move'),900);
+}
+// Puts new text in the editor with a selection, then saves it like typing (one undo step, no new words credited).
+function edApply(id,ed,text,s,e){ ed.innerHTML=renderText(text); selectRange(ed,s,e); ui.bigEdit=true; onType(id,ed); }
+// Tab: a tab at the caret, or every selected line indented. Shift+Tab: one tab off the start of each line.
+function edIndent(dir){
+  const v=ui.view, ed=$('#ed'); if(!ed||!v||v.k!=='scene') return; if(document.activeElement!==ed) ed.focus();
+  const sel=edSel(ed); if(!sel) return;
+  if(dir>0&&sel.s===sel.e){ document.execCommand('insertText',false,'\t'); return; }
+  const text=getText(ed), vis=plainText(text), lines=text.split('\n');
+  const l0=vis.slice(0,sel.s).split('\n').length-1, end=sel.e>sel.s&&vis[sel.e-1]==='\n'?sel.e-1:sel.e, l1=vis.slice(0,end).split('\n').length-1;
+  let ds=0, de=0;
+  for(let i=l0;i<=l1;i++){ if(dir>0){ lines[i]='\t'+lines[i]; de++; if(i===l0) ds=1; } else if(lines[i].startsWith('\t')){ lines[i]=lines[i].slice(1); de--; if(i===l0) ds=-1; } }
+  if(!de) return;
+  const ls=vis.lastIndexOf('\n',sel.s-1)+1;
+  edApply(v.id,ed,lines.join('\n'),Math.max(ls,sel.s+ds),Math.max(ls,sel.e+de));
+}
+// Words in the scene, and in the selection when there is one.
+function paintSceneWc(){
+  const v=ui.view, el=$('#sceneWc'); if(!el||!v||v.k!=='scene'||!S.meta.scenes[v.id]) return;
+  const w=S.meta.scenes[v.id].words, s=getSelection(), ed=$('#ed'); let n=0;
+  if(ed&&s.rangeCount&&!s.isCollapsed&&ed.contains(s.anchorNode)&&ed.contains(s.focusNode)) n=wc(s.toString());
+  el.textContent=fmt(w)+' words'+(n?' · '+fmt(n)+' selected':'');
+  el.title='About '+Math.max(1,Math.round(w/250))+' manuscript page'+(Math.round(w/250)>1?'s':'')+' and '+Math.max(1,Math.round(w/230))+' minute'+(Math.round(w/230)>1?'s':'')+' to read';
+}
+// Keeps the line being written in the middle of the screen (Settings › Writing › Typewriter scrolling).
+function typewriter(){
+  if(!LOOK.typewriter) return; const s=getSelection(), main=$('#main'); if(!s.rangeCount||!main) return;
+  const rc=s.getRangeAt(0).getClientRects()[0]; if(!rc) return;
+  const mr=main.getBoundingClientRect(), d=rc.top-(mr.top+mr.height*.45); if(Math.abs(d)>6) main.scrollTop+=d;
+}
+// Read aloud: the selection, or from the caret's paragraph to the end, one paragraph at a time, each one
+// highlighted while it is read (CSS custom highlights, where the browser has them).
+const canSpeak=()=>!!(window.speechSynthesis&&window.SpeechSynthesisUtterance);
+function raPaint(){ const b=$('#raBtn'); if(b){ b.innerHTML=ico(ui.ra?'stop':'speak')+'<span>'+(ui.ra?'Stop reading':'Read aloud')+'</span>'; b.setAttribute('aria-pressed',ui.ra?'true':'false'); } }
+function raStop(){ if(!ui.ra) return; ui.ra=false; try{ speechSynthesis.cancel(); }catch(e){} try{ if(window.CSS&&CSS.highlights) CSS.highlights.delete('inkread'); }catch(e){} raPaint(); }
+function raMark(ed,a,z){
+  if(!window.Highlight||!window.CSS||!CSS.highlights||!ed.isConnected) return;
+  const w=document.createTreeWalker(ed,NodeFilter.SHOW_TEXT), r=document.createRange(); let n,acc=0,ok=0;
+  while((n=w.nextNode())){ const l=n.nodeValue.length; if(!ok&&acc+l>a){ r.setStart(n,a-acc); ok=1; } if(ok&&acc+l>=z){ r.setEnd(n,z-acc); ok=2; break; } acc+=l; }
+  if(ok<2) return; CSS.highlights.set('inkread',new Highlight(r));
+  const b=r.getBoundingClientRect(); if(b.top<80||b.bottom>innerHeight-80) (r.startContainer.parentElement||ed).scrollIntoView({block:'center'});
+}
+function readAloud(){
+  if(!canSpeak()) return; if(ui.ra){ raStop(); return; }
+  const ed=$('#ed'); if(!ed) return; const sel=edSel(ed);
+  relinkEditor(true);   // fresh from the stored text, so visible offsets are DOM offsets
+  const vis=plainText(getText(ed)); let s=0, e=vis.length;
+  if(sel&&sel.e>sel.s){ s=sel.s; e=sel.e; } else if(sel&&sel.s<vis.length) s=vis.lastIndexOf('\n',sel.s-1)+1;
+  const parts=[]; for(let i=s;i<e;){ let j=vis.indexOf('\n',i); if(j<0||j>e) j=e; if(vis.slice(i,j).trim()) parts.push([i,j]); i=j+1; }
+  if(!parts.length){ toast('Nothing to read here yet.',{plain:true}); return; }
+  ui.ra=true; raPaint(); try{ speechSynthesis.cancel(); }catch(x){}
+  parts.forEach(([a,z],k)=>{ const u=new SpeechSynthesisUtterance(vis.slice(a,z).replace(/\t/g,' ')); u.rate=+LOOK.raRate||1;
+    u.onstart=()=>{ if(ui.ra) raMark(ed,a,z); }; if(k===parts.length-1){ u.onend=raStop; u.onerror=raStop; } speechSynthesis.speak(u); });
+}
+const MODK=/Mac|iPhone|iPad/.test(navigator.platform||'')?'⌘':'Ctrl';
+function showKeys(){
+  const k=s=>s.split('+').map(x=>'<kbd>'+esc(x==='Mod'?MODK:x)+'</kbd>').join('+'), row=(a,b)=>'<span class="kr"><span>'+b+'</span><span>'+k(a)+'</span></span>';
+  ask('Keyboard shortcuts','<span class="keys">'
+    +'<b>Writing</b>'+row('Mod+B','Bold')+row('Mod+I','Italic')+row('Mod+U','Underline')+row('Mod+Z','Undo')+row(MODK==='⌘'?'Mod+Shift+Z':'Mod+Y','Redo')
+    +row('Tab','Indent (with lines selected: indent them all)')+row('Shift+Tab','Remove an indent')+row('Enter','New line (keeps the indent)')+row('Mod+F','Find and replace')+row('Mod+S','Save now')
+    +'<b>Window</b>'+row('Mod+Shift+1','Show or hide the binder')+row('Mod+Shift+2','Show or hide the Inkling panel')+row('Mod+Shift+3','Focus mode')+row('Esc','Leave focus mode')
+    +'<b>As you type</b><span class="kr"><span>"quotes" become “curly”, -- becomes —, ... becomes …</span><span></span></span></span>',[['ok','Close','pri']]);
+}
+
 /* ---------- sticky notes beside the page ---------- */
 // sc[id].stickies = [{id, text, color, side:'l'|'r', y}] (y: pixels from the top of the page). Shown in the margins
 // when there is room for them; otherwise as small coloured tabs on the page edge that open when clicked.
@@ -2839,7 +2981,7 @@ function stkBind(sid){
     document.addEventListener('pointermove',mv); document.addEventListener('pointerup',up);
   });
 }
-function fmtCmd(cmd){ document.execCommand(cmd); const ed=$('#ed'); if(ed) ed.dispatchEvent(new Event('input',{bubbles:true})); }
+function fmtCmd(cmd){ ui.bigEdit=true; document.execCommand(cmd); const ed=$('#ed'); if(ed) ed.dispatchEvent(new Event('input',{bubbles:true})); }
 function selectRange(el,s,e){
   const w=document.createTreeWalker(el,NodeFilter.SHOW_TEXT), r=document.createRange(); let n,acc=0,ok=0;
   while((n=w.nextNode())){ const l=n.nodeValue.length;
@@ -2856,8 +2998,8 @@ function onType(id,ed){
   d.text=text; const w=wc(text), delta=w-sc.words, k0=Math.floor(sc.words/1000); sc.words=w;
   if(delta>0&&delta<=600&&w>=1000&&Math.floor(w/1000)>k0) say(pick(['This scene just passed '+fmt(Math.floor(w/1000)*1000)+' words.','“'+trunc(sc.title,30)+'” is up to '+fmt(Math.floor(w/1000)*1000)+' words!']));
   if(T.cur&&T.running) T.cur.scenes.add(id);
-  dirty('sc_'+id,'meta');
-  $('#sceneWc').textContent=fmt(w)+' words';
+  dirty('sc_'+id,'meta'); undoNote(id,text,ui.bigEdit); ui.bigEdit=false; raStop();
+  paintSceneWc(); typewriter();
   const bw=document.querySelector('[data-wc="'+id+'"]'); if(bw) bw.textContent=fmt(w);
   credit(delta); updateStats();
   clearTimeout(ui.rl); ui.rl=setTimeout(()=>relinkEditor(false),500);
@@ -4333,6 +4475,82 @@ function bindSizers(){
   addEventListener('resize',applySides);
 }
 
+/* ---------- your screen: what shows (Window › Project settings) ---------- */
+// meta.layout = {hide:{key:true}, order:[Inkling panel sections]}. Personal and per project: it follows the writer on
+// a shared project. Projects without one start from this device's default (LOOK.layoutDef, "Use for new projects").
+// Hidden things get an lo-<key> class on #app; the Inkling panel is built in layout order without hidden sections.
+const LO_INSP=[['pet','Inky and the room'],['timer','Focus timer'],['today','Today’s goal'],['todo','To-do list'],['ms','Manuscript'],['scene','This scene (synopsis and notes)']];
+const LO_GROUPS=[
+  ['Panels',[['binder','Binder (left)'],['insp','Inkling panel (right)']],'On narrow screens the panels are tabs at the bottom and are always there.'],
+  ['Top bar',[['goalChip','Word counter for today'],['saveSt','Saving status']]],
+  ['Above the page',[['fmt','Formatting, undo and indent buttons'],['link','Link selection'],['size','Text size buttons'],['stk','Sticky notes'],['snapBtn','Snapshots button'],['read','Read aloud'],['status','Scene status'],['swc','Scene word count']]],
+  ['Around the page',[['hint','Tip under the page'],['bubble','Inky’s speech bubble'],['peek','Inky peeking at the page corner (focus mode, phones)']]]
+];
+const LO_ALL=LO_INSP.map(x=>x[0]).concat(...LO_GROUPS.map(g=>g[1].map(x=>x[0])));
+const LO_PRESETS={standard:['Everything',[]],calm:['Calm',['saveSt','hint','link','size','snapBtn','read','ms','scene']],page:['Just the page',['binder','insp','saveSt','hint','link','size','stk','snapBtn','read','status','swc']]};
+function normLayout(x){
+  x=x&&typeof x==='object'?x:{}; const hide={}, ids=LO_INSP.map(s=>s[0]);
+  Object.keys(x.hide||{}).forEach(k=>{ if(LO_ALL.includes(k)&&x.hide[k]) hide[k]=true; });
+  const order=(Array.isArray(x.order)?x.order:[]).filter((k,i,a)=>ids.includes(k)&&a.indexOf(k)===i); ids.forEach(k=>{ if(!order.includes(k)) order.push(k); });
+  return {hide,order};
+}
+const loHidden=k=>!!(S&&S.meta.layout&&S.meta.layout.hide[k]);
+function applyLayout(){
+  const app=$('#app'); if(!app||!S) return;
+  [...app.classList].filter(c=>c.startsWith('lo-')).forEach(c=>app.classList.remove(c));
+  Object.keys(S.meta.layout.hide).forEach(k=>app.classList.add('lo-'+k));
+}
+function loSet(k,hide){ const h=S.meta.layout.hide; if(hide) h[k]=true; else delete h[k]; dirty('meta'); applyLayout(); if(LO_INSP.some(s=>s[0]===k)) renderInspector(); }
+function loToggle(k){ loSet(k,!loHidden(k)); if(ui.view.k==='layout') renderMain(); const nm=(LO_GROUPS[0][1].find(x=>x[0]===k)||[])[1]; if(nm&&innerWidth>=1080) toast((loHidden(k)?'Hid the ':'Showing the ')+nm.replace(/ \(.*\)/,'').toLowerCase()+'. Window › Project settings has more.',{plain:true}); }
+// Window actions, from the ⋯ menu, the desktop's Window menu or the keyboard. The desktop can deliver both a key and
+// its menu accelerator, so the same action twice within 150 ms is done once.
+function winAct(a){
+  const now=Date.now(); ui.actAt=ui.actAt||{}; if(now-(ui.actAt[a]||0)<150) return; ui.actAt[a]=now;
+  if(a==='layout') go({k:'layout'});
+  else if(a==='tBinder') loToggle('binder');
+  else if(a==='tInsp') loToggle('insp');
+  else if(a==='focus'){ ui.focus=!ui.focus; syncTab(); renderMain(); }
+  else if(a==='keys') showKeys();
+  else if(a==='undo'||a==='redo'){ if(now-(ui.keyHistAt||0)<400) return; const ed=$('#ed');
+    if(ed&&(document.activeElement===ed||ui.view.k==='scene'&&!document.activeElement.closest('input,textarea,select'))) edHist(a==='redo'); else document.execCommand(a); }
+}
+function renderLayout(el){
+  const m=S.meta, L=m.layout, ck=(k,label)=>'<label class="ck lo-ck"><input type="checkbox" data-lo="'+k+'"'+(L.hide[k]?'':' checked')+'>'+esc(label)+'</label>';
+  const preset=Object.keys(LO_PRESETS).find(p=>{ const h=LO_PRESETS[p][1]; return h.length===Object.keys(L.hide).length&&h.every(k=>L.hide[k]); });
+  el.innerHTML='<div class="main-head">'+backBtn()+'<span class="kind">'+ico('layout',16)+'</span><h1 class="mh-title">Project settings</h1></div><div class="pf-wrap">'
+    +'<section class="pf"><h2>This project</h2><div class="two"><label class="f">Title<input id="loTitle" maxlength="90" value="'+esc(m.title)+'"></label><label class="f">Author<input id="loAuthor" maxlength="120" value="'+esc(m.author||'')+'" placeholder="Your name or pen name"></label></div>'
+    +'<div class="two"><label class="f">Daily goal (words)<input id="loGoal" type="number" min="50" max="20000" step="50" value="'+m.goal+'"></label><label class="f">Novel length goal (words)<input id="loTarget" type="number" min="1000" max="1000000" step="1000" value="'+m.target+'"></label></div>'
+    +'<div class="ts-row"><button class="btn" data-lo-a="binder">'+ico('sliders',14)+'<span>Choose binder sections…</span></button><button class="btn" data-lo-a="exp">Export settings…</button></div></section>'
+    +'<section class="pf"><h2>Your screen</h2><p class="fine">Choose what you see while you work. Changes show straight away. Each project remembers its own setup'+(DESK?', and on a shared project your setup is yours alone':'')+'.</p>'
+    +'<span class="sec-l">Start from</span><div class="seg">'+Object.keys(LO_PRESETS).map(p=>'<button data-lo-p="'+p+'"'+(preset===p?' class="on"':'')+'>'+LO_PRESETS[p][0]+'</button>').join('')+'</div>'
+    +LO_GROUPS.map(g=>'<div class="lo-grp"><span class="sec-l">'+g[0]+'</span><div class="lo-cks">'+g[1].map(x=>ck(x[0],x[1])).join('')+'</div>'+(g[2]?'<p class="fine">'+g[2]+'</p>':'')+'</div>').join('')
+    +'<div class="lo-grp"><span class="sec-l">Inkling panel, top to bottom</span><p class="fine">Drag to change the order. Untick to hide.</p><ul class="lo-order" id="loOrder">'
+    +L.order.map(k=>'<li class="lo-it" data-k="'+k+'"><span class="td-grip" aria-hidden="true">'+ico('dots',12)+'</span>'+ck(k,LO_INSP.find(s=>s[0]===k)[1])
+      +'<span class="lo-mv"><button class="ibtn" data-lo-mv="-1" aria-label="Move up">'+ico('up',13)+'</button><button class="ibtn" data-lo-mv="1" aria-label="Move down">'+ico('down',13)+'</button></span></li>').join('')+'</ul></div>'
+    +'<div class="ts-row"><button class="btn" data-lo-a="def">Use this setup for new projects</button>'+(LOOK.layoutDef?'<button class="btn" data-lo-a="nodef">Forget my default</button>':'')+'</div>'
+    +'<p class="fine">Window shortcuts: '+MODK+'+Shift+1 binder, '+MODK+'+Shift+2 Inkling panel, '+MODK+'+Shift+3 focus mode. Appearance (theme, font, spacing) is in <button class="lnk" data-lo-a="prefs">Settings</button>.</p></section></div>';
+  const redraw=()=>{ applyLayout(); renderInspector(); renderLayout(el); };
+  el.onchange=e=>{ const x=e.target;
+    if(x.dataset.lo){ loSet(x.dataset.lo,!x.checked); renderLayout(el); return; }
+    if(x.id==='loTitle'){ m.title=x.value.trim()||'Untitled novel'; $('#projTitle').value=m.title; dirty('meta'); }
+    else if(x.id==='loAuthor'){ m.author=x.value.trim(); dirty('meta'); }
+    else if(x.id==='loGoal'){ m.goal=Math.max(50,Math.min(20000,Math.round(+x.value||500))); x.value=m.goal; dirty('meta'); updateStats(); renderInspector(); }
+    else if(x.id==='loTarget'){ m.target=Math.max(1000,Math.min(1000000,Math.round(+x.value||80000))); x.value=m.target; dirty('meta'); updateStats(); renderInspector(); }
+  };
+  el.onclick=e=>{
+    const p=e.target.closest('[data-lo-p]'), a=e.target.closest('[data-lo-a]'), mv=e.target.closest('[data-lo-mv]');
+    if(p){ L.hide={}; LO_PRESETS[p.dataset.loP][1].forEach(k=>{ L.hide[k]=true; }); dirty('meta'); redraw(); }
+    else if(mv){ const k=mv.closest('.lo-it').dataset.k, i=L.order.indexOf(k), j=i+ +mv.dataset.loMv; if(j<0||j>=L.order.length) return; L.order.splice(i,1); L.order.splice(j,0,k); dirty('meta'); redraw(); }
+    else if(a){ const w=a.dataset.loA;
+      if(w==='def'){ LOOK.layoutDef=clone(L); saveLook(); toast('New projects will start with this setup.',{plain:true}); renderLayout(el); }
+      else if(w==='nodef'){ delete LOOK.layoutDef; saveLook(); renderLayout(el); }
+      else if(w==='binder'){ loSet('binder',false); ui.binderCfg=true; renderBinder(); const b=$('.bcfg'); if(b) b.scrollIntoView({block:'nearest'}); }
+      else if(w==='exp') openExport();
+      else if(w==='prefs') go({k:'prefs'}); }
+  };
+  dragSort($('#loOrder',el),{item:'.lo-it',handle:'.td-grip',drop:(it,ref)=>{ if(moveInList(L.order,it.dataset.k,ref&&ref.dataset.k,x=>x)){ dirty('meta'); redraw(); } }});
+}
+
 /* ---------- settings ---------- */
 // Appearance is per device (localStorage), not per project: theme, writing font, line spacing, page width, spellcheck.
 const LOOK_DEF={theme:'system',font:'literata',lh:1.8,width:'standard',spell:true};
@@ -4346,6 +4564,7 @@ function applyLook(){
   if(LOOK.theme==='light'||LOOK.theme==='dark') r.dataset.theme=LOOK.theme; else delete r.dataset.theme;
   r.style.setProperty('--ed-font',f[2]); r.style.setProperty('--ed-lh',String(LOOK.lh)); r.style.setProperty('--ed-w',(WIDTHS[LOOK.width]||WIDTHS.standard)[1]+'px');
   const ed=$('#ed'); if(ed) ed.spellcheck=!!LOOK.spell;
+  const app=$('#app'); if(app) app.classList.toggle('tw',!!LOOK.typewriter);
   applySides();
 }
 function saveLook(){ try{ localStorage.setItem('inkling:look',JSON.stringify(LOOK)); }catch(e){} applyLook(); }
@@ -4366,7 +4585,10 @@ async function renderPrefs(el){
     +(LOOK.bw||LOOK.iw?'<button class="btn sm" data-pf="sides">Reset widths</button>':'')+'</div></section>'
     +'<section class="pf"><h2>Writing</h2><label class="ck"><input type="checkbox" data-look="spell"'+(LOOK.spell?' checked':'')+'>Check spelling as I type</label>'
     +'<label class="ck"><input type="checkbox" data-look="smart"'+(LOOK.smart!==false?' checked':'')+'>Curly quotes and em dashes as I type (“ ” ‘ ’ and -- becomes —)</label>'
-    +'<p class="fine">Bold, italic and underline: the B, I and U buttons above a scene, or Ctrl+B, Ctrl+I, Ctrl+U (⌘ on a Mac).</p>'
+    +'<label class="ck"><input type="checkbox" data-look="keepIndent"'+(LOOK.keepIndent!==false?' checked':'')+'>A new line keeps the indent of the line before (Tab indents, Shift+Tab removes it)</label>'
+    +'<label class="ck"><input type="checkbox" data-look="typewriter"'+(LOOK.typewriter?' checked':'')+'>Typewriter scrolling: keep the line I am writing in the middle of the screen</label>'
+    +(canSpeak()?'<span class="sec-l">Read aloud speed</span>'+seg('raRate',[[0.8,'Slower'],[1,'Normal'],[1.25,'Faster']]):'')
+    +'<p class="fine">Bold, italic and underline: the B, I and U buttons above a scene, or Ctrl+B, Ctrl+I, Ctrl+U (⌘ on a Mac). <button class="lnk" data-pf="keys">All keyboard shortcuts</button></p>'
     +(pf&&pf.spellLangs&&pf.spellLangs.length?'<label class="f">Spelling language<select data-pf="spell">'+pf.spellLangs.map(l=>'<option value="'+esc(l)+'"'+(pf.spell===l?' selected':'')+'>'+esc(l)+'</option>').join('')+'</select></label>':'')
     +(pf&&pf.platform==='darwin'?'<p class="fine">On a Mac, spelling uses your system language settings.</p>':'')+'</section>'
     +(pf?'<section class="pf"><h2>Projects folder</h2><p><code>'+esc(pf.dir)+'</code></p>'
@@ -4383,12 +4605,13 @@ async function renderPrefs(el){
   sample();
   el.onclick=async e=>{
     const b=e.target.closest('[data-look],[data-fs],[data-pf]'); if(!b||b.tagName==='SELECT'||b.type==='checkbox') return;
-    if(b.dataset.look){ const k=b.dataset.look; LOOK[k]=k==='lh'?+b.dataset.v:b.dataset.v; saveLook(); renderPrefs(el); return; }
+    if(b.dataset.look){ const k=b.dataset.look; LOOK[k]=k==='lh'||k==='raRate'?+b.dataset.v:b.dataset.v; saveLook(); renderPrefs(el); return; }
     if(b.dataset.fs){ ui.fs=Math.max(14,Math.min(28,ui.fs+ +b.dataset.fs)); try{ localStorage.setItem('inkling:fs',ui.fs); }catch(x){} $('#pfFs',el).textContent=ui.fs+' px'; sample(); return; }
     const a=b.dataset.pf;
     if(a==='check') checkUpdatesNow(); else if(a==='notes') DESK.openReleases(pf.version); else if(a==='reveal') DESK.reveal(); else if(a==='tour') startTour(true);
     else if(a==='dir'||a==='dirdef') changeFolder(a==='dirdef');
     else if(a==='help') go({k:'help'});
+    else if(a==='keys') showKeys();
     else if(a==='sides'){ delete LOOK.bw; delete LOOK.iw; saveLook(); renderPrefs(el); }
   };
   el.onchange=async e=>{
@@ -4443,7 +4666,8 @@ function pmPause(){ if(!T.running) return; hereSoon(); T.left=pmLeft(); T.runnin
 function pmRecord(done){
   const c=T.cur; T.cur=null; if(!c) return null; if(T.running) c.ms+=Date.now()-c.since;
   if(c.ms<60000&&!c.words) return null;   // under a minute with nothing written is not worth keeping
-  const id=uid('w_'); S.ss[id]={start:c.start,end:Date.now(),planned:S.meta.pomo.focus,mins:Math.round(c.ms/6000)/10,words:c.words,net:totalWords()-c.total0,done:!!done,scenes:[...c.scenes]};
+  const k=Math.floor(T.count/S.meta.pomo.every); if(!T.cyc||T.cyc.k!==k) T.cyc={k,id:uid('cy_')};   // the sessions up to a long break
+  const id=uid('w_'); S.ss[id]={start:c.start,end:Date.now(),planned:S.meta.pomo.focus,mins:Math.round(c.ms/6000)/10,words:c.words,net:totalWords()-c.total0,done:!!done,scenes:[...c.scenes],cyc:T.cyc.id};
   dirty('ss_'+id); if(ui.view&&ui.view.k==='ss') renderMain(); return S.ss[id];
 }
 function pmTick(){ if(!T.running) return; if(Date.now()>=T.endAt) pmEnd(); else pmPaint(); }
@@ -4453,8 +4677,9 @@ function pmEnd(){
   if(wasFocus){ r=pmRecord(true); if(r) todoTick('sprint'); }
   T.running=false; T.left=null;
   if(wasFocus){ pmNext();
-    const msg=(r?'Session done: '+fmt(r.words)+' new word'+(r.words===1?'':'s')+'. ':'Session done. ')+(T.phase==='long'?'Take a long break, you earned it.':'Stretch, sip something, back soon.');
-    pmChime(true); cheer(msg,!!(r&&P2.goal&&r.words>=P2.goal)); checkAch(); if(P2.autoBreak) pmStart(); }
+    const msg=(r?'Session done: '+fmt(r.words)+' new word'+(r.words===1?'':'s')+(r.mins?', '+wpmFmt(wpmOf(r))+' a minute':'')+'. ':'Session done. ')+(T.phase==='long'?'Take a long break, you earned it.':'Stretch, sip something, back soon.');
+    pmChime(true); cheer(msg,!!(r&&P2.goal&&r.words>=P2.goal)); checkAch(); if(P2.autoBreak) pmStart();
+    if(r&&T.phase==='long') setTimeout(()=>pmReport(r.cyc),400); }
   else { T.phase='focus'; pmChime(false); toast('Break is over. Ready when you are.'); say('Break is over. Shall we write?'); if(P2.autoFocus) pmStart(); }
   pmPaint();
 }
@@ -4464,7 +4689,7 @@ function pmStop(){
   if(r) toast('Saved this session: '+fmt(r.words)+' new words in '+r.mins+' min.',{plain:true});
 }
 function pmSkip(){
-  if(T.phase==='focus'){ const r=pmRecord(false); clearInterval(T.tick); T.running=false; T.left=null; pmNext(); if(r) toast('Saved this session ('+fmt(r.words)+' new words). On to your break.',{plain:true}); }
+  if(T.phase==='focus'){ const r=pmRecord(false); clearInterval(T.tick); T.running=false; T.left=null; pmNext(); if(r) toast('Saved this session ('+fmt(r.words)+' new words). On to your break.',{plain:true}); if(r&&T.phase==='long') setTimeout(()=>pmReport(r.cyc),400); }
   else { clearInterval(T.tick); T.running=false; T.left=null; T.phase='focus'; }
   pmPaint();
 }
@@ -4508,6 +4733,38 @@ function bindPomo(){
     if(x.type==='checkbox') P2[k]=x.checked; else { S.meta.pomo=normPomo(Object.assign({},P2,{[k]:x.value})); x.value=S.meta.pomo[k]; }
     dirty('meta'); pmPaint(); });
 }
+/* ---------- writing report after a full focus cycle ---------- */
+// Each focus session records its cycle (cyc: the sessions up to a long break). When the last focus session before
+// the long break ends, a report shows words per minute for each session and on average, against your usual pace.
+const wpmOf=x=>x.mins>0?x.words/x.mins:0, wpmFmt=v=>(Math.round(v*10)/10).toLocaleString();
+function pmReport(cyc){
+  const all=mySs(), list=all.filter(x=>x.cyc===cyc).sort((a,b)=>a.start-b.start); if(!list.length) return;
+  const words=list.reduce((a,x)=>a+x.words,0), mins=list.reduce((a,x)=>a+x.mins,0), avg=mins?words/mins:0;
+  const before=all.filter(x=>x.cyc!==cyc&&x.start<list[0].start&&x.mins>=1), bm=before.reduce((a,x)=>a+x.mins,0), usual=bm?before.reduce((a,x)=>a+x.words,0)/bm:0;
+  const best=list.reduce((b,x)=>wpmOf(x)>wpmOf(b)?x:b,list[0]), top=Math.max(1,...list.map(wpmOf));
+  const pace=arr=>{ const m=arr.reduce((a,x)=>a+x.mins,0); return m?arr.reduce((a,x)=>a+x.words,0)/m:0; }, h1=pace(list.slice(0,Math.floor(list.length/2))), h2=pace(list.slice(Math.ceil(list.length/2)));
+  const trend=list.length<2||!h1||!h2?'':h2>h1*1.15?'You sped up as you went.':h2<h1*.85?'You started fast and eased off.':'A steady pace all the way through.';
+  const pct=usual?Math.round((avg/usual-1)*100):0;
+  const cmp=before.length<3||!usual?'Your first report for this project. Next time you will see how it compares.'
+    :pct>=5?pct+'% faster than your usual '+wpmFmt(usual)+' words a minute.':pct<=-5?'A little under your usual '+wpmFmt(usual)+' words a minute. Thinking and revising count too.':'Right on your usual pace of '+wpmFmt(usual)+' words a minute.';
+  const left=Math.max(0,S.meta.target-totalWords()), hrs=avg>0?left/avg/60:0;
+  const scenes=[...new Set(list.flatMap(x=>x.scenes))].filter(id=>S.meta.scenes[id]);
+  const hm=t=>{ const d=new Date(t); return pad(d.getHours())+':'+pad(d.getMinutes()); };
+  const nm=S.meta.pet.name, say2=!words?'Some sessions are for thinking. That counts.':pct>=5&&usual?'Look at you go! '+nm+' can barely keep up.':avg>=20?nm+' is impressed. That is a lot of ink.':'Steady words, steady progress. '+nm+' approves.';
+  const ov=document.createElement('div'); ov.className='pj-ov ask-ov';
+  ov.innerHTML='<div class="pj-dlg rp" role="dialog" aria-modal="true" aria-labelledby="rpH"><div class="rp-top"><span class="rp-pet">'+petSVG(words?'party':'happy',petStage())+'</span><div><h2 id="rpH">Writing report</h2>'
+    +'<p class="muted">'+list.length+' focus session'+(list.length===1?'':'s')+' · '+wpmFmt(mins)+' minutes focused · '+hm(list[0].start)+'–'+hm(list[list.length-1].end)+'</p></div></div>'
+    +'<div class="rp-big"><div><b class="mono" id="rpWpm">'+wpmFmt(avg)+'</b><span>words a minute on average</span></div><div><b class="mono">'+fmt(words)+'</b><span>new words</span></div></div>'
+    +'<div class="rp-bars">'+list.map((x,i)=>'<div class="rp-row'+(x===best&&list.length>1?' best':'')+'"><span>Session '+(i+1)+'</span><div class="bar"><i style="width:'+(wpmOf(x)/top*100).toFixed(1)+'%"></i></div><b class="mono">'+wpmFmt(wpmOf(x))+'</b><small>'+fmt(x.words)+' words · '+wpmFmt(x.mins)+' min</small></div>').join('')+'</div>'
+    +'<ul class="rp-notes">'+(list.length>1?'<li>Best: session '+(list.indexOf(best)+1)+', '+wpmFmt(wpmOf(best))+' words a minute.</li>':'')+(trend?'<li>'+trend+'</li>':'')+'<li>'+esc(cmp)+'</li>'
+    +(avg>0&&left?'<li>At this pace, the rest of your '+fmt(S.meta.target)+'-word goal is about '+(hrs<1?Math.max(1,Math.round(hrs*60))+' minutes':wpmFmt(hrs)+' hours')+' of focus.</li>':'')
+    +(scenes.length?'<li>Worked on: '+scenes.slice(0,5).map(id=>'“'+esc(S.meta.scenes[id].title)+'”').join(', ')+(scenes.length>5?' and more':'')+'.</li>':'')+'</ul>'
+    +'<p class="rp-say">'+esc(say2)+'</p><div class="ask-btns"><button class="btn" data-v="ss">All sessions</button><button class="btn pri" data-v="ok">'+(T.phase==='long'?'Enjoy the break':'Close')+'</button></div></div>';
+  const done=v=>{ ov.remove(); document.removeEventListener('keydown',k,true); if(v==='ss') go({k:'ss'}); };
+  const k=e=>{ if(e.key==='Escape'){ e.stopPropagation(); e.preventDefault(); done(''); } };
+  ov.addEventListener('click',e=>{ const b=e.target.closest('[data-v]'); if(b) done(b.dataset.v); else if(e.target===ov) done(''); });
+  document.addEventListener('keydown',k,true); document.body.appendChild(ov); $('[data-v="ok"]',ov).focus();
+}
 // Writing sessions belong to the writer who recorded them (shared projects keep everyone's in one place).
 const mySs=()=>Object.keys(S.ss).map(id=>Object.assign({id},S.ss[id])).filter(x=>x._by?nameKey(x._by)===myKey():(!myKey()||!x._dev||x._dev===DEVICE));
 function renderSs(el){
@@ -4517,7 +4774,8 @@ function renderSs(el){
   const hm=t=>{ const d=new Date(t); return pad(d.getHours())+':'+pad(d.getMinutes()); };
   const dayName=t=>new Date(t).toLocaleDateString(undefined,{weekday:'long',day:'numeric',month:'long',year:'numeric'});
   const days=[]; list.forEach(x=>{ const k=keyOf(new Date(x.start)); let d=days[days.length-1]; if(!d||d.k!==k){ d={k,items:[]}; days.push(d); } d.items.push(x); });
-  const tile=(v,l)=>'<div class="ss-tile"><b class="mono">'+v+'</b><span>'+l+'</span></div>';
+  const tile=(v,l)=>'<div class="ss-tile"><b class="mono">'+v+'</b><span>'+l+'</span></div>', lastOf={}, nOf={};
+  list.slice().reverse().forEach(x=>{ if(x.cyc){ lastOf[x.cyc]=x.id; nOf[x.cyc]=(nOf[x.cyc]||0)+1; } }); Object.keys(nOf).forEach(c=>{ if(nOf[c]<2) delete lastOf[c]; });
   el.innerHTML='<div class="main-head">'+backBtn()+'<span class="kind">'+ico('timer',16)+'</span><h1 class="mh-title">Writing sessions</h1>'
     +(list.length?'<button class="btn danger" data-ss="all">'+ico('trash')+'<span>'+(cf==='ssall'?'Click again to delete every session':'Delete all')+'</span></button>':'')+'</div>'
     +'<div class="ss-wrap"><p class="muted ss-sub">Focus timer sessions for <b>'+esc(S.meta.title)+'</b>. New words are counted the same way as your daily goal: pasted blocks over 600 words are left out.</p>'
@@ -4533,12 +4791,14 @@ function renderSs(el){
             +'<b class="ss-w">'+fmt(x.words)+' <span>new words</span></b>'
             +'<span class="muted ss-net">'+(x.net>=0?'+':'')+fmt(x.net)+' net · '+(x.mins?Math.round(x.words/x.mins*10)/10:0)+'/min</span>'
             +'<span class="ss-sc">'+x.scenes.filter(id=>S.meta.scenes[id]).map(id=>'<button class="tc-sc" data-ss="open" data-id="'+id+'">'+ico('pen',12)+'<span>'+esc(S.meta.scenes[id].title)+'</span></button>').join('')+'</span>'
+            +(x.cyc&&lastOf[x.cyc]===x.id?'<button class="btn sm" data-ss="rep" data-id="'+x.cyc+'" title="Words per minute for this run of sessions">Report</button>':'')
             +'<button class="ibtn'+(cf==='ss'+x.id?' on':'')+'" data-ss="del" data-id="'+x.id+'" aria-label="Delete this session">'+(cf==='ss'+x.id?'Delete?':ico('trash',14))+'</button></div>').join('')+'</section>'; }).join('')
       :'<div class="ss-empty"><b>No sessions yet</b><p class="muted">Start the focus timer next to '+esc(S.meta.pet.name)+' and write. Each focus session is saved here with its word count.</p><button class="btn pri" data-ss="timer">'+ico('play',14)+'<span>Start a focus session</span></button></div>')+'</div>';
   drawWcBox($('#wcBox',el));
   const gone=ids=>{ ids.forEach(id=>{ delete S.ss[id]; forget('ss_'+id); }); dirty('meta'); renderSs(el); renderInspector(); };
   el.onclick=ev=>{ const b=ev.target.closest('[data-ss]'); if(!b) return; const a=b.dataset.ss, id=b.dataset.id, rr=()=>renderSs(el);
     if(a==='open') go({k:'scene',id});
+    else if(a==='rep') pmReport(id);
     else if(a==='timer'){ pmStart(); ui.tab='pet'; syncTab(); }
     else if(a==='del') confirmDo('ss'+id,()=>gone([id]),rr);
     else if(a==='day') confirmDo('ssd'+id,()=>gone(mySs().filter(x=>keyOf(new Date(x.start))===id).map(x=>x.id)),rr);
@@ -4600,39 +4860,45 @@ function drawWcBox(box){
 
 /* ---------- inspector ---------- */
 function renderInspector(){
+  applyLayout();
   const m=S.meta, p=m.pet, st=petStage(), nx=STAGES[st+1], md=curMood(), v=ui.view;
   ui.mood=md; ui.stage=st;
-  let h='<section class="pet-card m-'+md+'"><div class="pet-stage"><div class="room" id="petRoom" aria-hidden="true"></div><div class="pals" id="petPals"></div>'
+  const sec={};   // the panel's sections, shown in the writer's order (Project settings)
+  sec.pet='<section class="pet-card m-'+md+'"><div class="pet-stage"><div class="room" id="petRoom" aria-hidden="true"></div><div class="pals" id="petPals"></div>'
     +'<button class="pet-btn" id="petBtn" aria-label="Cheer with '+esc(p.name)+'"><span id="petArt"></span></button>'
     +'<button class="btn sm den-btn" id="denBtn" aria-pressed="'+(v.k==='den')+'">'+(v.k==='den'?ico('back',13)+'<span>Close room</span>':ico('spark',13)+'<span>Room</span>')+(ui.newThings&&v.k!=='den'?'<i class="dot-new" aria-label="new things"></i>':'')+'</button></div>'
     +'<div class="bubble" id="bubble">'+esc(ui.say||line(md))+'</div>'
     +'<div class="pet-meta"><input class="pet-name" id="petName" maxlength="18" value="'+esc(p.name)+'" aria-label="Pet name"><span class="stage-tag" id="stageTag">'+STAGES[st].n+'</span></div>'
-    +'<div class="evo">'+(nx?'<div class="bar"><i id="evoBar" style="width:'+Math.max(0,Math.min(100,(p.total-stageAt(st))/Math.max(1,stageAt(st+1)-stageAt(st))*100))+'%"></i></div>':'')+'<small id="evoTxt"></small></div></section>'+pomoHtml();
-  h+='<section class="psec"><h3>Today</h3><div class="big"><b class="mono" id="goalNum">0</b><span>of <span class="mono" id="goalOf">0</span> new words</span></div><div class="bar lg"><i id="goalBar" style="width:0"></i></div>'
+    +'<div class="evo">'+(nx?'<div class="bar"><i id="evoBar" style="width:'+Math.max(0,Math.min(100,(p.total-stageAt(st))/Math.max(1,stageAt(st+1)-stageAt(st))*100))+'%"></i></div>':'')+'<small id="evoTxt"></small></div></section>'; sec.timer=pomoHtml();
+  sec.today='<section class="psec"><h3>Today</h3><div class="big"><b class="mono" id="goalNum">0</b><span>of <span class="mono" id="goalOf">0</span> new words</span></div><div class="bar lg"><i id="goalBar" style="width:0"></i></div>'
     +'<div class="chips"><span class="chip2" id="streakChip"></span></div>'
     +'<div class="two"><label class="f">Daily goal<input id="goalIn" type="number" inputmode="numeric" min="50" max="20000" step="50" value="'+m.goal+'"></label><label class="f">Novel length goal<input id="tgtIn" type="number" inputmode="numeric" min="1000" max="1000000" step="1000" value="'+m.target+'"></label></div>'
-    +'<p class="fine">Only new words count. Pasted blocks over 600 words are treated as imports.</p></section>'
-    +'<section class="psec todo" id="todo"><h3><span>To do today</span><span class="td-n" id="tdN"></span></h3><div id="tdBox"></div></section>';
-  h+='<section class="psec"><h3>Manuscript</h3><div class="big"><b class="mono" id="totNum" style="font-size:26px">0</b><span>of <span class="mono" id="totOf">0</span> words</span></div><div class="bar proj"><i id="totBar" style="width:0"></i></div>'
+    +'<p class="fine">Only new words count. Pasted blocks over 600 words are treated as imports.</p></section>';
+  sec.todo='<section class="psec todo" id="todo"><h3><span>To do today</span><span class="td-n" id="tdN"></span></h3><div id="tdBox"></div></section>';
+  sec.ms='<section class="psec"><h3>Manuscript</h3><div class="big"><b class="mono" id="totNum" style="font-size:26px">0</b><span>of <span class="mono" id="totOf">0</span> words</span></div><div class="bar proj"><i id="totBar" style="width:0"></i></div>'
     +'<p class="fine">'+m.chapters.length+' chapter'+(m.chapters.length===1?'':'s')+', '+Object.keys(m.scenes).length+' scenes, '+Object.keys(m.ents).length+' story pages.</p>'
     +(n=>'<button class="btn sm ct-chip'+(n?' warn':'')+'" id="contBtn">'+ico('search',13)+'<span>'+(n?n+' continuity thing'+(n===1?'':'s')+' to check':'Continuity check')+'</span></button>')(contCount())+'</section>';
   if(v.k==='scene'&&m.scenes[v.id]){
     const d=S.sc[v.id];
-    h+='<section class="psec"><h3>This scene</h3><label class="sec-l" for="synIn" style="margin-top:0">Synopsis</label><textarea class="ta" id="synIn" rows="3" placeholder="One or two lines on what happens.">'+esc(d.synopsis)+'</textarea>'
+    sec.scene='<section class="psec"><h3>This scene</h3><label class="sec-l" for="synIn" style="margin-top:0">Synopsis</label><textarea class="ta" id="synIn" rows="3" placeholder="One or two lines on what happens.">'+esc(d.synopsis)+'</textarea>'
       +'<label class="sec-l" for="noteIn">Notes</label><textarea class="ta" id="noteIn" rows="3" placeholder="Reminders, research, loose ends.">'+esc(d.notes)+'</textarea>'
       +'<span class="sec-l">Linked in this scene</span><div class="chiplinks" id="sceneChips"></div></section>';
   }
+  const h=m.layout.order.filter(k=>sec[k]&&!loHidden(k)).map(k=>sec[k]).join('')
+    ||'<p class="fine lo-empty">Everything in this panel is hidden. <button class="lnk" data-a="layout">Project settings</button></p>';
   const el=$('#insp'); el.innerHTML=h; paintPet(true); updateStats(); updateSceneChips(); bindPomo(); pmPaint(); drawTodo(); bindTodo();
-  $('#petBtn').addEventListener('click',()=>{ bump(); say(line(curMood())); });
-  $('#contBtn').addEventListener('click',()=>go({k:'cont'}));
-  $('#denBtn').addEventListener('click',()=>{ ui.newThings=0; if(ui.view.k==='den') goBack(); else go({k:'den'}); });
+  const on=(q,ev,f)=>{ const x=$(q,el); if(x) x.addEventListener(ev,f); };
+  on('#petBtn','click',()=>{ bump(); say(line(curMood())); });
+  on('#contBtn','click',()=>go({k:'cont'}));
+  on('#denBtn','click',()=>{ ui.newThings=0; if(ui.view.k==='den') goBack(); else go({k:'den'}); });
+  on('[data-a="layout"]','click',()=>go({k:'layout'}));
   paintPals();
-  $('#petName').addEventListener('input',e=>{ p.name=e.target.value.trim()||'Inky'; dirty('meta'); });
-  $('#goalIn').addEventListener('change',e=>{ m.goal=Math.max(50,Math.min(20000,Math.round(+e.target.value||500))); e.target.value=m.goal; dirty('meta'); updateStats(); drawTodo(); });
-  $('#tgtIn').addEventListener('change',e=>{ m.target=Math.max(1000,Math.min(1000000,Math.round(+e.target.value||80000))); e.target.value=m.target;
+  on('#petName','input',e=>{ p.name=e.target.value.trim()||'Inky'; dirty('meta'); });
+  on('#goalIn','change',e=>{ m.goal=Math.max(50,Math.min(20000,Math.round(+e.target.value||500))); e.target.value=m.goal; dirty('meta'); updateStats(); drawTodo(); });
+  on('#tgtIn','change',e=>{ m.target=Math.max(1000,Math.min(1000000,Math.round(+e.target.value||80000))); e.target.value=m.target;
     const was=p.rank||0, now=stageOf(p.total); if(now>was){ p.rank=now; cheer(p.name+' grew into a '+STAGES[now].n+'!',true); }
     dirty('meta'); updateStats(); checkAch(); });
-  const si=$('#synIn'); if(si){ si.addEventListener('input',()=>{ S.sc[v.id].synopsis=si.value; dirty('sc_'+v.id); }); $('#noteIn').addEventListener('input',e=>{ S.sc[v.id].notes=e.target.value; dirty('sc_'+v.id); }); }
+  on('#synIn','input',e=>{ S.sc[v.id].synopsis=e.target.value; dirty('sc_'+v.id); }); on('#noteIn','input',e=>{ S.sc[v.id].notes=e.target.value; dirty('sc_'+v.id); });
 }
 
 /* ---------- menu, export, restore ---------- */
@@ -4837,12 +5103,13 @@ function openExport(){
 }
 function renderMenu(){
   const cf=ui.confirm, el=$('#menu');
+  const winItems=()=>'<hr><small class="m-h">Window</small>'+item('layout','Project settings…')+item('tBinder',(loHidden('binder')?'Show':'Hide')+' the binder')+item('tInsp',(loHidden('insp')?'Show':'Hide')+' the Inkling panel')+item('focus',ui.focus?'Leave focus mode':'Focus mode')+'<hr>';
   const item=(m,label,cls)=>'<button data-m="'+m+'"'+(cls?' class="'+cls+'"':'')+'>'+label+'</button>';
   if(DESK){ el.innerHTML=item('save','Save')+item('projects','Projects…')+item('share','Share this project…')+'<hr>'+item('export','Export… (Word, PDF, EPUB)')+item('json','Back up this project (.json)')+item('import','Import a backup as a new project…')+'<hr>'
-    +item('find','Find and replace…')+item('cont','Continuity check')+item('sessions','Writing sessions')+item('prefs','Settings')+item('help','How sharing works')+item('tour','Show the tour')+'<hr>'+item('reveal','Show projects folder')
+    +item('find','Find and replace…')+item('cont','Continuity check')+item('sessions','Writing sessions')+item('prefs','Settings')+winItems()+item('help','How sharing works')+item('keys','Keyboard shortcuts')+item('tour','Show the tour')+'<hr>'+item('reveal','Show projects folder')
     +'<small>Saved on this computer as you write. Each project folder also keeps automatic backups.</small>'; return; }
   el.innerHTML=item('save','Save now')+'<hr>'+item('export','Export… (Word, PDF, EPUB)')+item('json','Back up project (.json)')+item('restore','Restore from a backup…')+'<hr>'
-    +item('find','Find and replace…')+item('cont','Continuity check')+item('sessions','Writing sessions')+item('prefs','Settings')+item('help','How sharing works')+item('tour','Show the tour')+'<hr>'
+    +item('find','Find and replace…')+item('cont','Continuity check')+item('sessions','Writing sessions')+item('prefs','Settings')+winItems()+item('help','How sharing works')+item('keys','Keyboard shortcuts')+item('tour','Show the tour')+'<hr>'
     +item('sample',cf==='m-sample'?'Replace everything with the sample? Click again':'Load the sample project','warn')
     +item('blank',cf==='m-blank'?'Replace everything with a blank project? Click again':'Start a blank project','warn')
     +'<small>'+(P.db?'Your project saves automatically to your Claude account, private to you. A new project comes with its own Inky; your daily goal and timer settings carry over.':'Your project saves on this device only. Back it up from here when you can.')+'</small>';
@@ -4865,6 +5132,7 @@ function bindMenu(){
     else if(a==='import'){ closeMenu(); deskImportPick(); }
     else if(a==='reveal'){ closeMenu(); DESK.reveal(); }
     else if(a==='sessions'){ closeMenu(); go({k:'ss'}); }
+    else if(['layout','tBinder','tInsp','focus','keys'].includes(a)){ closeMenu(); winAct(a); }
     else if(a==='restore'){ closeMenu(); $('#fileIn').value=''; $('#fileIn').click(); }
     else if(a==='sample') confirmDo('m-sample',()=>{ closeMenu(); replaceProject(normalize(sampleProject()),true); },renderMenu);
     else if(a==='blank') confirmDo('m-blank',()=>{ closeMenu(); replaceProject(normalize(blankProject()),true); },renderMenu);
@@ -4984,14 +5252,14 @@ function sameProject(a,b){   // ignoring the per-device copies of personal stats
 // Personal stats live in meta.writers[name]; the copies at the top of meta are this device's working view.
 function stampMine(st){
   if(!DESK||!st||!st.meta) return; const m=st.meta, k=myKey(), w=m.writers[k];
-  const cur={name:ME.name,days:m.days,pet:m.pet,mark:m.mark,goal:m.goal,pomo:m.pomo,todo:m.todo,devs:Array.from(new Set(((w&&w.devs)||[]).concat(DEVICE))).slice(-10)};
+  const cur={name:ME.name,days:m.days,pet:m.pet,mark:m.mark,goal:m.goal,pomo:m.pomo,todo:m.todo,layout:m.layout,devs:Array.from(new Set(((w&&w.devs)||[]).concat(DEVICE))).slice(-10)};
   if(!w||canon(Object.assign({},w,{at:0}))!==canon(Object.assign({},cur,{at:0}))) m.writers[k]=Object.assign(clone(cur),{at:Date.now()});
 }
 function adoptMine(st){
   const m=st.meta, wr=m.writers||{}; let w=wr[myKey()];
   if(!w){ const k=Object.keys(wr).find(k=>(wr[k].devs||[]).includes(DEVICE)); if(k) w=wr[k]; }   // this computer under an earlier name
   if(w) PERSONAL.forEach(f=>{ if(w[f]!==undefined) m[f]=clone(w[f]); });
-  else if(Object.keys(wr).length){ m.days={}; m.pet=normPet({}); m.mark=null; m.todo=normTodo({}); }   // someone else's project: your own pet and goals start fresh
+  else if(Object.keys(wr).length){ m.days={}; m.pet=normPet({}); m.mark=null; m.todo=normTodo({}); m.layout=normLayout(LOOK.layoutDef); }   // someone else's project: your own pet and goals start fresh
 }
 // Puts merged data into the live state, keeping every object that did not change (open screens hold references to them).
 function patchState(ns){
@@ -5160,7 +5428,7 @@ function helpShareHtml(){
     +sec('What sharing is','<p>Two or more people can work on the same novel, each in Inkling on their own computer. The project lives in a folder that a sync service keeps the same on every computer: Dropbox, Google Drive, OneDrive or iCloud Drive. Inkling has no server and no accounts; your sync service carries the files, and Inkling merges everyone’s changes.</p><p>It is not live like Google Docs: changes arrive when the sync service delivers them, usually within a few seconds to a minute. It works best when co-writers work on different scenes, or take turns.</p>')
     +sec('Setting it up','<ol><li>Open the project and choose <b>Share this project…</b> (in the File menu, or <b>Share</b> on the Projects screen).</li><li>Move it into a folder inside Dropbox, Google Drive, OneDrive or iCloud Drive. Inkling copies it, checks the copy, then moves the original to the trash.</li><li>In your sync service, share that project folder with your co-writers, with permission to edit.</li><li>Each co-writer installs Inkling, waits for the folder to sync, and chooses <b>File › Open a shared project…</b>, then picks the folder. It joins their Projects list.</li><li>Everyone types their name in <b>Settings › You</b>.</li></ol>')
     +sec('Working at the same time','<ul><li><b>Who is here.</b> A chip at the top shows who else has the project open, and a letter beside a scene shows who is in it. A note appears above a scene when someone else is in it too.</li><li><b>Sprint together.</b> When a co-writer starts a focus sprint, the chip at the top says so. Click it and choose <b>Join the sprint</b>: your timer ends at the same moment as theirs, and their Inky sits beside yours.</li><li><b>Different things merge.</b> If you change one scene and your co-writer changes another, or adds a character, a timeline card or a chapter, both changes are kept. Inkling checks for new changes every few seconds and whenever you come back to the window, and says what came in.</li><li><b>The same scene.</b> If you both change the same scene before the sync catches up, the newer change is kept in the scene and the other text is saved as a <b>snapshot</b> of that scene, named after whoever wrote it. A note appears with a <b>Compare</b> button, so you can copy anything back. Nothing is thrown away.</li><li><b>Other pages.</b> For a story page, timeline, outline, note, map or tree that you both changed, the newer change is kept. The project’s Backups have earlier versions.</li><li><b>Deleting.</b> Deleting something removes it for everyone, unless someone changed it after it was deleted; then it comes back.</li><li><b>Chapter order and titles</b> merge too: scenes one person adds or moves appear in place for everyone.</li></ul>')
-    +sec('What stays yours','<p>Your Inkling pet, daily goal, to-do list, word history chart, focus timer settings and writing sessions belong to you, under the name you set. Appearance settings (theme, font, spacing) are per computer. Everything else (the text, story pages, timelines, outlines, notes, maps, trees, chapter notes, snapshots and export settings) is shared.</p><p>Use the same name on each of your own computers so your pet follows you.</p>')
+    +sec('What stays yours','<p>Your Inkling pet, daily goal, to-do list, screen setup, word history chart, focus timer settings and writing sessions belong to you, under the name you set. Appearance settings (theme, font, spacing) are per computer. Everything else (the text, story pages, timelines, outlines, notes, maps, trees, chapter notes, snapshots and export settings) is shared.</p><p>Use the same name on each of your own computers so your pet follows you.</p>')
     +sec('Good habits','<ul><li>Agree who is writing which chapters or scenes.</li><li>Before you start, check the sync service has finished syncing (its icon shows a tick).</li><li>Keep everyone on the same version of Inkling (Help › Check for updates). Inkling warns you when a co-writer has a different version.</li><li>Make the folder “available offline” or “always keep on this device” (Google Drive: right-click › Offline access; OneDrive: Always keep on this device; iCloud: Download Now). Online-only files can make Inkling wait.</li><li>Take a <b>snapshot</b> of a scene before a big rewrite.</li></ul>')
     +sec('If something looks wrong','<ul><li><b>A co-writer’s changes have not arrived.</b> Check that their sync service is running and finished. Switching back to Inkling, or waiting a few seconds, brings in anything that has arrived.</li><li><b>Text you expected is missing from a scene.</b> Open the scene’s <b>Snapshots</b>: the other version from a clash is there, named after its writer.</li><li><b>Files called “conflicted copy”, “(1)” or with a computer’s name.</b> Sync services make these when two saves cross. Inkling merges them in automatically and moves them into the project’s backups folder.</li><li><b>Going back to an earlier state.</b> Projects › Backups lists copies made every 10 minutes; opening one makes a separate project, so nothing is overwritten.</li><li><b>Stopping sharing.</b> In your sync service, stop sharing the folder. To take a shared project off your own list without affecting anyone, use <b>Remove from list</b> on the Projects screen.</li></ul>')
     +sec('Privacy','<p>The project is stored by your sync service and anyone you share the folder with can read and change all of it. Inkling itself sends nothing anywhere. Remove someone’s access in your sync service to stop sharing with them.</p>')
@@ -5216,7 +5484,7 @@ async function deskImport(text){
 }
 async function deskImportPick(){ try{ const t=await DESK.openFile(); if(t!=null){ await deskImport(t); closeProjects(); } }catch(e){ toast('Could not open that file.',{plain:true}); } }
 async function deskBoot(){
-  DESK.onMenu(a=>{ if(a==='new'||a==='projects') openProjects(); else if(a==='backup') doBackup(); else if(a==='export') openExport(); else if(a==='find') openFind(); else if(a==='prefs') go({k:'prefs'}); else if(a==='tour') startTour(true); else if(a==='updcheck') checkUpdatesNow(); else if(a==='save') saveNow(); else if(a==='cont') go({k:'cont'}); else if(a==='share') openShare(); else if(a==='openShared') openSharedPick(); else if(a==='helpShare') go({k:'help'}); else if(a==='snapshots'){ if(ui.view.k==='scene') go({k:'snap',id:ui.view.id}); else toast('Open a scene first, then choose Scene snapshots.',{plain:true}); } else if(a==='import') deskImportPick(); else if(a==='sessions') go({k:'ss'}); else if(a==='timer'){ if(T.running) pmPause(); else pmStart(); } });
+  DESK.onMenu(a=>{ if(a==='new'||a==='projects') openProjects(); else if(a==='backup') doBackup(); else if(a==='export') openExport(); else if(a==='find') openFind(); else if(a==='prefs') go({k:'prefs'}); else if(a==='tour') startTour(true); else if(a==='updcheck') checkUpdatesNow(); else if(a==='save') saveNow(); else if(a==='cont') go({k:'cont'}); else if(a==='share') openShare(); else if(a==='openShared') openSharedPick(); else if(a==='helpShare') go({k:'help'}); else if(a==='snapshots'){ if(ui.view.k==='scene') go({k:'snap',id:ui.view.id}); else toast('Open a scene first, then choose Scene snapshots.',{plain:true}); } else if(a==='import') deskImportPick(); else if(a==='sessions') go({k:'ss'}); else if(a==='timer'){ if(T.running) pmPause(); else pmStart(); } else winAct(a); });
   DESK.onClosing(async()=>{ try{ pmHalt(); await deskFlush(); }catch(e){} DESK.closeReady(); });
   DESK.onUpdate(showUpdate);
   DESK.onFocus(()=>{ syncCheck(); hereTick(); });   // bring in what the sync folder delivered while Inkling was in the background
@@ -5341,7 +5609,7 @@ function init(){
   $('#insp').addEventListener('click',e=>{ const c=e.target.closest('.cl'); if(c) go({k:'ent',id:c.dataset.ent}); });
   document.addEventListener('selectionchange',()=>{
     const ed=$('#ed'), s=getSelection(); if(!ed||!s.rangeCount) return;
-    if(ed.contains(s.anchorNode)&&ed.contains(s.focusNode)){ const t=s.toString(); if(t.trim()) ui.sel=t; else if(s.isCollapsed) ui.sel=''; }
+    if(ed.contains(s.anchorNode)&&ed.contains(s.focusNode)){ const t=s.toString(); if(t.trim()) ui.sel=t; else if(s.isCollapsed) ui.sel=''; clearTimeout(ui.selT); ui.selT=setTimeout(paintSceneWc,120); }
   });
   document.addEventListener('click',e=>{
     const path=e.composedPath();   // the menu re-renders on click, so e.target may already be detached
@@ -5349,6 +5617,12 @@ function init(){
     const pop=$('#mkPop'); if(pop&&!pop.hidden&&!e.target.closest('.mk-wrap')) pop.hidden=true;
   });
   document.addEventListener('keydown',e=>{ if(e.key==='Escape'){ const pj=$('#pj'); if(pj&&!pj.hidden){ if(PJ.id) closeProjects(); } else if(ui.menu) closeMenu(); else if((ui.view.k==='rm'||ui.view.k==='ft')&&(ui.cvSel||ui.cvPop)){ ui.cvSel=null; ui.cvPop=false; ui.confirm=null; cvRefresh(); } else if(ui.view.k==='tl'&&ui.tlSide){ ui.tlSide=null; ui.confirm=null; drawSide(); drawTl(); } else if(ui.focus){ ui.focus=false; syncTab(); renderMain(); } } });
+  document.addEventListener('keydown',e=>{   // window shortcuts, and Find
+    const mod=(e.ctrlKey||e.metaKey)&&!e.altKey; if(!mod) return;
+    if(e.shiftKey&&/^Digit[123]$/.test(e.code)){ e.preventDefault(); winAct({Digit1:'tBinder',Digit2:'tInsp',Digit3:'focus'}[e.code]); }
+    else if(e.key.toLowerCase()==='f'&&!$('#pj:not([hidden])')){ e.preventDefault(); openFind(); }
+    else if(e.key.toLowerCase()==='z'||e.key.toLowerCase()==='y') ui.keyHistAt=Date.now();
+  });
   let rz; window.addEventListener('resize',()=>{ clearTimeout(rz); rz=setTimeout(()=>{ if(ui.view&&ui.view.k==='tl') drawTl(); },150); });
   document.addEventListener('visibilitychange',()=>{ if(document.hidden&&P.dirty.size) flush(); });
   window.addEventListener('pagehide',()=>{ if(T.cur) pmRecord(false); if(P.dirty.size){ mirrorLocal(); flush(); } });
