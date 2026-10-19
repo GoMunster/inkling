@@ -399,6 +399,7 @@ function buildMenu() {
     { label: 'File', submenu: [
       { label: 'New project…', accelerator: 'CmdOrCtrl+N', click: () => send('new') },
       { label: 'Projects…', accelerator: 'CmdOrCtrl+O', click: () => send('projects') },
+      { label: 'Save', accelerator: 'CmdOrCtrl+S', click: () => send('save') },
       { type: 'separator' },
       { label: 'Export…', accelerator: 'CmdOrCtrl+E', click: () => send('export') },
       { label: 'Back up this project…', accelerator: 'CmdOrCtrl+Shift+S', click: () => send('backup') },

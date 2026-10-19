@@ -216,3 +216,45 @@ test('a quiet Inky keeps celebrations to the speech bubble', async ({ page }) =>
   await expect(page.locator('#toast')).toBeHidden();
   await expect(page.locator('#fx i')).toHaveCount(0);
 });
+
+test('Save in the menu and Ctrl+S save right away', async ({ page }) => {
+  await openApp(page);
+  await page.click('.sc-btn'); await typeInScene(page, ' Saved by hand.');
+  await page.keyboard.press('Control+s');
+  await expect(page.locator('#toast')).toContainText('Saved');
+  expect(Object.values((await saved(page)).sc).some(s => s.text.includes('Saved by hand.'))).toBe(true);
+  await page.click('#menuBtn'); await page.click('[data-m="save"]');
+  await expect(page.locator('#toast')).toContainText('Saved');
+});
+
+test('a picture can be reframed by dragging and zooming', async ({ page }) => {
+  await openApp(page);
+  await page.click('[data-a="open-e"] >> nth=0');
+  const png = Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAIAAABLbSncAAAAEklEQVR4nGP4z8CAFWEXHbQSACj/P8Fu7N9hAAAAAElFTkSuQmCC', 'base64');
+  await page.setInputFiles('#entFile', { name: 'p.png', mimeType: 'image/png', buffer: png });
+  await page.waitForSelector('#entImg img');
+  await page.click('[data-im="opts"]'); await page.click('[data-im="frame"]');
+  const box = await page.locator('#entImg').boundingBox();
+  await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2); await page.mouse.down();
+  await page.mouse.move(box.x + box.width / 2 + 40, box.y + box.height / 2 - 60, { steps: 4 }); await page.mouse.up();
+  await page.fill('#picZoom', '2'); await page.dispatchEvent('#picZoom', 'input');
+  const style = await page.locator('#entImg img').getAttribute('style');
+  expect(style).toContain('scale(2');
+  const p = await waitSaved(page, p => Object.values(p.en).some(x => x.pic && x.pic.zoom === 2));
+  const pic = Object.values(p.en).find(x => x.pic && x.pic.zoom === 2).pic;
+  expect(pic.px).toBeLessThan(50); expect(pic.py).toBeGreaterThan(50);
+  await page.click('[data-im="unframe"]');
+  await expect(page.locator('#entImg img')).toHaveAttribute('style', /50\.0% 50\.0%/);
+});
+
+test('the Room button opens and closes the room, and a new project gets a new Inky', async ({ page }) => {
+  await openApp(page);
+  await page.click('.sc-btn >> nth=1'); const title = await page.locator('#sceneTitle').inputValue();
+  await page.click('#denBtn'); await expect(page.locator('.den')).toBeVisible();
+  await expect(page.locator('#denBtn')).toContainText('Close room');
+  await page.click('#denBtn'); await expect(page.locator('#sceneTitle')).toHaveValue(title);
+  const before = (await saved(page)) || {};
+  await page.click('#menuBtn'); await page.click('[data-m="blank"]'); await page.click('[data-m="blank"]');
+  const p = await waitSaved(page, p => !p.meta.sample);
+  expect(p.meta.pet.total).toBe(0); expect(Object.keys(p.meta.pet.got)).toEqual([]);
+});

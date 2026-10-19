@@ -404,6 +404,9 @@ label.f input:focus,label.f textarea:focus,.ta:focus{border-color:var(--accent);
 .pz-l.sh-natural .ent-img{aspect-ratio:auto;max-height:none}
 .ent-img img{display:block;width:100%;height:100%;object-fit:cover}
 .fit-contain .ent-img img{object-fit:contain}
+.ent-img.framing{cursor:move;outline:2px solid var(--accent);outline-offset:2px;touch-action:none}
+.ent-img.framing img{pointer-events:none;user-select:none}
+.frame-row{display:flex;gap:6px;flex-wrap:wrap} .frame-zoom{margin-top:8px;width:100%} .frame-zoom input{width:100%}
 .sh-natural .ent-img img{height:auto}
 .ent-img.empty{cursor:pointer;border:1.5px dashed var(--line);background:var(--bg);aspect-ratio:4/5}
 .sh-square .ent-img.empty{aspect-ratio:1/1} .sh-wide .ent-img.empty,.sh-natural .ent-img.empty{aspect-ratio:16/10} .pz-l .ent-img.empty{aspect-ratio:21/6}
@@ -870,7 +873,7 @@ const ADD_DOCS=[];   // (raw, out) => out.<prefix> = normalized records, for doc
 const snapshot=st=>{ if(!st) stampMine(S); st=st||S; const o={meta:st.meta}; DOCS.forEach(p=>{ o[p]=st[p]; }); return o; };
 // The desktop app (desktop/) provides window.inklingDesktop: each project is a folder on the computer. Elsewhere it is null.
 const DESK=window.inklingDesktop||null;
-const APP_VERSION='1.2.0';   // the desktop build replaces this with desktop/package.json's version
+const APP_VERSION='1.3.0';   // the desktop build replaces this with desktop/package.json's version
 // Saved-format version. When the shape of saved data changes: bump FORMAT and add MIGRATE[old] that upgrades a raw
 // project one step (it runs before normalize()). A project from a newer FORMAT is never loaded or overwritten.
 const FORMAT=2;
@@ -1088,9 +1091,17 @@ const PIC_DEF_SHAPE={char:'portrait',place:'wide',thing:'square'};
 function normPic(p){
   p=p&&typeof p==='object'?p:{};
   return {a:/^[0-9a-f]{32}$/i.test(p.a||'')?p.a:'',l:!!p.l,f:/^[a-z0-9][a-z0-9_.-]{0,80}$/i.test(p.f||'')?p.f:'',cap:String(p.cap||'').slice(0,200),
-    shape:PIC_SHAPES.some(x=>x[0]===p.shape)?p.shape:'',size:PIC_SIZES.some(x=>x[0]===p.size)?p.size:'m',fit:p.fit==='contain'?'contain':'cover'};
+    shape:PIC_SHAPES.some(x=>x[0]===p.shape)?p.shape:'',size:PIC_SIZES.some(x=>x[0]===p.size)?p.size:'m',fit:p.fit==='contain'?'contain':'cover',
+    px:clamp(num(p.px,50),0,100),py:clamp(num(p.py,50),0,100),zoom:clamp(num(p.zoom,1),1,4)};
 }
 const LOCAL_PIC='inkling:img:';
+// Framing: which part of the picture shows in its frame (px/py, % from left/top) and how far it is zoomed in.
+function picStyle(eid){ const p=(S.en[eid]||{}).pic; if(!p) return ''; const o=p.px.toFixed(1)+'% '+p.py.toFixed(1)+'%';
+  return 'object-position:'+o+(p.zoom>1?';transform:scale('+p.zoom.toFixed(2)+');transform-origin:'+o:''); }
+// The same framing for a round picture in an SVG (maps and trees): grow the image and shift it around the focal point.
+function picSvg(eid,x,y,w,h){ const p=(S.en[eid]||{}).pic||{px:50,py:50,zoom:1}, z=p.zoom||1, W=w*z, H=h*z;
+  const al=(p.px<34?'xMin':p.px>66?'xMax':'xMid')+(p.py<34?'YMin':p.py>66?'YMax':'YMid');
+  return 'x="'+(x-(W-w)*p.px/100).toFixed(1)+'" y="'+(y-(H-h)*p.py/100).toFixed(1)+'" width="'+W.toFixed(1)+'" height="'+H.toFixed(1)+'" preserveAspectRatio="'+al+' slice"'; }
 function picSrc(eid){
   const p=S.en[eid]&&S.en[eid].pic; if(!p) return '';
   if(p.f) return DESK&&PJ.id?'inkpic://p/'+encodeURIComponent(PJ.id)+'/'+encodeURIComponent(p.f):'';
@@ -1168,8 +1179,8 @@ async function removePic(eid){
 }
 function picHtml(e){
   const p=S.en[e.id].pic, src=picSrc(e.id), busy=ui.imgBusy===e.id;
-  let h='<figure class="ent-fig"><div class="ent-img'+(src?'':' empty')+'" id="entImg" tabindex="0" role="button" aria-label="'+(src?'View picture full size':'Add a picture')+'">'
-    +(src?'<img src="'+esc(src)+'" alt="'+esc(p.cap||e.name)+'">':'<span class="ph">'+ico('image',28)+'<b>Add a picture</b><small>Drop an image here, paste one, or click to choose. Character art, a map, a mood board…</small></span>')
+  let h='<figure class="ent-fig"><div class="ent-img'+(src?'':' empty')+(ui.frame&&src&&p.fit==='cover'?' framing':'')+'" id="entImg" tabindex="0" role="button" aria-label="'+(src?'View picture full size':'Add a picture')+'">'
+    +(src?'<img src="'+esc(src)+'" alt="'+esc(p.cap||e.name)+'"'+(p.fit==='cover'?' style="'+picStyle(e.id)+'"':'')+' draggable="false">':'<span class="ph">'+ico('image',28)+'<b>Add a picture</b><small>Drop an image here, paste one, or click to choose. Character art, a map, a mood board…</small></span>')
     +(busy?'<span class="busy">Saving picture…</span>':'')+'</div>';
   if(src) h+='<input class="ent-cap" id="entCap" value="'+esc(p.cap)+'" maxlength="200" placeholder="Caption or artist credit" aria-label="Picture caption">';
   h+='<div class="ent-imgbar"><button class="btn sm" data-im="pick">'+ico('upload',14)+'<span>'+(src?'Replace':'Upload')+'</span></button>'
@@ -1177,27 +1188,47 @@ function picHtml(e){
     +'<button class="btn sm" data-im="opts" aria-expanded="'+ui.imgOpts+'">'+ico('sliders',14)+'<span>Layout</span></button></div>';
   if(ui.imgOpts){
     const seg=(k,opts,cur)=>'<div class="seg">'+opts.map(o=>'<button data-im="set" data-k="'+k+'" data-v="'+o[0]+'"'+(cur===o[0]?' class="on"':'')+'>'+o[1]+'</button>').join('')+'</div>';
-    h+='<div class="ent-imgopts"><span class="sec-l">Shape</span>'+seg('shape',PIC_SHAPES,p.shape)+'<span class="sec-l">Size</span>'+seg('size',PIC_SIZES,p.size)+'<span class="sec-l">Fit</span>'+seg('fit',[['cover','Fill the frame'],['contain','Show it all']],p.fit)+'</div>';
+    h+='<div class="ent-imgopts"><span class="sec-l">Shape</span>'+seg('shape',PIC_SHAPES,p.shape)+'<span class="sec-l">Size</span>'+seg('size',PIC_SIZES,p.size)+'<span class="sec-l">Fit</span>'+seg('fit',[['cover','Fill the frame'],['contain','Show it all']],p.fit)
+      +(src&&p.fit==='cover'?'<span class="sec-l">Framing</span><div class="frame-row"><button class="btn sm'+(ui.frame?' pri':'')+'" data-im="frame" aria-pressed="'+!!ui.frame+'">'+ico('image',14)+'<span>'+(ui.frame?'Done':'Adjust framing')+'</span></button>'
+        +'<button class="btn sm" data-im="unframe"'+(p.px===50&&p.py===50&&p.zoom===1?' disabled':'')+'>Reset</button></div>'
+        +(ui.frame?'<label class="f frame-zoom">Zoom<input type="range" id="picZoom" min="1" max="4" step="0.05" value="'+p.zoom+'" aria-label="Zoom"></label><p class="fine">Drag the picture to choose what shows in the frame, or use the arrow keys. Zoom in to crop more.</p>':''):'')+'</div>';
   }
   return h+'<input type="file" id="entFile" accept="image/*" hidden></figure>';
 }
+function applyFrame(eid){ const im=$('#entImg img'); if(im) im.setAttribute('style',picStyle(eid)); const r=$('[data-im="unframe"]'); if(r){ const p=S.en[eid].pic; r.disabled=p.px===50&&p.py===50&&p.zoom===1; } }
 function picClass(e){ const p=S.en[e.id].pic; return 'ent-top pz-'+p.size+' sh-'+(p.shape||PIC_DEF_SHAPE[e.type])+' fit-'+p.fit; }
 function refreshPic(){
   const v=ui.view; if(!v||v.k!=='ent') return; const top=$('#entTop'), e=S.meta.ents[v.id]; if(!top||!e) return;
   top.className=picClass(e); const f=$('.ent-fig',top); f.outerHTML=picHtml(e);
 }
 function bindPic(el,e){
+  if(ui.framePage!==e.id){ ui.frame=false; ui.framePage=e.id; }
   const top=$('#entTop',el);
   top.addEventListener('click',ev=>{
     const b=ev.target.closest('[data-im]');
-    if(!b){ if(ev.target.closest('#entImg')){ const src=picSrc(e.id); if(src) lightbox(src,S.en[e.id].pic.cap); else $('#entFile',el).click(); } return; }
+    if(!b){ if(ui.frame&&ev.target.closest('#entImg')) return; if(ev.target.closest('#entImg')){ const src=picSrc(e.id); if(src) lightbox(src,S.en[e.id].pic.cap); else $('#entFile',el).click(); } return; }
     const a=b.dataset.im, p=S.en[e.id].pic;
     if(a==='pick') $('#entFile',el).click();
     else if(a==='rm') confirmDo('pic'+e.id,()=>removePic(e.id),refreshPic);
-    else if(a==='opts'){ ui.imgOpts=!ui.imgOpts; refreshPic(); }
+    else if(a==='opts'){ ui.imgOpts=!ui.imgOpts; if(!ui.imgOpts) ui.frame=false; refreshPic(); }
+    else if(a==='frame'){ ui.frame=!ui.frame; refreshPic(); if(ui.frame){ const f=$('#entImg'); if(f) f.focus(); } }
+    else if(a==='unframe'){ Object.assign(p,{px:50,py:50,zoom:1}); dirty('en_'+e.id); refreshPic(); renderBinder(); }
     else if(a==='set'){ p[b.dataset.k]=b.dataset.v; dirty('en_'+e.id); refreshPic(); }
   });
-  top.addEventListener('keydown',ev=>{ if(ev.target.id==='entImg'&&(ev.key==='Enter'||ev.key===' ')){ ev.preventDefault(); ev.target.click(); } });
+  top.addEventListener('keydown',ev=>{
+    if(ev.target.id!=='entImg') return;
+    const arrows={ArrowLeft:[-1,0],ArrowRight:[1,0],ArrowUp:[0,-1],ArrowDown:[0,1]}[ev.key];
+    if(ui.frame&&arrows){ ev.preventDefault(); const p=S.en[e.id].pic, st=ev.shiftKey?10:2; p.px=clamp(p.px+arrows[0]*st,0,100); p.py=clamp(p.py+arrows[1]*st,0,100); applyFrame(e.id); dirty('en_'+e.id); return; }
+    if(ev.key==='Enter'||ev.key===' '){ ev.preventDefault(); ev.target.click(); } });
+  // framing: drag the picture inside its frame (moving it right shows more of its left side)
+  top.addEventListener('pointerdown',ev=>{
+    const f=ev.target.closest('#entImg'); if(!ui.frame||!f) return; ev.preventDefault(); f.setPointerCapture(ev.pointerId);
+    const p=S.en[e.id].pic, r=f.getBoundingClientRect(), x0=ev.clientX, y0=ev.clientY, px0=p.px, py0=p.py, k=100/Math.max(1,p.zoom);
+    const mv=m=>{ p.px=clamp(px0-(m.clientX-x0)/r.width*k*1.6,0,100); p.py=clamp(py0-(m.clientY-y0)/r.height*k*1.6,0,100); applyFrame(e.id); };
+    const up=()=>{ f.removeEventListener('pointermove',mv); f.removeEventListener('pointerup',up); f.removeEventListener('pointercancel',up); dirty('en_'+e.id); renderBinder(); };
+    f.addEventListener('pointermove',mv); f.addEventListener('pointerup',up); f.addEventListener('pointercancel',up);
+  });
+  top.addEventListener('input',ev=>{ if(ev.target.id!=='picZoom') return; S.en[e.id].pic.zoom=clamp(+ev.target.value||1,1,4); applyFrame(e.id); dirty('en_'+e.id); });
   top.addEventListener('change',ev=>{ if(ev.target.id==='entFile'){ const f=ev.target.files&&ev.target.files[0]; if(f) setPic(e.id,f); } });
   top.addEventListener('input',ev=>{ if(ev.target.id==='entCap'){ S.en[e.id].pic.cap=ev.target.value; dirty('en_'+e.id); } });
   top.addEventListener('dragover',ev=>{ if(ev.target.closest('.ent-fig')){ ev.preventDefault(); top.classList.add('drop'); } });
@@ -1778,7 +1809,7 @@ function confirmDo(key,fn,rerender){
 }
 function replaceProject(np,keep){
   pmHalt();
-  if(keep){ np.meta.pet=S.meta.pet; np.meta.days=S.meta.days; np.meta.goal=S.meta.goal; np.meta.mark=S.meta.mark; }
+  if(keep){ np.meta.goal=S.meta.goal; np.meta.pomo=S.meta.pomo; }   // each project has its own Inky; your goal and timer settings carry over
   const nk=allKeys(np), ok=allKeys(S); P.keys.forEach(k=>ok.add(k));
   ok.forEach(k=>{ if(!nk.has(k)) P.gone.add(k); });
   S=np; nk.forEach(k=>{P.dirty.add(k); P.gone.delete(k);}); S.meta.saved=Date.now(); ui.touched=true;
@@ -1848,7 +1879,7 @@ function renderBinder0(){
       list.forEach(e=>{
         const on=cur.k==='ent'&&cur.id===e.id;
         const ps=picSrc(e.id);
-        h+='<div class="e-row'+(on?' on':'')+'"><button class="e-btn" data-a="open-e" data-id="'+e.id+'" title="'+esc(e.tag||LS(t)+' page')+'">'+(ps?'<img class="bav t-'+t+'" src="'+esc(ps)+'" alt="">':'<i class="pip t-'+t+'"></i>')+'<span class="t">'+esc(e.name||'Untitled')+'</span></button><span class="acts"><button class="ibtn'+(cf==='en'+e.id?' on':'')+'" data-a="dele" data-id="'+e.id+'" aria-label="Delete page">'+(cf==='en'+e.id?'Delete?':ico('trash',14))+'</button></span></div>';
+        h+='<div class="e-row'+(on?' on':'')+'"><button class="e-btn" data-a="open-e" data-id="'+e.id+'" title="'+esc(e.tag||LS(t)+' page')+'">'+(ps?'<img class="bav t-'+t+'" src="'+esc(ps)+'" alt="" style="'+picStyle(e.id)+'">':'<i class="pip t-'+t+'"></i>')+'<span class="t">'+esc(e.name||'Untitled')+'</span></button><span class="acts"><button class="ibtn'+(cf==='en'+e.id?' on':'')+'" data-a="dele" data-id="'+e.id+'" aria-label="Delete page">'+(cf==='en'+e.id?'Delete?':ico('trash',14))+'</button></span></div>';
       });
       if(!list.length) h+='<div class="empty-s">None yet. Press + or select a name in your text.</div>';
     }
@@ -2433,7 +2464,7 @@ function drawRm(){
   m.nodes.forEach(n=>{
     const r=R(n), name=rmName(n), src=m.pics&&n.ent?picSrc(n.ent):'', on=sel.k==='node'&&sel.id===n.id, dim=sel.k==='node'&&!near.has(n.id);
     nodes+='<g class="rm-n'+(on?' sel':'')+(dim?' dim':'')+'" data-node="'+n.id+'" transform="translate('+n.x+' '+n.y+')" style="--c:'+rmCol(n)+'"><circle class="ring" r="'+(r+6)+'"/><circle class="bg" r="'+r+'"/>'
-      +(src?'<clipPath id="cp_'+n.id+'"><circle r="'+(r-2.5)+'"/></clipPath><image href="'+esc(src)+'" x="'+(2.5-r)+'" y="'+(2.5-r)+'" width="'+(2*r-5)+'" height="'+(2*r-5)+'" preserveAspectRatio="xMidYMid slice" clip-path="url(#cp_'+n.id+')"/>'
+      +(src?'<clipPath id="cp_'+n.id+'"><circle r="'+(r-2.5)+'"/></clipPath><image href="'+esc(src)+'" '+picSvg(n.ent,2.5-r,2.5-r,2*r-5,2*r-5)+' clip-path="url(#cp_'+n.id+')"/>'
         :'<text class="ini" dy=".35em" style="font-size:'+Math.round(r*.62)+'px">'+esc(initials(name))+'</text>')
       +'<text class="nm" y="'+(r+17)+'">'+esc(trunc(name,26))+'</text>'
       +(on?'<g class="hd" data-h="1" transform="translate('+(r*.72+4)+' '+(-r*.72-4)+')"><title>Drag onto another bubble to connect</title><circle r="10"/><path d="M-4.5 0h9M0 -4.5v9"/></g>':'')+'</g>';
@@ -2496,7 +2527,7 @@ function drawFt(){
     const pr=Math.min(18,(H-14)/2), tx=src?14+pr*2+10:16, chars=Math.max(4,Math.floor((W-tx-10)/7.2));
     const dates=(p.born||p.died)?(p.born||'?')+' – '+(p.died||''):'';
     let y=22; cards+='<g class="ft-p'+(on?' sel':'')+'" data-p="'+p.id+'" transform="translate('+P2.x+' '+P2.y+')" style="--c:'+col+'"><rect class="bx" width="'+W+'" height="'+H+'" rx="10"/><rect class="st" width="5" height="'+(H-16)+'" x="0" y="8" rx="2"/>'
-      +(src?'<clipPath id="fp_'+p.id+'"><circle cx="'+(14+pr)+'" cy="'+H/2+'" r="'+pr+'"/></clipPath><image href="'+esc(src)+'" x="14" y="'+(H/2-pr)+'" width="'+pr*2+'" height="'+pr*2+'" preserveAspectRatio="xMidYMid slice" clip-path="url(#fp_'+p.id+')"/>':'')
+      +(src?'<clipPath id="fp_'+p.id+'"><circle cx="'+(14+pr)+'" cy="'+H/2+'" r="'+pr+'"/></clipPath><image href="'+esc(src)+'" '+picSvg(p.ent,14,H/2-pr,pr*2,pr*2)+' clip-path="url(#fp_'+p.id+')"/>':'')
       +'<text class="nm" x="'+tx+'" y="'+y+'">'+esc(trunc(name,chars))+'</text>';
     if(f.titles){ y+=16; cards+='<text class="sub" x="'+tx+'" y="'+y+'">'+esc(trunc(p.title,chars+3))+'</text>'; }
     if(f.dates){ y+=16; cards+='<text class="dt" x="'+tx+'" y="'+y+'">'+esc(trunc(dates,chars+4))+'</text>'; }
@@ -3299,7 +3330,10 @@ function renderFind(el){
   };
   draw(); const q=$('#fdQ',el); q.focus(); q.select();
 }
-document.addEventListener('keydown',e=>{ if(!DESK&&(e.ctrlKey||e.metaKey)&&e.shiftKey&&!e.altKey&&e.key.toLowerCase()==='f'){ e.preventDefault(); openFind(); } });
+document.addEventListener('keydown',e=>{
+  if(DESK||!(e.ctrlKey||e.metaKey)||e.altKey) return;   // the desktop menu has these shortcuts
+  if(e.shiftKey&&e.key.toLowerCase()==='f'){ e.preventDefault(); openFind(); }
+  else if(!e.shiftKey&&e.key.toLowerCase()==='s'){ e.preventDefault(); saveNow(); } });
 function openFind(){ const s=getSelection(), t=s&&$('#ed')&&$('#ed').contains(s.anchorNode)?s.toString().trim():''; if(t&&t.length<80&&!t.includes('\n')){ ui.find=ui.find||{q:'',r:'',mc:false,ww:false,scope:'all'}; ui.find.q=t; } go({k:'find'}); }
 
 /* ---------- first-run tour ---------- */
@@ -3606,7 +3640,7 @@ function renderInspector(){
   ui.mood=md; ui.stage=st;
   let h='<section class="pet-card m-'+md+'"><div class="pet-stage"><div class="room" id="petRoom" aria-hidden="true">'+roomSVG()+'</div><div class="pals" id="petPals"></div>'
     +'<button class="pet-btn" id="petBtn" aria-label="Cheer with '+esc(p.name)+'"><span id="petArt">'+petSVG(md,st)+'</span></button>'
-    +'<button class="btn sm den-btn" id="denBtn">'+ico('spark',13)+'<span>Room</span>'+(ui.newThings?'<i class="dot-new" aria-label="new things"></i>':'')+'</button></div>'
+    +'<button class="btn sm den-btn" id="denBtn" aria-pressed="'+(v.k==='den')+'">'+(v.k==='den'?ico('back',13)+'<span>Close room</span>':ico('spark',13)+'<span>Room</span>')+(ui.newThings&&v.k!=='den'?'<i class="dot-new" aria-label="new things"></i>':'')+'</button></div>'
     +'<div class="bubble" id="bubble">'+esc(ui.say||line(md))+'</div>'
     +'<div class="pet-meta"><input class="pet-name" id="petName" maxlength="18" value="'+esc(p.name)+'" aria-label="Pet name"><span class="stage-tag" id="stageTag">'+STAGES[st].n+'</span></div>'
     +'<div class="evo">'+(nx?'<div class="bar"><i id="evoBar" style="width:'+Math.min(100,(p.total-STAGES[st].at)/(nx.at-STAGES[st].at)*100)+'%"></i></div>':'')+'<small id="evoTxt"></small></div></section>'+pomoHtml();
@@ -3624,7 +3658,7 @@ function renderInspector(){
   }
   const el=$('#insp'); el.innerHTML=h; updateStats(); updateSceneChips(); bindPomo(); pmPaint();
   $('#petBtn').addEventListener('click',()=>{ bump(); say(line(curMood())); });
-  $('#denBtn').addEventListener('click',()=>{ ui.newThings=0; go({k:'den'}); });
+  $('#denBtn').addEventListener('click',()=>{ ui.newThings=0; if(ui.view.k==='den') goBack(); else go({k:'den'}); });
   paintPals();
   $('#petName').addEventListener('input',e=>{ p.name=e.target.value.trim()||'Inky'; dirty('meta'); });
   $('#goalIn').addEventListener('change',e=>{ m.goal=Math.max(50,Math.min(20000,Math.round(+e.target.value||500))); e.target.value=m.goal; dirty('meta'); updateStats(); });
@@ -3835,14 +3869,14 @@ function openExport(){
 function renderMenu(){
   const cf=ui.confirm, el=$('#menu');
   const item=(m,label,cls)=>'<button data-m="'+m+'"'+(cls?' class="'+cls+'"':'')+'>'+label+'</button>';
-  if(DESK){ el.innerHTML=item('projects','Projects…')+item('share','Share this project…')+'<hr>'+item('export','Export… (Word, PDF, EPUB)')+item('json','Back up this project (.json)')+item('import','Import a backup as a new project…')+'<hr>'
+  if(DESK){ el.innerHTML=item('save','Save')+item('projects','Projects…')+item('share','Share this project…')+'<hr>'+item('export','Export… (Word, PDF, EPUB)')+item('json','Back up this project (.json)')+item('import','Import a backup as a new project…')+'<hr>'
     +item('find','Find and replace…')+item('sessions','Writing sessions')+item('prefs','Settings')+item('help','How sharing works')+item('tour','Show the tour')+'<hr>'+item('reveal','Show projects folder')
     +'<small>Saved on this computer as you write. Each project folder also keeps automatic backups.</small>'; return; }
-  el.innerHTML=item('export','Export… (Word, PDF, EPUB)')+item('json','Back up project (.json)')+item('restore','Restore from a backup…')+'<hr>'
+  el.innerHTML=item('save','Save now')+'<hr>'+item('export','Export… (Word, PDF, EPUB)')+item('json','Back up project (.json)')+item('restore','Restore from a backup…')+'<hr>'
     +item('find','Find and replace…')+item('sessions','Writing sessions')+item('prefs','Settings')+item('help','How sharing works')+item('tour','Show the tour')+'<hr>'
     +item('sample',cf==='m-sample'?'Replace everything with the sample? Click again':'Load the sample project','warn')
     +item('blank',cf==='m-blank'?'Replace everything with a blank project? Click again':'Start a blank project','warn')
-    +'<small>'+(P.db?'Your project saves automatically to your Claude account, private to you. Replacing a project keeps your Inkling and goals.':'Your project saves on this device only. Back it up from here when you can.')+'</small>';
+    +'<small>'+(P.db?'Your project saves automatically to your Claude account, private to you. A new project comes with its own Inky; your daily goal and timer settings carry over.':'Your project saves on this device only. Back it up from here when you can.')+'</small>';
 }
 function bindMenu(){
   $('#menuBtn').innerHTML=ico('dots',18);
@@ -3853,6 +3887,7 @@ function bindMenu(){
     else if(a==='find'){ closeMenu(); openFind(); }
     else if(a==='prefs'){ closeMenu(); go({k:'prefs'}); }
     else if(a==='tour'){ closeMenu(); startTour(true); }
+    else if(a==='save'){ closeMenu(); saveNow(); }
     else if(a==='share'){ closeMenu(); openShare(); }
     else if(a==='help'){ closeMenu(); go({k:'help'}); }
     else if(a==='json'){ closeMenu(); doBackup(); }
@@ -3871,6 +3906,13 @@ function bindMenu(){
       await adoptImages(np,o.imgs,null); replaceProject(np,false); toast('Backup restored.',{plain:true}); };
     r.readAsText(f);
   });
+}
+// Saving already happens as you write; this saves anything pending right away and says so.
+async function saveNow(){
+  if(ui.locked){ toast('This project is read-only here: it was saved by a newer Inkling.',{plain:true}); return; }
+  try{ clearTimeout(P.timer); P.dirty.add('meta'); if(DESK) await deskFlush(); else await flush(); }catch(e){}
+  if($('#saveSt').dataset.s==='error') toast('Could not save just now. Inkling keeps trying.',{plain:true});
+  else toast(DESK?'Saved to this computer.':P.db?'Saved to your account.':'Saved in this browser. Back up now and then from the menu.',{plain:true});
 }
 function closeMenu(){ ui.menu=false; ui.confirm=null; $('#menu').hidden=true; }
 
@@ -4204,7 +4246,7 @@ async function deskImport(text){
 }
 async function deskImportPick(){ try{ const t=await DESK.openFile(); if(t!=null){ await deskImport(t); closeProjects(); } }catch(e){ toast('Could not open that file.',{plain:true}); } }
 async function deskBoot(){
-  DESK.onMenu(a=>{ if(a==='new'||a==='projects') openProjects(); else if(a==='backup') doBackup(); else if(a==='export') openExport(); else if(a==='find') openFind(); else if(a==='prefs') go({k:'prefs'}); else if(a==='tour') startTour(true); else if(a==='updcheck') checkUpdatesNow(); else if(a==='share') openShare(); else if(a==='openShared') openSharedPick(); else if(a==='helpShare') go({k:'help'}); else if(a==='snapshots'){ if(ui.view.k==='scene') go({k:'snap',id:ui.view.id}); else toast('Open a scene first, then choose Scene snapshots.',{plain:true}); } else if(a==='import') deskImportPick(); else if(a==='sessions') go({k:'ss'}); else if(a==='timer'){ if(T.running) pmPause(); else pmStart(); } });
+  DESK.onMenu(a=>{ if(a==='new'||a==='projects') openProjects(); else if(a==='backup') doBackup(); else if(a==='export') openExport(); else if(a==='find') openFind(); else if(a==='prefs') go({k:'prefs'}); else if(a==='tour') startTour(true); else if(a==='updcheck') checkUpdatesNow(); else if(a==='save') saveNow(); else if(a==='share') openShare(); else if(a==='openShared') openSharedPick(); else if(a==='helpShare') go({k:'help'}); else if(a==='snapshots'){ if(ui.view.k==='scene') go({k:'snap',id:ui.view.id}); else toast('Open a scene first, then choose Scene snapshots.',{plain:true}); } else if(a==='import') deskImportPick(); else if(a==='sessions') go({k:'ss'}); else if(a==='timer'){ if(T.running) pmPause(); else pmStart(); } });
   DESK.onClosing(async()=>{ try{ pmHalt(); await deskFlush(); }catch(e){} DESK.closeReady(); });
   DESK.onUpdate(showUpdate);
   DESK.onFocus(()=>{ syncCheck(); hereTick(); });   // bring in what the sync folder delivered while Inkling was in the background
