@@ -414,6 +414,14 @@ function buildMenu() {
     { label: 'Edit', submenu: [{ label: 'Undo', accelerator: 'CmdOrCtrl+Z', click: () => send('undo') }, { label: 'Redo', accelerator: mac ? 'Cmd+Shift+Z' : 'Ctrl+Y', click: () => send('redo') }, { type: 'separator' }, { role: 'cut' }, { role: 'copy' }, { role: 'paste' }, { role: 'selectAll' }, { type: 'separator' },
       { label: 'Search everything…', accelerator: 'CmdOrCtrl+K', click: () => send('search') }, { label: 'Find and replace…', accelerator: 'CmdOrCtrl+Shift+F', click: () => send('find') }, { label: 'Continuity check', click: () => send('cont') }, { label: 'Scene snapshots…', click: () => send('snapshots') }, { type: 'separator' }, { label: 'Trash', click: () => send('trash') }] },
     { label: 'View', submenu: [{ label: 'Writing sessions', accelerator: 'CmdOrCtrl+Shift+H', click: () => send('sessions') }, { label: 'Deadline planner', click: () => send('plan') }, { label: 'Start or pause the focus timer', accelerator: 'CmdOrCtrl+Shift+T', click: () => send('timer') }, { type: 'separator' }, { role: 'zoomIn' }, { role: 'zoomOut' }, { role: 'resetZoom' }, { type: 'separator' }, { role: 'togglefullscreen' }, { type: 'separator' }, { role: 'toggleDevTools', label: 'Developer tools' }] },
+    { label: 'Go', submenu: [
+      { label: 'Go to…', accelerator: 'CmdOrCtrl+P', click: () => send('qs') },
+      { type: 'separator' },
+      { label: 'Back', accelerator: mac ? 'Cmd+[' : 'Alt+Left', click: () => send('back') },
+      { label: 'Forward', accelerator: mac ? 'Cmd+]' : 'Alt+Right', click: () => send('fwd') },
+      { type: 'separator' },
+      { label: 'Next scene', accelerator: 'CmdOrCtrl+PageDown', click: () => send('next') },
+      { label: 'Previous scene', accelerator: 'CmdOrCtrl+PageUp', click: () => send('prev') }] },
     { label: 'Window', submenu: [
       { label: 'Project settings…', click: () => send('layout') },
       { type: 'separator' },

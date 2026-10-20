@@ -184,6 +184,11 @@ test('the Window menu and Edit › Undo', async () => {
   await menu('Edit', 'Undo');
   await expect(win.locator('#ed')).toHaveText(before);
   await menu('Help', 'Keyboard shortcuts'); await expect(win.locator('.ask .keys')).toBeVisible();
+  await win.keyboard.press('Escape');
+  const t0 = await win.locator('#sceneTitle').inputValue();
+  await menu('Go', 'Next scene'); await expect(win.locator('#sceneTitle')).not.toHaveValue(t0);
+  await win.waitForTimeout(150); await menu('Go', 'Back'); await expect(win.locator('#sceneTitle')).toHaveValue(t0);
+  await menu('Go', 'Go to…'); await expect(win.locator('#qsQ')).toBeFocused();
   expect(errors).toEqual([]);
   await app.close();
 });

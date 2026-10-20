@@ -683,3 +683,88 @@ test('side by side: a story page beside the scene, edited in place, swapped and 
   await expect(page.locator('#split')).toBeHidden();
   expect(errors).toEqual([]);
 });
+
+test('Inkling remembers the scene, the caret and the scroll position, and reopens where you were', async ({ page }) => {
+  await page.setViewportSize({ width: 1300, height: 600 });
+  const long = Array.from({ length: 60 }, (_, i) => 'Line ' + i + ' of a long scene.').join('\n');
+  const project = ONE_SCENE(long); project.meta.chapters[0].scenes.push('s2'); project.meta.scenes.s2 = { title: 'Second', status: 'draft', words: 0 }; project.sc.s2 = { text: 'Short one.', synopsis: '', notes: '' };
+  const errors = await openApp(page, { project });
+  await page.click('#ed'); await page.keyboard.press('Control+End'); await page.keyboard.type(' End here.');
+  const y = await page.locator('#main').evaluate(m => m.scrollTop); expect(y).toBeGreaterThan(300);
+  await page.click('.sc-btn[data-id="s2"]'); await expect(page.locator('#sceneTitle')).toHaveValue('Second');
+  await page.click('.sc-btn[data-id="s1"]');
+  await expect.poll(() => page.locator('#main').evaluate(m => m.scrollTop)).toBeGreaterThan(300);
+  await page.keyboard.type('!');   // the caret came back to where it was
+  await expect.poll(() => saved(page).then(p => p && p.sc.s1.text.endsWith('End here.!'))).toBe(true);
+  await page.click('.sc-btn[data-id="s2"]'); await page.waitForTimeout(300);
+  await page.reload(); await page.waitForSelector('#ed');
+  await expect(page.locator('#sceneTitle')).toHaveValue('Second');   // the project reopens on the last scene
+  expect(errors).toEqual([]);
+});
+
+test('quick switcher, next and previous scene, back and forward', async ({ page }) => {
+  await page.setViewportSize({ width: 1600, height: 900 });
+  const errors = await openApp(page);
+  await page.click('.sc-btn'); const first = await page.locator('#sceneTitle').inputValue();
+  await page.keyboard.press('Control+p'); await page.keyboard.type('crane led'); await page.keyboard.press('Enter');
+  await expect(page.locator('#sceneTitle')).toHaveValue('The Crane ledger');
+  await page.keyboard.press('Control+p'); await page.keyboard.type('ilsa'); await page.keyboard.press('Alt+Enter');
+  await expect(page.locator('#split .sp-h')).toHaveText('Ilsa Verrin');
+  await page.keyboard.press('Control+Backslash');
+  await page.click('.sc-nav [data-nav="-1"]'); await expect(page.locator('#sceneTitle')).toHaveValue(first);
+  await page.keyboard.press('Alt+PageDown'); await expect(page.locator('#sceneTitle')).toHaveValue('The Crane ledger');
+  await page.waitForTimeout(150); await page.keyboard.press('Alt+PageDown');
+  await expect(page.locator('#sceneTitle')).not.toHaveValue('The Crane ledger'); const third = await page.locator('#sceneTitle').inputValue();
+  await page.waitForTimeout(150); await page.keyboard.press('Alt+ArrowLeft'); await expect(page.locator('#sceneTitle')).toHaveValue('The Crane ledger');
+  await page.click('[data-a="fwd"]'); await expect(page.locator('#sceneTitle')).toHaveValue(third);
+  expect(errors).toEqual([]);
+});
+
+test('right-click menus in the binder, collapse all, and word targets', async ({ page }) => {
+  const errors = await openApp(page);
+  const sid = await page.locator('.sc-btn').first().getAttribute('data-id');
+  await page.click('.sc-btn[data-id="' + sid + '"]', { button: 'right' });
+  await page.click('.ctx button:has-text("Duplicate")');
+  await expect(page.locator('.sc-btn .t', { hasText: '(copy)' })).toHaveCount(1);
+  await page.click('.sc-btn[data-id="' + sid + '"]', { button: 'right' });
+  await page.click('.ctx button:has-text("Status")'); await page.click('.ctx button:has-text("Final")');
+  await expect(page.locator('.sc-btn[data-id="' + sid + '"] .dot')).toHaveClass(/st-final/);
+  await page.click('.sc-btn[data-id="' + sid + '"]', { button: 'right' }); await page.click('.ctx button:has-text("Rename")');
+  await page.fill('#rn', 'Renamed scene'); await page.press('#rn', 'Enter');
+  await expect(page.locator('.sc-btn[data-id="' + sid + '"] .t')).toHaveText('Renamed scene');
+  await page.click('.sc-btn[data-id="' + sid + '"]', { button: 'right' }); await page.click('.ctx button:has-text("Word target")');
+  await page.fill('#askVal', '100'); await page.press('#askVal', 'Enter');
+  await expect(page.locator('.sc-btn[data-id="' + sid + '"] .tg')).toHaveCount(1);
+  await page.click('.sc-btn[data-id="' + sid + '"]');
+  await expect(page.locator('#sceneWc')).toContainText('of 100 words');
+  await page.click('#ed'); await page.keyboard.press('Control+End'); await page.keyboard.type(' ' + 'word '.repeat(12));
+  await expect(page.locator('#bubble')).toContainText('100-word target');
+  await expect(page.locator('#sceneWc')).toHaveClass(/met/);
+  await page.click('[data-a="fold"]'); await expect(page.locator('.sc-row')).toHaveCount(0);
+  await page.click('[data-a="fold"]'); await expect(page.locator('.sc-row').first()).toBeVisible();
+  const p = await waitSaved(page, p => p.meta.scenes[sid].goal === 100 && p.meta.scenes[sid].title === 'Renamed scene');
+  expect(p.meta.scenes[sid].status).toBe('final');
+  expect(errors).toEqual([]);
+});
+
+test('story pages: your own fields, and a picture dropped onto the page', async ({ page }) => {
+  const errors = await openApp(page);
+  await page.click('[data-a="open-e"][data-id="e_ilsa"]');
+  await page.click('[data-fe="edit"]'); await page.click('[data-fe="add"]');
+  await page.keyboard.press('Control+a'); await page.keyboard.type('Magic ability');
+  await page.click('.fe-row:has(input[value="Notes"]) [data-fe="del"]');
+  await page.click('[data-fe="done"]');
+  await page.fill('.fields label:has-text("Magic ability") textarea', 'Reads the tide.');
+  let p = await waitSaved(page, p => p.meta.fields && p.meta.fields.char && Object.values(p.en.e_ilsa.fields).includes('Reads the tide.'));
+  expect(p.meta.fields.char.map(f => f[1])).toContain('Magic ability'); expect(p.meta.fields.char.map(f => f[1])).not.toContain('Notes');
+  await page.click('[data-a="open-e"][data-id="e_tobias"]');
+  await expect(page.locator('.fields label:has-text("Magic ability")')).toHaveCount(1);   // every character page has it
+  await page.click('[data-a="open-e"][data-id="e_ilsa"]');
+  await page.evaluate(() => {   // drop a small PNG onto the page
+    const b = atob('iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAFklEQVR4nGP8z8DwnwEJMDEgcxh4KAABJgIBCX0d2wAAAABJRU5ErkJggg==');
+    const f = new File([Uint8Array.from(b, c => c.charCodeAt(0))], 'face.png', { type: 'image/png' }), dt = new DataTransfer(); dt.items.add(f);
+    const pg = document.querySelector('.ent-page'); pg.dispatchEvent(new DragEvent('dragover', { dataTransfer: dt, bubbles: true, cancelable: true })); pg.dispatchEvent(new DragEvent('drop', { dataTransfer: dt, bubbles: true, cancelable: true }));
+  });
+  await expect(page.locator('#entTop img').first()).toBeVisible();
+  expect(errors).toEqual([]);
+});
