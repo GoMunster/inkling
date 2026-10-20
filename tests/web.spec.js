@@ -528,3 +528,22 @@ test('Window › Project settings: choose what shows, reorder the Inkling panel,
   expect(p.meta.layout.hide.hint).toBe(true); await expect(page.locator('#sceneHint')).toBeHidden();
   expect(errors).toEqual([]);
 });
+
+test('the page scrolls with the caret when writing reaches the bottom of the screen', async ({ page }) => {
+  await page.setViewportSize({ width: 1300, height: 700 });
+  const errors = await openApp(page, { project: ONE_SCENE() });
+  await page.click('#ed');
+  const caretOnScreen = () => page.evaluate(() => {
+    const r = getSelection().getRangeAt(0), m = document.createElement('span'); m.textContent = '​'; r.insertNode(m);
+    const b = m.getBoundingClientRect(), main = document.querySelector('#main').getBoundingClientRect(); m.remove();
+    return b.top >= main.top && b.bottom <= main.bottom;
+  });
+  for (let i = 0; i < 30; i++) {
+    await page.keyboard.type('Line ' + i + ' of a long scene that keeps going.'); await page.keyboard.press('Enter');
+    if (i % 5 === 4) expect(await caretOnScreen()).toBe(true);
+  }
+  expect(await page.locator('#main').evaluate(m => m.scrollTop)).toBeGreaterThan(200);
+  await page.keyboard.press('Enter'); await page.keyboard.press('Enter');   // empty lines at the very end too
+  expect(await caretOnScreen()).toBe(true);
+  expect(errors).toEqual([]);
+});

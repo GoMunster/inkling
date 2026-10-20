@@ -677,7 +677,7 @@ dl.fam{display:grid;grid-template-columns:auto 1fr;gap:6px 10px} dl.fam dt{color
 @media (prefers-reduced-motion:reduce){.tour-ring{transition:none}}
 
 /* sticky notes */
-.sheet-wrap{position:relative}
+.sheet-wrap{position:relative;padding-bottom:18vh}   /* room to scroll the last line up from the bottom edge */
 .stk-layer{position:absolute;inset:0;pointer-events:none;z-index:3}
 .stk{position:absolute;pointer-events:auto;border-radius:3px 3px 10px 3px;box-shadow:0 6px 16px rgba(13,18,26,.16),0 1px 2px rgba(13,18,26,.12);transform:rotate(-.6deg)}
 .stk.c-thing{--c:var(--thing)} .stk.c-char{--c:var(--char)} .stk.c-accent{--c:var(--accent)} .stk.c-place{--c:var(--place)}
@@ -1059,7 +1059,7 @@ const ADD_DOCS=[];   // (raw, out) => out.<prefix> = normalized records, for doc
 const snapshot=st=>{ if(!st) stampMine(S); st=st||S; const o={meta:st.meta}; DOCS.forEach(p=>{ o[p]=st[p]; }); return o; };
 // The desktop app (desktop/) provides window.inklingDesktop: each project is a folder on the computer. Elsewhere it is null.
 const DESK=window.inklingDesktop||null;
-const APP_VERSION='1.7.0';   // the desktop build replaces this with desktop/package.json's version
+const APP_VERSION='1.7.1';   // the desktop build replaces this with desktop/package.json's version
 // Saved-format version. When the shape of saved data changes: bump FORMAT and add MIGRATE[old] that upgrades a raw
 // project one step (it runs before normalize()). A project from a newer FORMAT is never loaded or overwritten.
 const FORMAT=2;
@@ -2796,7 +2796,7 @@ function renderScene(el,v){
   });
   ed.addEventListener('click',e=>{ const t=e.target.closest('.ent'); if(t&&getSelection().isCollapsed) go({k:'ent',id:t.dataset.ent}); });
   const moved=()=>{ clearTimeout(ui.pkM); ui.pkM=setTimeout(()=>peekRun('move'),900); };   // Inky re-reads where the caret now is
-  ed.addEventListener('mouseup',moved); ed.addEventListener('keyup',e=>{ if(/^(Arrow|Page|Home|End)/.test(e.key)) moved(); });
+  ed.addEventListener('mouseup',moved); ed.addEventListener('keyup',e=>{ if(/^(Arrow|Page|Home|End)/.test(e.key)){ moved(); followCaret(); } });
   const pp=$('#peekPet'); if(pp){ pp.addEventListener('click',()=>{ const b=$('#peekB'); b.textContent=ui.say||line(curMood()); b.hidden=!b.hidden; }); paintPet(true); }
   const fresh=ui.pkOpen!==v.id; ui.pkOpen=v.id; setTimeout(()=>{ if(ui.view===v) peekRun(fresh?'open':'move'); },350);
   const tt=$('#sceneTitle'); tt.addEventListener('input',()=>{ S.meta.scenes[v.id].title=tt.value||'Untitled scene'; dirty('meta'); renderBinder(); });
@@ -2882,11 +2882,25 @@ function paintSceneWc(){
   el.textContent=fmt(w)+' words'+(n?' · '+fmt(n)+' selected':'');
   el.title='About '+Math.max(1,Math.round(w/250))+' manuscript page'+(Math.round(w/250)>1?'s':'')+' and '+Math.max(1,Math.round(w/230))+' minute'+(Math.round(w/230)>1?'s':'')+' to read';
 }
-// Keeps the line being written in the middle of the screen (Settings › Writing › Typewriter scrolling).
-function typewriter(){
-  if(!LOOK.typewriter) return; const s=getSelection(), main=$('#main'); if(!s.rangeCount||!main) return;
-  const rc=s.getRangeAt(0).getClientRects()[0]; if(!rc) return;
-  const mr=main.getBoundingClientRect(), d=rc.top-(mr.top+mr.height*.45); if(Math.abs(d)>6) main.scrollTop+=d;
+// Where the caret is on screen. A new empty line has no box of its own, so a moment's marker is measured instead.
+function caretRect(){
+  const s=getSelection(); if(!s.rangeCount) return null; const r=s.getRangeAt(0), rc=r.getClientRects()[0];
+  if(rc&&rc.height) return rc; if(!r.collapsed) return null;
+  const m=document.createElement('span'); m.textContent='\u200b'; r.insertNode(m);
+  const b=m.getBoundingClientRect(), par=m.parentNode, i=[...par.childNodes].indexOf(m); m.remove();
+  const nr=document.createRange(); nr.setStart(par,i); nr.collapse(true); s.removeAllRanges(); s.addRange(nr);
+  return b;
+}
+// Keeps the caret on screen while writing: once it gets near the bottom (or under a phone's keyboard) the page
+// scrolls up with it. With typewriter scrolling (Settings › Writing) the line stays in the middle instead.
+function followCaret(){
+  const main=$('#main'), ed=$('#ed'), s=getSelection(); if(!main||!ed||!s.rangeCount||!ed.contains(s.focusNode)) return;
+  const rc=caretRect(); if(!rc) return;
+  const mr=main.getBoundingClientRect(), vv=window.visualViewport, top=Math.max(mr.top,vv?vv.offsetTop:0), bot=Math.min(mr.bottom,vv?vv.offsetTop+vv.height:innerHeight);
+  if(LOOK.typewriter){ const d=rc.top-(top+(bot-top)*.45); if(Math.abs(d)>6) main.scrollTop+=d; return; }
+  const pad=Math.min(140,(bot-top)*.25);
+  if(rc.bottom>bot-pad) main.scrollTop+=rc.bottom-(bot-pad);
+  else if(rc.top<top+24) main.scrollTop-=top+24-rc.top;
 }
 // Read aloud: the selection, or from the caret's paragraph to the end, one paragraph at a time, each one
 // highlighted while it is read (CSS custom highlights, where the browser has them).
@@ -2999,7 +3013,7 @@ function onType(id,ed){
   if(delta>0&&delta<=600&&w>=1000&&Math.floor(w/1000)>k0) say(pick(['This scene just passed '+fmt(Math.floor(w/1000)*1000)+' words.','“'+trunc(sc.title,30)+'” is up to '+fmt(Math.floor(w/1000)*1000)+' words!']));
   if(T.cur&&T.running) T.cur.scenes.add(id);
   dirty('sc_'+id,'meta'); undoNote(id,text,ui.bigEdit); ui.bigEdit=false; raStop();
-  paintSceneWc(); typewriter();
+  paintSceneWc(); followCaret();
   const bw=document.querySelector('[data-wc="'+id+'"]'); if(bw) bw.textContent=fmt(w);
   credit(delta); updateStats();
   clearTimeout(ui.rl); ui.rl=setTimeout(()=>relinkEditor(false),500);
@@ -5623,6 +5637,7 @@ function init(){
     else if(e.key.toLowerCase()==='f'&&!$('#pj:not([hidden])')){ e.preventDefault(); openFind(); }
     else if(e.key.toLowerCase()==='z'||e.key.toLowerCase()==='y') ui.keyHistAt=Date.now();
   });
+  if(window.visualViewport) visualViewport.addEventListener('resize',()=>{ if(document.activeElement&&document.activeElement.id==='ed') followCaret(); });   // a phone keyboard opening
   let rz; window.addEventListener('resize',()=>{ clearTimeout(rz); rz=setTimeout(()=>{ if(ui.view&&ui.view.k==='tl') drawTl(); },150); });
   document.addEventListener('visibilitychange',()=>{ if(document.hidden&&P.dirty.size) flush(); });
   window.addEventListener('pagehide',()=>{ if(T.cur) pmRecord(false); if(P.dirty.size){ mirrorLocal(); flush(); } });
