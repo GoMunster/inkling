@@ -588,8 +588,8 @@ test('deadline planner: missed days raise the goal, and reaching the target is c
   for (let i = 0; i < 2; i++) { await page.keyboard.type(' ' + 'more '.repeat(450)); }   // 900 new words, in two sittings
   await expect(page.locator('#planLine')).toContainText('Deadline goal reached');
   await expect(page.locator('#bubble')).toContainText(/1,000 words/);
-  await page.click('#planLine'); await page.click('[data-pl="nano"]');
+  await page.click('#planLine'); await page.click('[data-pl="month"]');
   const p = await waitSaved(page, p => p.meta.plan && p.meta.plan.target === 50000);
-  expect(p.meta.plan.mode).toBe('new'); expect(p.meta.plan.start).toMatch(/-11-01$/); expect(p.meta.plan.by).toMatch(/-11-30$/);
+  expect(p.meta.plan.mode).toBe('new'); expect(p.meta.plan.start).toBe(dayOff(0)); expect(p.meta.plan.by > dayOff(26) && p.meta.plan.by < dayOff(31)).toBe(true);
   expect(errors).toEqual([]);
 });

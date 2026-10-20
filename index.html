@@ -1089,7 +1089,7 @@ const ADD_DOCS=[];   // (raw, out) => out.<prefix> = normalized records, for doc
 const snapshot=st=>{ if(!st) stampMine(S); st=st||S; const o={meta:st.meta}; DOCS.forEach(p=>{ o[p]=st[p]; }); return o; };
 // The desktop app (desktop/) provides window.inklingDesktop: each project is a folder on the computer. Elsewhere it is null.
 const DESK=window.inklingDesktop||null;
-const APP_VERSION='1.8.0';   // the desktop build replaces this with desktop/package.json's version
+const APP_VERSION='1.8.1';   // the desktop build replaces this with desktop/package.json's version
 // Saved-format version. When the shape of saved data changes: bump FORMAT and add MIGRATE[old] that upgrades a raw
 // project one step (it runs before normalize()). A project from a newer FORMAT is never loaded or overwritten.
 const FORMAT=2;
@@ -4524,7 +4524,7 @@ function bindSizers(){
 /* ---------- deadline planner ---------- */
 // meta.plan (personal, like the daily goal): reach `target` words by `by`, writing on the weekdays in wd[0..6]
 // (getDay order) except days in off{key:1}. mode 'total': the manuscript's word count (base = its count when the plan
-// started, worked out from meta.days); mode 'new': new words written since `start` (NaNoWriMo). Today's goal is what
+// started, worked out from meta.days); mode 'new': new words written since `start` (One Book a Month). Today's goal is what
 // is left at the start of today spread over the writing days left, so it stays put while you write and catches up (or
 // eases off) the next day. With `auto`, meta.goal follows it. log{day:{p,g}} keeps each day's progress and goal for
 // the chart and the calendar.
@@ -4655,13 +4655,13 @@ function renderPlan(el){
     +'<section class="pf"><h2>'+(p.on?'Your plan':'Set a deadline')+'</h2>'
     +(p.on?'':'<p class="fine">Tell Inkling where you want to get to and by when. It works out how much to write each day, and adjusts when you write more or less.</p>')
     +'<div class="seg pl-mode"><button data-pm2="total"'+(p.mode==='total'?' class="on"':'')+'>Finish my draft</button><button data-pm2="new"'+(p.mode==='new'?' class="on"':'')+'>Write new words</button></div>'
-    +'<p class="fine">'+(p.mode==='total'?'Counts the whole manuscript: reach this many words in total.':'Counts only new words written from the start date, like NaNoWriMo.')+'</p>'
+    +'<p class="fine">'+(p.mode==='total'?'Counts the whole manuscript: reach this many words in total.':'Counts only new words written from the start date, as in One Book a Month.')+'</p>'
     +'<div class="two"><label class="f">'+(p.mode==='total'?'Manuscript length':'New words')+'<input id="plTarget" type="number" min="100" step="1000" value="'+p.target+'"></label><label class="f">Deadline<input id="plBy" type="date" value="'+p.by+'"></label></div>'
     +'<div class="two"><label class="f">Start<input id="plStart" type="date" value="'+p.start+'"></label><div></div></div>'
     +'<span class="sec-l">Days I write</span><div class="pl-wd">'+[1,2,3,4,5,6,0].map(i=>'<button data-wd="'+i+'" aria-pressed="'+p.wd[i]+'"'+(p.wd[i]?' class="on"':'')+'>'+PLAN_WD[i]+'</button>').join('')+'</div>'
     +'<label class="ck"><input type="checkbox" id="plAuto"'+(p.auto?' checked':'')+'>Set my daily goal from this plan</label>'
     +'<p class="fine pl-err" id="plErr" hidden></p>'
-    +'<div class="ts-row">'+(p.on?'':'<button class="btn pri" data-pl="go">'+ico('cal',14)+'<span>Start the plan</span></button>')+'<button class="btn" data-pl="nano">NaNoWriMo: 50,000 words in November</button></div>'
+    +'<div class="ts-row">'+(p.on?'':'<button class="btn pri" data-pl="go">'+ico('cal',14)+'<span>Start the plan</span></button>')+'<button class="btn" data-pl="month" title="50,000 new words in a month, starting today">One Book a Month</button></div>'
     +(DESK?'<p class="fine">Your plan is yours alone on a shared project, like your daily goal.</p>':'')+'</section></div>';
   const err=$('#plErr',el), check=()=>{ const bad=p.by<=p.start?'The deadline needs to be after the start.':!planDays(p,p.start,p.by).length?'There are no writing days before the deadline.':''; err.textContent=bad; err.hidden=!bad; return !bad; };
   check();
@@ -4681,8 +4681,8 @@ function renderPlan(el){
     const a=b.dataset.pl;
     if(a==='go'){ if(!check()) return; p.on=true; p.based=''; p.doneAt=0; apply(); toast('Plan started. '+(p.auto?'Your daily goal now follows it.':''),{plain:true}); }
     else if(a==='stop') ask('Stop the plan?','Your daily goal stays at '+fmt(S.meta.goal)+' words, and you can start a new plan any time.',[['stop','Stop the plan','danger'],['','Keep it']]).then(v=>{ if(v!=='stop') return; p.on=false; dirty('meta'); updateStats(); renderInspector(); renderPlan(el); });
-    else if(a==='nano'){ const y=today>(new Date().getFullYear()+'-11-30')?new Date().getFullYear()+1:new Date().getFullYear();
-      Object.assign(p,{mode:'new',target:50000,start:y+'-11-01',by:y+'-11-30',wd:[true,true,true,true,true,true,true],based:''}); if(check()) apply(); }
+    else if(a==='month'){ const d=dayDate(today); d.setMonth(d.getMonth()+1); d.setDate(d.getDate()-1);   // One Book a Month: 50,000 new words, starting today
+      Object.assign(p,{mode:'new',target:50000,start:today,by:keyOf(d),wd:[true,true,true,true,true,true,true],based:''}); if(check()) apply(); }
   };
 }
 
