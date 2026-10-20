@@ -547,3 +547,49 @@ test('the page scrolls with the caret when writing reaches the bottom of the scr
   expect(await caretOnScreen()).toBe(true);
   expect(errors).toEqual([]);
 });
+
+const dayOff = n => { const d = new Date(); d.setDate(d.getDate() + n); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); };
+
+test('deadline planner: a daily goal from the deadline that keeps you on track', async ({ page }) => {
+  const errors = await openApp(page, { project: ONE_SCENE() });
+  await page.click('#planLine');
+  await expect(page.locator('#main h1')).toHaveText('Deadline planner');
+  await page.fill('#plTarget', '1000'); await page.press('#plTarget', 'Tab');
+  await page.fill('#plBy', dayOff(9)); await page.press('#plBy', 'Tab');   // ten writing days, today included
+  await page.click('[data-pl="go"]');
+  await expect(page.locator('.pl-now-box h2')).toHaveText('On track');
+  await expect(page.locator('#goalOf')).toHaveText('100');   // 1,000 words over 10 days
+  await expect(page.locator('#goalIn')).toBeDisabled();
+  await expect(page.locator('#planLine')).toContainText('100 today');
+  await page.click('.sc-btn'); await page.click('#ed'); await page.keyboard.type('word '.repeat(220));
+  await expect(page.locator('#planLine')).toContainText('120 ahead');
+  await expect(page.locator('#goalOf')).toHaveText('100');   // today's goal stays put while you write
+  await page.click('#planLine');
+  await page.click('.pl-d[data-day="' + dayOff(3) + '"]');   // a day off: the rest spread over nine days
+  await expect(page.locator('.pl-d[data-day="' + dayOff(3) + '"]')).toHaveClass(/rest/);
+  const p = await waitSaved(page, p => p.meta.plan && p.meta.plan.on && p.meta.plan.off[dayOff(3)]);
+  expect(p.meta.plan.target).toBe(1000); expect(p.meta.plan.log[dayOff(0)].p).toBe(220);
+  await page.click('[data-pl="stop"]'); await page.click('.ask [data-v="stop"]');
+  await expect(page.locator('#goalIn')).toBeEnabled(); await expect(page.locator('#planLine')).toContainText('Plan a deadline');
+  expect(errors).toEqual([]);
+});
+
+test('deadline planner: missed days raise the goal, and reaching the target is celebrated', async ({ page }) => {
+  const project = ONE_SCENE('word '.repeat(100).trim());
+  Object.assign(project.meta, { goal: 500, days: { [dayOff(-4)]: 100 },
+    plan: { on: true, mode: 'new', target: 1000, start: dayOff(-4), by: dayOff(5), wd: [true, true, true, true, true, true, true] } });
+  const errors = await openApp(page, { project });
+  await expect(page.locator('#planLine')).toContainText('400 behind');   // the plan expected 500 by tonight
+  await expect(page.locator('#goalOf')).toHaveText('150');   // 900 words left over 6 days
+  await page.click('#planLine');
+  await expect(page.locator('.pl-d.miss')).toHaveCount(3); await expect(page.locator('.pl-d.met')).toHaveCount(1);
+  await expect(page.locator('.pl-chart .pl-act')).toHaveCount(1);
+  await page.click('.sc-btn'); await page.click('#ed'); await page.keyboard.press('Control+End');
+  for (let i = 0; i < 2; i++) { await page.keyboard.type(' ' + 'more '.repeat(450)); }   // 900 new words, in two sittings
+  await expect(page.locator('#planLine')).toContainText('Deadline goal reached');
+  await expect(page.locator('#bubble')).toContainText(/1,000 words/);
+  await page.click('#planLine'); await page.click('[data-pl="nano"]');
+  const p = await waitSaved(page, p => p.meta.plan && p.meta.plan.target === 50000);
+  expect(p.meta.plan.mode).toBe('new'); expect(p.meta.plan.start).toMatch(/-11-01$/); expect(p.meta.plan.by).toMatch(/-11-30$/);
+  expect(errors).toEqual([]);
+});

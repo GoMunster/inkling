@@ -948,6 +948,36 @@ kbd{font-family:var(--f-mono);font-size:12px;border:1px solid var(--line);border
   #app.lo-insp .peek,#app.lo-pet .peek{display:block}
 }
 
+/* deadline planner */
+.plan-line{display:flex;align-items:center;gap:6px;width:100%;margin-top:8px;border:1px solid var(--line);background:var(--paper);border-radius:10px;padding:6px 10px;font-size:12.5px;color:var(--ink);text-align:left}
+.plan-line:hover{border-color:var(--accent)} .plan-line.off{border-style:dashed;color:var(--muted)}
+.plan-line.s-ahead,.plan-line.s-done{border-color:var(--place)} .plan-line.s-behind,.plan-line.s-past{border-color:var(--thing)}
+.pl-now-box h2{margin-bottom:2px} .pl-say{margin:0 0 12px;color:var(--muted)}
+.pl-now-box.s-ahead h2,.pl-now-box.s-done h2,.pl-now-box.s-ok h2{color:var(--place)} .pl-now-box.s-behind h2,.pl-now-box.s-past h2{color:var(--thing)}
+.ss-tile.hi{background:color-mix(in srgb,var(--pet) 14%,var(--panel2))} .ss-tile.warn b{color:var(--thing)}
+.pl-bar{margin-top:6px}
+.pl-chart{width:100%;height:auto;display:block}
+.pl-chart .pl-ideal{fill:none;stroke:var(--muted);stroke-width:1.6;stroke-dasharray:5 4}
+.pl-chart .pl-act{fill:none;stroke:var(--accent);stroke-width:2.6;stroke-linejoin:round}
+.pl-chart .pl-tgt{stroke:var(--place);stroke-width:1;stroke-dasharray:2 3}
+.pl-chart .pl-now{stroke:var(--line);stroke-width:1} .pl-chart .pl-dot{fill:var(--accent)}
+.pl-key{display:flex;gap:16px;font-size:12px;color:var(--muted);margin-top:4px} .pl-key i{display:inline-block;width:18px;height:0;border-top:2.6px solid var(--accent);vertical-align:middle;margin-right:6px} .pl-key i.k-ideal{border-top:1.6px dashed var(--muted)}
+.pl-cal{display:flex;flex-direction:column;gap:4px;margin-top:8px;max-width:620px}
+.pl-wk{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px} .pl-wk>b{font-size:11px;color:var(--muted);text-align:center;font-weight:600}
+.pl-d{border:1px solid var(--line);border-radius:8px;background:var(--paper);min-height:46px;padding:4px 5px;display:flex;flex-direction:column;align-items:flex-start;gap:1px;font:inherit;color:var(--ink)}
+.pl-d b{font-size:12px} .pl-d small{font-size:10.5px;color:var(--muted);font-family:var(--f-mono)}
+.pl-d.out{visibility:hidden} .pl-d:disabled{cursor:default}
+.pl-d.rest{background:repeating-linear-gradient(45deg,var(--panel2),var(--panel2) 4px,transparent 4px,transparent 8px)}
+.pl-d.met{background:color-mix(in srgb,var(--place) 22%,var(--paper));border-color:var(--place)}
+.pl-d.part{background:color-mix(in srgb,var(--thing) 18%,var(--paper))}
+.pl-d.miss{background:color-mix(in srgb,var(--danger) 8%,var(--paper))}
+.pl-d.fut{border-style:dashed} .pl-d.today{outline:2px solid var(--accent);outline-offset:1px}
+.pl-d:not(:disabled):hover{border-color:var(--accent)}
+.pl-wd{display:flex;gap:4px;flex-wrap:wrap} .pl-wd button{border:1px solid var(--line);background:var(--paper);border-radius:999px;padding:4px 10px;font-size:12.5px;color:var(--muted)}
+.pl-wd button.on{background:var(--accent);border-color:var(--accent);color:#fff}
+.pl-err{color:var(--danger)}
+.pl input[type=date]{font:inherit}
+
 /* tab layout */
 @media (max-width:1079px){
   :root{--tabh:58px}
@@ -1029,7 +1059,7 @@ const ICO={plus:'M12 5v14M5 12h14',down:'M6 9l6 6 6-6',right:'M9 6l6 6-6 6',up:'
   image:'M4 5h16v14H4zM4 16l5-5 4 4 3-3 4 4M15 9h.01',indent:'M4 6h16M10 12h10M10 18h10M4 10l3 2-3 2',outdent:'M4 6h16M10 12h10M10 18h10M7 10l-3 2 3 2',upload:'M12 16V4M7 9l5-5 5 5M4 20h16',play:'M7 5l12 7-12 7z',pause:'M8 5v14M16 5v14',stop:'M6 6h12v12H6z',skip:'M5 5l10 7-10 7zM19 5v14',timer:'M12 9v4l2.5 2M9 2h6M12 22a8 8 0 100-16 8 8 0 000 16z',folder:'M3 7a2 2 0 012-2h4l2 2h8a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z',web:'M8 7a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0zM21 7a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0zM14.5 18a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0zM8 7h8M6.5 9l4.5 7M17.5 9L13 16',tree:'M9 3h6v4H9zM3 17h6v4H3zM15 17h6v4h-6zM12 7v5M6 12h12M6 12v5M18 12v5',heart:'M12 20s-7-4.5-7-10a4 4 0 017-2.6A4 4 0 0119 10c0 5.5-7 10-7 10z',
   time:'M3 12h18M7 12V7M12 12v5M17 12V7',sliders:'M4 7h9M17 7h3M4 17h3M11 17h9M15 5v4M9 15v4',search:'M11 4a7 7 0 1 0 0 14a7 7 0 1 0 0-14M20 20l-4.2-4.2',users:'M9 11a3.5 3.5 0 1 0 0-7a3.5 3.5 0 1 0 0 7M2.5 20c.6-3.4 3.2-5.5 6.5-5.5s5.9 2.1 6.5 5.5M16 4.3a3.5 3.5 0 0 1 0 6.4M18 14.8c1.9.8 3.2 2.6 3.5 5.2',minus:'M5 12h14',
   grip:'M9 6h.01M15 6h.01M9 12h.01M15 12h.01M9 18h.01M15 18h.01',copy:'M8 8h11v11H8zM5 16V5h11',fit:'M4 12h16M4 12l4-4M4 12l4 4M20 12l-4-4M20 12l-4 4',
-  undo:'M9 14L4 9l5-5M4 9h10a6 6 0 010 12h-3',redo:'M15 14l5-5-5-5M20 9H10a6 6 0 000 12h3',speak:'M4 9v6h4l5 4V5L8 9zM16 9a4 4 0 010 6M18.5 6.5a8 8 0 010 11',layout:'M4 4h16v16H4zM9 4v16M9 10h11'};
+  undo:'M9 14L4 9l5-5M4 9h10a6 6 0 010 12h-3',redo:'M15 14l5-5-5-5M20 9H10a6 6 0 000 12h3',speak:'M4 9v6h4l5 4V5L8 9zM16 9a4 4 0 010 6M18.5 6.5a8 8 0 010 11',layout:'M4 4h16v16H4zM9 4v16M9 10h11',cal:'M4 6h16v14H4zM4 10h16M8 3v5M16 3v5'};
 const ico=(n,s)=>'<svg class="ico" width="'+(s||16)+'" height="'+(s||16)+'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="'+ICO[n]+'"/></svg>';
 
 const TYPES={
@@ -1059,7 +1089,7 @@ const ADD_DOCS=[];   // (raw, out) => out.<prefix> = normalized records, for doc
 const snapshot=st=>{ if(!st) stampMine(S); st=st||S; const o={meta:st.meta}; DOCS.forEach(p=>{ o[p]=st[p]; }); return o; };
 // The desktop app (desktop/) provides window.inklingDesktop: each project is a folder on the computer. Elsewhere it is null.
 const DESK=window.inklingDesktop||null;
-const APP_VERSION='1.7.1';   // the desktop build replaces this with desktop/package.json's version
+const APP_VERSION='1.8.0';   // the desktop build replaces this with desktop/package.json's version
 // Saved-format version. When the shape of saved data changes: bump FORMAT and add MIGRATE[old] that upgrades a raw
 // project one step (it runs before normalize()). A project from a newer FORMAT is never loaded or overwritten.
 const FORMAT=2;
@@ -1080,7 +1110,7 @@ const DEVICE=(()=>{ try{ let d=localStorage.getItem('inkling:device'); if(!d){ d
 const ME={name:''}; try{ ME.name=String(JSON.parse(localStorage.getItem('inkling:me')||'{}').name||'').slice(0,60); }catch(e){}
 const nameKey=n=>String(n||'').trim().toLowerCase();
 const myKey=()=>nameKey(ME.name);
-const PERSONAL=['days','pet','mark','goal','pomo','todo','layout'];
+const PERSONAL=['days','pet','mark','goal','pomo','todo','layout','plan'];
 const PJ={id:null,base:null};   // the desktop project that is open, and the version of it last read from or written to disk
 let linker=null;
 const ui={view:null,hist:[],cork:'all',rename:null,confirm:null,menu:false,tab:'write',focus:false,openSec:{ol:true,nt:true,tl:true,rm:true,ft:true,char:true,place:true,thing:true},say:'',sayAt:0,mood:'',touched:false,sel:'',focusName:false,fs:18,
@@ -1177,11 +1207,11 @@ function normalize(o){
   Object.keys(gn).filter(k=>+gn[k]>cut).sort((a,b)=>gn[b]-gn[a]).slice(0,2000).forEach(k=>{ meta.gone[k]=+gn[k]; }); meta.title=meta.title||'Untitled novel'; meta.goal=+meta.goal||500; meta.target=+meta.target||80000;
   meta.chapters=Array.isArray(meta.chapters)?meta.chapters:[]; meta.scenes=meta.scenes||{}; meta.ents=meta.ents||{};
   meta.pet=normPet(meta.pet);
-  meta.days=meta.days||{}; meta.saved=+meta.saved||0; meta.pomo=normPomo(meta.pomo); meta.todo=normTodo(meta.todo); meta.layout=normLayout(meta.layout||LOOK.layoutDef); meta.exp=normExp(meta.exp); meta.author=String(meta.author||'');
+  meta.days=meta.days||{}; meta.saved=+meta.saved||0; meta.pomo=normPomo(meta.pomo); meta.todo=normTodo(meta.todo); meta.layout=normLayout(meta.layout||LOOK.layoutDef); meta.plan=normPlan(meta.plan,meta.target); meta.exp=normExp(meta.exp); meta.author=String(meta.author||'');
   const wr=meta.writers&&typeof meta.writers==='object'?meta.writers:{}; meta.writers={};
   Object.keys(wr).slice(0,60).forEach(k=>{ const w=wr[k]; if(!w||typeof w!=='object') return;
     meta.writers[String(k).slice(0,60)]={name:String(w.name||'').slice(0,60),days:w.days&&typeof w.days==='object'?w.days:{},pet:normPet(w.pet),
-      mark:w.mark||null,goal:+w.goal||500,pomo:normPomo(w.pomo),...(w.todo?{todo:normTodo(w.todo)}:{}),...(w.layout?{layout:normLayout(w.layout)}:{}),devs:(Array.isArray(w.devs)?w.devs:[]).filter(x=>typeof x==='string').slice(-10),at:+w.at||0}; });
+      mark:w.mark||null,goal:+w.goal||500,pomo:normPomo(w.pomo),...(w.todo?{todo:normTodo(w.todo)}:{}),...(w.layout?{layout:normLayout(w.layout)}:{}),...(w.plan?{plan:normPlan(w.plan)}:{}),devs:(Array.isArray(w.devs)?w.devs:[]).filter(x=>typeof x==='string').slice(-10),at:+w.at||0}; });
   const sx=meta.secs&&typeof meta.secs==='object'?meta.secs:{rm:false,ft:false}; meta.secs={};
   OPT_SECS.forEach(k=>{ meta.secs[k]=sx[k]===undefined?!(k==='rm'||k==='ft'):!!sx[k]; });
   const lb=meta.labels&&typeof meta.labels==='object'?meta.labels:{}; meta.labels={};
@@ -1673,8 +1703,8 @@ function streak(){
 function curMood(){ const w=todayWords(), g=S.meta.goal; if(w>=g) return 'party'; if(w>=g*.5) return 'hype'; if(w>0) return 'happy'; return 'sleepy'; }
 function orderedScenes(){ const out=[]; S.meta.chapters.forEach(c=>c.scenes.forEach(id=>out.push({id,ch:c}))); return out; }
 function firstView(){ const s=orderedScenes()[0]; return s?{k:'scene',id:s.id}:{k:'cork'}; }
-function viewValid(v){ if(!v) return false; if(v.k==='scene') return !!S.meta.scenes[v.id]; if(v.k==='ent') return !!S.meta.ents[v.id]; if(v.k==='tl') return !!(S.tl[v.id]&&S.meta.tls.some(x=>x.id===v.id)); if(v.k==='nt') return !!(S.nt[v.id]&&S.meta.nts.some(x=>x.id===v.id)); if(v.k==='ol') return !!(S.ol[v.id]&&S.meta.ols.some(x=>x.id===v.id)); if(v.k==='rm'||v.k==='ft') return !!(S[v.k][v.id]&&S.meta[v.k+'s'].some(x=>x.id===v.id)); if(v.k==='snap') return !!S.meta.scenes[v.id]; return v.k==='cork'||v.k==='ss'||v.k==='prefs'||v.k==='find'||v.k==='help'||v.k==='den'||v.k==='cont'||v.k==='layout'; }
-function viewName(v){ if(v.k==='scene') return S.meta.scenes[v.id].title; if(v.k==='ent') return S.meta.ents[v.id].name; if(v.k==='tl') return S.meta.tls.find(x=>x.id===v.id).name; if(v.k==='nt') return S.meta.nts.find(x=>x.id===v.id).name; if(v.k==='ol') return S.meta.ols.find(x=>x.id===v.id).name; if(v.k==='rm'||v.k==='ft') return S.meta[v.k+'s'].find(x=>x.id===v.id).name; if(v.k==='ss') return 'Writing sessions'; if(v.k==='prefs') return 'Settings'; if(v.k==='find') return 'Find and replace'; if(v.k==='help') return 'How sharing works'; if(v.k==='den') return S.meta.pet.name+'’s room'; if(v.k==='cont') return 'Continuity'; if(v.k==='layout') return 'Project settings'; if(v.k==='snap') return 'Snapshots: '+S.meta.scenes[v.id].title; return 'Corkboard'; }
+function viewValid(v){ if(!v) return false; if(v.k==='scene') return !!S.meta.scenes[v.id]; if(v.k==='ent') return !!S.meta.ents[v.id]; if(v.k==='tl') return !!(S.tl[v.id]&&S.meta.tls.some(x=>x.id===v.id)); if(v.k==='nt') return !!(S.nt[v.id]&&S.meta.nts.some(x=>x.id===v.id)); if(v.k==='ol') return !!(S.ol[v.id]&&S.meta.ols.some(x=>x.id===v.id)); if(v.k==='rm'||v.k==='ft') return !!(S[v.k][v.id]&&S.meta[v.k+'s'].some(x=>x.id===v.id)); if(v.k==='snap') return !!S.meta.scenes[v.id]; return v.k==='cork'||v.k==='ss'||v.k==='prefs'||v.k==='find'||v.k==='help'||v.k==='den'||v.k==='cont'||v.k==='layout'||v.k==='plan'; }
+function viewName(v){ if(v.k==='scene') return S.meta.scenes[v.id].title; if(v.k==='ent') return S.meta.ents[v.id].name; if(v.k==='tl') return S.meta.tls.find(x=>x.id===v.id).name; if(v.k==='nt') return S.meta.nts.find(x=>x.id===v.id).name; if(v.k==='ol') return S.meta.ols.find(x=>x.id===v.id).name; if(v.k==='rm'||v.k==='ft') return S.meta[v.k+'s'].find(x=>x.id===v.id).name; if(v.k==='ss') return 'Writing sessions'; if(v.k==='prefs') return 'Settings'; if(v.k==='find') return 'Find and replace'; if(v.k==='help') return 'How sharing works'; if(v.k==='den') return S.meta.pet.name+'’s room'; if(v.k==='cont') return 'Continuity'; if(v.k==='layout') return 'Project settings'; if(v.k==='plan') return 'Deadline planner'; if(v.k==='snap') return 'Snapshots: '+S.meta.scenes[v.id].title; return 'Corkboard'; }
 
 /* ---------- pet ---------- */
 const PET_ARMS={sleepy:['M34 108 q-10 8 -8 22','M126 108 q10 8 8 22'],happy:['M34 106 q-14 2 -16 16','M126 106 q14 2 16 16'],hype:['M34 102 q-18 -6 -18 -28','M126 106 q14 2 16 16'],party:['M34 100 q-20 -8 -18 -32','M126 100 q20 -8 18 -32'],
@@ -1919,10 +1949,11 @@ function sceneFinal(id){
   todoTick('fin',id); checkAch();
 }
 function greet(){   // said once when a project opens
-  const d=S.meta.days, ks=Object.keys(d).filter(k=>d[k]>0).sort(), last=ks[ks.length-1]; if(!last) return;
+  const d=S.meta.days, ks=Object.keys(d).filter(k=>d[k]>0).sort(), last=ks[ks.length-1], pg=planGreet(); if(!last){ if(pg) say(pg); return; }
   const gap=Math.round((new Date(todayKey()+'T12:00')-new Date(last+'T12:00'))/864e5);
   if(gap>=3) say(pick(['Welcome back! It has been '+gap+' days. Shall we write a little?','There you are! '+gap+' days away. I kept your pages warm.']));
   else if(gap===1&&streak()>0) say('Back for day '+(streak()+1)+'? Let us keep the streak going.');
+  else if(pg) say(pg);
 }
 // The room behind the pet: a window that follows the time of day, a plant that grows with the streak, and what was earned.
 // While Inky reads a scene, the window shows the story instead: its time of day, weather and setting, and the room
@@ -2465,6 +2496,7 @@ function mentionCounts(){ contCheck(); const out={}, sn=(ui.cont&&ui.cont.seen)|
 
 /* ---------- header / stats ---------- */
 function updateStats(){
+  planSync(); planPaint();
   const m=S.meta, g=Math.max(1,m.goal), w=todayWords(), p=Math.min(1,w/g);
   $('#ringArc').style.strokeDasharray=(p*RING).toFixed(1)+' '+RING;
   $('#chipTxt').textContent=fmt(w)+' / '+fmt(m.goal);
@@ -2735,7 +2767,7 @@ function renderMain(){
   if(!viewValid(v)){ ui.view=firstView(); return renderMain(); }
   const key=v.k+':'+(v.id||''), reset=key!==ui.lastKey; ui.lastKey=key;
   const keep=el.scrollTop;
-  if(v.k==='ent') renderEnt(el,v); else if(v.k==='cork') renderCork(el); else if(v.k==='tl') renderTl(el,v); else if(v.k==='nt') renderNt(el,v); else if(v.k==='ol') renderOl(el,v); else if(v.k==='rm'||v.k==='ft') renderCv(el,v); else if(v.k==='ss') renderSs(el); else if(v.k==='prefs') renderPrefs(el); else if(v.k==='snap') renderSnap(el,v); else if(v.k==='find') renderFind(el); else if(v.k==='help') renderHelp(el); else if(v.k==='den') renderDen(el); else if(v.k==='cont') renderCont(el); else if(v.k==='layout') renderLayout(el); else renderScene(el,v);
+  if(v.k==='ent') renderEnt(el,v); else if(v.k==='cork') renderCork(el); else if(v.k==='tl') renderTl(el,v); else if(v.k==='nt') renderNt(el,v); else if(v.k==='ol') renderOl(el,v); else if(v.k==='rm'||v.k==='ft') renderCv(el,v); else if(v.k==='ss') renderSs(el); else if(v.k==='prefs') renderPrefs(el); else if(v.k==='snap') renderSnap(el,v); else if(v.k==='find') renderFind(el); else if(v.k==='help') renderHelp(el); else if(v.k==='den') renderDen(el); else if(v.k==='cont') renderCont(el); else if(v.k==='layout') renderLayout(el); else if(v.k==='plan') renderPlan(el); else renderScene(el,v);
   el.scrollTop=reset?0:keep;
 }
 function renderScene(el,v){
@@ -4489,6 +4521,171 @@ function bindSizers(){
   addEventListener('resize',applySides);
 }
 
+/* ---------- deadline planner ---------- */
+// meta.plan (personal, like the daily goal): reach `target` words by `by`, writing on the weekdays in wd[0..6]
+// (getDay order) except days in off{key:1}. mode 'total': the manuscript's word count (base = its count when the plan
+// started, worked out from meta.days); mode 'new': new words written since `start` (NaNoWriMo). Today's goal is what
+// is left at the start of today spread over the writing days left, so it stays put while you write and catches up (or
+// eases off) the next day. With `auto`, meta.goal follows it. log{day:{p,g}} keeps each day's progress and goal for
+// the chart and the calendar.
+const PLAN_WD=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+const isDayKey=v=>/^\d{4}-\d{2}-\d{2}$/.test(v||'');
+const dayDate=k=>new Date(k+'T12:00');
+const addDays=(k,n)=>{ const d=dayDate(k); d.setDate(d.getDate()+n); return keyOf(d); };
+const fmtDay=(k,o)=>dayDate(k).toLocaleDateString(undefined,o||{day:'numeric',month:'short'});
+function normPlan(x,len){
+  x=x&&typeof x==='object'?x:{};
+  const wd=Array.isArray(x.wd)&&x.wd.length===7&&x.wd.some(Boolean)?x.wd.map(Boolean):[true,true,true,true,true,true,true];
+  const off={}; Object.keys(x.off||{}).filter(isDayKey).slice(-400).forEach(k=>{ off[k]=1; });
+  const log={}; Object.keys(x.log||{}).filter(isDayKey).sort().slice(-500).forEach(k=>{ const v=x.log[k]||{}; log[k]={p:Math.max(0,Math.round(num(v.p,0))),g:Math.max(0,Math.round(num(v.g,0)))}; });
+  const start=isDayKey(x.start)?x.start:todayKey(), by=isDayKey(x.by)?x.by:addDays(start,90);
+  return {on:!!x.on&&by>start, mode:x.mode==='new'?'new':'total', target:clamp(Math.round(num(x.target,len||80000)),100,2000000),
+    start, by, base:Math.max(0,Math.round(num(x.base,0))), based:isDayKey(x.based)?x.based:'', wd, off, auto:x.auto!==false, log, doneAt:+x.doneAt||0};
+}
+// Writing days from a to b (keys, inclusive).
+function planDays(p,a,b){ const out=[]; if(a>b) return out; const d=dayDate(a);
+  for(let i=0;i<1500;i++){ const k=keyOf(d); if(k>b) break; if(p.wd[d.getDay()]&&!p.off[k]) out.push(k); d.setDate(d.getDate()+1); } return out; }
+function sumDays(a,b){ const d=S.meta.days; let n=0; Object.keys(d).forEach(k=>{ if(k>=a&&k<=b) n+=d[k]||0; }); return n; }
+function planState(){
+  const p=S.meta.plan; if(!p||!p.on) return null;
+  const today=todayKey(), tw=S.meta.days[today]||0, started=today>=p.start, past=today>p.by;
+  const from=p.mode==='new'?0:p.base, done=p.mode==='new'?(started?sumDays(p.start,today):0):totalWords();
+  const dayStart=started&&!past?done-tw:done, all=planDays(p,p.start,p.by), N=Math.max(1,all.length);
+  const left=planDays(p,started?today:p.start,p.by), writingToday=started&&left[0]===today, remaining=Math.max(0,p.target-done);
+  const share=k=>{ let c=0; for(const x of all){ if(x<=k) c++; else break; } return c; };
+  const ideal=k=>from+(p.target-from)*share(k)/N;
+  const goalNow=Math.max(0,Math.ceil(Math.max(0,p.target-dayStart)/Math.max(1,left.length)));
+  const todayGoal=writingToday?goalNow:0, nextGoal=writingToday?goalNow:Math.max(0,Math.ceil(remaining/Math.max(1,left.length)));
+  const nextDay=writingToday?today:left[0]||'';
+  let status='ok', diff=0;
+  if(remaining<=0) status='done';
+  else if(!started) status='soon';
+  else if(past) status='past';
+  else { const a=done-ideal(today); if(a>=Math.max(50,p.target*.002)){ status='ahead'; diff=Math.round(a); }
+    else if(dayStart>=ideal(addDays(today,-1))-1) status='ok';
+    else { status='behind'; diff=Math.round(ideal(today)-done); } }
+  const elapsed=all.filter(k=>k<today).length, pace=elapsed?(dayStart-from)/elapsed:0;
+  let finish='';
+  if(remaining>0&&pace>0){ let need=remaining; const d=dayDate(writingToday?today:(left[0]||today));
+    for(let i=0;i<3000&&need>0;i++){ const k=keyOf(d); if(p.wd[d.getDay()]&&!p.off[k]) need-=pace; if(need<=0){ finish=k; break; } d.setDate(d.getDate()+1); } }
+  return {p,today,started,past,from,done,dayStart,all,left,writingToday,remaining,todayGoal,nextGoal,nextDay,ideal,status,diff,pace,finish,elapsed};
+}
+function planLabel(st){
+  const by=fmtDay(st.p.by);
+  if(st.status==='done') return 'Deadline goal reached!';
+  if(st.status==='soon') return 'Starts '+fmtDay(st.p.start)+' · '+fmt(st.nextGoal)+' a writing day';
+  if(st.status==='past') return 'Deadline passed: '+fmt(st.remaining)+' to go';
+  const today=st.writingToday?fmt(st.todayGoal)+' today':'rest day';
+  if(st.status==='ahead') return fmt(st.diff)+' ahead · '+today+' · by '+by;
+  if(st.status==='behind') return fmt(st.diff)+' behind · '+today+' · by '+by;
+  return 'On track · '+today+' · by '+by;
+}
+// Keeps the plan's bookkeeping current: the base count once the plan starts, today's log, the daily goal, the cheer.
+function planSync(){
+  const p=S.meta.plan; if(!p||!p.on) return;
+  const today=todayKey(); let ch=false;
+  if(p.mode==='total'&&today>=p.start&&p.based!==p.start){ p.base=Math.max(0,totalWords()-sumDays(p.start,today)); p.based=p.start; ch=true; }
+  const st=planState(); if(!st) return;
+  if(st.started&&!st.past){ const g=st.writingToday?st.todayGoal:0, cur=p.log[today]; if(!cur||cur.p!==st.done||cur.g!==g){ p.log[today]={p:st.done,g}; ch=true; } }
+  if(p.auto&&st.started&&st.status!=='done'&&!st.past){ const g=clamp(st.writingToday?st.todayGoal:st.nextGoal,50,20000); if(g!==S.meta.goal){ S.meta.goal=g; ch=true; const gi=$('#goalIn'); if(gi) gi.value=g; } }
+  if(st.status==='done'&&!p.doneAt){ p.doneAt=Date.now(); ch=true; cheer(pick(['You reached '+fmt(p.target)+' words'+(st.past?'':' before your deadline')+'! '+S.meta.pet.name+' is beside itself.','Deadline goal: done! '+fmt(p.target)+' words.']),true); }
+  if(ch) dirty('meta');
+}
+function planPaint(){
+  const el=$('#planLine'); if(!el) return; const st=planState();
+  el.innerHTML=ico('cal',13)+'<span>'+(st?esc(planLabel(st)):'Plan a deadline…')+'</span>'; el.className='plan-line'+(st?' s-'+st.status:' off');
+}
+// "Behind / ahead" for Inky when a project opens.
+function planGreet(){
+  const st=planState(); if(!st||!st.started||st.past) return '';
+  if(st.status==='ahead') return 'We are '+fmt(st.diff)+' words ahead of schedule. Nice!';
+  if(st.status==='behind') return 'We are a little behind the plan, but today’s '+fmt(st.todayGoal)+' words catch us up.';
+  return st.writingToday?'Today’s plan: '+fmt(st.todayGoal)+' words. You can do this.':'';
+}
+function planChart(st){
+  const p=st.p, W=640, H=220, L=54, R=14, T=14, B=26, pw=W-L-R, ph=H-T-B, days=[];
+  for(let k=p.start,i=0;k<=p.by&&i<1500;k=addDays(k,1),i++) days.push(k);
+  const n=Math.max(1,days.length-1), max=Math.max(p.target,st.done)*1.04, min=p.mode==='new'?0:Math.max(0,Math.min(st.from,st.done)*.96);
+  const x=i=>L+i/n*pw, y=v=>T+ph-(v-min)/Math.max(1,max-min)*ph;
+  let ideal='', act='', prev=st.from, ti=-1;
+  days.forEach((k,i)=>{ ideal+=(i?'L':'M')+x(i).toFixed(1)+' '+y(st.ideal(k)).toFixed(1);
+    if(k<=st.today){ const lg=p.log[k]; let v=k===st.today?st.done:lg?lg.p:p.mode==='new'?sumDays(p.start,k):prev; prev=v; act+=(act?'L':'M')+x(i).toFixed(1)+' '+y(v).toFixed(1); if(k===st.today) ti=i; } });
+  let h='';
+  for(let i=0;i<=4;i++){ const v=min+(max-min)*i/4, yy=Math.round(y(v))+.5; h+='<line class="wc-grid" x1="'+L+'" x2="'+(W-R)+'" y1="'+yy+'" y2="'+yy+'"/><text class="wc-ax" x="'+(L-8)+'" y="'+(yy+4)+'" text-anchor="end">'+(v>=1000?(Math.round(v/100)/10)+'k':Math.round(v))+'</text>'; }
+  h+='<line class="pl-tgt" x1="'+L+'" x2="'+(W-R)+'" y1="'+y(p.target)+'" y2="'+y(p.target)+'"/>';
+  h+='<path class="pl-ideal" d="'+ideal+'"/>'+(act?'<path class="pl-act" d="'+act+'"/>':'');
+  if(ti>=0) h+='<line class="pl-now" x1="'+x(ti)+'" x2="'+x(ti)+'" y1="'+T+'" y2="'+(T+ph)+'"/><circle class="pl-dot" cx="'+x(ti)+'" cy="'+y(st.done)+'" r="4.5"/>';
+  h+='<text class="wc-ax" x="'+L+'" y="'+(H-8)+'">'+esc(fmtDay(p.start))+'</text><text class="wc-ax" x="'+(W-R)+'" y="'+(H-8)+'" text-anchor="end">'+esc(fmtDay(p.by))+'</text>';
+  return '<svg class="pl-chart" viewBox="0 0 '+W+' '+H+'" role="img" aria-label="'+esc('Progress: '+fmt(st.done)+' of '+fmt(p.target)+' words, against the plan')+'">'+h+'</svg>'
+    +'<div class="pl-key"><span><i class="k-act"></i>You</span><span><i class="k-ideal"></i>The plan</span></div>';
+}
+function planCal(st){
+  const p=st.p, span=Math.round((dayDate(p.by)-dayDate(p.start))/864e5);
+  let a=p.start, b=p.by, note='';
+  if(span>126){ a=st.today<p.start?p.start:addDays(st.today,-14); if(a<p.start) a=p.start; b=addDays(a,83); if(b>p.by) b=p.by; note='<p class="fine">Showing '+fmtDay(a)+' to '+fmtDay(b)+'.</p>'; }
+  const d0=dayDate(a); d0.setDate(d0.getDate()-((d0.getDay()+6)%7)); let h='<div class="pl-cal"><div class="pl-wk">'+['Mon','Tue','Wed','Thu','Fri','Sat','Sun'].map(w=>'<b>'+w+'</b>').join('')+'</div>';
+  const fut=st.writingToday?st.todayGoal:st.nextGoal;
+  for(let w=0;w<30;w++){ const ws=new Date(d0); ws.setDate(d0.getDate()+w*7); if(keyOf(ws)>b) break; h+='<div class="pl-wk">';
+    for(let i=0;i<7;i++){ const dd=new Date(ws); dd.setDate(ws.getDate()+i); const k=keyOf(dd);
+      if(k<a||k>b){ h+='<span class="pl-d out"></span>'; continue; }
+      const wr=p.wd[dd.getDay()]&&!p.off[k], words=S.meta.days[k]||0, lg=p.log[k], g=lg?lg.g:Math.ceil((p.target-st.from)/Math.max(1,st.all.length)), isT=k===st.today;   // days before the log: the plan's even share
+      let cls='pl-d', sub='';
+      if(!wr){ cls+=' rest'; sub=words?fmt(words):(p.off[k]?'off':'rest'); }
+      else if(k>st.today){ cls+=' fut'; sub=fmt(fut); }
+      else { const goal=isT?st.todayGoal:g; if(goal&&words>=goal) cls+=' met'; else if(words>0) cls+=' part'; else if(!isT) cls+=' miss'; sub=fmt(words)+(isT&&goal?' / '+fmt(goal):''); }
+      if(isT) cls+=' today';
+      h+='<button class="'+cls+'" data-day="'+k+'"'+(k>=st.today&&p.wd[dd.getDay()]?'':' disabled')+' title="'+esc(fmtDay(k,{weekday:'long',day:'numeric',month:'long'})+(k>=st.today&&p.wd[dd.getDay()]?(p.off[k]?' · click to write this day after all':' · click to take this day off'):''))+'"><b>'+dd.getDate()+'</b><small>'+esc(sub)+'</small></button>'; }
+    h+='</div>'; }
+  return note+h+'</div>';
+}
+function renderPlan(el){
+  const m=S.meta, p=m.plan, st=planState(), today=todayKey();
+  const tile=(v,l,c)=>'<div class="ss-tile'+(c?' '+c:'')+'"><b class="mono">'+v+'</b><span>'+l+'</span></div>';
+  const sl={done:'Goal reached',soon:'Not started yet',past:'Deadline passed',ahead:fmt(st?st.diff:0)+' ahead',behind:fmt(st?st.diff:0)+' behind',ok:'On track'};
+  el.innerHTML='<div class="main-head">'+backBtn()+'<span class="kind">'+ico('cal',16)+'</span><h1 class="mh-title">Deadline planner</h1>'
+    +(p.on?'<button class="btn" data-pl="stop">Stop the plan</button>':'')+'</div><div class="pf-wrap pl">'
+    +(st?'<section class="pf pl-now-box s-'+st.status+'"><h2>'+esc(sl[st.status])+'</h2><p class="pl-say">'+esc(st.status==='done'?'You reached '+fmt(p.target)+' words. Set a new goal below to keep going.':st.status==='past'?'The deadline was '+fmtDay(p.by,{day:'numeric',month:'long'})+'. Choose a new date below and Inkling works out a fresh daily goal.':st.status==='soon'?'Your plan starts on '+fmtDay(p.start,{weekday:'long',day:'numeric',month:'long'})+'.':st.status==='behind'?'No stress: the missed words are spread over the days left, so today’s goal is a little higher.':st.status==='ahead'?'Your extra words lower the goal for the days left.':'Write today’s goal and you stay on course.')+'</p>'
+      +'<div class="ss-tiles">'+tile(st.writingToday?fmt(st.todayGoal):st.status==='done'?'✓':'–',st.writingToday?'words today':'today is a rest day','hi')
+      +tile(fmt(st.done),p.mode==='new'?'new words so far':'words in the draft')+tile(fmt(st.remaining),'words to go')+tile(st.left.length,'writing days left')
+      +(st.status!=='done'&&!st.writingToday&&st.nextDay?tile(fmt(st.nextGoal),'a day from '+fmtDay(st.nextDay)):'')
+      +(st.pace?tile(fmt(st.pace),'your average per writing day'):'')+(st.finish?tile(fmtDay(st.finish),'finish at this pace',st.finish>p.by?'warn':''):'')+'</div>'
+      +'<div class="bar lg pl-bar"><i style="width:'+Math.min(100,(st.done-st.from)/Math.max(1,p.target-st.from)*100)+'%"></i></div></section>'
+      +(st.started?'<section class="pf"><h2>Progress</h2>'+planChart(st)+'</section>':'')
+      +'<section class="pf"><h2>Calendar</h2><p class="fine">Click a coming day to take it off, or to put it back. The goal for the other days adjusts.</p>'+planCal(st)+'</section>':'')
+    +'<section class="pf"><h2>'+(p.on?'Your plan':'Set a deadline')+'</h2>'
+    +(p.on?'':'<p class="fine">Tell Inkling where you want to get to and by when. It works out how much to write each day, and adjusts when you write more or less.</p>')
+    +'<div class="seg pl-mode"><button data-pm2="total"'+(p.mode==='total'?' class="on"':'')+'>Finish my draft</button><button data-pm2="new"'+(p.mode==='new'?' class="on"':'')+'>Write new words</button></div>'
+    +'<p class="fine">'+(p.mode==='total'?'Counts the whole manuscript: reach this many words in total.':'Counts only new words written from the start date, like NaNoWriMo.')+'</p>'
+    +'<div class="two"><label class="f">'+(p.mode==='total'?'Manuscript length':'New words')+'<input id="plTarget" type="number" min="100" step="1000" value="'+p.target+'"></label><label class="f">Deadline<input id="plBy" type="date" value="'+p.by+'"></label></div>'
+    +'<div class="two"><label class="f">Start<input id="plStart" type="date" value="'+p.start+'"></label><div></div></div>'
+    +'<span class="sec-l">Days I write</span><div class="pl-wd">'+[1,2,3,4,5,6,0].map(i=>'<button data-wd="'+i+'" aria-pressed="'+p.wd[i]+'"'+(p.wd[i]?' class="on"':'')+'>'+PLAN_WD[i]+'</button>').join('')+'</div>'
+    +'<label class="ck"><input type="checkbox" id="plAuto"'+(p.auto?' checked':'')+'>Set my daily goal from this plan</label>'
+    +'<p class="fine pl-err" id="plErr" hidden></p>'
+    +'<div class="ts-row">'+(p.on?'':'<button class="btn pri" data-pl="go">'+ico('cal',14)+'<span>Start the plan</span></button>')+'<button class="btn" data-pl="nano">NaNoWriMo: 50,000 words in November</button></div>'
+    +(DESK?'<p class="fine">Your plan is yours alone on a shared project, like your daily goal.</p>':'')+'</section></div>';
+  const err=$('#plErr',el), check=()=>{ const bad=p.by<=p.start?'The deadline needs to be after the start.':!planDays(p,p.start,p.by).length?'There are no writing days before the deadline.':''; err.textContent=bad; err.hidden=!bad; return !bad; };
+  check();
+  const apply=()=>{ S.meta.plan=normPlan(Object.assign({},p,{on:p.on&&p.by>p.start})); planSync(); dirty('meta'); updateStats(); renderInspector(); renderPlan(el); };
+  el.onchange=e=>{ const x=e.target;
+    if(x.id==='plTarget') p.target=clamp(Math.round(+x.value||p.target),100,2000000);
+    else if(x.id==='plBy'&&isDayKey(x.value)) p.by=x.value;
+    else if(x.id==='plStart'&&isDayKey(x.value)){ p.start=x.value; p.based=''; }
+    else if(x.id==='plAuto') p.auto=x.checked;
+    else return;
+    if(!check()) return; apply(); };
+  el.onclick=e=>{
+    const b=e.target.closest('[data-pl],[data-pm2],[data-wd],[data-day]'); if(!b||b.disabled) return;
+    if(b.dataset.pm2){ p.mode=b.dataset.pm2; p.based=''; if(p.mode==='new'&&p.target>=S.meta.target) p.target=50000; else if(p.mode==='total'&&p.target<totalWords()) p.target=S.meta.target; apply(); return; }
+    if(b.dataset.wd){ const i=+b.dataset.wd; p.wd[i]=!p.wd[i]; if(!p.wd.some(Boolean)) p.wd[i]=true; if(check()) apply(); else renderPlan(el); return; }
+    if(b.dataset.day){ const k=b.dataset.day; if(p.off[k]) delete p.off[k]; else p.off[k]=1; apply(); return; }
+    const a=b.dataset.pl;
+    if(a==='go'){ if(!check()) return; p.on=true; p.based=''; p.doneAt=0; apply(); toast('Plan started. '+(p.auto?'Your daily goal now follows it.':''),{plain:true}); }
+    else if(a==='stop') ask('Stop the plan?','Your daily goal stays at '+fmt(S.meta.goal)+' words, and you can start a new plan any time.',[['stop','Stop the plan','danger'],['','Keep it']]).then(v=>{ if(v!=='stop') return; p.on=false; dirty('meta'); updateStats(); renderInspector(); renderPlan(el); });
+    else if(a==='nano'){ const y=today>(new Date().getFullYear()+'-11-30')?new Date().getFullYear()+1:new Date().getFullYear();
+      Object.assign(p,{mode:'new',target:50000,start:y+'-11-01',by:y+'-11-30',wd:[true,true,true,true,true,true,true],based:''}); if(check()) apply(); }
+  };
+}
+
 /* ---------- your screen: what shows (Window › Project settings) ---------- */
 // meta.layout = {hide:{key:true}, order:[Inkling panel sections]}. Personal and per project: it follows the writer on
 // a shared project. Projects without one start from this device's default (LOOK.layoutDef, "Use for new projects").
@@ -4521,6 +4718,7 @@ function loToggle(k){ loSet(k,!loHidden(k)); if(ui.view.k==='layout') renderMain
 function winAct(a){
   const now=Date.now(); ui.actAt=ui.actAt||{}; if(now-(ui.actAt[a]||0)<150) return; ui.actAt[a]=now;
   if(a==='layout') go({k:'layout'});
+  else if(a==='plan') go({k:'plan'});
   else if(a==='tBinder') loToggle('binder');
   else if(a==='tInsp') loToggle('insp');
   else if(a==='focus'){ ui.focus=!ui.focus; syncTab(); renderMain(); }
@@ -4533,8 +4731,8 @@ function renderLayout(el){
   const preset=Object.keys(LO_PRESETS).find(p=>{ const h=LO_PRESETS[p][1]; return h.length===Object.keys(L.hide).length&&h.every(k=>L.hide[k]); });
   el.innerHTML='<div class="main-head">'+backBtn()+'<span class="kind">'+ico('layout',16)+'</span><h1 class="mh-title">Project settings</h1></div><div class="pf-wrap">'
     +'<section class="pf"><h2>This project</h2><div class="two"><label class="f">Title<input id="loTitle" maxlength="90" value="'+esc(m.title)+'"></label><label class="f">Author<input id="loAuthor" maxlength="120" value="'+esc(m.author||'')+'" placeholder="Your name or pen name"></label></div>'
-    +'<div class="two"><label class="f">Daily goal (words)<input id="loGoal" type="number" min="50" max="20000" step="50" value="'+m.goal+'"></label><label class="f">Novel length goal (words)<input id="loTarget" type="number" min="1000" max="1000000" step="1000" value="'+m.target+'"></label></div>'
-    +'<div class="ts-row"><button class="btn" data-lo-a="binder">'+ico('sliders',14)+'<span>Choose binder sections…</span></button><button class="btn" data-lo-a="exp">Export settings…</button></div></section>'
+    +'<div class="two"><label class="f">Daily goal (words)<input id="loGoal" type="number" min="50" max="20000" step="50" value="'+m.goal+'"'+(m.plan.on&&m.plan.auto?' disabled title="Set by your deadline plan"':'')+'></label><label class="f">Novel length goal (words)<input id="loTarget" type="number" min="1000" max="1000000" step="1000" value="'+m.target+'"></label></div>'
+    +'<div class="ts-row"><button class="btn" data-lo-a="binder">'+ico('sliders',14)+'<span>Choose binder sections…</span></button><button class="btn" data-lo-a="exp">Export settings…</button><button class="btn" data-lo-a="plan">'+ico('cal',14)+'<span>Deadline planner…</span></button></div></section>'
     +'<section class="pf"><h2>Your screen</h2><p class="fine">Choose what you see while you work. Changes show straight away. Each project remembers its own setup'+(DESK?', and on a shared project your setup is yours alone':'')+'.</p>'
     +'<span class="sec-l">Start from</span><div class="seg">'+Object.keys(LO_PRESETS).map(p=>'<button data-lo-p="'+p+'"'+(preset===p?' class="on"':'')+'>'+LO_PRESETS[p][0]+'</button>').join('')+'</div>'
     +LO_GROUPS.map(g=>'<div class="lo-grp"><span class="sec-l">'+g[0]+'</span><div class="lo-cks">'+g[1].map(x=>ck(x[0],x[1])).join('')+'</div>'+(g[2]?'<p class="fine">'+g[2]+'</p>':'')+'</div>').join('')
@@ -4560,6 +4758,7 @@ function renderLayout(el){
       else if(w==='nodef'){ delete LOOK.layoutDef; saveLook(); renderLayout(el); }
       else if(w==='binder'){ loSet('binder',false); ui.binderCfg=true; renderBinder(); const b=$('.bcfg'); if(b) b.scrollIntoView({block:'nearest'}); }
       else if(w==='exp') openExport();
+      else if(w==='plan') go({k:'plan'});
       else if(w==='prefs') go({k:'prefs'}); }
   };
   dragSort($('#loOrder',el),{item:'.lo-it',handle:'.td-grip',drop:(it,ref)=>{ if(moveInList(L.order,it.dataset.k,ref&&ref.dataset.k,x=>x)){ dirty('meta'); redraw(); } }});
@@ -4886,7 +5085,8 @@ function renderInspector(){
     +'<div class="evo">'+(nx?'<div class="bar"><i id="evoBar" style="width:'+Math.max(0,Math.min(100,(p.total-stageAt(st))/Math.max(1,stageAt(st+1)-stageAt(st))*100))+'%"></i></div>':'')+'<small id="evoTxt"></small></div></section>'; sec.timer=pomoHtml();
   sec.today='<section class="psec"><h3>Today</h3><div class="big"><b class="mono" id="goalNum">0</b><span>of <span class="mono" id="goalOf">0</span> new words</span></div><div class="bar lg"><i id="goalBar" style="width:0"></i></div>'
     +'<div class="chips"><span class="chip2" id="streakChip"></span></div>'
-    +'<div class="two"><label class="f">Daily goal<input id="goalIn" type="number" inputmode="numeric" min="50" max="20000" step="50" value="'+m.goal+'"></label><label class="f">Novel length goal<input id="tgtIn" type="number" inputmode="numeric" min="1000" max="1000000" step="1000" value="'+m.target+'"></label></div>'
+    +'<button class="plan-line" id="planLine"></button>'
+    +'<div class="two"><label class="f">Daily goal<input id="goalIn" type="number" inputmode="numeric" min="50" max="20000" step="50" value="'+m.goal+'"'+(m.plan.on&&m.plan.auto?' disabled title="Set by your deadline plan"':'')+'></label><label class="f">Novel length goal<input id="tgtIn" type="number" inputmode="numeric" min="1000" max="1000000" step="1000" value="'+m.target+'"></label></div>'
     +'<p class="fine">Only new words count. Pasted blocks over 600 words are treated as imports.</p></section>';
   sec.todo='<section class="psec todo" id="todo"><h3><span>To do today</span><span class="td-n" id="tdN"></span></h3><div id="tdBox"></div></section>';
   sec.ms='<section class="psec"><h3>Manuscript</h3><div class="big"><b class="mono" id="totNum" style="font-size:26px">0</b><span>of <span class="mono" id="totOf">0</span> words</span></div><div class="bar proj"><i id="totBar" style="width:0"></i></div>'
@@ -4906,6 +5106,7 @@ function renderInspector(){
   on('#contBtn','click',()=>go({k:'cont'}));
   on('#denBtn','click',()=>{ ui.newThings=0; if(ui.view.k==='den') goBack(); else go({k:'den'}); });
   on('[data-a="layout"]','click',()=>go({k:'layout'}));
+  on('#planLine','click',()=>go({k:'plan'}));
   paintPals();
   on('#petName','input',e=>{ p.name=e.target.value.trim()||'Inky'; dirty('meta'); });
   on('#goalIn','change',e=>{ m.goal=Math.max(50,Math.min(20000,Math.round(+e.target.value||500))); e.target.value=m.goal; dirty('meta'); updateStats(); drawTodo(); });
@@ -5120,10 +5321,10 @@ function renderMenu(){
   const winItems=()=>'<hr><small class="m-h">Window</small>'+item('layout','Project settings…')+item('tBinder',(loHidden('binder')?'Show':'Hide')+' the binder')+item('tInsp',(loHidden('insp')?'Show':'Hide')+' the Inkling panel')+item('focus',ui.focus?'Leave focus mode':'Focus mode')+'<hr>';
   const item=(m,label,cls)=>'<button data-m="'+m+'"'+(cls?' class="'+cls+'"':'')+'>'+label+'</button>';
   if(DESK){ el.innerHTML=item('save','Save')+item('projects','Projects…')+item('share','Share this project…')+'<hr>'+item('export','Export… (Word, PDF, EPUB)')+item('json','Back up this project (.json)')+item('import','Import a backup as a new project…')+'<hr>'
-    +item('find','Find and replace…')+item('cont','Continuity check')+item('sessions','Writing sessions')+item('prefs','Settings')+winItems()+item('help','How sharing works')+item('keys','Keyboard shortcuts')+item('tour','Show the tour')+'<hr>'+item('reveal','Show projects folder')
+    +item('find','Find and replace…')+item('cont','Continuity check')+item('sessions','Writing sessions')+item('plan','Deadline planner')+item('prefs','Settings')+winItems()+item('help','How sharing works')+item('keys','Keyboard shortcuts')+item('tour','Show the tour')+'<hr>'+item('reveal','Show projects folder')
     +'<small>Saved on this computer as you write. Each project folder also keeps automatic backups.</small>'; return; }
   el.innerHTML=item('save','Save now')+'<hr>'+item('export','Export… (Word, PDF, EPUB)')+item('json','Back up project (.json)')+item('restore','Restore from a backup…')+'<hr>'
-    +item('find','Find and replace…')+item('cont','Continuity check')+item('sessions','Writing sessions')+item('prefs','Settings')+winItems()+item('help','How sharing works')+item('keys','Keyboard shortcuts')+item('tour','Show the tour')+'<hr>'
+    +item('find','Find and replace…')+item('cont','Continuity check')+item('sessions','Writing sessions')+item('plan','Deadline planner')+item('prefs','Settings')+winItems()+item('help','How sharing works')+item('keys','Keyboard shortcuts')+item('tour','Show the tour')+'<hr>'
     +item('sample',cf==='m-sample'?'Replace everything with the sample? Click again':'Load the sample project','warn')
     +item('blank',cf==='m-blank'?'Replace everything with a blank project? Click again':'Start a blank project','warn')
     +'<small>'+(P.db?'Your project saves automatically to your Claude account, private to you. A new project comes with its own Inky; your daily goal and timer settings carry over.':'Your project saves on this device only. Back it up from here when you can.')+'</small>';
@@ -5146,7 +5347,7 @@ function bindMenu(){
     else if(a==='import'){ closeMenu(); deskImportPick(); }
     else if(a==='reveal'){ closeMenu(); DESK.reveal(); }
     else if(a==='sessions'){ closeMenu(); go({k:'ss'}); }
-    else if(['layout','tBinder','tInsp','focus','keys'].includes(a)){ closeMenu(); winAct(a); }
+    else if(['layout','tBinder','tInsp','focus','keys','plan'].includes(a)){ closeMenu(); winAct(a); }
     else if(a==='restore'){ closeMenu(); $('#fileIn').value=''; $('#fileIn').click(); }
     else if(a==='sample') confirmDo('m-sample',()=>{ closeMenu(); replaceProject(normalize(sampleProject()),true); },renderMenu);
     else if(a==='blank') confirmDo('m-blank',()=>{ closeMenu(); replaceProject(normalize(blankProject()),true); },renderMenu);
@@ -5266,14 +5467,14 @@ function sameProject(a,b){   // ignoring the per-device copies of personal stats
 // Personal stats live in meta.writers[name]; the copies at the top of meta are this device's working view.
 function stampMine(st){
   if(!DESK||!st||!st.meta) return; const m=st.meta, k=myKey(), w=m.writers[k];
-  const cur={name:ME.name,days:m.days,pet:m.pet,mark:m.mark,goal:m.goal,pomo:m.pomo,todo:m.todo,layout:m.layout,devs:Array.from(new Set(((w&&w.devs)||[]).concat(DEVICE))).slice(-10)};
+  const cur={name:ME.name,days:m.days,pet:m.pet,mark:m.mark,goal:m.goal,pomo:m.pomo,todo:m.todo,layout:m.layout,plan:m.plan,devs:Array.from(new Set(((w&&w.devs)||[]).concat(DEVICE))).slice(-10)};
   if(!w||canon(Object.assign({},w,{at:0}))!==canon(Object.assign({},cur,{at:0}))) m.writers[k]=Object.assign(clone(cur),{at:Date.now()});
 }
 function adoptMine(st){
   const m=st.meta, wr=m.writers||{}; let w=wr[myKey()];
   if(!w){ const k=Object.keys(wr).find(k=>(wr[k].devs||[]).includes(DEVICE)); if(k) w=wr[k]; }   // this computer under an earlier name
   if(w) PERSONAL.forEach(f=>{ if(w[f]!==undefined) m[f]=clone(w[f]); });
-  else if(Object.keys(wr).length){ m.days={}; m.pet=normPet({}); m.mark=null; m.todo=normTodo({}); m.layout=normLayout(LOOK.layoutDef); }   // someone else's project: your own pet and goals start fresh
+  else if(Object.keys(wr).length){ m.days={}; m.pet=normPet({}); m.mark=null; m.todo=normTodo({}); m.layout=normLayout(LOOK.layoutDef); m.plan=normPlan({},m.target); }   // someone else's project: your own pet and goals start fresh
 }
 // Puts merged data into the live state, keeping every object that did not change (open screens hold references to them).
 function patchState(ns){
@@ -5442,7 +5643,7 @@ function helpShareHtml(){
     +sec('What sharing is','<p>Two or more people can work on the same novel, each in Inkling on their own computer. The project lives in a folder that a sync service keeps the same on every computer: Dropbox, Google Drive, OneDrive or iCloud Drive. Inkling has no server and no accounts; your sync service carries the files, and Inkling merges everyone’s changes.</p><p>It is not live like Google Docs: changes arrive when the sync service delivers them, usually within a few seconds to a minute. It works best when co-writers work on different scenes, or take turns.</p>')
     +sec('Setting it up','<ol><li>Open the project and choose <b>Share this project…</b> (in the File menu, or <b>Share</b> on the Projects screen).</li><li>Move it into a folder inside Dropbox, Google Drive, OneDrive or iCloud Drive. Inkling copies it, checks the copy, then moves the original to the trash.</li><li>In your sync service, share that project folder with your co-writers, with permission to edit.</li><li>Each co-writer installs Inkling, waits for the folder to sync, and chooses <b>File › Open a shared project…</b>, then picks the folder. It joins their Projects list.</li><li>Everyone types their name in <b>Settings › You</b>.</li></ol>')
     +sec('Working at the same time','<ul><li><b>Who is here.</b> A chip at the top shows who else has the project open, and a letter beside a scene shows who is in it. A note appears above a scene when someone else is in it too.</li><li><b>Sprint together.</b> When a co-writer starts a focus sprint, the chip at the top says so. Click it and choose <b>Join the sprint</b>: your timer ends at the same moment as theirs, and their Inky sits beside yours.</li><li><b>Different things merge.</b> If you change one scene and your co-writer changes another, or adds a character, a timeline card or a chapter, both changes are kept. Inkling checks for new changes every few seconds and whenever you come back to the window, and says what came in.</li><li><b>The same scene.</b> If you both change the same scene before the sync catches up, the newer change is kept in the scene and the other text is saved as a <b>snapshot</b> of that scene, named after whoever wrote it. A note appears with a <b>Compare</b> button, so you can copy anything back. Nothing is thrown away.</li><li><b>Other pages.</b> For a story page, timeline, outline, note, map or tree that you both changed, the newer change is kept. The project’s Backups have earlier versions.</li><li><b>Deleting.</b> Deleting something removes it for everyone, unless someone changed it after it was deleted; then it comes back.</li><li><b>Chapter order and titles</b> merge too: scenes one person adds or moves appear in place for everyone.</li></ul>')
-    +sec('What stays yours','<p>Your Inkling pet, daily goal, to-do list, screen setup, word history chart, focus timer settings and writing sessions belong to you, under the name you set. Appearance settings (theme, font, spacing) are per computer. Everything else (the text, story pages, timelines, outlines, notes, maps, trees, chapter notes, snapshots and export settings) is shared.</p><p>Use the same name on each of your own computers so your pet follows you.</p>')
+    +sec('What stays yours','<p>Your Inkling pet, daily goal, deadline plan, to-do list, screen setup, word history chart, focus timer settings and writing sessions belong to you, under the name you set. Appearance settings (theme, font, spacing) are per computer. Everything else (the text, story pages, timelines, outlines, notes, maps, trees, chapter notes, snapshots and export settings) is shared.</p><p>Use the same name on each of your own computers so your pet follows you.</p>')
     +sec('Good habits','<ul><li>Agree who is writing which chapters or scenes.</li><li>Before you start, check the sync service has finished syncing (its icon shows a tick).</li><li>Keep everyone on the same version of Inkling (Help › Check for updates). Inkling warns you when a co-writer has a different version.</li><li>Make the folder “available offline” or “always keep on this device” (Google Drive: right-click › Offline access; OneDrive: Always keep on this device; iCloud: Download Now). Online-only files can make Inkling wait.</li><li>Take a <b>snapshot</b> of a scene before a big rewrite.</li></ul>')
     +sec('If something looks wrong','<ul><li><b>A co-writer’s changes have not arrived.</b> Check that their sync service is running and finished. Switching back to Inkling, or waiting a few seconds, brings in anything that has arrived.</li><li><b>Text you expected is missing from a scene.</b> Open the scene’s <b>Snapshots</b>: the other version from a clash is there, named after its writer.</li><li><b>Files called “conflicted copy”, “(1)” or with a computer’s name.</b> Sync services make these when two saves cross. Inkling merges them in automatically and moves them into the project’s backups folder.</li><li><b>Going back to an earlier state.</b> Projects › Backups lists copies made every 10 minutes; opening one makes a separate project, so nothing is overwritten.</li><li><b>Stopping sharing.</b> In your sync service, stop sharing the folder. To take a shared project off your own list without affecting anyone, use <b>Remove from list</b> on the Projects screen.</li></ul>')
     +sec('Privacy','<p>The project is stored by your sync service and anyone you share the folder with can read and change all of it. Inkling itself sends nothing anywhere. Remove someone’s access in your sync service to stop sharing with them.</p>')
@@ -5641,7 +5842,7 @@ function init(){
   let rz; window.addEventListener('resize',()=>{ clearTimeout(rz); rz=setTimeout(()=>{ if(ui.view&&ui.view.k==='tl') drawTl(); },150); });
   document.addEventListener('visibilitychange',()=>{ if(document.hidden&&P.dirty.size) flush(); });
   window.addEventListener('pagehide',()=>{ if(T.cur) pmRecord(false); if(P.dirty.size){ mirrorLocal(); flush(); } });
-  setInterval(()=>{ if(S.meta.todo.d!==todayKey()) drawTodo(); if(!document.hidden&&Date.now()-ui.sayAt>40000&&!(peekNow()||{}).mood) say(line(curMood())); },15000);
+  setInterval(()=>{ if(S.meta.todo.d!==todayKey()) drawTodo(); planSync(); planPaint(); if(!document.hidden&&Date.now()-ui.sayAt>40000&&!(peekNow()||{}).mood) say(line(curMood())); },15000);
   renderAll(); checkAch(true); greet();
   if(newer){ lockNewer(newer); return; }
   if(DESK) deskBoot(); else { setStatus('local'); connectDb(!!local); setTimeout(()=>startTour(),700); }

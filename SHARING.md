@@ -86,8 +86,8 @@ you need, or restore it.
 
 ### What stays yours
 
-- **Yours alone:** your Inkling pet, your daily goal and today's words, your to-do list, your screen setup (Window ›
-  Project settings), your word history chart, your focus timer settings and your writing sessions. They are kept under the name you set, so use the **same name on each of your
+- **Yours alone:** your Inkling pet, your daily goal and today's words, your to-do list, your deadline plan, your screen setup
+  (Window › Project settings), your word history chart, your focus timer settings and your writing sessions. They are kept under the name you set, so use the **same name on each of your
   own computers** and your pet follows you.
 - **Per computer:** appearance settings (theme, font, text size, spacing, page width, side panel widths, spellcheck)
   and whether Inky reads over your shoulder.
