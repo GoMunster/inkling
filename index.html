@@ -85,13 +85,12 @@ button{cursor:pointer}
 .menu hr{border:0;border-top:1px solid var(--line);margin:4px 0;width:100%}
 .menu small{color:var(--muted);padding:4px 10px 6px;font-size:12px}
 
-.cols{display:grid;grid-template-columns:var(--bw,272px) minmax(0,1fr) var(--iw,308px);grid-template-rows:minmax(0,1fr);min-height:0;position:relative}
+.cols{display:grid;grid-template-columns:var(--cols,var(--bw,272px) minmax(0,1fr) var(--iw,308px));grid-template-rows:minmax(0,1fr);min-height:0;position:relative}
 .pane{overflow:auto;min-height:0;min-width:0}
 .pane-binder{background:var(--panel);border-right:1px solid var(--line);overflow-x:hidden}
 .pane-insp{background:var(--panel);border-left:1px solid var(--line)}
 .pane-main{background:var(--bg);position:relative}
 #app.focus .pane-binder,#app.focus .pane-insp{display:none}
-#app.focus .cols{grid-template-columns:minmax(0,1fr)}
 .tabs{display:none}
 
 /* binder */
@@ -942,9 +941,6 @@ kbd{font-family:var(--f-mono);font-size:12px;border:1px solid var(--line);border
 #app.lo-snapBtn #snBtn,#app.lo-read #raBtn,#app.lo-status #sceneStatus,#app.lo-swc #sceneWc,#app.lo-hint #sceneHint,#app.lo-bubble #bubble,#app.lo-peek .peek{display:none!important}
 @media (min-width:1080px){
   #app.lo-binder .pane-binder,#app.lo-binder #szL,#app.lo-insp .pane-insp,#app.lo-insp #szR{display:none}
-  #app.lo-binder .cols{grid-template-columns:minmax(0,1fr) var(--iw,308px)}
-  #app.lo-insp .cols{grid-template-columns:var(--bw,272px) minmax(0,1fr)}
-  #app.lo-binder.lo-insp .cols,#app.focus.focus .cols{grid-template-columns:minmax(0,1fr)}
   #app.lo-insp .peek,#app.lo-pet .peek{display:block}
 }
 
@@ -977,6 +973,53 @@ kbd{font-family:var(--f-mono);font-size:12px;border:1px solid var(--line);border
 .pl-wd button.on{background:var(--accent);border-color:var(--accent);color:#fff}
 .pl-err{color:var(--danger)}
 .pl input[type=date]{font:inherit}
+
+/* trash, search everything, side by side */
+.toast.has-act{pointer-events:auto}
+.toast .t-act{margin-left:6px;flex:none}
+.b-search{display:flex;align-items:center;gap:8px;width:calc(100% - 24px);margin:0 12px 8px;border:1px solid var(--line);background:var(--paper);border-radius:10px;padding:7px 10px;font-size:13px;color:var(--muted);text-align:left}
+.b-search span{flex:1} .b-search:hover{border-color:var(--accent);color:var(--ink)}
+.b-foot{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.tr-sub{margin:0 0 14px!important}
+.tr-list{display:flex;flex-direction:column;gap:8px}
+.tr-row{display:flex;gap:12px;align-items:flex-start;background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+.tr-ico{flex:none;color:var(--muted);margin-top:2px}
+.tr-t{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px} .tr-t b{font-size:14.5px} .tr-t>.muted{font-size:12.5px}
+.tr-peek{font-family:var(--f-prose);font-size:13.5px;color:var(--ink);opacity:.85;overflow-wrap:anywhere}
+.tr-a{display:flex;flex-direction:column;gap:6px;flex:none}
+@media (max-width:640px){.tr-row{flex-wrap:wrap}.tr-a{flex-direction:row}}
+.sa-wrap{max-width:860px;margin:0 auto;padding:16px}
+.sa-bar{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center}
+.sa-bar input[type=search]{flex:1 1 320px;border:1px solid var(--line);border-radius:10px;background:var(--paper);padding:10px 12px;font-size:15px;color:var(--ink)}
+.sa-bar input[type=search]:focus{outline:none;border-color:var(--accent)}
+.sa-areas{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0}
+.sa-areas button{border:1px solid var(--line);background:var(--paper);border-radius:999px;padding:3px 11px;font-size:12.5px;color:var(--muted)}
+.sa-areas button span{font-family:var(--f-mono);font-size:11.5px;margin-left:3px} .sa-areas button.on{background:var(--accent);border-color:var(--accent);color:#fff}
+.sa-sec h2{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:18px 0 6px}
+.sa-hit{display:flex;flex-direction:column;gap:3px;width:100%;text-align:left;border:1px solid var(--line);background:var(--paper);border-radius:10px;padding:9px 12px;margin-bottom:6px;color:var(--ink)}
+.sa-hit:hover,.sa-hit:focus-visible{border-color:var(--accent)}
+.sa-top{display:flex;gap:8px;align-items:baseline;flex-wrap:wrap} .sa-top .muted{font-size:12px} .sa-n{margin-left:auto;font-family:var(--f-mono);font-size:11.5px;color:var(--muted)}
+.sa-snip{font-family:var(--f-prose);font-size:13.5px;line-height:1.5;color:var(--ink);opacity:.9;overflow-wrap:anywhere}
+.sa-snip mark{background:color-mix(in srgb,var(--thing) 40%,transparent);color:inherit;border-radius:3px;padding:0 1px}
+.sa-none{padding:20px 4px}
+.pane-split{background:var(--bg);border-left:1px solid var(--line);display:flex;flex-direction:column}
+.pane-split[hidden]{display:none!important}
+.sp-head{position:sticky;top:0;z-index:2;display:flex;gap:6px;align-items:center;padding:10px 12px;background:var(--panel);border-bottom:1px solid var(--line)}
+.sp-head select{flex:1;min-width:0}
+.sp-body{padding:18px 20px 40px;display:flex;flex-direction:column;gap:6px}
+.sp-h{margin:4px 0 0;font-family:var(--f-prose);font-size:22px} .sp-sub{margin:0;font-size:12.5px} .sp-syn{margin:4px 0;font-style:italic;color:var(--muted)}
+.sp-text{min-height:0;font-size:calc(var(--fs,18px)*.9);margin-top:8px;background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:18px 22px}
+.sp-pic{width:100%;max-height:240px;object-fit:cover;border-radius:10px}
+.sp-body label.f textarea{min-height:44px}
+.sp-note{width:100%;min-height:60vh;border:1px solid var(--line);border-radius:8px;background:var(--paper);padding:14px 16px;font-family:var(--f-prose);font-size:15px;line-height:1.7;color:var(--ink);resize:none;overflow:hidden}
+.sp-ideas{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}
+.sp-idea{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:10px;font-family:var(--f-prose);font-size:14px}
+.sp-ol{list-style:none;margin:6px 0 0;padding:0} .sp-ol li{padding:4px 0 4px calc(var(--d)*18px);border-bottom:1px solid var(--line)} .sp-ol li.done span{text-decoration:line-through;color:var(--muted)}
+.sp-ol small{display:block;color:var(--muted);font-size:12px}
+.sp-tl{display:flex;flex-direction:column;gap:6px} .sp-card{border-left:4px solid var(--c);background:var(--paper);border-radius:8px;padding:8px 10px;display:flex;flex-direction:column;gap:2px}
+.sp-card small{color:var(--muted);font-size:11.5px} .sp-card span{font-size:13px;color:var(--muted)}
+#spBtn.on{background:color-mix(in srgb,var(--accent) 16%,transparent);color:var(--accent)}
+@media (max-width:1079px){.pane-split{display:none!important}}
 
 /* tab layout */
 @media (max-width:1079px){
@@ -1023,6 +1066,7 @@ kbd{font-family:var(--f-mono);font-size:12px;border:1px solid var(--line);border
   <main class="cols">
     <aside id="binder" class="pane pane-binder" aria-label="Binder"></aside>
     <section id="main" class="pane pane-main" aria-label="Workspace"></section>
+    <aside id="split" class="pane pane-split" aria-label="Side by side" hidden></aside>
     <aside id="insp" class="pane pane-insp" aria-label="Inkling and goals"></aside>
     <div class="sizer" id="szL" role="separator" aria-orientation="vertical" aria-label="Binder width" tabindex="0" title="Drag to widen the binder. Double-click to reset."></div>
     <div class="sizer" id="szR" role="separator" aria-orientation="vertical" aria-label="Inkling panel width" tabindex="0" title="Drag to widen this panel. Double-click to reset."></div>
@@ -1059,7 +1103,7 @@ const ICO={plus:'M12 5v14M5 12h14',down:'M6 9l6 6 6-6',right:'M9 6l6 6-6 6',up:'
   image:'M4 5h16v14H4zM4 16l5-5 4 4 3-3 4 4M15 9h.01',indent:'M4 6h16M10 12h10M10 18h10M4 10l3 2-3 2',outdent:'M4 6h16M10 12h10M10 18h10M7 10l-3 2 3 2',upload:'M12 16V4M7 9l5-5 5 5M4 20h16',play:'M7 5l12 7-12 7z',pause:'M8 5v14M16 5v14',stop:'M6 6h12v12H6z',skip:'M5 5l10 7-10 7zM19 5v14',timer:'M12 9v4l2.5 2M9 2h6M12 22a8 8 0 100-16 8 8 0 000 16z',folder:'M3 7a2 2 0 012-2h4l2 2h8a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z',web:'M8 7a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0zM21 7a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0zM14.5 18a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0zM8 7h8M6.5 9l4.5 7M17.5 9L13 16',tree:'M9 3h6v4H9zM3 17h6v4H3zM15 17h6v4h-6zM12 7v5M6 12h12M6 12v5M18 12v5',heart:'M12 20s-7-4.5-7-10a4 4 0 017-2.6A4 4 0 0119 10c0 5.5-7 10-7 10z',
   time:'M3 12h18M7 12V7M12 12v5M17 12V7',sliders:'M4 7h9M17 7h3M4 17h3M11 17h9M15 5v4M9 15v4',search:'M11 4a7 7 0 1 0 0 14a7 7 0 1 0 0-14M20 20l-4.2-4.2',users:'M9 11a3.5 3.5 0 1 0 0-7a3.5 3.5 0 1 0 0 7M2.5 20c.6-3.4 3.2-5.5 6.5-5.5s5.9 2.1 6.5 5.5M16 4.3a3.5 3.5 0 0 1 0 6.4M18 14.8c1.9.8 3.2 2.6 3.5 5.2',minus:'M5 12h14',
   grip:'M9 6h.01M15 6h.01M9 12h.01M15 12h.01M9 18h.01M15 18h.01',copy:'M8 8h11v11H8zM5 16V5h11',fit:'M4 12h16M4 12l4-4M4 12l4 4M20 12l-4-4M20 12l-4 4',
-  undo:'M9 14L4 9l5-5M4 9h10a6 6 0 010 12h-3',redo:'M15 14l5-5-5-5M20 9H10a6 6 0 000 12h3',speak:'M4 9v6h4l5 4V5L8 9zM16 9a4 4 0 010 6M18.5 6.5a8 8 0 010 11',layout:'M4 4h16v16H4zM9 4v16M9 10h11',cal:'M4 6h16v14H4zM4 10h16M8 3v5M16 3v5'};
+  undo:'M9 14L4 9l5-5M4 9h10a6 6 0 010 12h-3',redo:'M15 14l5-5-5-5M20 9H10a6 6 0 000 12h3',speak:'M4 9v6h4l5 4V5L8 9zM16 9a4 4 0 010 6M18.5 6.5a8 8 0 010 11',layout:'M4 4h16v16H4zM9 4v16M9 10h11',cal:'M4 6h16v14H4zM4 10h16M8 3v5M16 3v5',swap:'M7 7h13l-4-4M17 17H4l4 4',split:'M4 4h16v16H4zM12 4v16'};
 const ico=(n,s)=>'<svg class="ico" width="'+(s||16)+'" height="'+(s||16)+'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="'+ICO[n]+'"/></svg>';
 
 const TYPES={
@@ -1084,12 +1128,12 @@ const petStage=()=>Math.max(stageOf(S.meta.pet.total),S.meta.pet.rank||0);
 
 /* ---------- state ---------- */
 let S=null;          // {meta, sc:{id:{text,synopsis,notes}}, en:{id:{fields,pic}}, tl:{id:timeline}, ch:{id:{notes}}, nt:{id:{text,ideas}}, ol:{id:{num,showNotes,items}}}
-const DOCS=['sc','en','tl','ch','nt','ol','rm','ft','ss','sn'];   // each record of these maps is its own saved doc, '<prefix>_<id>'
+const DOCS=['sc','en','tl','ch','nt','ol','rm','ft','ss','sn','tr'];   // each record of these maps is its own saved doc, '<prefix>_<id>'
 const ADD_DOCS=[];   // (raw, out) => out.<prefix> = normalized records, for doc types added after normalize() was written
 const snapshot=st=>{ if(!st) stampMine(S); st=st||S; const o={meta:st.meta}; DOCS.forEach(p=>{ o[p]=st[p]; }); return o; };
 // The desktop app (desktop/) provides window.inklingDesktop: each project is a folder on the computer. Elsewhere it is null.
 const DESK=window.inklingDesktop||null;
-const APP_VERSION='1.8.1';   // the desktop build replaces this with desktop/package.json's version
+const APP_VERSION='1.9.0';   // the desktop build replaces this with desktop/package.json's version
 // Saved-format version. When the shape of saved data changes: bump FORMAT and add MIGRATE[old] that upgrades a raw
 // project one step (it runs before normalize()). A project from a newer FORMAT is never loaded or overwritten.
 const FORMAT=2;
@@ -1349,8 +1393,8 @@ async function adoptImages(np,imgs,deskId){
     else if(!inClaude) p.a='';
   }
 }
-async function dropPic(eid){
-  const p=S.en[eid]&&S.en[eid].pic; if(!p) return;
+async function dropPic(eid,pic){
+  const p=pic||S.en[eid]&&S.en[eid].pic; if(!p) return;
   if(p.l){ try{ localStorage.removeItem(LOCAL_PIC+eid); }catch(e){} }
   if(p.f&&DESK&&PJ.id) DESK.picDelete(PJ.id,p.f).catch(()=>{});
   if(p.a){ const as=await getAssets(); if(as) try{ await as.delete(p.a); }catch(e){} }
@@ -1613,6 +1657,7 @@ function dirty(){
   ui.touched=true; const now=Date.now();
   for(const k of arguments){ P.dirty.add(k); P.gone.delete(k); const d=docData(k); if(d&&typeof d==='object'){ d._m=now; d._dev=DEVICE; if(ME.name) d._by=ME.name; else delete d._by; } if(S.meta.gone[k]) delete S.meta.gone[k]; }
   if(P.dirty.has('meta')) S.meta.saved=Date.now();
+  if(ui.split) splitTouch([...arguments]);
   schedule(1400);
 }
 // A record the writer deleted: drop it from the store and leave a dated marker in meta.gone.
@@ -1703,8 +1748,8 @@ function streak(){
 function curMood(){ const w=todayWords(), g=S.meta.goal; if(w>=g) return 'party'; if(w>=g*.5) return 'hype'; if(w>0) return 'happy'; return 'sleepy'; }
 function orderedScenes(){ const out=[]; S.meta.chapters.forEach(c=>c.scenes.forEach(id=>out.push({id,ch:c}))); return out; }
 function firstView(){ const s=orderedScenes()[0]; return s?{k:'scene',id:s.id}:{k:'cork'}; }
-function viewValid(v){ if(!v) return false; if(v.k==='scene') return !!S.meta.scenes[v.id]; if(v.k==='ent') return !!S.meta.ents[v.id]; if(v.k==='tl') return !!(S.tl[v.id]&&S.meta.tls.some(x=>x.id===v.id)); if(v.k==='nt') return !!(S.nt[v.id]&&S.meta.nts.some(x=>x.id===v.id)); if(v.k==='ol') return !!(S.ol[v.id]&&S.meta.ols.some(x=>x.id===v.id)); if(v.k==='rm'||v.k==='ft') return !!(S[v.k][v.id]&&S.meta[v.k+'s'].some(x=>x.id===v.id)); if(v.k==='snap') return !!S.meta.scenes[v.id]; return v.k==='cork'||v.k==='ss'||v.k==='prefs'||v.k==='find'||v.k==='help'||v.k==='den'||v.k==='cont'||v.k==='layout'||v.k==='plan'; }
-function viewName(v){ if(v.k==='scene') return S.meta.scenes[v.id].title; if(v.k==='ent') return S.meta.ents[v.id].name; if(v.k==='tl') return S.meta.tls.find(x=>x.id===v.id).name; if(v.k==='nt') return S.meta.nts.find(x=>x.id===v.id).name; if(v.k==='ol') return S.meta.ols.find(x=>x.id===v.id).name; if(v.k==='rm'||v.k==='ft') return S.meta[v.k+'s'].find(x=>x.id===v.id).name; if(v.k==='ss') return 'Writing sessions'; if(v.k==='prefs') return 'Settings'; if(v.k==='find') return 'Find and replace'; if(v.k==='help') return 'How sharing works'; if(v.k==='den') return S.meta.pet.name+'’s room'; if(v.k==='cont') return 'Continuity'; if(v.k==='layout') return 'Project settings'; if(v.k==='plan') return 'Deadline planner'; if(v.k==='snap') return 'Snapshots: '+S.meta.scenes[v.id].title; return 'Corkboard'; }
+function viewValid(v){ if(!v) return false; if(v.k==='scene') return !!S.meta.scenes[v.id]; if(v.k==='ent') return !!S.meta.ents[v.id]; if(v.k==='tl') return !!(S.tl[v.id]&&S.meta.tls.some(x=>x.id===v.id)); if(v.k==='nt') return !!(S.nt[v.id]&&S.meta.nts.some(x=>x.id===v.id)); if(v.k==='ol') return !!(S.ol[v.id]&&S.meta.ols.some(x=>x.id===v.id)); if(v.k==='rm'||v.k==='ft') return !!(S[v.k][v.id]&&S.meta[v.k+'s'].some(x=>x.id===v.id)); if(v.k==='snap') return !!S.meta.scenes[v.id]; return v.k==='cork'||v.k==='ss'||v.k==='prefs'||v.k==='find'||v.k==='help'||v.k==='den'||v.k==='cont'||v.k==='layout'||v.k==='plan'||v.k==='trash'||v.k==='search'; }
+function viewName(v){ if(v.k==='scene') return S.meta.scenes[v.id].title; if(v.k==='ent') return S.meta.ents[v.id].name; if(v.k==='tl') return S.meta.tls.find(x=>x.id===v.id).name; if(v.k==='nt') return S.meta.nts.find(x=>x.id===v.id).name; if(v.k==='ol') return S.meta.ols.find(x=>x.id===v.id).name; if(v.k==='rm'||v.k==='ft') return S.meta[v.k+'s'].find(x=>x.id===v.id).name; if(v.k==='ss') return 'Writing sessions'; if(v.k==='prefs') return 'Settings'; if(v.k==='find') return 'Find and replace'; if(v.k==='help') return 'How sharing works'; if(v.k==='den') return S.meta.pet.name+'’s room'; if(v.k==='cont') return 'Continuity'; if(v.k==='layout') return 'Project settings'; if(v.k==='plan') return 'Deadline planner'; if(v.k==='trash') return 'Trash'; if(v.k==='search') return 'Search'; if(v.k==='snap') return 'Snapshots: '+S.meta.scenes[v.id].title; return 'Corkboard'; }
 
 /* ---------- pet ---------- */
 const PET_ARMS={sleepy:['M34 108 q-10 8 -8 22','M126 108 q10 8 8 22'],happy:['M34 106 q-14 2 -16 16','M126 106 q14 2 16 16'],hype:['M34 102 q-18 -6 -18 -28','M126 106 q14 2 16 16'],party:['M34 100 q-20 -8 -18 -32','M126 100 q20 -8 18 -32'],
@@ -1816,10 +1861,14 @@ function bump(){
 function toast(msg,o){
   const t=$('#toast'), withPet=!(o&&o.plain);
   t.className='toast'+(withPet?'':' plain');
-  t.innerHTML=(withPet?'<span class="tpet m-'+curMood()+'">'+petSVG(curMood(),petStage())+'</span>':'')+'<span>'+esc(msg)+'</span>';
+  const act=o&&o.act;   // [label, fn]: a button, such as Undo
+  t.innerHTML=(withPet?'<span class="tpet m-'+curMood()+'">'+petSVG(curMood(),petStage())+'</span>':'')+'<span>'+esc(msg)+'</span>'+(act?'<button class="btn sm t-act">'+esc(act[0])+'</button>':'');
+  t.classList.toggle('has-act',!!act);
+  const hide=()=>{ t.classList.remove('show'); ui.tt2=setTimeout(()=>{t.hidden=true},300); };
+  if(act) t.querySelector('.t-act').onclick=()=>{ clearTimeout(ui.tt); hide(); act[1](); };
   t.hidden=false; void t.offsetWidth; t.classList.add('show');
   clearTimeout(ui.tt); clearTimeout(ui.tt2);
-  ui.tt=setTimeout(()=>{t.classList.remove('show'); ui.tt2=setTimeout(()=>{t.hidden=true},300);},4300);
+  ui.tt=setTimeout(hide,act?7000:4300);
 }
 function confetti(){
   if(RM) return;
@@ -2535,10 +2584,240 @@ function goBack(){
   if(v) go(v,{push:false}); else go(firstView(),{push:false});
 }
 function syncTab(){
-  $('#app').dataset.tab=ui.tab; $('#app').classList.toggle('focus',ui.focus);
+  $('#app').dataset.tab=ui.tab; $('#app').classList.toggle('focus',ui.focus); applyCols();
   const t=$('#tabs'); if(t) t.querySelectorAll('button').forEach(b=>b.setAttribute('aria-selected',b.dataset.tab===ui.tab?'true':'false'));
 }
 const backBtn=()=>{ if(!ui.hist.length) return ''; const v=ui.hist[ui.hist.length-1]; if(!viewValid(v)) return ''; return '<button class="btn" data-a="back" aria-label="Go back to '+esc(viewName(v))+'">'+ico('back')+'<span>'+esc(viewName(v))+'</span></button>'; };
+
+/* ---------- trash ---------- */
+// Deleting a scene, chapter, story page, timeline, outline, notes page, map or tree moves it to S.tr (one doc per
+// item, so it syncs and merges like everything else): {kind, at, by, title, sub, d}, where d holds everything needed
+// to put it back (a scene's snapshots, a page's picture and its links from maps and trees). Items older than
+// TRASH_DAYS go for good when a project loads (trashPurge); that is also when a page's picture is removed.
+const TRASH_DAYS=30;
+const TRASH_KINDS={scene:['Scene','pen'],chapter:['Chapter','book'],ent:['Story page','note'],tl:['Timeline','time'],ol:['Outline','list'],nt:['Notes','note'],rm:['Relationship map','web'],ft:['Family tree','tree']};
+const bare=x=>{ const o=clone(x); if(o&&typeof o==='object') ['_m','_dev','_by'].forEach(k=>{ delete o[k]; }); return o; };
+const snOf=sid=>Object.keys(S.sn).filter(k=>S.sn[k].scene===sid).map(k=>Object.assign({id:k},bare(S.sn[k])));
+ADD_DOCS.push((o,out)=>{
+  const i=o.tr&&typeof o.tr==='object'?o.tr:{}, r={};
+  Object.keys(i).forEach(id=>{ const x=i[id]; if(!x||!TRASH_KINDS[x.kind]||!x.d||typeof x.d!=='object') return;
+    r[id]={kind:x.kind,at:+x.at||Date.now(),by:String(x.by||'').slice(0,60),title:String(x.title||'').slice(0,120),sub:String(x.sub||'').slice(0,120),d:x.d}; });
+  out.tr=r;
+});
+function trashPut(kind,title,sub,d){
+  const id=uid('x_'); S.tr[id]={kind,at:Date.now(),by:ME.name||'',title:String(title||'').slice(0,120),sub:String(sub||'').slice(0,120),d}; dirty('tr_'+id);
+  toast('“'+trunc(title||TRASH_KINDS[kind][0],40)+'” is in the Trash.',{plain:true,act:['Undo',()=>trashRestore(id)]});
+  return id;
+}
+function putScene(sid,meta,sc,sn){
+  S.sc[sid]=Object.assign({text:'',synopsis:'',notes:''},sc); S.sc[sid].stickies=normStickies(S.sc[sid].stickies);
+  S.meta.scenes[sid]=Object.assign({title:'Untitled scene',status:'draft'},meta,{words:wc(S.sc[sid].text)}); dirty('sc_'+sid);
+  (sn||[]).forEach(s=>{ const nid=S.sn[s.id]?uid('n_'):s.id, r=Object.assign({},s,{scene:sid}); delete r.id; S.sn[nid]=r; dirty('sn_'+nid); });
+}
+// Puts an item back where it was (or as near as it can), and returns the view to open.
+function trashRestore(id){
+  const x=S.tr[id]; if(!x) return null; const m=S.meta, d=x.d; let to=null;
+  if(x.kind==='scene'){
+    let c=m.chapters.find(c2=>c2.id===d.ch)||m.chapters[m.chapters.length-1];
+    if(!c){ c={id:uid('c_'),title:'Chapter 1',open:true,scenes:[]}; m.chapters.push(c); S.ch[c.id]={notes:''}; dirty('ch_'+c.id); }
+    const sid=m.scenes[d.id]?uid('s_'):d.id; putScene(sid,d.meta,d.sc,d.sn); c.scenes.splice(Math.min(+d.i||0,c.scenes.length),0,sid); c.open=true; to={k:'scene',id:sid};
+  } else if(x.kind==='chapter'){
+    const cid=m.chapters.some(c=>c.id===d.chap.id)?uid('c_'):d.chap.id, chap=Object.assign({},d.chap,{id:cid,scenes:[],open:true});
+    (d.chap.scenes||[]).forEach(s=>{ const r=d.scenes&&d.scenes[s]; if(!r) return; const sid=m.scenes[s]?uid('s_'):s; putScene(sid,r.meta,r.sc,r.sn); chap.scenes.push(sid); });
+    m.chapters.splice(Math.min(+d.i||0,m.chapters.length),0,chap); S.ch[cid]=Object.assign({notes:''},d.ch||{}); dirty('ch_'+cid);
+    to=chap.scenes.length?{k:'scene',id:chap.scenes[0]}:{k:'cork'};
+  } else if(x.kind==='ent'){
+    const eid=m.ents[d.id]?uid('e_'):d.id; m.ents[eid]=Object.assign({aliases:[],tag:''},d.meta,{id:eid});
+    S.en[eid]=Object.assign({fields:{}},d.en||{}); S.en[eid].pic=normPic(S.en[eid].pic); dirty('en_'+eid);
+    const links=d.links||{}, name=m.ents[eid].name;   // its bubbles on maps and people in trees link back to it
+    ['rm','ft'].forEach(k=>Object.keys(links[k]||{}).forEach(mid=>{ const doc=S[k][mid]; if(!doc) return; let ch=false;
+      (k==='rm'?doc.nodes:doc.people).forEach(n=>{ if(links[k][mid].includes(n.id)&&!n.ent&&n.name===name){ n.ent=eid; ch=true; } }); if(ch) dirty(k+'_'+mid); }));
+    linker=buildLinker(); to={k:'ent',id:eid};
+  } else {
+    const k=x.kind, list=m[k+'s'], did=S[k][d.id]?uid(k+'_'):d.id;
+    S[k][did]=d.rec; list.splice(Math.min(+d.i||0,list.length),0,Object.assign({},d.item,{id:did})); secOn(k)||(m.secs[k]=true); ui.openSec[k]=true; dirty(k+'_'+did); to={k,id:did};
+  }
+  delete S.tr[id]; forget('tr_'+id); dirty('meta'); renderAll(); return to;
+}
+function trashDrop(id){
+  const x=S.tr[id]; if(!x) return;
+  if(x.kind==='ent'&&x.d.en&&x.d.en.pic&&!S.meta.ents[x.d.id]) dropPic(x.d.id,x.d.en.pic);
+  delete S.tr[id]; forget('tr_'+id);
+}
+function trashPurge(){
+  if(!S||!S.tr||ui.locked) return; const cut=Date.now()-TRASH_DAYS*864e5; let n=0;
+  Object.keys(S.tr).forEach(id=>{ if(S.tr[id].at<cut){ trashDrop(id); n++; } }); if(n) dirty('meta');
+}
+function trashPeek(x){
+  const d=x.d;
+  if(x.kind==='scene') return trunc(plainText((d.sc||{}).text||'').replace(/\s+/g,' ').trim(),180)||'(empty scene)';
+  if(x.kind==='chapter'){ const ids=(d.chap||{}).scenes||[], w=ids.reduce((a,s)=>a+wc(((d.scenes||{})[s]||{sc:{}}).sc.text||''),0); return ids.length+' scene'+(ids.length===1?'':'s')+', '+fmt(w)+' words'; }
+  if(x.kind==='ent'){ const f=(d.en||{}).fields||{}, k=Object.keys(f).find(k2=>String(f[k2]).trim()); return k?trunc(String(f[k]).replace(/\s+/g,' '),160):((d.meta||{}).tag||''); }
+  if(x.kind==='nt') return (d.rec||{}).ideas&&(d.item||{}).kind==='board'?d.rec.ideas.length+' ideas':trunc(String((d.rec||{}).text||'').replace(/\s+/g,' ').trim(),160);
+  if(x.kind==='ol') return ((d.rec||{}).items||[]).length+' lines';
+  if(x.kind==='tl') return Object.keys((d.rec||{}).cards||{}).length+' cards';
+  return '';
+}
+function renderTrash(el){
+  trashPurge();
+  const list=Object.keys(S.tr).map(id=>Object.assign({id},S.tr[id])).sort((a,b)=>b.at-a.at), cf=ui.confirm;
+  el.innerHTML='<div class="main-head">'+backBtn()+'<span class="kind">'+ico('trash',16)+'</span><h1 class="mh-title">Trash</h1>'
+    +(list.length?'<button class="btn danger" data-tr="empty">'+ico('trash')+'<span>Empty the Trash</span></button>':'')+'</div>'
+    +'<div class="pf-wrap"><p class="fine tr-sub">Deleted scenes, chapters, story pages, notes, outlines, timelines, maps and trees wait here for '+TRASH_DAYS+' days, then go for good.'+(DESK?' On a shared project, co-writers see the same Trash.':'')+'</p>'
+    +(list.length?'<div class="tr-list">'+list.map(x=>{ const k=TRASH_KINDS[x.kind], left=Math.max(1,Math.ceil((x.at+TRASH_DAYS*864e5-Date.now())/864e5));
+        return '<div class="tr-row" data-id="'+x.id+'"><span class="tr-ico">'+ico(k[1],16)+'</span><div class="tr-t"><b>'+esc(x.title||'Untitled')+'</b><span class="muted">'+esc(k[0]+(x.sub?' · '+x.sub:''))+'</span>'
+          +'<span class="tr-peek">'+esc(trashPeek(x))+'</span><small class="muted">Deleted '+esc(ago(x.at))+(x.by&&DESK?' by '+esc(x.by):'')+' · gone in '+left+' day'+(left===1?'':'s')+'</small></div>'
+          +'<div class="tr-a"><button class="btn pri" data-tr="back">Restore</button><button class="btn'+(cf==='tr'+x.id?' danger':'')+'" data-tr="drop">'+(cf==='tr'+x.id?'Delete forever?':'Delete forever')+'</button></div></div>'; }).join('')+'</div>'
+      :'<div class="ss-empty"><b>The Trash is empty</b><p class="muted">When you delete something, it comes here first, so you can change your mind.</p></div>')+'</div>';
+  el.onclick=e=>{ const b=e.target.closest('[data-tr]'); if(!b) return; const a=b.dataset.tr, row=b.closest('.tr-row'), id=row&&row.dataset.id;
+    if(a==='back'){ const to=trashRestore(id); toast('Restored.',{plain:true}); if(to) go(to); }
+    else if(a==='drop') confirmDo('tr'+id,()=>{ trashDrop(id); dirty('meta'); renderTrash(el); renderBinder(); },()=>renderTrash(el));
+    else if(a==='empty') ask('Empty the Trash?','The '+list.length+' item'+(list.length===1?'':'s')+' in it will be gone for good. Inkling’s backups still keep older copies of the project.',[['go','Empty the Trash','danger'],['','Keep them']])
+      .then(v=>{ if(v!=='go') return; Object.keys(S.tr).forEach(trashDrop); dirty('meta'); renderTrash(el); renderBinder(); });
+  };
+}
+
+/* ---------- search everything ---------- */
+// One search over scenes (text, titles, synopses, notes, sticky notes), chapters, story pages, notes and
+// brainstorms, outlines, timelines, maps and trees. Each hit knows how to open its place (saOpen): a scene selects
+// the match (ui.findSel), others open the item and flash the line, card, idea or bubble.
+const SA_AREAS=[['scene','Scenes'],['ent','Story pages'],['nt','Notes'],['ol','Outlines'],['tl','Timelines'],['cv','Maps and trees']];
+function saRegex(q,o){
+  const e=q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+  try{ return new RegExp(o.ww?'(?<![\\p{L}\\p{N}_])'+e+'(?![\\p{L}\\p{N}_])':e,(o.mc?'g':'gi')+'u'); }catch(x){ return null; }
+}
+function searchAll(q,o){
+  const out=[], re=q&&q.trim()?saRegex(q.trim(),o):null; if(!re) return out; const m=S.meta;
+  const add=(area,label,where,text,open)=>{ text=String(text||''); if(!text) return; re.lastIndex=0; let mm, n=0, s=-1, len=0;
+    while((mm=re.exec(text))){ if(!n){ s=mm.index; len=mm[0].length; } n++; if(!mm[0].length) re.lastIndex++; if(n>=999) break; }
+    if(!n) return; const a=Math.max(0,s-60), b=Math.min(text.length,s+len+90);
+    const snip=(a?'…':'')+esc(text.slice(a,s))+'<mark>'+esc(text.slice(s,s+len))+'</mark>'+esc(text.slice(s+len,b))+(b<text.length?'…':'');
+    out.push({area,label,where,n,snip:snip.replace(/\n+/g,' ¶ '),open:Object.assign({s,e:s+len},open),pri:open.text||open.field||open.flash||open.card||open.sel?0:1}); };
+  m.chapters.forEach(c=>{
+    add('scene',c.title,'Chapter title',c.title,{k:'cork',ch:c.id}); add('scene',c.title,'Chapter notes',(S.ch[c.id]||{}).notes,{k:'cork',ch:c.id});
+    c.scenes.forEach(id=>{ const sc=m.scenes[id], d=S.sc[id]; if(!sc||!d) return;
+      add('scene',sc.title,c.title,plainText(d.text),{k:'scene',id,text:1});
+      add('scene',sc.title,c.title+' · title',sc.title,{k:'scene',id}); add('scene',sc.title,c.title+' · synopsis',d.synopsis,{k:'scene',id}); add('scene',sc.title,c.title+' · notes',d.notes,{k:'scene',id});
+      (d.stickies||[]).forEach(n=>add('scene',sc.title,c.title+' · sticky note',n.text,{k:'scene',id})); }); });
+  Object.values(m.ents).forEach(e=>{ const f=(S.en[e.id]||{}).fields||{}, labels=Object.fromEntries((TYPES[e.type]||TYPES.thing).fields);
+    add('ent',e.name,LS(e.type),[e.name].concat(e.aliases||[]).join(', '),{k:'ent',id:e.id}); add('ent',e.name,LS(e.type)+' · tag',e.tag,{k:'ent',id:e.id});
+    Object.keys(f).forEach(k=>add('ent',e.name,LS(e.type)+' · '+(k==='facts'?'Key facts':labels[k]||k),f[k],{k:'ent',id:e.id,field:k})); });
+  m.nts.forEach(x=>{ const d=S.nt[x.id]; if(!d) return; add('nt',x.name,x.kind==='board'?'Brainstorm':'Notes page',x.name,{k:'nt',id:x.id});
+    if(x.kind==='board') d.ideas.forEach(i=>add('nt',x.name,'Brainstorm idea',i.text,{k:'nt',id:x.id,flash:'.idea[data-id="'+i.id+'"]'})); else add('nt',x.name,'Notes page',d.text,{k:'nt',id:x.id}); });
+  m.ols.forEach(x=>{ const d=S.ol[x.id]; if(!d) return; add('ol',x.name,LS('ol'),x.name,{k:'ol',id:x.id});
+    d.items.forEach(i=>{ add('ol',x.name,'Line',i.text,{k:'ol',id:x.id,flash:'.ol-row[data-i="'+i.id+'"]'}); add('ol',x.name,'Line note',i.note,{k:'ol',id:x.id,flash:'.ol-row[data-i="'+i.id+'"]'}); }); });
+  m.tls.forEach(x=>{ const t=S.tl[x.id]; if(!t) return; add('tl',x.name,LS('tl'),x.name,{k:'tl',id:x.id});
+    Object.keys(t.cards).forEach(cid=>{ const c=t.cards[cid]; add('tl',c.title||'Untitled card',x.name,[c.title,c.when,c.body].filter(Boolean).join(' · '),{k:'tl',id:x.id,card:cid}); });
+    (t.marks||[]).forEach(mk=>add('tl',mk.label,x.name+' · era',mk.label,{k:'tl',id:x.id})); });
+  m.rms.forEach(x=>{ const r=S.rm[x.id]; if(!r) return;
+    r.nodes.forEach(n=>{ add('cv',rmName(n),x.name,n.ent?'':n.name,{k:'rm',id:x.id,sel:{k:'node',id:n.id}}); add('cv',rmName(n),x.name+' · note',n.note,{k:'rm',id:x.id,sel:{k:'node',id:n.id}}); });
+    r.edges.forEach(ed=>add('cv',[ed.label,ed.note].filter(Boolean).join(' · '),x.name+' · connection',[ed.label,ed.note].filter(Boolean).join(' · '),{k:'rm',id:x.id,sel:{k:'edge',id:ed.id}})); });
+  m.fts.forEach(x=>{ const t=S.ft[x.id]; if(!t) return;
+    t.people.forEach(p=>add('cv',ftName(p),x.name,[p.ent?'':p.name,p.title,p.note].filter(Boolean).join(' · '),{k:'ft',id:x.id,sel:{k:'person',id:p.id}})); });
+  return out.map((r,i)=>[r,i]).sort((a,b)=>a[0].pri-b[0].pri||a[1]-b[1]).map(x=>x[0]);   // what is written first, then titles and names
+}
+function saOpen(o){
+  if(o.k==='cork'){ ui.cork=o.ch; go({k:'cork'}); return; }
+  if(o.k==='scene'){ if(o.text) ui.findSel={id:o.id,s:o.s,e:o.e}; go({k:'scene',id:o.id}); return; }
+  if(o.k==='rm'||o.k==='ft'){ ui.cvFor=o.id; ui.cvSel=o.sel; go({k:o.k,id:o.id}); return; }
+  go({k:o.k,id:o.id});
+  if(o.k==='tl'&&o.card) tlOpenCard(o.card,true);
+  const sel=o.flash||(o.field?'[data-k="'+o.field+'"]':''); if(!sel) return;
+  setTimeout(()=>{ const x=document.querySelector('#main '+sel); if(!x) return; x.scrollIntoView({block:'center'}); x.classList.add('flash'); setTimeout(()=>x.classList.remove('flash'),2000); if(o.field&&x.focus) x.focus(); },80);
+}
+function renderSearch(el){
+  const sa=ui.sa=ui.sa||{q:'',mc:false,ww:false,area:''};
+  el.innerHTML='<div class="main-head">'+backBtn()+'<span class="kind">'+ico('search',16)+'</span><h1 class="mh-title">Search everything</h1><button class="btn" data-sa="find">Find and replace in scenes…</button></div>'
+    +'<div class="sa-wrap"><div class="sa-bar"><input id="saQ" type="search" placeholder="Search scenes, story pages, notes, outlines, timelines, maps…" value="'+esc(sa.q)+'" aria-label="Search everything" autocomplete="off">'
+    +'<label class="ck"><input type="checkbox" id="saMc"'+(sa.mc?' checked':'')+'>Match case</label><label class="ck"><input type="checkbox" id="saWw"'+(sa.ww?' checked':'')+'>Whole words</label></div>'
+    +'<div class="sa-areas" id="saAreas"></div><div id="saList" class="sa-list"></div></div>';
+  const draw=()=>{
+    const all=searchAll(sa.q,sa), cnt={}; all.forEach(r=>{ cnt[r.area]=(cnt[r.area]||0)+1; });
+    if(sa.area&&!cnt[sa.area]) sa.area='';
+    $('#saAreas',el).innerHTML=sa.q.trim()?'<button data-area=""'+(sa.area?'':' class="on"')+'>All <span>'+all.length+'</span></button>'+SA_AREAS.filter(a=>cnt[a[0]]).map(a=>'<button data-area="'+a[0]+'"'+(sa.area===a[0]?' class="on"':'')+'>'+esc(a[0]==='ent'?'Story pages':a[1])+' <span>'+cnt[a[0]]+'</span></button>').join(''):'';
+    const list=all.filter(r=>!sa.area||r.area===sa.area); ui.saHits=list;
+    $('#saList',el).innerHTML=!sa.q.trim()?'<p class="muted sa-none">Type to search the whole project. '+MODK+'+K opens this from anywhere.</p>'
+      :!list.length?'<p class="muted sa-none">Nothing found for “'+esc(sa.q)+'”.</p>'
+      :SA_AREAS.filter(a=>list.some(r=>r.area===a[0])).map(a=>'<section class="sa-sec"><h2>'+esc(a[1])+'</h2>'+list.map((r,i)=>r.area!==a[0]?'':'<button class="sa-hit" data-hit="'+i+'"><span class="sa-top"><b>'+esc(r.label||'Untitled')+'</b><span class="muted">'+esc(r.where)+'</span>'+(r.n>1?'<span class="sa-n">'+r.n+'×</span>':'')+'</span><span class="sa-snip">'+r.snip+'</span></button>').join('')+'</section>').join('');
+  };
+  draw();
+  const q=$('#saQ',el); q.focus(); q.setSelectionRange(q.value.length,q.value.length);
+  q.addEventListener('input',()=>{ sa.q=q.value; clearTimeout(ui.saT); ui.saT=setTimeout(draw,140); });
+  q.addEventListener('keydown',e=>{ if(e.key==='Enter'&&ui.saHits&&ui.saHits[0]) saOpen(ui.saHits[0].open); });
+  $('#saMc',el).addEventListener('change',e=>{ sa.mc=e.target.checked; draw(); }); $('#saWw',el).addEventListener('change',e=>{ sa.ww=e.target.checked; draw(); });
+  el.onclick=e=>{ const h=e.target.closest('[data-hit]'), ar=e.target.closest('[data-area]'), f=e.target.closest('[data-sa="find"]');
+    if(h){ const r=ui.saHits[+h.dataset.hit]; if(r) saOpen(r.open); }
+    else if(ar){ sa.area=ar.dataset.area; draw(); }
+    else if(f){ ui.find=ui.find||{q:'',r:'',mc:false,ww:false,scope:'all'}; ui.find.q=sa.q; go({k:'find'}); } };
+}
+
+/* ---------- split view ---------- */
+// A second pane beside the page (#split), so a scene can be written with a story page, a note, an outline, a
+// timeline or another scene in view. ui.split is that view. Scenes, outlines and timelines show read-only there (⇄
+// swaps the two sides to edit); a story page's fields and a notes page can be edited in place. The grid's columns
+// come from applyCols(), which accounts for focus mode, hidden panels and the split.
+const SPLIT_KINDS=['scene','ent','nt','ol','tl'];
+const splitOk=v=>!!v&&SPLIT_KINDS.includes(v.k)&&viewValid(v);
+function applyCols(){
+  const app=$('#app'); if(!app||!S) return; const sp=app.classList.contains('splitting'), f=ui.focus;
+  app.style.setProperty('--cols',[!f&&!loHidden('binder')?'var(--bw,272px)':'','minmax(0,1fr)',sp?'minmax(0,1fr)':'',!f&&!loHidden('insp')?'var(--iw,308px)':''].filter(Boolean).join(' '));
+}
+function splitOpen(v){
+  if(innerWidth<1080){ toast('Side by side needs a wider window.',{plain:true}); return; }
+  if(!v){ const cur=ui.view, d=cur.k==='scene'&&S.sc[cur.id], links=d?findLinks(plainText(d.text)):[];   // a good first guess: a page named in this scene
+    v=splitOk(ui.lastSplit)?ui.lastSplit:links.length?{k:'ent',id:links[0].id}:S.meta.nts[0]?{k:'nt',id:S.meta.nts[0].id}:firstView(); }
+  if(!splitOk(v)) return; ui.split=ui.lastSplit=v; renderSplit();
+}
+function splitClose(){ ui.split=null; renderSplit(); }
+function splitSwap(){ const a=ui.view, b=ui.split; if(!splitOk(b)) return; ui.split=splitOk(a)?a:null; go(b); renderSplit(); }
+function splitPicker(cur){
+  const m=S.meta, o=(v,label)=>'<option value="'+v+'"'+(v===cur?' selected':'')+'>'+esc(label)+'</option>', grp=(l,h)=>h?'<optgroup label="'+esc(l)+'">'+h+'</optgroup>':'';
+  return grp('Scenes',m.chapters.map(c=>c.scenes.filter(id=>m.scenes[id]).map(id=>o('scene:'+id,c.title+' · '+m.scenes[id].title)).join('')).join(''))
+    +TYPE_ORDER.map(t=>grp(LP(t),Object.values(m.ents).filter(e=>e.type===t).sort((a,b)=>a.name.localeCompare(b.name)).map(e=>o('ent:'+e.id,e.name)).join(''))).join('')
+    +grp(LP('nt'),m.nts.map(x=>o('nt:'+x.id,x.name)).join(''))+grp(LP('ol'),m.ols.map(x=>o('ol:'+x.id,x.name)).join(''))+grp(LP('tl'),m.tls.map(x=>o('tl:'+x.id,x.name)).join(''));
+}
+function renderSplit(){
+  const el=$('#split'), app=$('#app'); if(!el) return; if(ui.split&&!splitOk(ui.split)) ui.split=null;
+  const v=ui.split; app.classList.toggle('splitting',!!v); el.hidden=!v; applyCols(); paintSplitBtn(); if(!v){ el.innerHTML=''; return; }
+  const m=S.meta; let body='';
+  if(v.k==='scene'){ const sc=m.scenes[v.id], d=S.sc[v.id], ch=m.chapters.find(c=>c.scenes.includes(v.id));
+    body='<h2 class="sp-h">'+esc(sc.title)+'</h2><p class="muted sp-sub">'+esc((ch?ch.title+' · ':'')+fmt(sc.words)+' words · read only')+'</p>'
+      +(d.synopsis?'<p class="sp-syn">'+esc(d.synopsis)+'</p>':'')+'<div class="sp-text editor">'+renderText(d.text)+'</div>'; }
+  else if(v.k==='ent'){ const e=m.ents[v.id], b=S.en[v.id]||{fields:{}}, T=TYPES[e.type]||TYPES.thing, ps=picSrc(e.id);
+    body=(ps?'<img class="sp-pic" src="'+esc(ps)+'" alt="" style="'+picStyle(e.id)+'">':'')+'<span class="badge t-'+e.type+'"><i class="pip"></i>'+esc(LS(e.type))+'</span><h2 class="sp-h">'+esc(e.name)+'</h2>'
+      +((e.aliases||[]).length?'<p class="muted sp-sub">Also called '+esc(e.aliases.join(', '))+'</p>':'')+(e.tag?'<p class="sp-syn">'+esc(e.tag)+'</p>':'')
+      +T.fields.concat([['facts','Key facts']]).map(f=>'<label class="f">'+esc(f[1])+'<textarea data-spf="'+f[0]+'" rows="2">'+esc((b.fields||{})[f[0]]||'')+'</textarea></label>').join(''); }
+  else if(v.k==='nt'){ const x=m.nts.find(y=>y.id===v.id), d=S.nt[v.id];
+    body='<h2 class="sp-h">'+esc(x.name)+'</h2>'+(x.kind==='board'?'<div class="sp-ideas">'+(d.ideas.map(i=>'<div class="sp-idea">'+esc(i.text||'…')+'</div>').join('')||'<p class="muted">No ideas yet.</p>')+'</div>'
+      :'<textarea class="sp-note" data-spn="1" placeholder="Notes…">'+esc(d.text)+'</textarea>'); }
+  else if(v.k==='ol'){ const x=m.ols.find(y=>y.id===v.id), d=S.ol[v.id];
+    body='<h2 class="sp-h">'+esc(x.name)+'</h2><p class="muted sp-sub">Read only</p><ul class="sp-ol">'+d.items.filter(i=>i.text||i.note).map(i=>'<li style="--d:'+i.depth+'" class="'+(i.done?'done':'')+'"><span>'+esc(i.text||'')+'</span>'+(i.note?'<small>'+esc(i.note)+'</small>':'')+'</li>').join('')+'</ul>'; }
+  else if(v.k==='tl'){ const x=m.tls.find(y=>y.id===v.id), t=S.tl[v.id], lanes={}; t.lanes.forEach(l=>{ lanes[l.id]=l; });
+    const cards=Object.values(t.cards).sort((a,b)=>a.at-b.at);
+    body='<h2 class="sp-h">'+esc(x.name)+'</h2><p class="muted sp-sub">'+cards.length+' cards in time order · read only</p><div class="sp-tl">'+cards.map(c=>'<div class="sp-card" style="--c:'+cssCol(c.color||(lanes[c.lane]||{}).color||'accent')+'"><small>'+esc([(lanes[c.lane]||{}).name,c.when].filter(Boolean).join(' · '))+'</small><b>'+esc(c.title||'Untitled card')+'</b>'+(c.body?'<span>'+esc(c.body)+'</span>':'')+'</div>').join('')+'</div>'; }
+  el.innerHTML='<div class="sp-head"><select id="spPick" aria-label="Show beside the page">'+splitPicker(v.k+':'+v.id)+'</select>'
+    +'<button class="ibtn" data-sp="swap" title="Swap sides (edit this one)" aria-label="Swap sides">'+ico('swap',15)+'</button><button class="ibtn" data-sp="close" title="Close side by side ('+MODK+'+\\)" aria-label="Close side by side">'+ico('x',15)+'</button></div><div class="sp-body">'+body+'</div>';
+  el.querySelectorAll('textarea').forEach(ag);
+}
+function paintSplitBtn(){ const b=$('#spBtn'); if(b){ b.setAttribute('aria-pressed',ui.split?'true':'false'); b.classList.toggle('on',!!ui.split); } }
+function bindSplit(){
+  const el=$('#split');
+  el.addEventListener('change',e=>{ if(e.target.id!=='spPick') return; const [k,id]=e.target.value.split(':'); ui.split=ui.lastSplit={k,id}; renderSplit(); });
+  el.addEventListener('click',e=>{ const b=e.target.closest('[data-sp]'), en=e.target.closest('.ent[data-ent]');
+    if(b){ if(b.dataset.sp==='close') splitClose(); else splitSwap(); }
+    else if(en){ ui.split=ui.lastSplit={k:'ent',id:en.dataset.ent}; renderSplit(); } });
+  el.addEventListener('input',e=>{ const v=ui.split, x=e.target; if(!v) return;
+    if(x.dataset.spf){ const b=S.en[v.id]; b.fields=b.fields||{}; b.fields[x.dataset.spf]=x.value; dirty('en_'+v.id); if(x.dataset.spf==='facts'){ ui.cont=null; } ag(x); }
+    else if(x.dataset.spn){ S.nt[v.id].text=x.value; dirty('nt_'+v.id); ag(x); }
+    if(ui.view.k===v.k&&ui.view.id===v.id) ui.splitStale=true; });
+  el.addEventListener('focusout',()=>{ if(ui.splitStale){ ui.splitStale=false; setTimeout(()=>{ if(!el.contains(document.activeElement)) renderMain(); },0); } });
+}
+// Something changed elsewhere: redraw the split pane if it shows that thing (and is not being typed in).
+function splitTouch(keys){
+  const v=ui.split; if(!v) return; const mine=v.k==='scene'?'sc_'+v.id:v.k+'_'+v.id;
+  if(!keys.includes(mine)) return;
+  clearTimeout(ui.spT); ui.spT=setTimeout(()=>{ const el=$('#split'); if(el&&!el.contains(document.activeElement)) renderSplit(); },500);
+}
 
 /* ---------- structure operations ---------- */
 function addScene(chId,thenOpen){
@@ -2563,13 +2842,17 @@ function moveChapter(id,dir){
   const t=cs[i]; cs[i]=cs[j]; cs[j]=t; dirty('meta'); renderBinder(); if(ui.view.k==='cork') renderMain();
 }
 function delScene(id){
-  const m=S.meta; m.chapters.forEach(c=>{c.scenes=c.scenes.filter(x=>x!==id);});
+  const m=S.meta, c=m.chapters.find(x=>x.scenes.includes(id));
+  if(m.scenes[id]) trashPut('scene',m.scenes[id].title,c?c.title:'',{id,ch:c?c.id:'',i:c?c.scenes.indexOf(id):0,meta:bare(m.scenes[id]),sc:bare(S.sc[id]),sn:snOf(id)});
+  m.chapters.forEach(c=>{c.scenes=c.scenes.filter(x=>x!==id);});
   delete m.scenes[id]; delete S.sc[id]; forget('sc_'+id); snDrop(id); dirty('meta');
   if(!viewValid(ui.view)) ui.view=firstView(); ui.hist=ui.hist.filter(viewValid);
   renderAll();
 }
 function delChapter(id){
-  const m=S.meta, c=m.chapters.find(x=>x.id===id); if(!c) return;
+  const m=S.meta, c=m.chapters.find(x=>x.id===id); if(!c) return; const sc={};
+  c.scenes.forEach(s=>{ if(m.scenes[s]) sc[s]={meta:bare(m.scenes[s]),sc:bare(S.sc[s]),sn:snOf(s)}; });
+  trashPut('chapter',c.title,c.scenes.length+' scene'+(c.scenes.length===1?'':'s'),{chap:bare(c),i:m.chapters.indexOf(c),scenes:sc,ch:bare(S.ch[id]||{notes:''})});
   c.scenes.forEach(s=>{delete m.scenes[s]; delete S.sc[s]; forget('sc_'+s); snDrop(s);});
   delete S.ch[id]; forget('ch_'+id);
   m.chapters=m.chapters.filter(x=>x.id!==id); dirty('meta');
@@ -2585,7 +2868,11 @@ function addEntity(type,name){
   setTimeout(checkAch,0); return id;
 }
 function delEntity(id){
-  dropPic(id); unlinkEnt(id);
+  const e=S.meta.ents[id]; if(!e) return; const links={rm:{},ft:{}};   // its picture stays until the Trash lets it go
+  Object.keys(S.rm).forEach(k=>{ const n=S.rm[k].nodes.filter(x=>x.ent===id).map(x=>x.id); if(n.length) links.rm[k]=n; });
+  Object.keys(S.ft).forEach(k=>{ const n=S.ft[k].people.filter(x=>x.ent===id).map(x=>x.id); if(n.length) links.ft[k]=n; });
+  trashPut('ent',e.name,LS(e.type),{id,meta:bare(e),en:bare(S.en[id]),links});
+  unlinkEnt(id);
   delete S.meta.ents[id]; delete S.en[id]; forget('en_'+id); dirty('meta'); linker=buildLinker();
   if(!viewValid(ui.view)) ui.view=firstView(); ui.hist=ui.hist.filter(viewValid);
   renderAll();
@@ -2598,6 +2885,7 @@ function addDocItem(k,kind){
   ui.openSec[k]=true; ui.focusName=true; dirty('meta',k+'_'+id); go({k,id});
 }
 function delDocItem(k,id){
+  const list=S.meta[k+'s'], it=list.find(x=>x.id===id); if(it) trashPut(k,it.name,k==='nt'&&it.kind==='board'?'Brainstorm':LS(k),{id,item:bare(it),i:list.indexOf(it),rec:bare(S[k][id])});
   S.meta[k+'s']=S.meta[k+'s'].filter(x=>x.id!==id); delete S[k][id]; forget(k+'_'+id); dirty('meta');
   if(!viewValid(ui.view)) ui.view=firstView(); ui.hist=ui.hist.filter(viewValid);
   renderAll();
@@ -2609,6 +2897,7 @@ function addTimeline(src){
   ui.openSec.tl=true; ui.confirm=null; dirty('meta','tl_'+id); go({k:'tl',id});
 }
 function delTimeline(id){
+  const it=S.meta.tls.find(x=>x.id===id); if(it) trashPut('tl',it.name,LS('tl'),{id,item:bare(it),i:S.meta.tls.indexOf(it),rec:bare(S.tl[id])});
   S.meta.tls=S.meta.tls.filter(x=>x.id!==id); delete S.tl[id]; forget('tl_'+id); dirty('meta');
   if(!viewValid(ui.view)) ui.view=firstView(); ui.hist=ui.hist.filter(viewValid);
   renderAll();
@@ -2645,7 +2934,8 @@ function saveRelabel(ok){
 function renderBinder(){ renderBinder0(); if(ui.others&&ui.others.length) paintHere(); }
 function renderBinder0(){
   const m=S.meta, cur=ui.view, el=$('#binder'), cf=ui.confirm;
-  let h='<div class="pane-head"><h2>Binder</h2><div class="row"><button class="btn sm" data-a="cork-all">'+ico('card',14)+'<span>Corkboard</span></button><button class="btn sm" data-a="addch">'+ico('plus',14)+'<span>Chapter</span></button></div></div><div class="tree">';
+  let h='<div class="pane-head"><h2>Binder</h2><div class="row"><button class="btn sm" data-a="cork-all">'+ico('card',14)+'<span>Corkboard</span></button><button class="btn sm" data-a="addch">'+ico('plus',14)+'<span>Chapter</span></button></div></div>'
+    +'<button class="b-search" data-a="search">'+ico('search',14)+'<span>Search everything</span><kbd>'+MODK+' K</kbd></button><div class="tree">';
   h+='<div class="chs">';
   m.chapters.forEach((c,ci)=>{
     const words=c.scenes.reduce((a,id)=>a+(m.scenes[id]?m.scenes[id].words:0),0);
@@ -2658,7 +2948,7 @@ function renderBinder0(){
       +'<button class="ibtn'+(cf==='ch'+c.id?' on':'')+'" data-a="delch" data-id="'+c.id+'" aria-label="Delete chapter">'+(cf==='ch'+c.id?'Delete?':ico('trash',14))+'</button></span></div>';
     if(c.open) c.scenes.forEach((id,si)=>{
       const s=m.scenes[id]; if(!s) return; const on=cur.k==='scene'&&cur.id===id;
-      h+='<div class="sc-row'+(on?' on':'')+'" data-sid="'+id+'"><button class="sc-btn" data-a="open-sc" data-id="'+id+'"><i class="dot st-'+s.status+'" title="'+STATUS[s.status]+'"></i><span class="t">'+esc(s.title)+'</span><span class="wc" data-wc="'+id+'">'+fmt(s.words)+'</span></button><span class="acts"><button class="ibtn" data-a="scup" data-id="'+id+'" aria-label="Move scene up">'+ico('up',14)+'</button><button class="ibtn" data-a="scdn" data-id="'+id+'" aria-label="Move scene down">'+ico('down',14)+'</button><button class="ibtn'+(cf==='sc'+id?' on':'')+'" data-a="delsc" data-id="'+id+'" aria-label="Delete scene">'+(cf==='sc'+id?'Delete?':ico('trash',14))+'</button></span></div>';
+      h+='<div class="sc-row'+(on?' on':'')+'" data-sid="'+id+'"><button class="sc-btn" data-a="open-sc" data-id="'+id+'"><i class="dot st-'+s.status+'" title="'+STATUS[s.status]+'"></i><span class="t">'+esc(s.title)+'</span><span class="wc" data-wc="'+id+'">'+fmt(s.words)+'</span></button><span class="acts"><button class="ibtn" data-a="split" data-k="scene" data-id="'+id+'" aria-label="Open beside the page" title="Open side by side (or Alt+click)">'+ico('split',14)+'</button><button class="ibtn" data-a="scup" data-id="'+id+'" aria-label="Move scene up">'+ico('up',14)+'</button><button class="ibtn" data-a="scdn" data-id="'+id+'" aria-label="Move scene down">'+ico('down',14)+'</button><button class="ibtn'+(cf==='sc'+id?' on':'')+'" data-a="delsc" data-id="'+id+'" aria-label="Delete scene">'+(cf==='sc'+id?'Delete?':ico('trash',14))+'</button></span></div>';
     });
     if(c.open&&!c.scenes.length) h+='<div class="empty-s">No scenes yet.</div>';
     h+='</div>';
@@ -2666,7 +2956,7 @@ function renderBinder0(){
   h+='</div>';
   h+='<div class="ch-row" style="margin-top:20px"></div>';
   const secHead=(t,n,add)=>'<div class="bsec"><button class="lbl" data-a="sec" data-t="'+t+'" aria-expanded="'+(ui.openSec[t]?'true':'false')+'">'+ico(ui.openSec[t]?'down':'right',14)+'<span>'+esc(LP(t))+'</span><span class="n">'+n+'</span></button><button class="ibtn" data-a="relabel" data-t="'+t+'" aria-label="Rename this section" title="Rename this section">'+ico('edit',14)+'</button><button class="ibtn" data-a="'+add+'" aria-label="Add '+esc(LS(t).toLowerCase())+'">'+ico('plus',14)+'</button></div>'+relabelForm(t);
-  const docRow=(k,x,icon,count)=>{ const on=cur.k===k&&cur.id===x.id; return '<div class="e-row'+(on?' on':'')+'"><button class="e-btn" data-a="open-'+k+'" data-id="'+x.id+'">'+ico(icon,14)+'<span class="t">'+esc(x.name)+'</span><span class="wc">'+count+'</span></button><span class="acts"><button class="ibtn'+(cf===k+x.id?' on':'')+'" data-a="del'+k+'" data-id="'+x.id+'" aria-label="Delete">'+(cf===k+x.id?'Delete?':ico('trash',14))+'</button></span></div>'; };
+  const docRow=(k,x,icon,count)=>{ const on=cur.k===k&&cur.id===x.id; return '<div class="e-row'+(on?' on':'')+'"><button class="e-btn" data-a="open-'+k+'" data-id="'+x.id+'">'+ico(icon,14)+'<span class="t">'+esc(x.name)+'</span><span class="wc">'+count+'</span></button><span class="acts">'+(k==='ol'||k==='nt'?'<button class="ibtn" data-a="split" data-k="'+k+'" data-id="'+x.id+'" aria-label="Open beside the page" title="Open side by side (or Alt+click)">'+ico('split',14)+'</button>':'')+'<button class="ibtn'+(cf===k+x.id?' on':'')+'" data-a="del'+k+'" data-id="'+x.id+'" aria-label="Delete">'+(cf===k+x.id?'Delete?':ico('trash',14))+'</button></span></div>'; };
   if(secOn('ol')) h+=secHead('ol',m.ols.length,'addol');
   if(secOn('ol')&&ui.openSec.ol){ h+='<div class="doc-list" data-list="ols">'; m.ols.forEach(x=>{ const it=S.ol[x.id].items; h+=docRow('ol',x,'list',it.filter(i=>i.done).length+'/'+it.length); }); h+='</div>'; if(!m.ols.length) h+='<div class="empty-s">No outline yet. Press + to start one.</div>'; }
   if(secOn('nt')) h+=secHead('nt',m.nts.length,'addnt');
@@ -2677,7 +2967,7 @@ function renderBinder0(){
     h+='<div class="doc-list" data-list="tls">';
     m.tls.forEach(x=>{
       const on=cur.k==='tl'&&cur.id===x.id, n=Object.keys(S.tl[x.id].cards).length;
-      h+='<div class="e-row'+(on?' on':'')+'"><button class="e-btn" data-a="open-tl" data-id="'+x.id+'">'+ico('time',14)+'<span class="t">'+esc(x.name)+'</span><span class="wc">'+n+'</span></button><span class="acts"><button class="ibtn'+(cf==='tl'+x.id?' on':'')+'" data-a="deltl" data-id="'+x.id+'" aria-label="Delete timeline">'+(cf==='tl'+x.id?'Delete?':ico('trash',14))+'</button></span></div>';
+      h+='<div class="e-row'+(on?' on':'')+'"><button class="e-btn" data-a="open-tl" data-id="'+x.id+'">'+ico('time',14)+'<span class="t">'+esc(x.name)+'</span><span class="wc">'+n+'</span></button><span class="acts"><button class="ibtn" data-a="split" data-k="tl" data-id="'+x.id+'" aria-label="Open beside the page" title="Open side by side (or Alt+click)">'+ico('split',14)+'</button><button class="ibtn'+(cf==='tl'+x.id?' on':'')+'" data-a="deltl" data-id="'+x.id+'" aria-label="Delete timeline">'+(cf==='tl'+x.id?'Delete?':ico('trash',14))+'</button></span></div>';
     });
     h+='</div>'; if(!m.tls.length) h+='<div class="empty-s">No timelines yet. Press + to start one.</div>';
   }
@@ -2695,12 +2985,13 @@ function renderBinder0(){
       list.forEach(e=>{
         const on=cur.k==='ent'&&cur.id===e.id;
         const ps=picSrc(e.id);
-        h+='<div class="e-row'+(on?' on':'')+'"><button class="e-btn" data-a="open-e" data-id="'+e.id+'" title="'+esc(e.tag||LS(t)+' page')+'">'+(ps?'<img class="bav t-'+t+'" src="'+esc(ps)+'" alt="" style="'+picStyle(e.id)+'">':'<i class="pip t-'+t+'"></i>')+'<span class="t">'+esc(e.name||'Untitled')+'</span><span class="wc" title="Mentions in your scenes">'+(mc[e.id]||0)+'</span></button><span class="acts"><button class="ibtn'+(cf==='en'+e.id?' on':'')+'" data-a="dele" data-id="'+e.id+'" aria-label="Delete page">'+(cf==='en'+e.id?'Delete?':ico('trash',14))+'</button></span></div>';
+        h+='<div class="e-row'+(on?' on':'')+'"><button class="e-btn" data-a="open-e" data-id="'+e.id+'" title="'+esc(e.tag||LS(t)+' page')+'">'+(ps?'<img class="bav t-'+t+'" src="'+esc(ps)+'" alt="" style="'+picStyle(e.id)+'">':'<i class="pip t-'+t+'"></i>')+'<span class="t">'+esc(e.name||'Untitled')+'</span><span class="wc" title="Mentions in your scenes">'+(mc[e.id]||0)+'</span></button><span class="acts"><button class="ibtn" data-a="split" data-k="ent" data-id="'+e.id+'" aria-label="Open beside the page" title="Open side by side (or Alt+click)">'+ico('split',14)+'</button><button class="ibtn'+(cf==='en'+e.id?' on':'')+'" data-a="dele" data-id="'+e.id+'" aria-label="Delete page">'+(cf==='en'+e.id?'Delete?':ico('trash',14))+'</button></span></div>';
       });
       if(!list.length) h+='<div class="empty-s">None yet. Press + or select a name in your text.</div>';
     }
   });
-  h+='<div class="bcfg-wrap"><button class="btn sm" data-a="bcfg" aria-expanded="'+ui.binderCfg+'">'+ico('sliders',14)+'<span>Customize binder</span></button>';
+  const nTr=Object.keys(S.tr||{}).length;
+  h+='<div class="bcfg-wrap"><div class="b-foot"><button class="btn sm" data-a="bcfg" aria-expanded="'+ui.binderCfg+'">'+ico('sliders',14)+'<span>Customize binder</span></button><button class="btn sm" data-a="trash">'+ico('trash',14)+'<span>Trash'+(nTr?' ('+nTr+')':'')+'</span></button></div>';
   if(ui.binderCfg) h+='<div class="bcfg"><p class="fine">Choose which sections appear in your binder. Hiding a section keeps everything in it.</p>'
     +OPT_SECS.map(k=>'<label class="ck"><input type="checkbox" data-sec="'+k+'"'+(secOn(k)?' checked':'')+'>'+esc(LP(k))+'</label>').join('')
     +'<label class="ck"><input type="checkbox" checked disabled>'+esc(LP('char'))+' <span class="muted">(always on)</span></label></div>';
@@ -2726,6 +3017,11 @@ function renderBinder0(){
 function bindBinder(){
   $('#binder').addEventListener('click',e=>{
     const b=e.target.closest('[data-a]'); if(!b) return; const a=b.dataset.a, id=b.dataset.id, rr=renderBinder;
+    const opens={'open-sc':'scene','open-e':'ent','open-nt':'nt','open-ol':'ol','open-tl':'tl'};
+    if(e.altKey&&opens[a]){ splitOpen({k:opens[a],id}); return; }   // Alt+click: open beside the page
+    if(a==='split'){ splitOpen({k:b.dataset.k,id}); return; }
+    if(a==='search'){ go({k:'search'}); return; }
+    if(a==='trash'){ go({k:'trash'}); return; }
     if(a==='cork-all'){ ui.cork='all'; go({k:'cork'}); }
     else if(a==='cork-ch'){ ui.cork=id; go({k:'cork'}); }
     else if(a==='addch') addChapter();
@@ -2767,7 +3063,7 @@ function renderMain(){
   if(!viewValid(v)){ ui.view=firstView(); return renderMain(); }
   const key=v.k+':'+(v.id||''), reset=key!==ui.lastKey; ui.lastKey=key;
   const keep=el.scrollTop;
-  if(v.k==='ent') renderEnt(el,v); else if(v.k==='cork') renderCork(el); else if(v.k==='tl') renderTl(el,v); else if(v.k==='nt') renderNt(el,v); else if(v.k==='ol') renderOl(el,v); else if(v.k==='rm'||v.k==='ft') renderCv(el,v); else if(v.k==='ss') renderSs(el); else if(v.k==='prefs') renderPrefs(el); else if(v.k==='snap') renderSnap(el,v); else if(v.k==='find') renderFind(el); else if(v.k==='help') renderHelp(el); else if(v.k==='den') renderDen(el); else if(v.k==='cont') renderCont(el); else if(v.k==='layout') renderLayout(el); else if(v.k==='plan') renderPlan(el); else renderScene(el,v);
+  if(v.k==='ent') renderEnt(el,v); else if(v.k==='cork') renderCork(el); else if(v.k==='tl') renderTl(el,v); else if(v.k==='nt') renderNt(el,v); else if(v.k==='ol') renderOl(el,v); else if(v.k==='rm'||v.k==='ft') renderCv(el,v); else if(v.k==='ss') renderSs(el); else if(v.k==='prefs') renderPrefs(el); else if(v.k==='snap') renderSnap(el,v); else if(v.k==='find') renderFind(el); else if(v.k==='help') renderHelp(el); else if(v.k==='den') renderDen(el); else if(v.k==='cont') renderCont(el); else if(v.k==='layout') renderLayout(el); else if(v.k==='plan') renderPlan(el); else if(v.k==='trash') renderTrash(el); else if(v.k==='search') renderSearch(el); else renderScene(el,v);
   el.scrollTop=reset?0:keep;
 }
 function renderScene(el,v){
@@ -2783,6 +3079,7 @@ function renderScene(el,v){
     +'<button class="btn" id="stkBtn" title="Add a sticky note beside the page (or double-click in the margin)">'+ico('note')+'<span>Sticky note</span></button>'
     +'<button class="btn" id="snBtn" title="Saved versions of this scene">'+ico('time')+'<span>Snapshots</span></button>'
     +(canSpeak()?'<button class="btn" id="raBtn" aria-pressed="false" title="Hear the selection, or from this paragraph on: a good way to catch mistakes"></button>':'')
+    +'<button class="ibtn" id="spBtn" title="Side by side: a story page, note or another scene beside this one ('+MODK+'+\\)" aria-label="Side by side" aria-pressed="false">'+ico('split')+'</button>'
     +'<button class="btn" id="focusBtn" aria-pressed="'+(ui.focus?'true':'false')+'">'+ico('focus')+'<span>'+(ui.focus?'Exit focus':'Focus')+'</span></button></div></div>'
     +(m.sample?'<div class="banner"><span>This is a sample project, so you can try the links and the pet. '+(DESK?'Choose <b>File → New project</b> when you are ready for your own.':'Open the menu and choose <b>Start a blank project</b> when you are ready for your own.')+'</span><button class="btn sm" id="bnX">Dismiss</button></div>':'')
     +'<div class="here-ban" id="hereBan" role="status" hidden></div>'
@@ -2835,6 +3132,7 @@ function renderScene(el,v){
   $('#sceneStatus').addEventListener('change',e=>{ S.meta.scenes[v.id].status=e.target.value; dirty('meta'); renderBinder(); if(e.target.value==='final') sceneFinal(v.id); else checkAch(); });
   $('#focusBtn').addEventListener('click',()=>{ ui.focus=!ui.focus; syncTab(); renderMain(); });
   $('#snBtn').addEventListener('click',()=>go({k:'snap',id:v.id}));
+  $('#spBtn').addEventListener('click',()=>{ if(ui.split) splitClose(); else splitOpen(); }); paintSplitBtn();
   $('#stkBtn').addEventListener('click',()=>stkAdd(v.id));
   stkBind(v.id);
   el.querySelectorAll('.fb').forEach(b=>{ b.addEventListener('mousedown',e=>e.preventDefault()); b.addEventListener('click',()=>{ if(document.activeElement!==ed) ed.focus();
@@ -4710,6 +5008,7 @@ function applyLayout(){
   const app=$('#app'); if(!app||!S) return;
   [...app.classList].filter(c=>c.startsWith('lo-')).forEach(c=>app.classList.remove(c));
   Object.keys(S.meta.layout.hide).forEach(k=>app.classList.add('lo-'+k));
+  applyCols();
 }
 function loSet(k,hide){ const h=S.meta.layout.hide; if(hide) h[k]=true; else delete h[k]; dirty('meta'); applyLayout(); if(LO_INSP.some(s=>s[0]===k)) renderInspector(); }
 function loToggle(k){ loSet(k,!loHidden(k)); if(ui.view.k==='layout') renderMain(); const nm=(LO_GROUPS[0][1].find(x=>x[0]===k)||[])[1]; if(nm&&innerWidth>=1080) toast((loHidden(k)?'Hid the ':'Showing the ')+nm.replace(/ \(.*\)/,'').toLowerCase()+'. Window › Project settings has more.',{plain:true}); }
@@ -4719,6 +5018,9 @@ function winAct(a){
   const now=Date.now(); ui.actAt=ui.actAt||{}; if(now-(ui.actAt[a]||0)<150) return; ui.actAt[a]=now;
   if(a==='layout') go({k:'layout'});
   else if(a==='plan') go({k:'plan'});
+  else if(a==='search') go({k:'search'});
+  else if(a==='trash') go({k:'trash'});
+  else if(a==='split'){ if(ui.split) splitClose(); else splitOpen(); }
   else if(a==='tBinder') loToggle('binder');
   else if(a==='tInsp') loToggle('insp');
   else if(a==='focus'){ ui.focus=!ui.focus; syncTab(); renderMain(); }
@@ -5318,13 +5620,13 @@ function openExport(){
 }
 function renderMenu(){
   const cf=ui.confirm, el=$('#menu');
-  const winItems=()=>'<hr><small class="m-h">Window</small>'+item('layout','Project settings…')+item('tBinder',(loHidden('binder')?'Show':'Hide')+' the binder')+item('tInsp',(loHidden('insp')?'Show':'Hide')+' the Inkling panel')+item('focus',ui.focus?'Leave focus mode':'Focus mode')+'<hr>';
+  const winItems=()=>'<hr><small class="m-h">Window</small>'+item('layout','Project settings…')+item('tBinder',(loHidden('binder')?'Show':'Hide')+' the binder')+item('tInsp',(loHidden('insp')?'Show':'Hide')+' the Inkling panel')+item('split',ui.split?'Close side by side':'Side by side')+item('focus',ui.focus?'Leave focus mode':'Focus mode')+'<hr>';
   const item=(m,label,cls)=>'<button data-m="'+m+'"'+(cls?' class="'+cls+'"':'')+'>'+label+'</button>';
   if(DESK){ el.innerHTML=item('save','Save')+item('projects','Projects…')+item('share','Share this project…')+'<hr>'+item('export','Export… (Word, PDF, EPUB)')+item('json','Back up this project (.json)')+item('import','Import a backup as a new project…')+'<hr>'
-    +item('find','Find and replace…')+item('cont','Continuity check')+item('sessions','Writing sessions')+item('plan','Deadline planner')+item('prefs','Settings')+winItems()+item('help','How sharing works')+item('keys','Keyboard shortcuts')+item('tour','Show the tour')+'<hr>'+item('reveal','Show projects folder')
+    +item('find','Find and replace…')+item('cont','Continuity check')+item('search','Search everything…')+item('sessions','Writing sessions')+item('plan','Deadline planner')+item('trash','Trash')+item('prefs','Settings')+winItems()+item('help','How sharing works')+item('keys','Keyboard shortcuts')+item('tour','Show the tour')+'<hr>'+item('reveal','Show projects folder')
     +'<small>Saved on this computer as you write. Each project folder also keeps automatic backups.</small>'; return; }
   el.innerHTML=item('save','Save now')+'<hr>'+item('export','Export… (Word, PDF, EPUB)')+item('json','Back up project (.json)')+item('restore','Restore from a backup…')+'<hr>'
-    +item('find','Find and replace…')+item('cont','Continuity check')+item('sessions','Writing sessions')+item('plan','Deadline planner')+item('prefs','Settings')+winItems()+item('help','How sharing works')+item('keys','Keyboard shortcuts')+item('tour','Show the tour')+'<hr>'
+    +item('find','Find and replace…')+item('cont','Continuity check')+item('search','Search everything…')+item('sessions','Writing sessions')+item('plan','Deadline planner')+item('trash','Trash')+item('prefs','Settings')+winItems()+item('help','How sharing works')+item('keys','Keyboard shortcuts')+item('tour','Show the tour')+'<hr>'
     +item('sample',cf==='m-sample'?'Replace everything with the sample? Click again':'Load the sample project','warn')
     +item('blank',cf==='m-blank'?'Replace everything with a blank project? Click again':'Start a blank project','warn')
     +'<small>'+(P.db?'Your project saves automatically to your Claude account, private to you. A new project comes with its own Inky; your daily goal and timer settings carry over.':'Your project saves on this device only. Back it up from here when you can.')+'</small>';
@@ -5347,7 +5649,7 @@ function bindMenu(){
     else if(a==='import'){ closeMenu(); deskImportPick(); }
     else if(a==='reveal'){ closeMenu(); DESK.reveal(); }
     else if(a==='sessions'){ closeMenu(); go({k:'ss'}); }
-    else if(['layout','tBinder','tInsp','focus','keys','plan'].includes(a)){ closeMenu(); winAct(a); }
+    else if(['layout','tBinder','tInsp','focus','keys','plan','search','trash','split'].includes(a)){ closeMenu(); winAct(a); }
     else if(a==='restore'){ closeMenu(); $('#fileIn').value=''; $('#fileIn').click(); }
     else if(a==='sample') confirmDo('m-sample',()=>{ closeMenu(); replaceProject(normalize(sampleProject()),true); },renderMenu);
     else if(a==='blank') confirmDo('m-blank',()=>{ closeMenu(); replaceProject(normalize(blankProject()),true); },renderMenu);
@@ -5800,8 +6102,8 @@ async function pjAct(a,id,name){
 
 /* ---------- boot ---------- */
 function renderAll(){
-  $('#projTitle').value=S.meta.title;
-  renderBinder(); renderMain(); renderInspector(); updateStats(); syncTab();
+  trashPurge(); $('#projTitle').value=S.meta.title;
+  renderBinder(); renderMain(); renderInspector(); updateStats(); syncTab(); renderSplit();
 }
 function init(){
   try{ const f=+localStorage.getItem('inkling:fs'); if(f>=14&&f<=28) ui.fs=f; }catch(e){}
@@ -5816,7 +6118,7 @@ function init(){
   const pc=document.createElement('button'); pc.id='pmChip'; pc.className='chip pm-chip'; pc.hidden=true; pc.setAttribute('aria-label','Focus timer'); pc.innerHTML=ico('timer',16)+'<span class="mono"></span>';
   pc.addEventListener('click',()=>{ ui.tab='pet'; syncTab(); const t=$('#pomo'); if(t) t.scrollIntoView({block:'nearest'}); }); $('#goalChip').after(pc);
   $('#projTitle').addEventListener('input',e=>{ S.meta.title=e.target.value||'Untitled novel'; dirty('meta'); if(DESK){ document.title=S.meta.title+' – Inkling'; DESK.setTitle(document.title); } });
-  bindBinder(); bindMenu(); bindSizers(); applySides();
+  bindBinder(); bindMenu(); bindSizers(); applySides(); bindSplit();
   $('#main').addEventListener('click',e=>{
     const b=e.target.closest('[data-a="back"]'); if(b) goBack();
     const c=e.target.closest('.cl'); if(c) go({k:'ent',id:c.dataset.ent});
@@ -5834,6 +6136,8 @@ function init(){
   document.addEventListener('keydown',e=>{ if(e.key==='Escape'){ const pj=$('#pj'); if(pj&&!pj.hidden){ if(PJ.id) closeProjects(); } else if(ui.menu) closeMenu(); else if((ui.view.k==='rm'||ui.view.k==='ft')&&(ui.cvSel||ui.cvPop)){ ui.cvSel=null; ui.cvPop=false; ui.confirm=null; cvRefresh(); } else if(ui.view.k==='tl'&&ui.tlSide){ ui.tlSide=null; ui.confirm=null; drawSide(); drawTl(); } else if(ui.focus){ ui.focus=false; syncTab(); renderMain(); } } });
   document.addEventListener('keydown',e=>{   // window shortcuts, and Find
     const mod=(e.ctrlKey||e.metaKey)&&!e.altKey; if(!mod) return;
+    if(!e.shiftKey&&e.key.toLowerCase()==='k'){ e.preventDefault(); winAct('search'); return; }
+    if(!e.shiftKey&&(e.key==='\\'||e.code==='Backslash')){ e.preventDefault(); winAct('split'); return; }
     if(e.shiftKey&&/^Digit[123]$/.test(e.code)){ e.preventDefault(); winAct({Digit1:'tBinder',Digit2:'tInsp',Digit3:'focus'}[e.code]); }
     else if(e.key.toLowerCase()==='f'&&!$('#pj:not([hidden])')){ e.preventDefault(); openFind(); }
     else if(e.key.toLowerCase()==='z'||e.key.toLowerCase()==='y') ui.keyHistAt=Date.now();

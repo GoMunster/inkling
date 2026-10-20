@@ -593,3 +593,93 @@ test('deadline planner: missed days raise the goal, and reaching the target is c
   expect(p.meta.plan.mode).toBe('new'); expect(p.meta.plan.start).toBe(dayOff(0)); expect(p.meta.plan.by > dayOff(26) && p.meta.plan.by < dayOff(31)).toBe(true);
   expect(errors).toEqual([]);
 });
+
+test('Trash: deleted things can be undone, restored with their snapshots and links, or deleted for good', async ({ page }) => {
+  const errors = await openApp(page);
+  const sid = await page.locator('.sc-btn >> nth=1').getAttribute('data-id');
+  const title = (await page.locator('.sc-btn').nth(1).locator('.t').textContent()).trim();
+  const del = async (sel) => { await page.click(sel, { force: true }); await page.click(sel, { force: true }); };
+  await del('[data-a="delsc"][data-id="' + sid + '"]');
+  await expect(page.locator('.sc-btn[data-id="' + sid + '"]')).toHaveCount(0);
+  await page.click('#toast .t-act');   // Undo
+  await expect(page.locator('.sc-btn[data-id="' + sid + '"]')).toHaveCount(1);
+  // a scene with a snapshot, deleted and restored from the Trash
+  await page.click('.sc-btn[data-id="' + sid + '"]'); await page.click('#snBtn'); await page.fill('#snName', 'Keep me'); await page.click('#snForm button');
+  await expect(page.locator('.sn-it').first()).toContainText('Keep me');
+  await del('[data-a="delsc"][data-id="' + sid + '"]');
+  let p = await waitSaved(page, p => p.tr && Object.values(p.tr).some(x => x.kind === 'scene') && !p.sc[sid]);
+  expect(Object.values(p.sn).some(x => x.scene === sid)).toBe(false);
+  await page.click('[data-a="trash"]');
+  await expect(page.locator('.tr-row')).toHaveCount(1); await expect(page.locator('.tr-row')).toContainText(title);
+  await page.click('.tr-row [data-tr="back"]');
+  await expect(page.locator('#sceneTitle')).toHaveValue(title);
+  p = await waitSaved(page, p => p.sc[sid] && !Object.keys(p.tr).length);
+  expect(Object.values(p.sn).some(x => x.scene === sid)).toBe(true);
+  // a character on a relationship map comes back linked to its bubble
+  const onMap = pr => Object.values(pr.rm).some(r => r.nodes.some(n => n.ent === 'e_ilsa'));
+  expect(onMap(p)).toBe(true);
+  await del('[data-a="dele"][data-id="e_ilsa"]');
+  p = await waitSaved(page, p => !p.en.e_ilsa); expect(onMap(p)).toBe(false);
+  await page.click('[data-a="trash"]'); await page.click('.tr-row [data-tr="back"]');
+  p = await waitSaved(page, p => p.en.e_ilsa && onMap(p)); expect(p.meta.ents.e_ilsa.name).toBe('Ilsa Verrin');
+  // delete for good, and empty
+  await del('[data-a="dele"][data-id="e_ilsa"]');
+  await page.click('[data-a="trash"]'); await page.click('.tr-row [data-tr="drop"]'); await page.click('.tr-row [data-tr="drop"]');
+  await expect(page.locator('.tr-row')).toHaveCount(0); await expect(page.locator('.ss-empty')).toContainText('empty');
+  expect(errors).toEqual([]);
+});
+
+test('Trash: items older than 30 days go for good when the project opens', async ({ page }) => {
+  const project = ONE_SCENE('Hello.');
+  project.tr = { x_old: { kind: 'scene', at: Date.now() - 31 * 864e5, title: 'Old', d: { id: 's_old', ch: 'c1', i: 0, meta: { title: 'Old' }, sc: { text: 'gone' } } },
+    x_new: { kind: 'scene', at: Date.now() - 2 * 864e5, title: 'Recent', d: { id: 's_new', ch: 'c1', i: 1, meta: { title: 'Recent' }, sc: { text: 'Back again.' } } } };
+  const errors = await openApp(page, { project });
+  await expect(page.locator('[data-a="trash"]')).toContainText('Trash (1)');
+  await page.click('[data-a="trash"]'); await expect(page.locator('.tr-row')).toHaveCount(1);
+  await page.click('.tr-row [data-tr="back"]');
+  await expect(page.locator('#ed')).toHaveText('Back again.');
+  expect(errors).toEqual([]);
+});
+
+test('Search everything finds scenes, story pages, notes and brainstorms, and opens the right place', async ({ page }) => {
+  const errors = await openApp(page);
+  await page.click('#ed'); await page.keyboard.press('Control+k');
+  await expect(page.locator('#main h1')).toHaveText('Search everything');
+  await page.keyboard.type('compass');
+  await expect(page.locator('.sa-sec h2')).toContainText(['Scenes']);
+  await expect(page.locator('.sa-hit mark').first()).toHaveText(/compass/i);
+  const areas = await page.locator('.sa-areas button').allTextContents();
+  expect(areas.length).toBeGreaterThan(2);   // All, plus at least two kinds of places
+  await page.click('.sa-areas [data-area="nt"]');
+  await page.click('.sa-hit:has-text("points at whoever is lying")');
+  await expect(page.locator('#main .idea[data-id="i1"]')).toBeVisible();
+  await page.click('[data-a="search"]');   // the search box in the binder; the last search is still there
+  await expect(page.locator('#saQ')).toHaveValue('compass');
+  await page.click('.sa-areas [data-area="scene"]');
+  await page.locator('.sa-hit').first().click();
+  expect((await page.evaluate(() => getSelection().toString())).toLowerCase()).toBe('compass');
+  await page.click('[data-a="search"]'); await page.fill('#saQ', 'zzqx nothing');
+  await expect(page.locator('.sa-none')).toContainText('Nothing found');
+  expect(errors).toEqual([]);
+});
+
+test('side by side: a story page beside the scene, edited in place, swapped and closed', async ({ page }) => {
+  await page.setViewportSize({ width: 1600, height: 900 });
+  const errors = await openApp(page);
+  await page.click('.sc-btn');
+  await page.click('#spBtn');
+  await expect(page.locator('#split')).toBeVisible();
+  await page.click('[data-a="open-e"][data-id="e_tobias"]', { modifiers: ['Alt'] });   // Alt+click opens it beside the page
+  await expect(page.locator('#split .sp-h')).toHaveText('Tobias Crane');
+  await expect(page.locator('#main #ed')).toBeVisible();   // the scene stays open
+  await page.fill('#split [data-spf="voice"]', 'Dry, careful, never in a hurry.');
+  await waitSaved(page, p => p.en.e_tobias.fields.voice === 'Dry, careful, never in a hurry.');
+  await page.selectOption('#spPick', { label: 'General notes' });
+  await expect(page.locator('#split .sp-note')).toBeVisible();
+  await page.click('#split [data-sp="swap"]');   // the note becomes the main view, the scene goes beside it
+  await expect(page.locator('#main .nt-ta')).toBeVisible();
+  await expect(page.locator('#split .sp-text')).toBeVisible();
+  await page.keyboard.press('Control+Backslash');
+  await expect(page.locator('#split')).toBeHidden();
+  expect(errors).toEqual([]);
+});
