@@ -43,7 +43,7 @@ test('saves format 2 with change stamps, and leaves a marker for deleted records
   expect(typeof sc._dev).toBe('string');
   const id = await page.locator('.sc-btn >> nth=1').getAttribute('data-id');
   await page.click('[data-a="delsc"][data-id="' + id + '"]', { force: true });
-  await page.click('[data-a="delsc"][data-id="' + id + '"]', { force: true });
+  await page.click('[data-a="delsc"][data-id="' + id + '"].on', { force: true }); // after it asks "Delete?"
   const after = await waitSaved(page, p => !p.sc[id]);
   expect(after.meta.gone['sc_' + id]).toBeGreaterThan(0);
 });

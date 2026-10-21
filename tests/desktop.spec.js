@@ -175,8 +175,9 @@ test('two writers share one project through a synced folder', async () => {
 
   // a deletion reaches the other computer
   const ent = await B.win.locator('[data-a="open-e"]').last().getAttribute('data-id');
+  // delete asks "Delete?" first: wait for that before confirming
   await B.win.click('[data-a="dele"][data-id="' + ent + '"]', { force: true });
-  await B.win.click('[data-a="dele"][data-id="' + ent + '"]', { force: true });
+  await B.win.click('[data-a="dele"][data-id="' + ent + '"].on', { force: true });
   expect(
     await syncUntil(
       A.app,
