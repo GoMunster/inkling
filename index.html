@@ -803,6 +803,68 @@ body.dnd,body.dnd *{cursor:grabbing!important;user-select:none}
 .ask-btns{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
 .upd-bar{position:fixed;left:16px;bottom:calc(16px + var(--tabh) + env(safe-area-inset-bottom,0px));z-index:45;display:flex;align-items:center;gap:8px;flex-wrap:wrap;max-width:calc(100vw - 32px);background:var(--paper);border:1px solid var(--accent);border-radius:12px;box-shadow:var(--shadow);padding:8px 10px 8px 12px;font-size:13.5px;color:var(--ink)}
 .upd-bar>.ico{color:var(--accent)}
+.pf-wrap.st-wrap{max-width:1040px}
+.st-tabs{margin-left:auto}
+.st-chart{overflow-x:auto;margin:8px -4px 0;padding-bottom:4px}
+.st-chart svg{display:block;font-family:var(--f-ui);max-width:none}
+.st-band{fill:transparent} .st-band.alt{fill:var(--panel2)}
+.st-chl{font-size:10.5px;fill:var(--muted);font-weight:600}
+.st-ax{font-size:10px;fill:var(--muted)}
+.st-grid{stroke:var(--line);stroke-dasharray:2 4}
+.st-line{fill:none;stroke:var(--accent);stroke-width:2;stroke-linejoin:round}
+.st-pt{fill:var(--paper);stroke:var(--accent);stroke-width:2} .st-pt.set{fill:var(--accent)}
+.st-words{fill:var(--muted);opacity:.28}
+.st-m.dlg{fill:var(--pet)} .st-m.act{fill:var(--danger)} .st-m.refl{fill:var(--thing)} .st-m.nar{fill:var(--line)}
+.st-hit{fill:transparent}
+.st-col{cursor:pointer} .st-col:hover .st-hit{fill:var(--accent-soft)} .st-col:hover .st-words{opacity:.45}
+.st-key{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:12px;color:var(--muted);margin-top:8px}
+.st-key span{display:inline-flex;align-items:center;gap:6px}
+.st-k{display:inline-block;width:12px;height:10px;border-radius:2px} .st-k.pt{width:10px;border-radius:50%;border:2px solid var(--accent);background:var(--paper)} .st-k.pt.set{background:var(--accent)}
+.st-k.dlg{background:var(--pet)} .st-k.act{background:var(--danger)} .st-k.refl{background:var(--thing)} .st-k.nar{background:var(--line)}
+.st-notes{margin:6px 0 0;padding-left:18px;display:grid;gap:6px;font-size:13.5px}
+.st-bars{display:grid;gap:8px;margin-top:10px}
+.st-br{display:grid;grid-template-columns:minmax(90px,160px) 1fr auto;gap:10px;align-items:center;font-size:13px}
+.st-bn{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.st-bb{height:12px;background:var(--panel2);border-radius:6px;overflow:hidden} .st-bb i{display:block;height:100%;background:var(--c);border-radius:6px}
+.st-bv{color:var(--muted);font-size:12px;white-space:nowrap}
+.st-grid-wrap{overflow-x:auto;margin-top:8px}
+.st-tab{border-collapse:separate;border-spacing:3px;font-size:12px}
+.st-tab th{font-weight:500;color:var(--muted);text-align:center;min-width:26px}
+.st-tab tbody th{text-align:left;color:var(--ink);white-space:nowrap;padding-right:8px;max-width:200px;overflow:hidden;text-overflow:ellipsis}
+.st-c{width:26px;height:24px;text-align:center;border-radius:4px;background:color-mix(in srgb,var(--char) calc(var(--a)*100%),var(--panel2));color:var(--ink);font-variant-numeric:tabular-nums}
+.st-c.pov{box-shadow:inset 0 0 0 2px var(--ink)}
+.st-all{color:var(--muted);text-align:right;padding-left:6px}
+.th-c{width:26px;height:24px;text-align:center;border-radius:4px;background:var(--panel2);font-weight:600}
+.th-c.on{background:color-mix(in srgb,var(--c) 70%,var(--paper));color:var(--ink)}
+.th-c.after{opacity:.35} .th-c.done{box-shadow:inset 0 0 0 2px var(--c);background:var(--paper)}
+.th-dot{display:inline-block;width:9px;height:9px;border-radius:50%;background:var(--c);margin-right:6px}
+.th-add{display:flex;gap:8px;margin:10px 0}
+.th-add input{flex:1;min-width:0}
+.th-cards{display:grid;gap:10px}
+.th-card{border:1px solid var(--line);border-left:4px solid var(--c);border-radius:10px;padding:10px 12px;display:grid;gap:8px}
+.th-row{display:flex;gap:8px;align-items:center} .th-row input{flex:1;min-width:0;font-weight:600}
+.th-card textarea{width:100%;resize:vertical}
+.th-add input,.th-row input,.th-card textarea,.th-new{border:1px solid var(--line);background:var(--bg);border-radius:8px;padding:7px 10px;color:var(--ink);font:inherit}
+.th-add input:focus,.th-row input:focus,.th-card textarea:focus,.th-new:focus{border-color:var(--accent);outline:none}
+.th-w.gap::marker,.th-w.end::marker{color:var(--danger)}
+.sd{display:grid;gap:8px;border-top:1px solid var(--line);margin-top:12px;padding-top:12px}
+.sdf{display:flex;flex-direction:column;gap:4px;font-size:12px;font-weight:600;color:var(--muted)}
+.sd select{width:100%}
+.sd-ten{display:flex;margin-top:4px} .sd-ten button{flex:1}
+.sd-th{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}
+.th-chip{border:1px solid var(--line);background:var(--paper);border-radius:999px;padding:3px 10px 3px 8px;font-size:12px;display:inline-flex;align-items:center;gap:6px}
+.th-chip::before{content:'';width:8px;height:8px;border-radius:50%;background:var(--c)}
+.th-chip.on{background:color-mix(in srgb,var(--c) 22%,var(--paper));border-color:var(--c);font-weight:600}
+.th-new{flex:1 1 140px;min-width:0;font-size:12px;padding:4px 8px!important;font-weight:400}
+.fs-mini{display:grid;gap:5px;margin-top:4px;font-weight:400;color:var(--ink)}
+.fs-li{display:grid;grid-template-columns:auto 1fr;column-gap:6px;font-size:12.5px;align-items:baseline}
+.fs-li small{grid-column:2;color:var(--muted);font-size:11.5px}
+.fs-ic{color:var(--thing);font-size:11px} .fs-li.pay .fs-ic,.fs-card.paid .fs-ic{color:var(--place)}
+.fs-mini select{font-size:12px}
+.fs-add select{max-width:200px}
+.fs-card{border-left-color:var(--thing)} .fs-card.paid{border-left-color:var(--place)} .fs-card.bad{border-left-color:var(--danger)}
+.th-w.fs-order::marker,.th-w.fs-open::marker{color:var(--danger)}
+.sd-open{justify-self:start;display:inline-flex;align-items:center;gap:5px;font-size:12.5px}
 .pf-wrap{max-width:760px;margin:0 auto;padding:16px 16px 48px;display:grid;gap:14px}
 .pf{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:16px 18px}
 .pf h2{margin:0 0 6px;font-size:15px}
@@ -1123,7 +1185,7 @@ const pick=a=>a[Math.floor(Math.random()*a.length)];
 const RM=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
 const RING=66;
 
-const ICO={plus:'M12 5v14M5 12h14',down:'M6 9l6 6 6-6',right:'M9 6l6 6-6 6',up:'M6 15l6-6 6 6',back:'M15 6l-6 6 6 6',
+const ICO={plus:'M12 5v14M5 12h14',chart:'M3 3v18h18M7 15l4-4 3 3 5-6',down:'M6 9l6 6 6-6',right:'M9 6l6 6-6 6',up:'M6 15l6-6 6 6',back:'M15 6l-6 6 6 6',
   trash:'M5 7h14M10 7V5h4v2M7 7l1 12h8l1-12',edit:'M4 20h4L19 9l-4-4L4 16v4z',dots:'M5 12h.01M12 12h.01M19 12h.01',
   card:'M4 6h7v6H4zM13 6h7v6h-7zM4 14h7v4H4zM13 14h7v4h-7z',book:'M5 5h6a2 2 0 012 2v12a2 2 0 00-2-2H5zM19 5h-6a2 2 0 00-2 2v12a2 2 0 012-2h6z',
   pen:'M4 20l1-4L16 5l3 3L8 19l-4 1z',focus:'M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5',link:'M10 14a4 4 0 005.7 0l3-3a4 4 0 00-5.7-5.7l-1 1M14 10a4 4 0 00-5.7 0l-3 3a4 4 0 005.7 5.7l1-1',
@@ -1297,6 +1359,7 @@ function normalize(o){
     if(c.open==null) c.open=true;
   });
   Object.keys(meta.ents).forEach(id=>{const e=meta.ents[id]; e.id=id; e.aliases=Array.isArray(e.aliases)?e.aliases:[]; e.tag=e.tag||''; if(!TYPES[e.type]) e.type='thing'; en[id]=en[id]||{}; en[id].fields=en[id].fields||{}; en[id].pic=normPic(en[id].pic);});
+  meta.threads=normThreads(meta.threads); meta.setups=normSetups(meta.setups); normSceneDetails(meta);
   if(!meta.chapters.length){const b=blankProject(); meta.chapters=b.meta.chapters; meta.scenes=Object.assign(meta.scenes,b.meta.scenes); Object.assign(sc,b.sc);}
   const tl=o.tl&&typeof o.tl==='object'?o.tl:{};
   if(!Array.isArray(meta.tls)){ meta.tls=[]; if(!Object.keys(tl).length){ const id=uid('t_'); meta.tls.push({id,name:'Story timeline'}); tl[id]=newTl(); } }
@@ -1778,8 +1841,8 @@ function streak(){
 function curMood(){ const w=todayWords(), g=S.meta.goal; if(w>=g) return 'party'; if(w>=g*.5) return 'hype'; if(w>0) return 'happy'; return 'sleepy'; }
 function orderedScenes(){ const out=[]; S.meta.chapters.forEach(c=>c.scenes.forEach(id=>out.push({id,ch:c}))); return out; }
 function firstView(){ const s=orderedScenes()[0]; return s?{k:'scene',id:s.id}:{k:'cork'}; }
-function viewValid(v){ if(!v) return false; if(v.k==='scene') return !!S.meta.scenes[v.id]; if(v.k==='ent') return !!S.meta.ents[v.id]; if(v.k==='tl') return !!(S.tl[v.id]&&S.meta.tls.some(x=>x.id===v.id)); if(v.k==='nt') return !!(S.nt[v.id]&&S.meta.nts.some(x=>x.id===v.id)); if(v.k==='ol') return !!(S.ol[v.id]&&S.meta.ols.some(x=>x.id===v.id)); if(v.k==='rm'||v.k==='ft') return !!(S[v.k][v.id]&&S.meta[v.k+'s'].some(x=>x.id===v.id)); if(v.k==='snap') return !!S.meta.scenes[v.id]; return v.k==='cork'||v.k==='ss'||v.k==='prefs'||v.k==='find'||v.k==='help'||v.k==='den'||v.k==='cont'||v.k==='layout'||v.k==='plan'||v.k==='trash'||v.k==='search'; }
-function viewName(v){ if(v.k==='scene') return S.meta.scenes[v.id].title; if(v.k==='ent') return S.meta.ents[v.id].name; if(v.k==='tl') return S.meta.tls.find(x=>x.id===v.id).name; if(v.k==='nt') return S.meta.nts.find(x=>x.id===v.id).name; if(v.k==='ol') return S.meta.ols.find(x=>x.id===v.id).name; if(v.k==='rm'||v.k==='ft') return S.meta[v.k+'s'].find(x=>x.id===v.id).name; if(v.k==='ss') return 'Writing sessions'; if(v.k==='prefs') return 'Settings'; if(v.k==='find') return 'Find and replace'; if(v.k==='help') return 'How sharing works'; if(v.k==='den') return S.meta.pet.name+'’s room'; if(v.k==='cont') return 'Continuity'; if(v.k==='layout') return 'Project settings'; if(v.k==='plan') return 'Deadline planner'; if(v.k==='trash') return 'Trash'; if(v.k==='search') return 'Search'; if(v.k==='snap') return 'Snapshots: '+S.meta.scenes[v.id].title; return 'Corkboard'; }
+function viewValid(v){ if(!v) return false; if(v.k==='scene') return !!S.meta.scenes[v.id]; if(v.k==='ent') return !!S.meta.ents[v.id]; if(v.k==='tl') return !!(S.tl[v.id]&&S.meta.tls.some(x=>x.id===v.id)); if(v.k==='nt') return !!(S.nt[v.id]&&S.meta.nts.some(x=>x.id===v.id)); if(v.k==='ol') return !!(S.ol[v.id]&&S.meta.ols.some(x=>x.id===v.id)); if(v.k==='rm'||v.k==='ft') return !!(S[v.k][v.id]&&S.meta[v.k+'s'].some(x=>x.id===v.id)); if(v.k==='snap') return !!S.meta.scenes[v.id]; return v.k==='cork'||v.k==='ss'||v.k==='prefs'||v.k==='find'||v.k==='help'||v.k==='den'||v.k==='cont'||v.k==='layout'||v.k==='plan'||v.k==='trash'||v.k==='search'||v.k==='story'; }
+function viewName(v){ if(v.k==='scene') return S.meta.scenes[v.id].title; if(v.k==='ent') return S.meta.ents[v.id].name; if(v.k==='tl') return S.meta.tls.find(x=>x.id===v.id).name; if(v.k==='nt') return S.meta.nts.find(x=>x.id===v.id).name; if(v.k==='ol') return S.meta.ols.find(x=>x.id===v.id).name; if(v.k==='rm'||v.k==='ft') return S.meta[v.k+'s'].find(x=>x.id===v.id).name; if(v.k==='ss') return 'Writing sessions'; if(v.k==='prefs') return 'Settings'; if(v.k==='find') return 'Find and replace'; if(v.k==='help') return 'How sharing works'; if(v.k==='den') return S.meta.pet.name+'’s room'; if(v.k==='cont') return 'Continuity'; if(v.k==='layout') return 'Project settings'; if(v.k==='plan') return 'Deadline planner'; if(v.k==='trash') return 'Trash'; if(v.k==='search') return 'Search'; if(v.k==='story') return 'Story insights'; if(v.k==='snap') return 'Snapshots: '+S.meta.scenes[v.id].title; return 'Corkboard'; }
 
 /* ---------- pet ---------- */
 const PET_ARMS={sleepy:['M34 108 q-10 8 -8 22','M126 108 q10 8 8 22'],happy:['M34 106 q-14 2 -16 16','M126 106 q14 2 16 16'],hype:['M34 102 q-18 -6 -18 -28','M126 106 q14 2 16 16'],party:['M34 100 q-20 -8 -18 -32','M126 100 q20 -8 18 -32'],
@@ -2573,6 +2636,251 @@ function entContHtml(e){
 }
 function mentionCounts(){ contCheck(); const out={}, sn=(ui.cont&&ui.cont.seen)||{}; Object.keys(sn).forEach(k=>out[k]=sn[k].n); return out; }
 
+/* ---------- story insights: scene details, pacing, point of view, plot threads ---------- */
+// Each scene can name its point-of-view character (meta.scenes[id].pov), where it happens (place), how tense it is
+// (tension 1–5) and the plot threads it moves on (threads: ids from meta.threads). The Story insights view
+// ({k:'story'}, tabs in ui.stTab) draws pacing across the book, who gets the page, and threads by chapter.
+const THREAD_GAP=3;   // chapters a thread may go missing before it is flagged
+const REFLECT=new Set('thought thoughts think thinks thinking wondered wonder wonders wondering remembered remember remembers remembering memory memories realised realized realise realize knew felt feel feels feeling feelings wished wish hoped hope hopes considered imagined believed supposed perhaps maybe somehow regret regretted'.split(' '));
+function normThreads(x){
+  const seen=new Set();
+  return (Array.isArray(x)?x:[]).filter(t=>t&&typeof t==='object'&&/^[\w-]{1,40}$/.test(t.id)&&!seen.has(t.id)&&seen.add(t.id)).slice(0,80)
+    .map(t=>({id:t.id,name:String(t.name||'Thread').slice(0,80),color:colOk(t.color)?t.color:'accent',note:String(t.note||'').slice(0,2000),done:typeof t.done==='string'?t.done:''}));
+}
+function normSceneDetails(meta){
+  const ids=new Set(meta.threads.map(t=>t.id));
+  Object.values(meta.scenes).forEach(s=>{
+    if(!(s.pov&&meta.ents[s.pov])) delete s.pov;
+    if(!(s.place&&meta.ents[s.place])) delete s.place;
+    const t=Math.round(+s.tension||0); if(t>=1&&t<=5) s.tension=t; else delete s.tension;
+    const th=(Array.isArray(s.threads)?s.threads:[]).filter(x=>ids.has(x)); if(th.length) s.threads=[...new Set(th)]; else delete s.threads;
+  });
+  meta.threads.forEach(t=>{ if(t.done&&!meta.scenes[t.done]) t.done=''; });
+  meta.setups.forEach(x=>{ if(x.scene&&!meta.scenes[x.scene]) x.scene=''; if(x.pay&&!meta.scenes[x.pay]) x.pay=''; });
+}
+// Foreshadowing: a setup (a clue, a promise, Chekhov's gun) planted in one scene and paid off in a later one.
+function normSetups(x){
+  const seen=new Set();
+  return (Array.isArray(x)?x:[]).filter(t=>t&&typeof t==='object'&&/^[\w-]{1,40}$/.test(t.id)&&!seen.has(t.id)&&seen.add(t.id)).slice(0,500)
+    .map(t=>({id:t.id,text:String(t.text||'').slice(0,300),note:String(t.note||'').slice(0,2000),scene:typeof t.scene==='string'?t.scene:'',pay:typeof t.pay==='string'?t.pay:''}));
+}
+function setupAdd(text,scene){ const x={id:uid('fs'),text:String(text).trim().slice(0,300),note:'',scene:scene||'',pay:''}; S.meta.setups.push(x); dirty('meta'); return x; }
+function sceneOrder(){ const o={}; orderedScenes().forEach((x,i)=>{ o[x.id]=i; }); return o; }
+function setupWarnings(){
+  const ord=sceneOrder(), m=S.meta, out=[];
+  m.setups.forEach(x=>{ const a=ord[x.scene], b=ord[x.pay];
+    if(x.pay&&x.scene&&b<a) out.push({x,kind:'order',text:'“'+x.text+'” pays off in '+m.scenes[x.pay].title+', before it is set up in '+m.scenes[x.scene].title+'.'});
+    else if(x.pay&&x.scene&&b===a) out.push({x,kind:'same',text:'“'+x.text+'” is set up and paid off in the same scene ('+m.scenes[x.pay].title+').'});
+    else if(!x.pay) out.push({x,kind:'open',text:'“'+x.text+'” is set up'+(x.scene?' in '+m.scenes[x.scene].title:'')+' and never paid off.'});
+    if(!x.scene) out.push({x,kind:'where',text:'“'+x.text+'” doesn’t say which scene sets it up.'}); });
+  return out;
+}
+// One row per scene, in book order: words, the tension set by the writer (or 0) and one estimated from the words,
+// the share of dialogue, action and reflection words per 100, who is named, and the scene's details.
+function storyRows(){
+  const m=S.meta, c=ui.stRows; if(c&&c.v===m.saved&&c.n===Object.keys(m.scenes).length&&Date.now()-c.at<4000) return c.rows;
+  const L=pkLex(), rows=[];
+  orderedScenes().forEach((o,i)=>{
+    const s=m.scenes[o.id], vis=plainText(S.sc[o.id].text), words=wc(vis), per=Math.max(1,words/100);
+    const sents=(vis.match(/[^.!?…\n]+[.!?…]*/g)||[]).filter(x=>/\p{L}/u.test(x)).length;
+    const toks=vis.toLowerCase().replace(/’/g,"'").match(/[\p{L}']+/gu)||[];
+    let act=0, refl=0, ev=0;
+    toks.forEach(w=>{ if(REFLECT.has(w)) refl++; pkHits(L.mood,w).forEach(([k,v])=>{ if(k==='action'||k==='fear'||k==='anger') act+=v; }); });
+    PK_EV.forEach(e=>{ ev+=(vis.match(new RegExp(e[1].source,'gi'))||[]).length*e[4]; });
+    const avg=sents?words/sents:0, bangs=(vis.match(/!/g)||[]).length;
+    let est=1+(act+ev*.6)/per*1.1+bangs/per*.3; if(avg&&avg<10) est+=.5; else if(avg>24) est-=.4;
+    const quote=(vis.match(/[“"][^”"\n]*[”"]/g)||[]).join('').length, cast={};
+    findLinks(vis).forEach(l=>{ cast[l.id]=(cast[l.id]||0)+1; });
+    rows.push({id:o.id,ch:o.ch,i,title:s.title,words,tension:s.tension||0,est:words?Math.round(Math.max(1,Math.min(5,est))*10)/10:0,
+      dlg:vis.length?Math.min(1,quote/vis.length):0,act:act/per,refl:refl/per,cast,pov:s.pov||'',place:s.place||'',threads:s.threads||[]});
+  });
+  ui.stRows={v:m.saved,n:Object.keys(m.scenes).length,at:Date.now(),rows}; return rows;
+}
+const stTen=r=>r.tension||r.est;
+function stLabel(r){ return r.ch.title+' › '+r.title; }
+// Scene details in the Inkling panel (This scene)
+function sceneDetailsHtml(id){
+  const m=S.meta, s=m.scenes[id], ents=Object.values(m.ents).sort((a,b)=>a.name.localeCompare(b.name));
+  const opt=(list,sel,none)=>'<option value="">'+none+'</option>'+list.map(e=>'<option value="'+e.id+'"'+(sel===e.id?' selected':'')+'>'+esc(e.name)+'</option>').join('');
+  const chars=ents.filter(e=>e.type==='char'), places=ents.filter(e=>e.type==='place');
+  return '<div class="sd" id="sceneDet">'
+    +'<label class="f">Point of view<select data-sd="pov">'+opt(chars,s.pov,'Not set')+'</select></label>'
+    +(places.length||s.place?'<label class="f">'+esc(LS('place'))+'<select data-sd="place">'+opt(places,s.place,'Not set')+'</select></label>':'')
+     +'<div class="f sdf">Tension<span class="seg sd-ten" role="group" aria-label="Tension">'+[1,2,3,4,5].map(n=>'<button data-sd="ten" data-n="'+n+'"'+(s.tension===n?' class="on" aria-pressed="true"':' aria-pressed="false"')+' title="'+['Calm','Easy','Rising','Tense','Peak'][n-1]+'">'+n+'</button>').join('')+'</span></div>'
+    +'<div class="f sdf">Plot threads<span class="sd-th">'+m.threads.map(t=>{ const on=(s.threads||[]).includes(t.id);
+      return '<button class="th-chip'+(on?' on':'')+'" data-sd="th" data-id="'+t.id+'" aria-pressed="'+on+'" style="--c:'+cssCol(t.color)+'">'+esc(t.name)+'</button>'; }).join('')
+    +'<input class="th-new" data-sd="new" maxlength="80" placeholder="'+(m.threads.length?'New thread…':'Name a plot thread…')+'" aria-label="New plot thread"></span></div>'
+    +sceneSetupsHtml(id)
+    +'<button class="lnk sd-open" data-sd="open">'+ico('chart',13)+'<span>Story insights</span></button></div>';
+}
+function sceneSetupsHtml(id){
+  const m=S.meta, ord=sceneOrder(), here=m.setups.filter(x=>x.scene===id), paid=m.setups.filter(x=>x.pay===id&&x.scene!==id), open=m.setups.filter(x=>!x.pay&&x.scene&&x.scene!==id&&ord[x.scene]<ord[id]);
+  return '<div class="f sdf">Setups and payoffs<div class="fs-mini">'
+    +here.map(x=>'<div class="fs-li"><span class="fs-ic" title="Set up here">◆</span><span>'+esc(x.text)+'</span><small>'+(x.pay&&m.scenes[x.pay]?'paid off in '+esc(m.scenes[x.pay].title):'no payoff yet')+'</small></div>').join('')
+    +paid.map(x=>'<div class="fs-li pay"><span class="fs-ic" title="Paid off here">✓</span><span>'+esc(x.text)+'</span><small>'+(x.scene&&m.scenes[x.scene]?'set up in '+esc(m.scenes[x.scene].title):'')+'</small></div>').join('')
+    +'<input class="th-new" data-sd="setup" maxlength="300" placeholder="Plant a setup: a clue, a promise… (Enter)" aria-label="New setup in this scene">'
+    +(open.length?'<select data-sd="pay" aria-label="Pay off a setup in this scene"><option value="">Pay off a setup here…</option>'+open.map(x=>'<option value="'+x.id+'">'+esc(x.text.slice(0,60))+'</option>').join('')+'</select>':'')
+    +'</div></div>';
+}
+function bindSceneDetails(id){
+  const box=$('#sceneDet'); if(!box) return; const m=S.meta;
+  const redo=()=>{ renderInspector(); renderBinder(); if(ui.view.k==='story') renderMain(); };
+  box.addEventListener('focusin',e=>{ if(e.target.dataset.sd==='setup'&&!e.target.value&&ui.sel&&ui.sel.trim()) { e.target.value=ui.sel.trim().replace(/\s+/g,' ').slice(0,300); e.target.select(); } });
+  box.addEventListener('change',e=>{ const k=e.target.dataset.sd, s=m.scenes[id];
+    if(k==='pay'){ const x=m.setups.find(q=>q.id===e.target.value); if(x){ x.pay=id; dirty('meta'); redo(); toast('Paid off here.',{plain:true}); } return; }
+    if(k!=='pov'&&k!=='place') return;
+    if(e.target.value) s[k]=e.target.value; else delete s[k]; dirty('meta'); });
+  box.addEventListener('click',e=>{ const b=e.target.closest('button[data-sd]'); if(!b) return; const s=m.scenes[id], k=b.dataset.sd;
+    if(k==='ten'){ const n=+b.dataset.n; if(s.tension===n) delete s.tension; else s.tension=n; dirty('meta'); redo(); }
+    else if(k==='th'){ const t=s.threads||[], i=t.indexOf(b.dataset.id); if(i>=0) t.splice(i,1); else t.push(b.dataset.id); if(t.length) s.threads=t; else delete s.threads; dirty('meta'); redo(); }
+    else if(k==='open') go({k:'story',tab:'pace'}); });
+  box.addEventListener('keydown',e=>{ if(e.key==='Enter'&&e.target.dataset.sd==='setup'){ e.preventDefault(); const t=e.target.value.trim(); if(!t) return; setupAdd(t,id); ui.sel=''; redo(); setTimeout(()=>{ const x=$('#sceneDet [data-sd="setup"]'); if(x) x.focus(); }); return; }
+    if(e.key!=='Enter'||e.target.dataset.sd!=='new') return; e.preventDefault();
+    const name=e.target.value.trim(); if(!name) return; const t=threadAdd(name), s=m.scenes[id]; s.threads=(s.threads||[]).concat(t.id); dirty('meta'); redo();
+    setTimeout(()=>{ const x=$('#sceneDet [data-sd="new"]'); if(x) x.focus(); }); });
+}
+function threadAdd(name){
+  const m=S.meta, t={id:uid('th'),name:String(name).slice(0,80),color:TL_COLORS[m.threads.length%TL_COLORS.length][0],note:'',done:''};
+  m.threads.push(t); dirty('meta'); return t;
+}
+// The view
+function renderStory(el,v){
+  const tab=['pace','cast','threads','setups'].includes(v.tab)?v.tab:(ui.stTab||'pace'); ui.stTab=tab; v.tab=tab;
+  const tabs=[['pace','Pacing'],['cast','Point of view'],['threads','Plot threads'],['setups','Setups & payoffs']];
+  el.innerHTML='<div class="main-head">'+backBtn()+'<span class="kind">'+ico('chart',16)+'</span><h1 class="mh-title">Story insights</h1>'
+    +'<div class="seg st-tabs" role="tablist">'+tabs.map(([k,l])=>'<button role="tab" data-st="tab" data-v="'+k+'" aria-selected="'+(k===tab)+'"'+(k===tab?' class="on"':'')+'>'+l+'</button>').join('')+'</div></div>'
+    +'<div class="pf-wrap st-wrap">'+(tab==='pace'?stPaceHtml():tab==='cast'?stCastHtml():tab==='setups'?stSetupsHtml():stThreadsHtml())+'</div>';
+  el.onclick=e=>{ const b=e.target.closest('[data-st],[data-open]'); if(!b) return;
+    if(b.dataset.open){ go({k:'scene',id:b.dataset.open}); return; }
+    const k=b.dataset.st;
+    if(k==='tab'){ v.tab=b.dataset.v; renderStory(el,v); }
+    else if(k==='ent') go({k:'ent',id:b.dataset.id});
+    else if(k==='thadd'){ const i=$('#thName',el), n=i&&i.value.trim(); if(!n){ if(i) i.focus(); return; } threadAdd(n); renderStory(el,v); const j=$('#thName',el); if(j) j.focus(); }
+    else if(k==='fsadd'){ const i=$('#fsText',el), t=i&&i.value.trim(); if(!t){ if(i) i.focus(); return; } setupAdd(t,$('#fsScene',el).value); renderStory(el,v); const j=$('#fsText',el); if(j) j.focus(); }
+    else if(k==='fsdel'){ S.meta.setups=S.meta.setups.filter(x=>x.id!==b.dataset.id); dirty('meta'); renderStory(el,v); }
+    else if(k==='thcol'){ const t=S.meta.threads.find(x=>x.id===b.dataset.id); if(t){ t.color=b.dataset.c; dirty('meta'); renderStory(el,v); } }
+    else if(k==='thdel'){ const t=S.meta.threads.find(x=>x.id===b.dataset.id); if(!t) return;
+      ask('Delete the thread “'+t.name+'”?','Scenes keep their words; they just stop being tagged with this thread.',[['yes','Delete','danger'],['no','Cancel']]).then(r=>{ if(r!=='yes') return;
+        S.meta.threads=S.meta.threads.filter(x=>x.id!==t.id); Object.values(S.meta.scenes).forEach(s=>{ if(s.threads){ s.threads=s.threads.filter(x=>x!==t.id); if(!s.threads.length) delete s.threads; } });
+        dirty('meta'); renderStory(el,v); }); }
+  };
+  el.onkeydown=e=>{ if(e.key==='Enter'&&e.target.id==='fsText'){ e.preventDefault(); const b=$('[data-st="fsadd"]',el); if(b) b.click(); return; }
+    if(e.key==='Enter'&&e.target.id==='thName'){ e.preventDefault(); const b=$('[data-st="thadd"]',el); if(b) b.click(); } };
+  el.oninput=e=>{ const fx=e.target.dataset.fs&&S.meta.setups.find(x=>x.id===e.target.dataset.id);
+    if(fx){ const k=e.target.dataset.fs; if(k==='text') fx.text=e.target.value.slice(0,300); else if(k==='note') fx.note=e.target.value.slice(0,2000); dirty('meta'); return; }
+    const t=e.target.dataset.th&&S.meta.threads.find(x=>x.id===e.target.dataset.id); if(!t) return;
+    if(e.target.dataset.th==='name') t.name=e.target.value.slice(0,80)||'Thread'; else if(e.target.dataset.th==='note') t.note=e.target.value.slice(0,2000); dirty('meta'); };
+  el.onchange=e=>{ const fx=e.target.dataset.fs&&S.meta.setups.find(x=>x.id===e.target.dataset.id);
+    if(fx&&(e.target.dataset.fs==='scene'||e.target.dataset.fs==='pay')){ fx[e.target.dataset.fs]=e.target.value; dirty('meta'); renderStory(el,v); return; }
+    const t=e.target.dataset.th==='done'&&S.meta.threads.find(x=>x.id===e.target.dataset.id); if(!t) return; t.done=e.target.value; dirty('meta'); renderStory(el,v); };
+}
+function stEmpty(){ return '<section class="pf"><p class="ct-none">Write a scene or two first. Story insights reads your scenes in order.</p></section>'; }
+function stPaceHtml(){
+  const rows=storyRows(); if(!rows.some(r=>r.words)) return stEmpty();
+  const n=rows.length, cw=Math.max(14,680/n), x0=34, W=x0+n*cw+12, yT=34, yB=170, wT=186, wB=226, mT=236, mB=248, H=262;
+  const y=t=>yB-(t-1)/4*(yB-yT), cx=i=>x0+i*cw+cw/2, maxW=Math.max(...rows.map(r=>r.words),1);
+  let bands='', lastCh=null, ci=0;
+  rows.forEach((r,i)=>{ if(r.ch!==lastCh){ let j=i; while(j<n&&rows[j].ch===r.ch) j++; const bw=(j-i)*cw;
+    bands+='<g><rect x="'+(x0+i*cw)+'" y="14" width="'+bw+'" height="'+(mB-14)+'" class="st-band'+(ci%2?' alt':'')+'"/><text x="'+(x0+i*cw+4)+'" y="26" class="st-chl">'+esc(stClip(r.ch.title,Math.floor(bw/6.5)))+'</text></g>'; lastCh=r.ch; ci++; } });
+  const pts=rows.map((r,i)=>r.words||r.tension?[cx(i),y(stTen(r))]:null);
+  let path='', pen=false; pts.forEach(p=>{ if(!p){ pen=false; return; } path+=(pen?'L':'M')+p[0].toFixed(1)+' '+p[1].toFixed(1); pen=true; });
+  const grid=[1,2,3,4,5].map(t=>'<line x1="'+x0+'" x2="'+(W-12)+'" y1="'+y(t)+'" y2="'+y(t)+'" class="st-grid"/><text x="'+(x0-8)+'" y="'+(y(t)+4)+'" class="st-ax" text-anchor="end">'+t+'</text>').join('');
+  const cols=rows.map((r,i)=>{ const x=x0+i*cw, bh=r.words/maxW*(wB-wT), t=stTen(r), d=r.dlg, rest=1-d, ar=r.act+r.refl, a=ar?rest*r.act/ar:0, f=ar?rest*r.refl/ar:0, w2=cw-4;
+    const tip=stLabel(r)+'\n'+(r.tension?'Tension '+r.tension+' (set by you)':r.words?'Tension about '+r.est+' (estimated)':'No words yet')+'\n'+fmt(r.words)+' words · '+Math.round(d*100)+'% dialogue';
+    return '<g class="st-col" data-open="'+r.id+'"><title>'+esc(tip)+'</title><rect x="'+x+'" y="14" width="'+cw+'" height="'+(mB-14)+'" class="st-hit"/>'
+      +'<rect x="'+(x+2)+'" y="'+(wB-bh).toFixed(1)+'" width="'+w2+'" height="'+bh.toFixed(1)+'" rx="2" class="st-words"/>'
+      +(r.words?'<rect x="'+(x+2)+'" y="'+mT+'" width="'+(w2*d).toFixed(1)+'" height="'+(mB-mT)+'" class="st-m dlg"/><rect x="'+(x+2+w2*d).toFixed(1)+'" y="'+mT+'" width="'+(w2*a).toFixed(1)+'" height="'+(mB-mT)+'" class="st-m act"/><rect x="'+(x+2+w2*(d+a)).toFixed(1)+'" y="'+mT+'" width="'+(w2*f).toFixed(1)+'" height="'+(mB-mT)+'" class="st-m refl"/><rect x="'+(x+2+w2*(d+a+f)).toFixed(1)+'" y="'+mT+'" width="'+Math.max(0,w2*(1-d-a-f)).toFixed(1)+'" height="'+(mB-mT)+'" class="st-m nar"/>':'')
+      +(pts[i]?'<circle cx="'+pts[i][0].toFixed(1)+'" cy="'+pts[i][1].toFixed(1)+'" r="'+(r.tension?4.5:3.5)+'" class="st-pt'+(r.tension?' set':'')+'"/>':'')+'</g>'; }).join('');
+  const svg='<div class="st-chart"><svg viewBox="0 0 '+W+' '+H+'" style="width:100%;min-width:'+(cw>14?0:W)+'px" role="img" aria-label="Tension across the book, scene by scene">'+bands+grid
+    +'<path d="'+path+'" class="st-line"/>'+cols+'</svg></div>'
+    +'<div class="st-key"><span><i class="st-k pt set"></i>Tension you set</span><span><i class="st-k pt"></i>Estimated from your words</span><span><i class="st-k dlg"></i>Dialogue</span><span><i class="st-k act"></i>Action</span><span><i class="st-k refl"></i>Reflection</span><span><i class="st-k nar"></i>Other narration</span></div>';
+  // what stands out
+  const notes=[], vals=rows.map(r=>r.words||r.tension?stTen(r):null), total=rows.reduce((a,r)=>a+r.words,0);
+  let i=0; while(i<n){ if(vals[i]!=null&&vals[i]<=2){ let j=i; while(j+1<n&&vals[j+1]!=null&&vals[j+1]<=2) j++; if(j-i+1>=3) notes.push('<li><b>A quiet stretch of '+(j-i+1)+' scenes</b>, from <button class="lnk" data-open="'+rows[i].id+'">'+esc(stLabel(rows[i]))+'</button> to <button class="lnk" data-open="'+rows[j].id+'">'+esc(stLabel(rows[j]))+'</button>. A breather can be good; check it isn’t a sag.</li>'); i=j+1; } else i++; }
+  const top=rows.filter(r=>r.words||r.tension).sort((a,b)=>stTen(b)-stTen(a)||b.i-a.i)[0];
+  if(top&&total){ const at=rows.slice(0,top.i).reduce((a,r)=>a+r.words,0)+top.words/2, pc=Math.round(at/total*100);
+    notes.push('<li><b>The most intense scene</b> is <button class="lnk" data-open="'+top.id+'">'+esc(stLabel(top))+'</button>, '+pc+'% of the way through. '+(pc<60?'Most stories build to their biggest moment later, around 75–90%.':pc>95?'Leave a little room after the climax to land the ending.':'That’s about where a climax usually sits.')+'</li>'); }
+  const unset=rows.filter(r=>r.words&&!r.tension).length;
+  if(unset) notes.push('<li>'+unset+' scene'+(unset===1?' has':'s have')+' an estimated tension. Set your own in the Inkling panel (This scene › Tension) for a truer line.</li>');
+  return '<section class="pf"><h2>Pacing</h2><p class="fine">Each column is a scene, in book order. The line is how tense it feels; the bars are its length; the strip under them is its mix. Click a scene to open it.</p>'+svg+'</section>'
+    +(notes.length?'<section class="pf"><h2>What stands out</h2><ul class="st-notes">'+notes.join('')+'</ul></section>':'');
+}
+function stClip(s,n){ s=String(s); return n<4?'':s.length>n?s.slice(0,n-1)+'…':s; }
+function stCastHtml(){
+  const rows=storyRows(), m=S.meta; if(!rows.some(r=>r.words)) return stEmpty();
+  const total=rows.reduce((a,r)=>a+r.words,0)||1, by={};
+  rows.forEach(r=>{ const k=r.pov&&m.ents[r.pov]?r.pov:''; const b=by[k]||(by[k]={words:0,scenes:0,chs:new Set()}); b.words+=r.words; b.scenes++; b.chs.add(r.ch.id); });
+  const keys=Object.keys(by).sort((a,b)=>(a?0:1)-(b?0:1)||by[b].words-by[a].words);
+  const pov='<section class="pf"><h2>Point of view</h2><p class="fine">Whose eyes we see through, by words. Set each scene’s point of view in the Inkling panel (This scene › Point of view).</p><div class="st-bars">'
+    +keys.map(k=>{ const b=by[k], pc=b.words/total*100, e=k&&m.ents[k];
+      return '<div class="st-br"><span class="st-bn">'+(e?'<button class="lnk" data-st="ent" data-id="'+k+'">'+esc(e.name)+'</button>':'<span class="muted">Not set</span>')+'</span><span class="st-bb"><i style="width:'+pc.toFixed(1)+'%;--c:'+(e?'var(--char)':'var(--line)')+'"></i></span><span class="st-bv">'+Math.round(pc)+'% · '+b.scenes+' scene'+(b.scenes===1?'':'s')+'</span></div>'; }).join('')+'</div></section>';
+  const chars=Object.values(m.ents).filter(e=>e.type==='char'), tot={};
+  rows.forEach(r=>Object.keys(r.cast).forEach(id=>{ tot[id]=(tot[id]||0)+r.cast[id]; }));
+  const list=chars.filter(e=>tot[e.id]||rows.some(r=>r.pov===e.id)).sort((a,b)=>(tot[b.id]||0)-(tot[a.id]||0)).slice(0,20);
+  const chs=m.chapters.filter(c=>c.scenes.length), cell={}, povIn={};
+  rows.forEach(r=>{ Object.keys(r.cast).forEach(id=>{ const k=id+'|'+r.ch.id; cell[k]=(cell[k]||0)+r.cast[id]; }); if(r.pov) povIn[r.pov+'|'+r.ch.id]=1; });
+  const max=Math.max(1,...Object.values(cell));
+  const grid=list.length?'<div class="st-grid-wrap"><table class="st-tab"><thead><tr><th></th>'+chs.map((c,i)=>'<th title="'+esc(c.title)+'">'+(i+1)+'</th>').join('')+'<th>All</th></tr></thead><tbody>'
+    +list.map(e=>'<tr><th><button class="lnk" data-st="ent" data-id="'+e.id+'">'+esc(e.name)+'</button></th>'+chs.map(c=>{ const k=e.id+'|'+c.id, nn=cell[k]||0;
+      return '<td class="st-c'+(povIn[k]?' pov':'')+'" style="--a:'+(nn?(.15+.85*nn/max).toFixed(2):0)+'" title="'+esc(e.name+' in '+c.title+': '+nn+' mention'+(nn===1?'':'s')+(povIn[k]?', point of view':''))+'">'+(nn||'')+'</td>'; }).join('')+'<td class="st-all">'+(tot[e.id]||0)+'</td></tr>').join('')
+    +'</tbody></table></div><p class="fine">Mentions of each character by chapter (names and aliases). A ringed square means they hold the point of view there.</p>'
+    :'<p class="ct-none">No characters are mentioned yet. Add character pages and use their names in your scenes.</p>';
+  return pov+'<section class="pf"><h2>Screen time</h2>'+grid+'</section>';
+}
+function threadWarnings(){
+  const m=S.meta, chs=m.chapters.filter(c=>c.scenes.length), idx={}, out=[];
+  chs.forEach((c,i)=>{ idx[c.id]=i; });
+  m.threads.forEach(t=>{
+    const at=[...new Set(storyRows().filter(r=>r.threads.includes(t.id)).map(r=>idx[r.ch.id]))].sort((a,b)=>a-b);
+    if(!at.length){ out.push({t,kind:'none',text:'“'+t.name+'” isn’t in any scene yet.'}); return; }
+    for(let k=1;k<at.length;k++) if(at[k]-at[k-1]-1>=THREAD_GAP) out.push({t,kind:'gap',text:'“'+t.name+'” disappears for '+(at[k]-at[k-1]-1)+' chapters, between '+chs[at[k-1]].title+' and '+chs[at[k]].title+'.'});
+    const last=at[at.length-1];
+    if(!t.done&&chs.length-1-last>=THREAD_GAP) out.push({t,kind:'end',text:'“'+t.name+'” was last seen in '+chs[last].title+' and is never resolved.'});
+    else if(!t.done&&chs.length>=THREAD_GAP*2) out.push({t,kind:'open',text:'“'+t.name+'” has no resolving scene yet.'});
+  });
+  return out;
+}
+function stSetupsHtml(){
+  const m=S.meta, ord=sceneOrder(), list=m.setups.slice().sort((a,b)=>(ord[a.scene]??1e9)-(ord[b.scene]??1e9)), warn=setupWarnings(), cur=ui.view.k==='scene'?ui.view.id:(ui.lastScene||'');
+  const scOpts=(sel,none)=>'<option value="">'+none+'</option>'+m.chapters.map(ch=>'<optgroup label="'+esc(ch.title)+'">'+ch.scenes.map(id=>'<option value="'+id+'"'+(sel===id?' selected':'')+'>'+esc(m.scenes[id].title)+'</option>').join('')+'</optgroup>').join('');
+  const add='<div class="th-add fs-add"><input id="fsText" maxlength="300" placeholder="A clue, a promise, a gun on the wall…" aria-label="New setup"><select id="fsScene" aria-label="Set up in">'+scOpts(m.scenes[cur]?cur:'','Set up in…')+'</select><button class="btn pri" data-st="fsadd">'+ico('plus',14)+'<span>Add setup</span></button></div>';
+  const intro='<p class="fine">Every clue, promise or Chekhov’s gun should pay off later. Plant them here or in the Inkling panel (This scene › Setups and payoffs; select words in a scene first to use them), then choose where each one pays off.</p>';
+  if(!list.length) return '<section class="pf"><h2>Setups &amp; payoffs</h2>'+intro+add+'</section>';
+  const paid=list.filter(x=>x.pay).length;
+  const cards=list.map(x=>{ const bad=warn.some(w=>w.x===x&&w.kind==='order');
+    return '<div class="th-card fs-card'+(x.pay?' paid':'')+(bad?' bad':'')+'"><div class="th-row"><span class="fs-ic">'+(x.pay?'✓':'◆')+'</span><input data-fs="text" data-id="'+x.id+'" value="'+esc(x.text)+'" maxlength="300" aria-label="Setup"><button class="ibtn" data-st="fsdel" data-id="'+x.id+'" aria-label="Delete setup" title="Delete setup">'+ico('trash',14)+'</button></div>'
+      +'<div class="two"><label class="f">Set up in<select data-fs="scene" data-id="'+x.id+'">'+scOpts(x.scene,'Not chosen')+'</select></label><label class="f">Paid off in<select data-fs="pay" data-id="'+x.id+'">'+scOpts(x.pay,'Not yet')+'</select></label></div>'
+      +'<textarea data-fs="note" data-id="'+x.id+'" rows="2" placeholder="How it pays off, or what the reader should notice." aria-label="Setup notes">'+esc(x.note)+'</textarea>'
+      +'<p class="fine">'+[x.scene&&m.scenes[x.scene]?'<button class="lnk" data-open="'+x.scene+'">Open the setup</button>':'',x.pay&&m.scenes[x.pay]?'<button class="lnk" data-open="'+x.pay+'">Open the payoff</button>':''].filter(Boolean).join(' · ')+'</p></div>'; }).join('');
+  return '<section class="pf"><h2>Setups &amp; payoffs <span class="muted">'+paid+' of '+list.length+' paid off</span></h2>'+intro+add+'</section>'
+    +'<section class="pf"><h2>To check <span class="muted">'+warn.length+'</span></h2>'+(warn.length?'<ul class="st-notes">'+warn.map(w=>'<li class="th-w fs-'+w.kind+'">'+esc(w.text)+'</li>').join('')+'</ul>':'<p class="ct-none">Every setup pays off, in the right order.</p>')+'</section>'
+    +'<section class="pf"><h2>In book order</h2><div class="th-cards">'+cards+'</div></section>';
+}
+function stThreadsHtml(){
+  const m=S.meta, rows=storyRows(), chs=m.chapters.filter(c=>c.scenes.length), idx={};
+  chs.forEach((c,i)=>{ idx[c.id]=i; });
+  const add='<div class="th-add"><input id="thName" maxlength="80" placeholder="A subplot, mystery or relationship, like “Who sank the Lantern?”" aria-label="New plot thread"><button class="btn pri" data-st="thadd">'+ico('plus',14)+'<span>Add thread</span></button></div>';
+  if(!m.threads.length) return '<section class="pf"><h2>Plot threads</h2><p class="fine">Plot threads are the storylines that run through your book: subplots, mysteries, relationships. Tag the scenes that move each one on (Inkling panel › This scene › Plot threads) and see where each thread goes quiet or is left hanging.</p>'+add+'</section>';
+  const doneAt={}; m.threads.forEach(t=>{ const r=t.done&&rows.find(x=>x.id===t.done); if(r) doneAt[t.id]=idx[r.ch.id]; });
+  const grid='<div class="st-grid-wrap"><table class="st-tab th-tab"><thead><tr><th></th>'+chs.map((c,i)=>'<th title="'+esc(c.title)+'">'+(i+1)+'</th>').join('')+'</tr></thead><tbody>'
+    +m.threads.map(t=>{ const n={}; rows.forEach(r=>{ if(r.threads.includes(t.id)) n[idx[r.ch.id]]=(n[idx[r.ch.id]]||0)+1; });
+      return '<tr><th><span class="th-dot" style="--c:'+cssCol(t.color)+'"></span>'+esc(t.name)+'</th>'+chs.map((c,i)=>{ const k=n[i]||0, after=doneAt[t.id]!=null&&i>doneAt[t.id];
+        return '<td class="th-c'+(k?' on':'')+(after?' after':'')+(doneAt[t.id]===i?' done':'')+'" style="--c:'+cssCol(t.color)+'" title="'+esc(t.name+' · '+c.title+': '+k+' scene'+(k===1?'':'s')+(doneAt[t.id]===i?' · resolved here':''))+'">'+(doneAt[t.id]===i?'✓':k>1?k:'')+'</td>'; }).join('')+'</tr>'; }).join('')
+    +'</tbody></table></div>';
+  const warn=threadWarnings();
+  const scOpts=sel=>'<option value="">Not resolved yet</option>'+m.chapters.map(ch=>'<optgroup label="'+esc(ch.title)+'">'+ch.scenes.map(id=>'<option value="'+id+'"'+(sel===id?' selected':'')+'>'+esc(m.scenes[id].title)+'</option>').join('')+'</optgroup>').join('');
+  const cards=m.threads.map(t=>{ const sc=rows.filter(r=>r.threads.includes(t.id));
+    return '<div class="th-card" style="--c:'+cssCol(t.color)+'"><div class="th-row"><input data-th="name" data-id="'+t.id+'" value="'+esc(t.name)+'" maxlength="80" aria-label="Thread name">'
+      +'<span class="sws mini">'+TL_COLORS.map(c=>'<button class="sw'+(c[0]===t.color?' on':'')+'" data-st="thcol" data-id="'+t.id+'" data-c="'+c[0]+'" style="--c:var(--'+c[0]+')" title="'+c[1]+'" aria-label="'+c[1]+'"></button>').join('')+'</span>'
+      +'<button class="ibtn" data-st="thdel" data-id="'+t.id+'" aria-label="Delete thread" title="Delete thread">'+ico('trash',14)+'</button></div>'
+      +'<textarea data-th="note" data-id="'+t.id+'" rows="2" placeholder="What this thread is about, and how it should end." aria-label="Thread notes">'+esc(t.note)+'</textarea>'
+      +'<label class="f">Resolved in<select data-th="done" data-id="'+t.id+'">'+scOpts(t.done)+'</select></label>'
+      +'<p class="fine">'+(sc.length?'In '+sc.length+' scene'+(sc.length===1?'':'s')+': '+sc.slice(0,8).map(r=>'<button class="lnk" data-open="'+r.id+'">'+esc(r.title)+'</button>').join(', ')+(sc.length>8?' and more':''):'Not in any scene yet.')+'</p></div>'; }).join('');
+  return '<section class="pf"><h2>Plot threads</h2><p class="fine">Each row is a thread, each column a chapter. Tag scenes in the Inkling panel (This scene › Plot threads); mark where a thread is resolved below.</p>'+grid+'</section>'
+    +'<section class="pf"><h2>Threads to check <span class="muted">'+warn.length+'</span></h2>'+(warn.length?'<ul class="st-notes">'+warn.map(w=>'<li class="th-w '+w.kind+'">'+esc(w.text)+'</li>').join('')+'</ul>':'<p class="ct-none">Every thread keeps turning up and is resolved.</p>')+'</section>'
+    +'<section class="pf"><h2>Your threads</h2>'+add+'<div class="th-cards">'+cards+'</div></section>';
+}
+
 /* ---------- header / stats ---------- */
 function updateStats(){
   planSync(); planPaint();
@@ -2881,7 +3189,7 @@ function qsItems(){
   m.chapters.forEach(c=>{ add({k:'cork',ch:c.id},c.title,'Chapter','book'); c.scenes.forEach(id=>{ const s=m.scenes[id]; if(s) add({k:'scene',id},s.title,c.title,'pen'); }); });
   Object.values(m.ents).forEach(e=>add({k:'ent',id:e.id},e.name,LS(e.type),'note'));
   [['nt','note'],['ol','list'],['tl','time'],['rm','web'],['ft','tree']].forEach(([k,i])=>m[k+'s'].forEach(x=>add({k,id:x.id},x.name,k==='nt'&&x.kind==='board'?'Brainstorm':LS(k),i)));
-  [[{k:'cork'},'Corkboard','card'],[{k:'search'},'Search everything','search'],[{k:'ss'},'Writing sessions','timer'],[{k:'plan'},'Deadline planner','cal'],[{k:'cont'},'Continuity check','search'],[{k:'trash'},'Trash','trash'],[{k:'layout'},'Project settings','layout'],[{k:'prefs'},'Settings','sliders']]
+  [[{k:'cork'},'Corkboard','card'],[{k:'search'},'Search everything','search'],[{k:'ss'},'Writing sessions','timer'],[{k:'plan'},'Deadline planner','cal'],[{k:'cont'},'Continuity check','search'],[{k:'story'},'Story insights','chart'],[{k:'trash'},'Trash','trash'],[{k:'layout'},'Project settings','layout'],[{k:'prefs'},'Settings','sliders']]
     .forEach(([v,l,i])=>add(v,l,'Screen',i));
   return out;
 }
@@ -3293,7 +3601,7 @@ function renderMain(){
   if(!viewValid(v)){ ui.view=firstView(); return renderMain(); }
   const key=v.k+':'+(v.id||''), reset=key!==ui.lastKey; ui.lastKey=key;
   const keep=el.scrollTop;
-  if(v.k==='ent') renderEnt(el,v); else if(v.k==='cork') renderCork(el); else if(v.k==='tl') renderTl(el,v); else if(v.k==='nt') renderNt(el,v); else if(v.k==='ol') renderOl(el,v); else if(v.k==='rm'||v.k==='ft') renderCv(el,v); else if(v.k==='ss') renderSs(el); else if(v.k==='prefs') renderPrefs(el); else if(v.k==='snap') renderSnap(el,v); else if(v.k==='find') renderFind(el); else if(v.k==='help') renderHelp(el); else if(v.k==='den') renderDen(el); else if(v.k==='cont') renderCont(el); else if(v.k==='layout') renderLayout(el); else if(v.k==='plan') renderPlan(el); else if(v.k==='trash') renderTrash(el); else if(v.k==='search') renderSearch(el); else renderScene(el,v);
+  if(v.k==='ent') renderEnt(el,v); else if(v.k==='cork') renderCork(el); else if(v.k==='tl') renderTl(el,v); else if(v.k==='nt') renderNt(el,v); else if(v.k==='ol') renderOl(el,v); else if(v.k==='rm'||v.k==='ft') renderCv(el,v); else if(v.k==='ss') renderSs(el); else if(v.k==='prefs') renderPrefs(el); else if(v.k==='snap') renderSnap(el,v); else if(v.k==='find') renderFind(el); else if(v.k==='help') renderHelp(el); else if(v.k==='den') renderDen(el); else if(v.k==='cont') renderCont(el); else if(v.k==='layout') renderLayout(el); else if(v.k==='plan') renderPlan(el); else if(v.k==='trash') renderTrash(el); else if(v.k==='search') renderSearch(el); else if(v.k==='story') renderStory(el,v); else renderScene(el,v);
   el.scrollTop=reset?0:keep;
   if(reset&&v.k==='scene') posRestore(v.id);
 }
@@ -5261,6 +5569,7 @@ function winAct(a,src){
   ui.actLast={a,src,t:now};
   if(a==='layout') go({k:'layout'});
   else if(a==='plan') go({k:'plan'});
+  else if(a==='story') go({k:'story'});
   else if(a==='search') go({k:'search'});
   else if(a==='qs') openQs();
   else if(a==='next'||a==='prev') sceneStep(a==='next'?1:-1);
@@ -5640,20 +5949,21 @@ function renderInspector(){
   sec.todo='<section class="psec todo" id="todo"><h3><span>To do today</span><span class="td-n" id="tdN"></span></h3><div id="tdBox"></div></section>';
   sec.ms='<section class="psec"><h3>Manuscript</h3><div class="big"><b class="mono" id="totNum" style="font-size:26px">0</b><span>of <span class="mono" id="totOf">0</span> words</span></div><div class="bar proj"><i id="totBar" style="width:0"></i></div>'
     +'<p class="fine">'+m.chapters.length+' chapter'+(m.chapters.length===1?'':'s')+', '+Object.keys(m.scenes).length+' scenes, '+Object.keys(m.ents).length+' story pages.</p>'
-    +(n=>'<button class="btn sm ct-chip'+(n?' warn':'')+'" id="contBtn">'+ico('search',13)+'<span>'+(n?n+' continuity thing'+(n===1?'':'s')+' to check':'Continuity check')+'</span></button>')(contCount())+'</section>';
+    +(n=>'<button class="btn sm ct-chip'+(n?' warn':'')+'" id="contBtn">'+ico('search',13)+'<span>'+(n?n+' continuity thing'+(n===1?'':'s')+' to check':'Continuity check')+'</span></button>')(contCount())+' <button class="btn sm" id="storyBtn">'+ico('chart',13)+'<span>Story insights</span></button></section>';
   if(v.k==='scene'&&m.scenes[v.id]){
     const d=S.sc[v.id];
     sec.scene='<section class="psec"><h3>This scene</h3><label class="sec-l" for="synIn" style="margin-top:0">Synopsis</label><textarea class="ta" id="synIn" rows="3" placeholder="One or two lines on what happens.">'+esc(d.synopsis)+'</textarea>'
+      +sceneDetailsHtml(v.id)
       +'<label class="sec-l" for="scGoal">Word target</label><div class="sc-goal"><input id="scGoal" type="number" min="0" step="100" placeholder="None" value="'+(m.scenes[v.id].goal||'')+'"></div>'
       +'<label class="sec-l" for="noteIn">Notes</label><textarea class="ta" id="noteIn" rows="3" placeholder="Reminders, research, loose ends.">'+esc(d.notes)+'</textarea>'
       +'<span class="sec-l">Linked in this scene</span><div class="chiplinks" id="sceneChips"></div></section>';
   }
   const h=m.layout.order.filter(k=>sec[k]&&!loHidden(k)).map(k=>sec[k]).join('')
     ||'<p class="fine lo-empty">Everything in this panel is hidden. <button class="lnk" data-a="layout">Project settings</button></p>';
-  const el=$('#insp'); el.innerHTML=h; paintPet(true); updateStats(); updateSceneChips(); bindPomo(); pmPaint(); drawTodo(); bindTodo();
+  const el=$('#insp'); el.innerHTML=h; paintPet(true); updateStats(); updateSceneChips(); bindPomo(); pmPaint(); drawTodo(); bindTodo(); if(v.k==='scene'&&m.scenes[v.id]) bindSceneDetails(v.id);
   const on=(q,ev,f)=>{ const x=$(q,el); if(x) x.addEventListener(ev,f); };
   on('#petBtn','click',()=>{ bump(); say(line(curMood())); });
-  on('#contBtn','click',()=>go({k:'cont'}));
+  on('#contBtn','click',()=>go({k:'cont'})); on('#storyBtn','click',()=>go({k:'story'}));
   on('#denBtn','click',()=>{ ui.newThings=0; if(ui.view.k==='den') goBack(); else go({k:'den'}); });
   on('[data-a="layout"]','click',()=>go({k:'layout'}));
   on('#planLine','click',()=>go({k:'plan'}));
@@ -5872,10 +6182,10 @@ function renderMenu(){
   const winItems=()=>'<hr><small class="m-h">Window</small>'+item('layout','Project settings…')+item('tBinder',(loHidden('binder')?'Show':'Hide')+' the binder')+item('tInsp',(loHidden('insp')?'Show':'Hide')+' the Inkling panel')+item('split',ui.split?'Close side by side':'Side by side')+item('focus',ui.focus?'Leave focus mode':'Focus mode')+'<hr>';
   const item=(m,label,cls)=>'<button data-m="'+m+'"'+(cls?' class="'+cls+'"':'')+'>'+label+'</button>';
   if(DESK){ el.innerHTML=item('save','Save')+item('projects','Projects…')+item('share','Share this project…')+'<hr>'+item('export','Export… (Word, PDF, EPUB)')+item('json','Back up this project (.json)')+item('import','Import a backup as a new project…')+'<hr>'
-    +item('find','Find and replace…')+item('cont','Continuity check')+item('qs','Go to… ('+MODK+'+P)')+item('search','Search everything…')+item('sessions','Writing sessions')+item('plan','Deadline planner')+item('trash','Trash')+item('prefs','Settings')+winItems()+item('help','How sharing works')+item('keys','Keyboard shortcuts')+item('tour','Show the tour')+'<hr>'+item('reveal','Show projects folder')
+    +item('find','Find and replace…')+item('cont','Continuity check')+item('story','Story insights')+item('qs','Go to… ('+MODK+'+P)')+item('search','Search everything…')+item('sessions','Writing sessions')+item('plan','Deadline planner')+item('trash','Trash')+item('prefs','Settings')+winItems()+item('help','How sharing works')+item('keys','Keyboard shortcuts')+item('tour','Show the tour')+'<hr>'+item('reveal','Show projects folder')
     +'<small>Saved on this computer as you write. Each project folder also keeps automatic backups.</small>'; return; }
   el.innerHTML=item('save','Save now')+'<hr>'+item('export','Export… (Word, PDF, EPUB)')+item('json','Back up project (.json)')+item('restore','Restore from a backup…')+'<hr>'
-    +item('find','Find and replace…')+item('cont','Continuity check')+item('qs','Go to… ('+MODK+'+P)')+item('search','Search everything…')+item('sessions','Writing sessions')+item('plan','Deadline planner')+item('trash','Trash')+item('prefs','Settings')+winItems()+item('help','How sharing works')+item('keys','Keyboard shortcuts')+item('tour','Show the tour')+'<hr>'
+    +item('find','Find and replace…')+item('cont','Continuity check')+item('story','Story insights')+item('qs','Go to… ('+MODK+'+P)')+item('search','Search everything…')+item('sessions','Writing sessions')+item('plan','Deadline planner')+item('trash','Trash')+item('prefs','Settings')+winItems()+item('help','How sharing works')+item('keys','Keyboard shortcuts')+item('tour','Show the tour')+'<hr>'
     +item('sample',cf==='m-sample'?'Replace everything with the sample? Click again':'Load the sample project','warn')
     +item('blank',cf==='m-blank'?'Replace everything with a blank project? Click again':'Start a blank project','warn')
     +'<small>'+(P.db?'Your project saves automatically to your Claude account, private to you. A new project comes with its own Inky; your daily goal and timer settings carry over.':'Your project saves on this device only. Back it up from here when you can.')+'</small>';
@@ -5898,7 +6208,7 @@ function bindMenu(){
     else if(a==='import'){ closeMenu(); deskImportPick(); }
     else if(a==='reveal'){ closeMenu(); DESK.reveal(); }
     else if(a==='sessions'){ closeMenu(); go({k:'ss'}); }
-    else if(['layout','tBinder','tInsp','focus','keys','plan','search','trash','split','qs'].includes(a)){ closeMenu(); winAct(a); }
+    else if(['layout','tBinder','tInsp','focus','keys','plan','story','search','trash','split','qs'].includes(a)){ closeMenu(); winAct(a); }
     else if(a==='restore'){ closeMenu(); $('#fileIn').value=''; $('#fileIn').click(); }
     else if(a==='sample') confirmDo('m-sample',()=>{ closeMenu(); replaceProject(normalize(sampleProject()),true); },renderMenu);
     else if(a==='blank') confirmDo('m-blank',()=>{ closeMenu(); replaceProject(normalize(blankProject()),true); },renderMenu);

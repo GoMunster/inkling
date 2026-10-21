@@ -27,10 +27,10 @@ The full plan, KDP requirements and best practices are in [PUBLISHING-PLAN.md](P
 - [ ] World-building: magic/technology rules with costs and limits, languages and glossaries with pronunciation, invented calendars, currencies
 - [ ] Map maker: upload or draw a world map, pin story pages to it, see which scenes happen where
 - [ ] Character arcs: goal, wound, lie and change per character across chapters, as a line chart
-- [ ] Pacing graph: tension, action vs reflection and scene length across the book
-- [ ] POV and screen-time balance: words per character and viewpoint, chapter by chapter
-- [ ] Subplot tracker: warns when a thread disappears for too long or never resolves
-- [ ] Foreshadowing log: setups linked to payoffs, unresolved setups listed
+- [x] Pacing graph: tension, action vs reflection and scene length across the book
+- [x] POV and screen-time balance: words per character and viewpoint, chapter by chapter
+- [x] Subplot tracker: warns when a thread disappears for too long or never resolves
+- [x] Foreshadowing log: setups linked to payoffs, unresolved setups listed
 
 ## Writing and revising
 
@@ -51,7 +51,8 @@ The full plan, KDP requirements and best practices are in [PUBLISHING-PLAN.md](P
 
 ## Planning and structure
 
-- [ ] Scene details (POV, story date, location, plot threads) and a plot grid
+- [x] Scene details (POV, place, tension, plot threads) and a plot grid
+- [ ] Story date for each scene
 - [ ] Custom scene statuses and colour labels, with a binder filter
 - [ ] Characters' ages from the timeline
 - [ ] Linking timeline cards to each other

@@ -771,3 +771,110 @@ test('story pages: your own fields, and a picture dropped onto the page', async 
   await expect(page.locator('#entTop img').first()).toBeVisible();
   expect(errors).toEqual([]);
 });
+
+const STORY_PROJECT = (() => {
+  const chapters = [], scenes = {}, sc = {};
+  const texts = [
+    'Mara walked to the market. She thought about her mother and wondered whether she remembered the old songs.',
+    'Mara ran. The soldiers chased her through the alley, swords drawn, and she leapt the wall as a gun fired twice!',
+    '"Where were you?" Jon asked. "Out," Mara said. "Out where?" "Just out."',
+    'The rain fell on the quiet town. Jon sat by the window and remembered the summer.',
+    'Jon felt the long afternoon pass. He wondered about the letter and thought about Mara.',
+    'The tower exploded. Mara screamed, blood on her hands, and fought the captain on the burning stairs!'
+  ];
+  texts.forEach((t, i) => { const c = 'c' + (i + 1), s = 's' + (i + 1);
+    chapters.push({ id: c, title: 'Chapter ' + (i + 1), open: true, scenes: [s] });
+    scenes[s] = { title: 'Scene ' + (i + 1), status: 'draft', words: 0 }; sc[s] = { text: t, synopsis: '', notes: '' }; });
+  return { meta: { v: 2, title: 'Story Test', chapters, scenes, days: {}, pet: { name: 'Inky', total: 0 },
+    ents: { e1: { id: 'e1', type: 'char', name: 'Mara', aliases: [], tag: '' }, e2: { id: 'e2', type: 'char', name: 'Jon', aliases: [], tag: '' },
+      e3: { id: 'e3', type: 'place', name: 'the market', aliases: [], tag: '' } } }, sc, en: {} };
+})();
+
+test('story insights: scene details, pacing, point of view and plot threads', async ({ page }) => {
+  const errors = await openApp(page, { project: STORY_PROJECT });
+  await page.click('.sc-btn[data-id="s1"]');
+  await page.selectOption('#sceneDet [data-sd="pov"]', 'e1');
+  await page.selectOption('#sceneDet [data-sd="place"]', 'e3');
+  await page.click('#sceneDet [data-sd="ten"][data-n="2"]');
+  await page.fill('#sceneDet [data-sd="new"]', 'The missing letter'); await page.press('#sceneDet [data-sd="new"]', 'Enter');
+  await expect(page.locator('#sceneDet .th-chip.on')).toHaveText('The missing letter');
+  let p = await waitSaved(page, p => p.meta.scenes.s1.threads && p.meta.scenes.s1.tension === 2);
+  expect(p.meta.scenes.s1).toMatchObject({ pov: 'e1', place: 'e3', tension: 2 });
+  expect(p.meta.threads).toHaveLength(1);
+  // tension toggles off, and scene 2 also gets the thread from its chip
+  await page.click('.sc-btn[data-id="s2"]');
+  await page.click('#sceneDet .th-chip');
+  await page.selectOption('#sceneDet [data-sd="pov"]', 'e1');
+  await page.click('.sc-btn[data-id="s4"]');
+  await page.selectOption('#sceneDet [data-sd="pov"]', 'e2');
+  await page.click('#sceneDet [data-sd="ten"][data-n="5"]'); await page.click('#sceneDet [data-sd="ten"][data-n="5"]');
+  p = await waitSaved(page, p => p.meta.scenes.s2.threads && p.meta.scenes.s4.pov === 'e2');
+  expect(p.meta.scenes.s4.tension).toBeUndefined();
+
+  // Pacing: one column per scene, a set point for scene 1, action scenes estimated higher than reflective ones
+  await page.click('#sceneDet [data-sd="open"]');
+  await expect(page.locator('.mh-title')).toHaveText('Story insights');
+  await expect(page.locator('.st-col')).toHaveCount(6);
+  await expect(page.locator('.st-pt.set')).toHaveCount(1);
+  const ys = await page.locator('.st-pt').evaluateAll(els => els.map(e => +e.getAttribute('cy')));
+  expect(ys[1]).toBeLessThan(ys[3]); expect(ys[5]).toBeLessThan(ys[4]);   // higher on screen = more tense
+  await expect(page.locator('.st-notes')).toContainText('most intense scene');
+  await page.click('.st-col[data-open="s3"]');
+  await expect(page.locator('#sceneTitle')).toHaveValue('Scene 3');
+  await page.click('#menuBtn'); await page.click('[data-m="story"]');
+
+  // Point of view and screen time
+  await page.click('[data-st="tab"][data-v="cast"]');
+  await expect(page.locator('.st-br')).toHaveCount(3);
+  await expect(page.locator('.st-br').first()).toContainText('Mara');
+  await expect(page.locator('.st-br').last()).toContainText('Not set');
+  await expect(page.locator('.st-tab tbody tr')).toHaveCount(2);
+  await expect(page.locator('.st-c.pov')).toHaveCount(3);
+
+  // Plot threads: a grid, a warning for a thread that is dropped and never resolved, then resolving it
+  await page.click('[data-st="tab"][data-v="threads"]');
+  await expect(page.locator('.th-tab tbody tr')).toHaveCount(1);
+  await expect(page.locator('.th-c.on')).toHaveCount(2);
+  await expect(page.locator('.th-w.end')).toContainText('never resolved');
+  await page.fill('#thName', 'Jon and Mara'); await page.click('[data-st="thadd"]');
+  await expect(page.locator('.th-w.none')).toContainText('Jon and Mara');
+  await page.selectOption('.th-card >> nth=0 >> select', 's6');
+  await expect(page.locator('.th-w.end')).toHaveCount(0);
+  await expect(page.locator('.th-c.done')).toHaveCount(1);
+  p = await waitSaved(page, p => p.meta.threads.length === 2 && p.meta.threads[0].done === 's6');
+  expect(errors).toEqual([]);
+});
+
+test('setups and payoffs: plant from selected words, pay off later, and flag what is left hanging', async ({ page }) => {
+  const errors = await openApp(page, { project: STORY_PROJECT });
+  await page.click('.sc-btn[data-id="s2"]');
+  // select "the wall" in the scene, then plant it as a setup from the Inkling panel
+  await page.evaluate(() => { const ed = document.querySelector('#ed'), w = document.createTreeWalker(ed, NodeFilter.SHOW_TEXT); let n;
+    while ((n = w.nextNode())) { const i = n.data.indexOf('the wall'); if (i >= 0) { const r = document.createRange(); r.setStart(n, i); r.setEnd(n, i + 8); getSelection().removeAllRanges(); getSelection().addRange(r); return; } } });
+  await page.waitForTimeout(200);
+  await page.click('#sceneDet [data-sd="setup"]');
+  await expect(page.locator('#sceneDet [data-sd="setup"]')).toHaveValue('the wall');
+  await page.fill('#sceneDet [data-sd="setup"]', 'The cracked wall'); await page.press('#sceneDet [data-sd="setup"]', 'Enter');
+  await page.fill('#sceneDet [data-sd="setup"]', 'The captain’s promise'); await page.press('#sceneDet [data-sd="setup"]', 'Enter');
+  await expect(page.locator('#sceneDet .fs-li')).toHaveCount(2);
+  // a later scene pays one off
+  await page.click('.sc-btn[data-id="s6"]');
+  await page.selectOption('#sceneDet [data-sd="pay"]', { label: 'The cracked wall' });
+  await expect(page.locator('#sceneDet .fs-li.pay')).toContainText('The cracked wall');
+  let p = await waitSaved(page, p => p.meta.setups && p.meta.setups.some(x => x.pay === 's6'));
+  expect(p.meta.setups.map(x => [x.text, x.scene, x.pay])).toEqual([['The cracked wall', 's2', 's6'], ['The captain’s promise', 's2', '']]);
+  // Story insights › Setups & payoffs
+  await page.click('#sceneDet [data-sd="open"]'); await page.click('[data-st="tab"][data-v="setups"]');
+  await expect(page.locator('.pf h2').first()).toContainText('1 of 2 paid off');
+  await expect(page.locator('.th-w.fs-open')).toContainText('captain’s promise');
+  // a payoff before its setup is flagged
+  await page.selectOption('.fs-card >> nth=1 >> [data-fs="pay"]', 's1');
+  await expect(page.locator('.th-w.fs-order')).toContainText('before it is set up');
+  await expect(page.locator('.fs-card.bad')).toHaveCount(1);
+  // add one from the tab, then delete it
+  await page.fill('#fsText', 'A key on a string'); await page.selectOption('#fsScene', 's3'); await page.press('#fsText', 'Enter');
+  await expect(page.locator('.fs-card')).toHaveCount(3);
+  await page.click('.fs-card:has([value="A key on a string"]) [data-st="fsdel"]');
+  await expect(page.locator('.fs-card')).toHaveCount(2);
+  expect(errors).toEqual([]);
+});
