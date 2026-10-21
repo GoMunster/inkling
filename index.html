@@ -5252,10 +5252,13 @@ function applyLayout(){
 }
 function loSet(k,hide){ const h=S.meta.layout.hide; if(hide) h[k]=true; else delete h[k]; dirty('meta'); applyLayout(); if(LO_INSP.some(s=>s[0]===k)) renderInspector(); }
 function loToggle(k){ loSet(k,!loHidden(k)); if(ui.view.k==='layout') renderMain(); const nm=(LO_GROUPS[0][1].find(x=>x[0]===k)||[])[1]; if(nm&&innerWidth>=1080) toast((loHidden(k)?'Hid the ':'Showing the ')+nm.replace(/ \(.*\)/,'').toLowerCase()+'. Window › Project settings has more.',{plain:true}); }
-// Window actions, from the ⋯ menu, the desktop's Window menu or the keyboard. The desktop can deliver both a key and
-// its menu accelerator, so the same action twice within 80 ms is done once.
-function winAct(a){
-  const now=Date.now(); ui.actAt=ui.actAt||{}; if(now-(ui.actAt[a]||0)<80) return; ui.actAt[a]=now;
+// Window actions, from the ⋯ menu, the desktop's menus or the keyboard (src 'menu', 'key' or 'ui'). The desktop can
+// deliver both a key and its menu accelerator for one press, so the same action from the other of those two within
+// 200 ms is done once; repeats from the same source always go through.
+function winAct(a,src){
+  const now=Date.now(), last=ui.actLast; src=src||'ui';
+  if(last&&last.a===a&&last.src!==src&&(last.src==='key'||last.src==='menu')&&(src==='key'||src==='menu')&&now-last.t<200) return;
+  ui.actLast={a,src,t:now};
   if(a==='layout') go({k:'layout'});
   else if(a==='plan') go({k:'plan'});
   else if(a==='search') go({k:'search'});
@@ -6247,7 +6250,7 @@ async function deskImport(text){
 }
 async function deskImportPick(){ try{ const t=await DESK.openFile(); if(t!=null){ await deskImport(t); closeProjects(); } }catch(e){ toast('Could not open that file.',{plain:true}); } }
 async function deskBoot(){
-  DESK.onMenu(a=>{ if(a==='new'||a==='projects') openProjects(); else if(a==='backup') doBackup(); else if(a==='export') openExport(); else if(a==='find') openFind(); else if(a==='prefs') go({k:'prefs'}); else if(a==='tour') startTour(true); else if(a==='updcheck') checkUpdatesNow(); else if(a==='save') saveNow(); else if(a==='cont') go({k:'cont'}); else if(a==='share') openShare(); else if(a==='openShared') openSharedPick(); else if(a==='helpShare') go({k:'help'}); else if(a==='snapshots'){ if(ui.view.k==='scene') go({k:'snap',id:ui.view.id}); else toast('Open a scene first, then choose Scene snapshots.',{plain:true}); } else if(a==='import') deskImportPick(); else if(a==='sessions') go({k:'ss'}); else if(a==='timer'){ if(T.running) pmPause(); else pmStart(); } else winAct(a); });
+  DESK.onMenu(a=>{ if(a==='new'||a==='projects') openProjects(); else if(a==='backup') doBackup(); else if(a==='export') openExport(); else if(a==='find') openFind(); else if(a==='prefs') go({k:'prefs'}); else if(a==='tour') startTour(true); else if(a==='updcheck') checkUpdatesNow(); else if(a==='save') saveNow(); else if(a==='cont') go({k:'cont'}); else if(a==='share') openShare(); else if(a==='openShared') openSharedPick(); else if(a==='helpShare') go({k:'help'}); else if(a==='snapshots'){ if(ui.view.k==='scene') go({k:'snap',id:ui.view.id}); else toast('Open a scene first, then choose Scene snapshots.',{plain:true}); } else if(a==='import') deskImportPick(); else if(a==='sessions') go({k:'ss'}); else if(a==='timer'){ if(T.running) pmPause(); else pmStart(); } else winAct(a,'menu'); });
   DESK.onClosing(async()=>{ try{ pmHalt(); await deskFlush(); }catch(e){} DESK.closeReady(); });
   DESK.onUpdate(showUpdate);
   DESK.onFocus(()=>{ syncCheck(); hereTick(); });   // bring in what the sync folder delivered while Inkling was in the background
@@ -6384,10 +6387,10 @@ function init(){
   document.addEventListener('keydown',e=>{ if(e.key==='Escape'){ const pj=$('#pj'); if(pj&&!pj.hidden){ if(PJ.id) closeProjects(); } else if(ui.menu) closeMenu(); else if((ui.view.k==='rm'||ui.view.k==='ft')&&(ui.cvSel||ui.cvPop)){ ui.cvSel=null; ui.cvPop=false; ui.confirm=null; cvRefresh(); } else if(ui.view.k==='tl'&&ui.tlSide){ ui.tlSide=null; ui.confirm=null; drawSide(); drawTl(); } else if(ui.focus){ ui.focus=false; syncTab(); renderMain(); } } });
   document.addEventListener('keydown',e=>{   // window shortcuts, and Find
     const mod=(e.ctrlKey||e.metaKey)&&!e.altKey; if(!mod) return;
-    if(!e.shiftKey&&e.key.toLowerCase()==='k'){ e.preventDefault(); winAct('search'); return; }
-    if(!e.shiftKey&&e.key.toLowerCase()==='p'){ e.preventDefault(); winAct('qs'); return; }
-    if(!e.shiftKey&&(e.key==='\\'||e.code==='Backslash')){ e.preventDefault(); winAct('split'); return; }
-    if(e.shiftKey&&/^Digit[123]$/.test(e.code)){ e.preventDefault(); winAct({Digit1:'tBinder',Digit2:'tInsp',Digit3:'focus'}[e.code]); }
+    if(!e.shiftKey&&e.key.toLowerCase()==='k'){ e.preventDefault(); winAct('search','key'); return; }
+    if(!e.shiftKey&&e.key.toLowerCase()==='p'){ e.preventDefault(); winAct('qs','key'); return; }
+    if(!e.shiftKey&&(e.key==='\\'||e.code==='Backslash')){ e.preventDefault(); winAct('split','key'); return; }
+    if(e.shiftKey&&/^Digit[123]$/.test(e.code)){ e.preventDefault(); winAct({Digit1:'tBinder',Digit2:'tInsp',Digit3:'focus'}[e.code],'key'); }
     else if(e.key.toLowerCase()==='f'&&!$('#pj:not([hidden])')){ e.preventDefault(); openFind(); }
     else if(e.key.toLowerCase()==='z'||e.key.toLowerCase()==='y') ui.keyHistAt=Date.now();
   });
@@ -6398,9 +6401,9 @@ function init(){
   document.addEventListener('mouseup',e=>{ if(e.button===3||e.button===4){ e.preventDefault(); winAct(e.button===3?'back':'fwd'); } });   // mouse back and forward buttons
   document.addEventListener('keydown',e=>{   // scene to scene, back and forward
     if(e.defaultPrevented) return; const k=e.key;
-    if((e.altKey||e.ctrlKey||e.metaKey)&&!e.shiftKey&&(k==='PageDown'||k==='PageUp')){ e.preventDefault(); winAct(k==='PageDown'?'next':'prev'); }
-    else if(MODK!=='⌘'&&e.altKey&&!e.ctrlKey&&!e.shiftKey&&(k==='ArrowLeft'||k==='ArrowRight')){ e.preventDefault(); winAct(k==='ArrowLeft'?'back':'fwd'); }
-    else if(MODK==='⌘'&&e.metaKey&&!e.shiftKey&&(k==='['||k===']')){ e.preventDefault(); winAct(k==='['?'back':'fwd'); }
+    if((e.altKey||e.ctrlKey||e.metaKey)&&!e.shiftKey&&(k==='PageDown'||k==='PageUp')){ e.preventDefault(); winAct(k==='PageDown'?'next':'prev','key'); }
+    else if(MODK!=='⌘'&&e.altKey&&!e.ctrlKey&&!e.shiftKey&&(k==='ArrowLeft'||k==='ArrowRight')){ e.preventDefault(); winAct(k==='ArrowLeft'?'back':'fwd','key'); }
+    else if(MODK==='⌘'&&e.metaKey&&!e.shiftKey&&(k==='['||k===']')){ e.preventDefault(); winAct(k==='['?'back':'fwd','key'); }
   });
   window.addEventListener('pagehide',()=>{ posSaveScene(); if(T.cur) pmRecord(false); if(P.dirty.size){ mirrorLocal(); flush(); } });
   setInterval(()=>{ if(S.meta.todo.d!==todayKey()) drawTodo(); planSync(); planPaint(); if(!document.hidden&&Date.now()-ui.sayAt>40000&&!(peekNow()||{}).mood) say(line(curMood())); },15000);

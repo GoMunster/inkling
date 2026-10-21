@@ -706,9 +706,9 @@ test('quick switcher, next and previous scene, back and forward', async ({ page 
   await page.setViewportSize({ width: 1600, height: 900 });
   const errors = await openApp(page);
   await page.click('.sc-btn'); const first = await page.locator('#sceneTitle').inputValue();
-  const pick = async (q) => { await page.keyboard.press('Control+p');
-    try { await expect(page.locator('#qsQ')).toBeFocused({ timeout: 4000 }); }
-    catch (x) { console.log('DIAG', JSON.stringify(errors), await page.evaluate(() => JSON.stringify({ active: document.activeElement && document.activeElement.outerHTML.slice(0, 160), qs: !!document.querySelector('#qs'), ov: document.querySelectorAll('.pj-ov').length, ctx: !!document.querySelector('#ctx'), view: document.querySelector('#main h1, #sceneTitle') && (document.querySelector('#sceneTitle') || {}).value }))); throw x; } await page.keyboard.type(q); await expect(page.locator('.qs-it.on')).toContainText(q === 'ilsa' ? 'Ilsa Verrin' : 'The Crane ledger'); };
+  const pick = async (q) => { await page.keyboard.press('Control+p'); await expect(page.locator('#qsQ')).toBeFocused(); await page.keyboard.type(q); await expect(page.locator('.qs-it.on')).toContainText(q === 'ilsa' ? 'Ilsa Verrin' : 'The Crane ledger'); };
+  await page.keyboard.press('Control+p'); await page.keyboard.press('Escape'); await page.keyboard.press('Control+p');   // quick repeats are not swallowed
+  await expect(page.locator('#qsQ')).toBeFocused(); await page.keyboard.press('Escape');
   await pick('crane led'); await page.keyboard.press('Enter');
   await expect(page.locator('#sceneTitle')).toHaveValue('The Crane ledger');
   await pick('ilsa'); await page.keyboard.down('Alt'); await page.keyboard.press('Enter'); await page.keyboard.up('Alt');
