@@ -10,7 +10,7 @@
 // timeline or another scene in view. ui.split is that view. Scenes, outlines and timelines show read-only there (⇄
 // swaps the two sides to edit); a story page's fields and a notes page can be edited in place. The grid's columns
 // come from applyCols(), which accounts for focus mode, hidden panels and the split.
-const SPLIT_KINDS = ['scene', 'ent', 'nt', 'ol', 'tl'];
+const SPLIT_KINDS = ['scene', 'ent', 'nt', 'ol', 'tl', 'preview'];
 // Whether a view can be shown side by side.
 const splitOk = v => !!v && SPLIT_KINDS.includes(v.k) && viewValid(v);
 // Sets the page's columns (--cols on #app) for the panes that are shown: binder, page, side by side, Inkling panel.
@@ -96,7 +96,8 @@ function splitPicker(cur) {
     ).join('') +
     grp(LP('nt'), m.nts.map(x => o('nt:' + x.id, x.name)).join('')) +
     grp(LP('ol'), m.ols.map(x => o('ol:' + x.id, x.name)).join('')) +
-    grp(LP('tl'), m.tls.map(x => o('tl:' + x.id, x.name)).join(''))
+    grp(LP('tl'), m.tls.map(x => o('tl:' + x.id, x.name)).join('')) +
+    grp('Publishing', o('preview:', 'Book preview (live)'))
   );
 }
 // Draws the side-by-side pane for its view.
@@ -116,7 +117,8 @@ function renderSplit() {
   }
   const m = S.meta;
   let body = '';
-  if (v.k === 'scene') {
+  if (v.k === 'preview') body = pvSideHtml();
+  else if (v.k === 'scene') {
     const sc = m.scenes[v.id],
       d = S.sc[v.id],
       ch = m.chapters.find(c => c.scenes.includes(v.id));
@@ -253,6 +255,10 @@ function renderSplit() {
     body +
     '</div>';
   el.querySelectorAll('textarea').forEach(ag);
+  if (v.k === 'preview') {
+    ui.pvSideCtl = null;
+    pvSide();
+  }
 }
 // Shows whether side by side is open on the button above a scene.
 function paintSplitBtn() {
@@ -273,8 +279,13 @@ function bindSplit() {
   });
   el.addEventListener('click', e => {
     const b = e.target.closest('[data-sp]'),
-      en = e.target.closest('.ent[data-ent]');
-    if (b) {
+      en = e.target.closest('.ent[data-ent]'),
+      pv = e.target.closest('[data-pvside]');
+    if (pv) {
+      PV.side = pv.dataset.pvside;
+      pvSave();
+      renderSplit();
+    } else if (b) {
       if (b.dataset.sp === 'close') splitClose();
       else splitSwap();
     } else if (en) {
@@ -315,6 +326,7 @@ function bindSplit() {
 function splitTouch(keys) {
   const v = ui.split;
   if (!v) return;
+  if (v.k === 'preview') return; // the preview follows changes itself (pvTouch)
   const mine = v.k === 'scene' ? 'sc_' + v.id : v.k + '_' + v.id;
   if (!keys.includes(mine)) return;
   clearTimeout(ui.spT);
@@ -428,6 +440,7 @@ function qsItems() {
     [{ k: 'world' }, 'Calendars & money', 'cal'],
     [{ k: 'series' }, 'Series bible', 'book'],
     [{ k: 'book' }, 'Book details', 'book'],
+    [{ k: 'preview' }, 'Book preview', 'book'],
     [{ k: 'trash' }, 'Trash', 'trash'],
     [{ k: 'layout' }, 'Project settings', 'layout'],
     [{ k: 'prefs' }, 'Settings', 'sliders']

@@ -1867,3 +1867,63 @@ test('print book: a paragraph split across pages breaks exactly where the line d
   expect(squash(r.story)).toBe(squash(text));
   expect(errors).toEqual([]);
 });
+
+test('book preview: ebook pages on reading devices, print spreads, and a live preview beside the writing', async ({
+  page
+}) => {
+  const project = JSON.parse(JSON.stringify(STORY_PROJECT));
+  project.sc.s1.text = Array(30).fill(project.sc.s1.text).join('\n'); // a chapter long enough to turn pages
+  const errors = await openApp(page, { project });
+  await page.click('#menuBtn');
+  await page.click('[data-m="preview"]');
+  await expect(page.locator('.mh-title')).toHaveText('Book preview');
+  // ebook: the chapter in the book style, a page at a time
+  const ebook = page.frameLocator('#pvStage .pv-frame');
+  await expect(ebook.locator('h1.ch')).toBeVisible();
+  await expect(page.locator('#pvStage .pv-pg')).toHaveText(/^Page 1 of \d+$/);
+  await page.click('[data-pvo="dev"][data-v="kindle"]');
+  await expect(page.locator('#pvStage .pv-frame')).toHaveAttribute('width', '530');
+  await page.click('[data-pvo="theme"][data-v="night"]');
+  await expect(ebook.locator('body')).toHaveCSS('background-color', 'rgb(18, 18, 18)');
+  // a long chapter turns pages
+  await page.click('[data-pvz="1"]');
+  await page.click('[data-pvz="1"]');
+  await expect(page.locator('#pvStage .pv-pg')).not.toHaveText('Page 1 of 1');
+  const pages = +(await page.locator('#pvStage .pv-pg').textContent()).match(/of (\d+)/)[1];
+  await page.click('[data-pvp="1"]');
+  await expect(page.locator('#pvStage .pv-pg')).toHaveText('Page 2 of ' + pages);
+  await page.selectOption('[data-pvsel]', 'front');
+  await expect(ebook.locator('h1.bk-title')).toHaveText('Story Test');
+  // the choices are remembered on this device
+  const pv = JSON.parse(await page.evaluate(() => localStorage.getItem('inkling:pv')));
+  expect(pv).toMatchObject({ dev: 'kindle', theme: 'night', size: 1.3 });
+
+  // print: the laid-out book as spreads, the first page on the right
+  await page.click('[data-pvt="print"]');
+  const print = page.frameLocator('#pvPrint .pv-pframe');
+  await expect(print.locator('.pg').first()).toBeVisible();
+  const n = await print.locator('.pg').count();
+  expect(n % 2).toBe(0);
+  await expect(print.locator('.pg').first()).toHaveCSS('grid-column-start', '2');
+  await expect(page.locator('.pv-facts')).toContainText(n + ' pages');
+
+  // beside the writing: the chapter being written, following the text as it changes
+  await page.click('[data-pva="side"]');
+  await expect(page.locator('#split .pv-frame')).toBeVisible();
+  await page.click('#ed');
+  await page.keyboard.press('Control+Home');
+  await page.keyboard.type('Zephyrine ');
+  await expect(page.frameLocator('#split .pv-frame').locator('#flow')).toContainText('Zephyrine');
+  await page.click('[data-pvside="print"]');
+  await expect(page.frameLocator('#split .pv-pframe').locator('.pg').first()).toContainText('Zephyrine');
+  // moving to another chapter's scene moves the preview with it
+  const other = await page.locator('.sc-btn').last().getAttribute('data-id');
+  await page.click('.sc-btn[data-id="' + other + '"]');
+  await page.click('[data-pvside="ebook"]');
+  const lastCh = await page.evaluate(() => {
+    const p = JSON.parse(localStorage.getItem('inkling:project'));
+    return p.meta.chapters[p.meta.chapters.length - 1].title;
+  });
+  await expect(page.locator('#pvSideSub')).toContainText(lastCh);
+  expect(errors).toEqual([]);
+});

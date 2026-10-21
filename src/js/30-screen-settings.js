@@ -138,6 +138,7 @@ function winAct(a, src) {
   else if (a === 'world') go({ k: 'world' });
   else if (a === 'series') go({ k: 'series' });
   else if (a === 'book') go({ k: 'book' });
+  else if (a === 'preview') go({ k: 'preview' });
   else if (a === 'search') go({ k: 'search' });
   else if (a === 'qs') openQs();
   else if (a === 'next' || a === 'prev') sceneStep(a === 'next' ? 1 : -1);

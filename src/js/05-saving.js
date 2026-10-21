@@ -44,6 +44,7 @@ function dirty() {
     if (S.meta.gone[k]) delete S.meta.gone[k];
   }
   if (P.dirty.has('meta')) S.meta.saved = Date.now();
+  pvTouch([...arguments]);
   if (ui.split) splitTouch([...arguments]);
   schedule(1400);
 }
@@ -301,7 +302,8 @@ function viewValid(v) {
     v.k === 'story' ||
     v.k === 'world' ||
     v.k === 'series' ||
-    v.k === 'book'
+    v.k === 'book' ||
+    v.k === 'preview'
   );
 }
 // A view's name, as shown in history, the quick switcher and the back button.
@@ -326,6 +328,7 @@ function viewName(v) {
   if (v.k === 'world') return 'Calendars & money';
   if (v.k === 'series') return 'Series bible';
   if (v.k === 'book') return 'Book details';
+  if (v.k === 'preview') return 'Book preview';
   if (v.k === 'snap') return 'Snapshots: ' + S.meta.scenes[v.id].title;
   return 'Corkboard';
 }

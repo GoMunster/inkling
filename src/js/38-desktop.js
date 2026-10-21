@@ -1,5 +1,5 @@
 /*
- * 37-desktop.js: Dialogs, and the desktop app's projects
+ * 38-desktop.js: Dialogs, and the desktop app's projects
  *
  * ask() is the app's dialog (use it instead of confirm()). The rest runs only in the desktop app: opening, creating
  * and importing projects (each a folder on the computer), saving through the desktop bridge (deskFlush), the Projects

@@ -988,6 +988,7 @@ function renderMenu() {
       item('world', 'Calendars & money') +
       item('series', 'Series bible') +
       item('book', 'Book details…') +
+      item('preview', 'Book preview') +
       item('qs', 'Go to… (' + MODK + '+P)') +
       item('search', 'Search everything…') +
       item('sessions', 'Writing sessions') +
@@ -1016,6 +1017,7 @@ function renderMenu() {
     item('world', 'Calendars & money') +
     item('series', 'Series bible') +
     item('book', 'Book details…') +
+    item('preview', 'Book preview') +
     item('qs', 'Go to… (' + MODK + '+P)') +
     item('search', 'Search everything…') +
     item('sessions', 'Writing sessions') +
@@ -1108,6 +1110,7 @@ function bindMenu() {
         'world',
         'series',
         'book',
+        'preview',
         'search',
         'trash',
         'split',

@@ -165,7 +165,7 @@ Today Inkling's export makes a submission manuscript (Word/PDF in standard manus
    - our own paginator, with trim size and paperback/hardcover presets
    - KDP gutter by page count, recto starts, running heads and folios
    - spine width readout
-4. **Live preview:** ebook (phone, tablet, Kindle sizes) and print (spreads), side by side with the writing.
+4. **Live preview** (done: Book preview with phone, tablet and Kindle screens and print spreads, and a live preview beside the writing): ebook (phone, tablet, Kindle sizes) and print (spreads), side by side with the writing.
 5. **Extras:**
    - special paragraphs and heading images
    - box sets

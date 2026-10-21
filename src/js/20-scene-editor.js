@@ -17,6 +17,7 @@ function renderMain() {
     ui.view = firstView();
     return renderMain();
   }
+  if (v.k === 'scene') ui.lastScene = v.id; // the scene being written, for previews and insights
   const key = v.k + ':' + (v.id || ''),
     reset = key !== ui.lastKey;
   ui.lastKey = key;
@@ -42,9 +43,11 @@ function renderMain() {
   else if (v.k === 'world') renderWorld(el);
   else if (v.k === 'series') renderSeries(el);
   else if (v.k === 'book') renderBook(el);
+  else if (v.k === 'preview') renderPreview(el);
   else renderScene(el, v);
   el.scrollTop = reset ? 0 : keep;
   if (reset && v.k === 'scene') posRestore(v.id);
+  pvFollow();
 }
 // Draws the scene editor: title, status, word count, the toolbar, the text with its name links and formatting, sticky
 // notes, and the next and previous scene buttons. Also wires up typing, shortcuts and pasting.

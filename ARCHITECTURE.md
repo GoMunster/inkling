@@ -47,8 +47,9 @@ build.js              joins them into index.html (node build.js; no dependencies
 | `33-export` | The ⋯ menu, backups, Word/PDF/EPUB/Markdown export |
 | `34-book` | Book details, front and back matter, chapter kinds and headings, the cover, ebook styles and the check before publishing (Publishing) |
 | `35-print` | Print-ready paperback and hardcover PDFs: trim sizes, our own page layout, running heads, page numbers, spine width |
-| `36-sharing`, `37-desktop` | Shared projects (merging, presence) and the desktop app's projects |
-| `38-boot` | Start-up: `init()` and `renderAll()` |
+| `36-preview` | Book preview: the ebook on a phone, tablet or Kindle screen, and the print book as spreads; live beside the writing |
+| `37-sharing`, `38-desktop` | Shared projects (merging, presence) and the desktop app's projects |
+| `39-boot` | Start-up: `init()` and `renderAll()` |
 
 ## Data
 

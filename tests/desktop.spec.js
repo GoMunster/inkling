@@ -493,3 +493,24 @@ test('print book: a print-ready PDF at the trim size, with an even page count', 
   expect(errors).toEqual([]);
   await app.close();
 });
+
+test('book preview works under the desktop app’s security policy, with its bundled fonts', async () => {
+  const home = newHome();
+  const { app, win, errors } = await launch(home);
+  await win.click('#menuBtn');
+  await win.click('[data-m="preview"]');
+  const ebook = win.frameLocator('#pvStage .pv-frame');
+  await expect(ebook.locator('h1')).toBeVisible();
+  await win.click('[data-pvt="print"]');
+  const print = win.frameLocator('#pvPrint .pv-pframe');
+  await expect(print.locator('.pg').first()).toBeVisible();
+  // the print preview is set in the bundled book font, not a fallback
+  expect(
+    await print
+      .locator('.pb')
+      .first()
+      .evaluate(el => [...el.ownerDocument.fonts].some(f => /EB Garamond/.test(f.family) && f.status === 'loaded'))
+  ).toBe(true);
+  expect(errors).toEqual([]);
+  await app.close();
+});

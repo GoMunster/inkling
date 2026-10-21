@@ -366,7 +366,9 @@ function renderBook(el) {
     backBtn() +
     '<span class="kind">' +
     ico('book', 16) +
-    '</span><h1 class="mh-title">Book details</h1><button class="btn" data-bka="export">' +
+    '</span><h1 class="mh-title">Book details</h1><button class="btn" data-bka="preview">' +
+    ico('book', 14) +
+    '<span>Preview</span></button><button class="btn" data-bka="export">' +
     ico('down', 14) +
     '<span>Export…</span></button></div><div class="pf-wrap bk-wrap">' +
     '<section class="pf"><h2>About the book</h2><p class="fine">Used on the title page, the copyright page and in ebook files. Stores ask for the same details when you publish.</p><div class="bk-grid">' +
@@ -656,6 +658,7 @@ function renderBook(el) {
     const a = (e.target.closest('[data-bka]') || {}).dataset;
     if (!a || !a.bka) return;
     if (a.bka === 'export') openExport();
+    else if (a.bka === 'preview') go({ k: 'preview' });
     else if (a.bka === 'delcover') removePic('cover');
     else if (a.bka === 'count') printCount(el);
     else if (a.bka === 'check' || a.bka === 'tidy') {
