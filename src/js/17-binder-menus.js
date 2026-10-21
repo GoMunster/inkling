@@ -266,6 +266,10 @@ function binderMenu(e) {
             if (n) toast('Scene copied.', { plain: true });
           }
         ],
+        ...(ui.view.k === 'scene' && ui.view.id === id && edCaret(id) != null
+          ? [['Split at the cursor', () => splitScene(id)]]
+          : []),
+        ...(nextScene(id) ? [['Merge with the next scene', () => mergeNext(id)]] : []),
         [
           'Move to chapter',
           null,

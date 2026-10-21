@@ -2155,3 +2155,132 @@ test('print book: English hyphenation with book rules, and none across a page tu
   expect((await layout()).text).not.toContain('­');
   expect(errors).toEqual([]);
 });
+
+// Pastes into the scene editor as a browser would, with an HTML version and a plain version.
+async function pasteInto(page, html, plain) {
+  await page.evaluate(
+    ([html, plain]) => {
+      const dt = new DataTransfer();
+      if (html) dt.setData('text/html', html);
+      dt.setData('text/plain', plain);
+      document.querySelector('#ed').dispatchEvent(new ClipboardEvent('paste', { clipboardData: dt, bubbles: true }));
+    },
+    [html, plain]
+  );
+}
+// Puts the caret in the scene editor at a visible-text offset.
+async function caretAt(page, off) {
+  await page.click('#ed');
+  await page.evaluate(off => {
+    const ed = document.querySelector('#ed'),
+      w = document.createTreeWalker(ed, NodeFilter.SHOW_TEXT);
+    let n,
+      acc = 0;
+    while ((n = w.nextNode())) {
+      if (acc + n.data.length >= off) {
+        const r = document.createRange();
+        r.setStart(n, off - acc);
+        r.collapse(true);
+        getSelection().removeAllRanges();
+        getSelection().addRange(r);
+        return;
+      }
+      acc += n.data.length;
+    }
+  }, off);
+}
+const TWO_SCENES = text => ({
+  meta: {
+    v: 2,
+    title: 'Paste',
+    chapters: [{ id: 'c1', title: 'One', open: true, scenes: ['s1', 's2'] }],
+    scenes: {
+      s1: { title: 'First', status: 'draft', words: 0, pov: '' },
+      s2: { title: 'Second', status: 'draft', words: 0 }
+    },
+    ents: {},
+    days: {},
+    pet: { name: 'Inky', total: 0 }
+  },
+  sc: {
+    s1: { text, synopsis: 'The arrival.', notes: 'Check the tide.', stickies: [] },
+    s2: { text: 'They met at dawn.', synopsis: 'The meeting.', notes: '', stickies: [] }
+  },
+  en: {}
+});
+
+test('paste keeps italics, bold and underlining from Google Docs, Word and other scenes', async ({ page }) => {
+  const errors = await openApp(page, { project: TWO_SCENES('Hello *world* end.') });
+  await page.click('.sc-btn[data-id="s1"]');
+  // Google Docs: everything wrapped in <b style="font-weight:normal">, formatting as inline styles
+  await page.click('#ed');
+  await page.keyboard.press('Control+End');
+  await page.keyboard.press('Enter'); // a new empty line, then paste there
+  await pasteInto(
+    page,
+    '<meta charset="utf-8"><b style="font-weight:normal;" id="docs-internal-guid-1"><p dir="ltr"><span style="font-weight:400;font-style:normal;"> She said </span><span style="font-weight:400;font-style:italic;">never</span><span style="font-weight:400;"> again.</span></p><p dir="ltr"><span style="font-weight:700;">Bold line</span></p></b>',
+    'She said never again.\nBold line'
+  );
+  let p = await waitSaved(page, p => p.sc.s1.text.includes('Bold'));
+  expect(p.sc.s1.text).toBe('Hello *world* end.\nShe said *never* again.\n**Bold line**');
+  // Word: classes, comments, an empty paragraph, <o:p> tags and underlining
+  await caretAt(page, plainLen(p.sc.s1.text));
+  await pasteInto(
+    page,
+    '<html xmlns:o="urn:schemas-microsoft-com:office:office"><head><style>p.MsoNormal{margin:0}</style></head><body><!--StartFragment--><p class=MsoNormal>The <i>Gull</i> was <u>full</u>.<o:p></o:p></p><p class=MsoNormal><o:p>&nbsp;</o:p></p><p class=MsoNormal>Next.</p><!--EndFragment--></body></html>',
+    'The Gull was full.\n\nNext.'
+  );
+  p = await waitSaved(page, p => p.sc.s1.text.includes('Next.'));
+  expect(p.sc.s1.text).toBe(
+    'Hello *world* end.\nShe said *never* again.\n**Bold line**The *Gull* was __full__.\n\nNext.'
+  );
+  // pasting bold into the middle of italic text keeps both, and the markers stay well formed
+  await caretAt(page, 8); // Hello wo|rld
+  await pasteInto(page, '<b>X</b>', 'X');
+  p = await waitSaved(page, p => p.sc.s1.text.includes('X'));
+  await expect(page.locator('#ed i').first()).toHaveText('wo');
+  await expect(page.locator('#ed b').first()).toHaveText('X');
+  expect(await page.locator('#ed').textContent()).toContain('Hello woXrld end.');
+  // plain text (nothing formatted) still arrives as it is
+  await caretAt(page, 0);
+  await pasteInto(page, '<span>plain</span>', 'plain ');
+  p = await waitSaved(page, p => p.sc.s1.text.startsWith('plain'));
+  expect(errors).toEqual([]);
+});
+// The visible length of stored text (markers removed).
+const plainLen = t => t.replace(/\*\*|__|\*/g, '').length;
+
+test('split a scene at the cursor, merge it back with the next one, and undo both', async ({ page }) => {
+  const errors = await openApp(page, { project: TWO_SCENES('Line *one*.\nLine two is here.') });
+  await page.click('.sc-btn[data-id="s1"]');
+  await caretAt(page, 9); // after "Line one."
+  await page.keyboard.press('Control+Shift+K');
+  let p = await waitSaved(page, p => p.meta.chapters[0].scenes.length === 3);
+  const [a, b, c] = p.meta.chapters[0].scenes;
+  expect([a, c]).toEqual(['s1', 's2']);
+  expect(p.sc.s1.text).toBe('Line *one*.');
+  expect(p.sc[b].text).toBe('Line two is here.');
+  expect(p.meta.scenes[b].title).toBe('First (2)');
+  expect(Object.values(p.sn).some(x => x.scene === 's1' && x.name === 'Before splitting')).toBe(true);
+  await expect(page.locator('#sceneTitle')).toHaveValue('First (2)'); // the new scene is open
+  // undo puts it back as it was
+  await page.click('#toast .t-act');
+  p = await waitSaved(page, p => p.meta.chapters[0].scenes.length === 2 && !p.sc[b]);
+  expect(p.sc.s1.text).toBe('Line *one*.\nLine two is here.');
+
+  // merge the first scene with the next from the binder's right-click menu
+  await page.click('.sc-btn[data-id="s1"] .t', { button: 'right' });
+  await page.click('.ctx button:has-text("Merge with the next scene")');
+  p = await waitSaved(page, p => p.meta.chapters[0].scenes.length === 1);
+  expect(p.sc.s1.text).toBe('Line *one*.\nLine two is here.\nThey met at dawn.');
+  expect(p.sc.s1.synopsis).toBe('The arrival. The meeting.');
+  expect(p.sc.s1.notes).toBe('Check the tide.');
+  expect(p.sc.s2).toBeUndefined();
+  expect(p.meta.gone.sc_s2).toBeGreaterThan(0);
+  await page.click('#toast .t-act');
+  p = await waitSaved(page, p => p.meta.chapters[0].scenes.length === 2 && p.sc.s2);
+  expect(p.sc.s1.text).toBe('Line *one*.\nLine two is here.');
+  expect(p.sc.s2.text).toBe('They met at dawn.');
+  expect(p.sc.s1.synopsis).toBe('The arrival.');
+  expect(errors).toEqual([]);
+});

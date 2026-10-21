@@ -163,6 +163,11 @@ function init() {
       winAct('split', 'key');
       return;
     }
+    if (e.shiftKey && e.key.toLowerCase() === 'k') {
+      e.preventDefault();
+      winAct('splitScene', 'key');
+      return;
+    }
     if (e.shiftKey && /^Digit[123]$/.test(e.code)) {
       e.preventDefault();
       winAct({ Digit1: 'tBinder', Digit2: 'tInsp', Digit3: 'focus' }[e.code], 'key');

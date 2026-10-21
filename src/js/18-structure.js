@@ -1,8 +1,9 @@
 /*
- * 18-structure.js: Adding, moving and deleting scenes, chapters, story pages and documents
+ * 18-structure.js: Adding, moving, splitting, merging and deleting scenes, chapters, story pages and documents
  *
  * The operations behind the binder's buttons and menus. Every delete goes to the Trash first (trashPut), so it can be
- * undone.
+ * undone. Splitting a scene at the cursor and merging it with the next take a snapshot first and can be undone from
+ * their toast.
  */
 // Adds an empty scene to a chapter (the last one if none is given) and opens it if asked.
 function addScene(chId, thenOpen) {
@@ -312,4 +313,136 @@ function replaceProject(np, keep) {
   ui.mood = '';
   renderAll();
   schedule(300);
+}
+
+/* ---------- splitting and merging scenes ---------- */
+// The caret's place in the open scene, as a visible-text offset: the live selection, or where it was last seen (a
+// right-click in the binder takes the focus away). null when that scene isn't open.
+function edCaret(id) {
+  const ed = $('#ed');
+  if (!ed || ui.view.k !== 'scene' || ui.view.id !== id) return null;
+  const s = edSel(ed);
+  if (s) return s.s;
+  const r = ui.edRange;
+  return r && ed.contains(r.startContainer) ? visAt(ed, r.startContainer, r.startOffset) : null;
+}
+// The latest text of a scene, including typing the editor hasn't saved yet.
+function sceneTextNow(id) {
+  const ed = $('#ed');
+  return ed && ui.view.k === 'scene' && ui.view.id === id ? getText(ed) : S.sc[id].text;
+}
+// Splits a scene at the caret: the text after it becomes a new scene just below, with the same details (point of
+// view, place, threads, status). A snapshot is taken first, and the toast can undo it.
+function splitScene(id) {
+  const m = S.meta,
+    c = m.chapters.find(x => x.scenes.includes(id)),
+    at = edCaret(id);
+  if (!c) return;
+  if (at == null) {
+    toast('Open the scene and put the cursor where it should split.', { plain: true });
+    return;
+  }
+  const orig = sceneTextNow(id),
+    chars = fmtChars(orig),
+    a = chars.slice(0, at),
+    b = chars.slice(at);
+  while (a.length && /\s/.test(a[a.length - 1][0])) a.pop();
+  while (b.length && /\s/.test(b[0][0])) b.shift();
+  if (!a.length || !b.length) {
+    toast('Put the cursor inside the text, not at its start or end, to split the scene there.', { plain: true });
+    return;
+  }
+  S.sc[id].text = orig;
+  snTake(id, 'Before splitting', 'replace');
+  const nid = uid('s_');
+  m.scenes[nid] = Object.assign(bare(m.scenes[id]), { title: m.scenes[id].title + ' (2)' });
+  delete m.scenes[nid].goal;
+  S.sc[nid] = { text: '', synopsis: '', notes: '', stickies: [] };
+  c.scenes.splice(c.scenes.indexOf(id) + 1, 0, nid);
+  setSceneText(id, fmtSerialize(a));
+  setSceneText(nid, fmtSerialize(b));
+  delete UNDO[id]; // the editor's undo history no longer matches the scene
+  renderBinder();
+  go({ k: 'scene', id: nid });
+  toast('Split into two scenes.', {
+    act: [
+      'Undo',
+      () => {
+        c.scenes.splice(c.scenes.indexOf(nid), 1);
+        delete m.scenes[nid];
+        delete S.sc[nid];
+        forget('sc_' + nid);
+        setSceneText(id, orig);
+        delete UNDO[id];
+        go({ k: 'scene', id });
+        renderBinder();
+      }
+    ]
+  });
+}
+// The scene after this one in reading order (in this chapter or the next), or null.
+function nextScene(id) {
+  const o = orderedScenes(),
+    i = o.findIndex(x => x.id === id);
+  return i >= 0 && o[i + 1] ? o[i + 1].id : null;
+}
+// Joins the next scene onto this one: its text after this one's, its synopsis, notes and sticky notes added, its
+// snapshots kept with this scene. Snapshots of both are taken first, and the toast can undo it.
+function mergeNext(id) {
+  const m = S.meta,
+    b = nextScene(id);
+  if (!b) {
+    toast('This is the last scene, so there is nothing to merge it with.', { plain: true });
+    return;
+  }
+  const ta = sceneTextNow(id);
+  S.sc[id].text = ta;
+  snTake(id, 'Before merging', 'replace');
+  snTake(b, 'Before merging', 'replace');
+  const A = bare(S.sc[id]),
+    B = { sc: S.sc[b], meta: m.scenes[b] },
+    cb = m.chapters.find(x => x.scenes.includes(b)),
+    at = cb.scenes.indexOf(b),
+    join = (x, y, sep) => [x, y].filter(t => t && t.trim()).join(sep),
+    moved = Object.keys(S.sn).filter(k => S.sn[k].scene === b);
+  const d = S.sc[id];
+  d.synopsis = join(d.synopsis, B.sc.synopsis, ' ');
+  d.notes = join(d.notes, B.sc.notes, '\n\n');
+  d.stickies = (d.stickies || []).concat((B.sc.stickies || []).map(n => Object.assign({}, n, { id: uid('k_') })));
+  setSceneText(id, join(ta, B.sc.text, '\n'));
+  moved.forEach(k => {
+    S.sn[k].scene = id;
+    dirty('sn_' + k);
+  });
+  cb.scenes.splice(at, 1);
+  delete m.scenes[b];
+  delete S.sc[b];
+  forget('sc_' + b);
+  delete UNDO[id];
+  dirty('meta');
+  if (ui.view.k === 'scene' && ui.view.id === b) go({ k: 'scene', id });
+  else renderMain();
+  renderBinder();
+  toast('Merged “' + B.meta.title + '” into this scene.', {
+    act: [
+      'Undo',
+      () => {
+        Object.assign(S.sc[id], A);
+        setSceneText(id, A.text);
+        S.sc[b] = B.sc;
+        m.scenes[b] = B.meta;
+        cb.scenes.splice(at, 0, b);
+        moved.forEach(k => {
+          if (S.sn[k]) {
+            S.sn[k].scene = b;
+            dirty('sn_' + k);
+          }
+        });
+        delete UNDO[id];
+        dirty('sc_' + b, 'meta');
+        renderMain();
+        renderBinder();
+      }
+    ]
+  });
 }

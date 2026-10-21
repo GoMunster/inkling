@@ -45,9 +45,9 @@ The full plan, KDP requirements and best practices are in [PUBLISHING-PLAN.md](P
 - [ ] Revision mode: filter words, weak adverbs, repeated words, long sentences, passive voice, your own pet words
 - [ ] Comments in the margin, with replies and resolving
 - [ ] Suggested edits and revision marks (track changes)
-- [ ] Split a scene at the cursor; merge a scene with the next
+- [x] Split a scene at the cursor; merge a scene with the next
 - [ ] Double-click to rename a scene in the binder
-- [ ] Paste from Word or Google Docs keeping italics and bold
+- [x] Paste from Word or Google Docs keeping italics and bold
 - [ ] "First draft" mode that won't let you delete
 - [ ] Typewriter sounds (key clacks and the carriage-return ding)
 - [ ] Beta reader links: read-only copy readers can highlight and comment on, with questions and a "where readers stopped" heat map

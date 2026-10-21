@@ -9800,6 +9800,14 @@ const plainText = t => fmtParse(t).vis;
 const rawAt = (P, i) => (P.map ? (i < P.map.length ? P.map[i] : P.map.length ? P.map[P.map.length - 1] + 1 : 0) : i); // visible offset → stored offset
 // Turns the end of a visible range into the end in the stored text.
 const rawEnd = (P, e) => (P.map ? (e > 0 ? P.map[e - 1] + 1 : 0) : e);
+// Stored text as characters with their style flags ([char, 1 bold | 2 italic | 4 underline]), the form fmtSerialize()
+// writes back: for cutting, joining and pasting text without breaking its markers.
+function fmtChars(text) {
+  const p = fmtParse(text),
+    out = [];
+  for (let i = 0; i < p.vis.length; i++) out.push([p.vis[i], p.flags ? p.flags[i] : 0]);
+  return out;
+}
 // Characters with their styles back to stored text; spaces at the edges of a styled run stay outside the markers.
 function fmtSerialize(chars) {
   let out = '';
@@ -17230,6 +17238,10 @@ function binderMenu(e) {
             if (n) toast('Scene copied.', { plain: true });
           }
         ],
+        ...(ui.view.k === 'scene' && ui.view.id === id && edCaret(id) != null
+          ? [['Split at the cursor', () => splitScene(id)]]
+          : []),
+        ...(nextScene(id) ? [['Merge with the next scene', () => mergeNext(id)]] : []),
         [
           'Move to chapter',
           null,
@@ -17529,10 +17541,11 @@ function bindPicDrop(el, e) {
   });
 }
 /*
- * 18-structure.js: Adding, moving and deleting scenes, chapters, story pages and documents
+ * 18-structure.js: Adding, moving, splitting, merging and deleting scenes, chapters, story pages and documents
  *
  * The operations behind the binder's buttons and menus. Every delete goes to the Trash first (trashPut), so it can be
- * undone.
+ * undone. Splitting a scene at the cursor and merging it with the next take a snapshot first and can be undone from
+ * their toast.
  */
 // Adds an empty scene to a chapter (the last one if none is given) and opens it if asked.
 function addScene(chId, thenOpen) {
@@ -17842,6 +17855,138 @@ function replaceProject(np, keep) {
   ui.mood = '';
   renderAll();
   schedule(300);
+}
+
+/* ---------- splitting and merging scenes ---------- */
+// The caret's place in the open scene, as a visible-text offset: the live selection, or where it was last seen (a
+// right-click in the binder takes the focus away). null when that scene isn't open.
+function edCaret(id) {
+  const ed = $('#ed');
+  if (!ed || ui.view.k !== 'scene' || ui.view.id !== id) return null;
+  const s = edSel(ed);
+  if (s) return s.s;
+  const r = ui.edRange;
+  return r && ed.contains(r.startContainer) ? visAt(ed, r.startContainer, r.startOffset) : null;
+}
+// The latest text of a scene, including typing the editor hasn't saved yet.
+function sceneTextNow(id) {
+  const ed = $('#ed');
+  return ed && ui.view.k === 'scene' && ui.view.id === id ? getText(ed) : S.sc[id].text;
+}
+// Splits a scene at the caret: the text after it becomes a new scene just below, with the same details (point of
+// view, place, threads, status). A snapshot is taken first, and the toast can undo it.
+function splitScene(id) {
+  const m = S.meta,
+    c = m.chapters.find(x => x.scenes.includes(id)),
+    at = edCaret(id);
+  if (!c) return;
+  if (at == null) {
+    toast('Open the scene and put the cursor where it should split.', { plain: true });
+    return;
+  }
+  const orig = sceneTextNow(id),
+    chars = fmtChars(orig),
+    a = chars.slice(0, at),
+    b = chars.slice(at);
+  while (a.length && /\s/.test(a[a.length - 1][0])) a.pop();
+  while (b.length && /\s/.test(b[0][0])) b.shift();
+  if (!a.length || !b.length) {
+    toast('Put the cursor inside the text, not at its start or end, to split the scene there.', { plain: true });
+    return;
+  }
+  S.sc[id].text = orig;
+  snTake(id, 'Before splitting', 'replace');
+  const nid = uid('s_');
+  m.scenes[nid] = Object.assign(bare(m.scenes[id]), { title: m.scenes[id].title + ' (2)' });
+  delete m.scenes[nid].goal;
+  S.sc[nid] = { text: '', synopsis: '', notes: '', stickies: [] };
+  c.scenes.splice(c.scenes.indexOf(id) + 1, 0, nid);
+  setSceneText(id, fmtSerialize(a));
+  setSceneText(nid, fmtSerialize(b));
+  delete UNDO[id]; // the editor's undo history no longer matches the scene
+  renderBinder();
+  go({ k: 'scene', id: nid });
+  toast('Split into two scenes.', {
+    act: [
+      'Undo',
+      () => {
+        c.scenes.splice(c.scenes.indexOf(nid), 1);
+        delete m.scenes[nid];
+        delete S.sc[nid];
+        forget('sc_' + nid);
+        setSceneText(id, orig);
+        delete UNDO[id];
+        go({ k: 'scene', id });
+        renderBinder();
+      }
+    ]
+  });
+}
+// The scene after this one in reading order (in this chapter or the next), or null.
+function nextScene(id) {
+  const o = orderedScenes(),
+    i = o.findIndex(x => x.id === id);
+  return i >= 0 && o[i + 1] ? o[i + 1].id : null;
+}
+// Joins the next scene onto this one: its text after this one's, its synopsis, notes and sticky notes added, its
+// snapshots kept with this scene. Snapshots of both are taken first, and the toast can undo it.
+function mergeNext(id) {
+  const m = S.meta,
+    b = nextScene(id);
+  if (!b) {
+    toast('This is the last scene, so there is nothing to merge it with.', { plain: true });
+    return;
+  }
+  const ta = sceneTextNow(id);
+  S.sc[id].text = ta;
+  snTake(id, 'Before merging', 'replace');
+  snTake(b, 'Before merging', 'replace');
+  const A = bare(S.sc[id]),
+    B = { sc: S.sc[b], meta: m.scenes[b] },
+    cb = m.chapters.find(x => x.scenes.includes(b)),
+    at = cb.scenes.indexOf(b),
+    join = (x, y, sep) => [x, y].filter(t => t && t.trim()).join(sep),
+    moved = Object.keys(S.sn).filter(k => S.sn[k].scene === b);
+  const d = S.sc[id];
+  d.synopsis = join(d.synopsis, B.sc.synopsis, ' ');
+  d.notes = join(d.notes, B.sc.notes, '\n\n');
+  d.stickies = (d.stickies || []).concat((B.sc.stickies || []).map(n => Object.assign({}, n, { id: uid('k_') })));
+  setSceneText(id, join(ta, B.sc.text, '\n'));
+  moved.forEach(k => {
+    S.sn[k].scene = id;
+    dirty('sn_' + k);
+  });
+  cb.scenes.splice(at, 1);
+  delete m.scenes[b];
+  delete S.sc[b];
+  forget('sc_' + b);
+  delete UNDO[id];
+  dirty('meta');
+  if (ui.view.k === 'scene' && ui.view.id === b) go({ k: 'scene', id });
+  else renderMain();
+  renderBinder();
+  toast('Merged “' + B.meta.title + '” into this scene.', {
+    act: [
+      'Undo',
+      () => {
+        Object.assign(S.sc[id], A);
+        setSceneText(id, A.text);
+        S.sc[b] = B.sc;
+        m.scenes[b] = B.meta;
+        cb.scenes.splice(at, 0, b);
+        moved.forEach(k => {
+          if (S.sn[k]) {
+            S.sn[k].scene = b;
+            dirty('sn_' + k);
+          }
+        });
+        delete UNDO[id];
+        dirty('sc_' + b, 'meta');
+        renderMain();
+        renderBinder();
+      }
+    ]
+  });
 }
 /*
  * 19-binder.js: The binder: the left-hand pane
@@ -18680,10 +18825,23 @@ function renderScene(el, v) {
     typed();
   });
   ed.addEventListener('paste', e => {
-    // pasted text arrives plain, line by line (Enter makes a line break, never a new block)
+    // formatted text (from Word, Google Docs, a web page or another scene) keeps its bold, italic and underlining;
+    // anything else arrives plain, line by line (Enter makes a line break, never a new block)
     e.preventDefault();
     ui.bigEdit = true;
-    const t = (e.clipboardData || window.clipboardData).getData('text/plain').replace(/\r\n?/g, '\n');
+    const cd = e.clipboardData || window.clipboardData,
+      rich = cd.getData && cd.getData('text/html') ? htmlChars(cd.getData('text/html')) : null,
+      sel = rich && edSel(ed);
+    if (rich && sel) {
+      const all = fmtChars(getText(ed)),
+        n = all.length;
+      // after an Enter at the very end the browser keeps a placeholder line break; what's pasted takes its place
+      if (sel.e === n - 1 && n > 1 && all[n - 1][0] === '\n' && all[n - 2][0] === '\n') all.pop();
+      all.splice(sel.s, sel.e - sel.s, ...rich);
+      edApply(v.id, ed, fmtSerialize(all), sel.s + rich.length, sel.s + rich.length);
+      return;
+    }
+    const t = cd.getData('text/plain').replace(/\r\n?/g, '\n');
     t.split('\n').forEach((ln, i) => {
       if (i) document.execCommand('insertLineBreak');
       if (ln) document.execCommand('insertText', false, ln);
@@ -19221,6 +19379,7 @@ function showKeys() {
       row('Tab', 'Indent (with lines selected: indent them all)') +
       row('Shift+Tab', 'Remove an indent') +
       row('Enter', 'New line (keeps the indent)') +
+      row('Mod+Shift+K', 'Split the scene at the cursor') +
       row('Mod+F', 'Find and replace') +
       row('Mod+S', 'Save now') +
       '<b>Window</b>' +
@@ -27273,7 +27432,11 @@ function winAct(a, src) {
   else if (a === 'book') go({ k: 'book' });
   else if (a === 'preview') go({ k: 'preview' });
   else if (a === 'docx') docxPick();
-  else if (a === 'search') go({ k: 'search' });
+  else if (a === 'splitScene' || a === 'mergeScene') {
+    if (ui.view.k !== 'scene') toast('Open a scene first.', { plain: true });
+    else if (a === 'splitScene') splitScene(ui.view.id);
+    else mergeNext(ui.view.id);
+  } else if (a === 'search') go({ k: 'search' });
   else if (a === 'qs') openQs();
   else if (a === 'next' || a === 'prev') sceneStep(a === 'next' ? 1 : -1);
   else if (a === 'back') goBack();
@@ -30185,6 +30348,8 @@ function closeMenu() {
  * Parts and prologues get their chapter kind. The import dialog (openDocxImport) shows what was found, lets the writer
  * change how chapters are found, and makes a new project (docxProject) or adds the chapters to this one (docxAppend).
  * Imported words are not counted as today's writing.
+ *
+ * htmlChars() reads formatted text from the clipboard the same way, so pasting into a scene keeps its italics.
  */
 const W_NS = 'http://schemas.openxmlformats.org/wordprocessingml/2006/main';
 // How chapters can be found: [key, name].
@@ -30545,6 +30710,75 @@ function docxAppend(plan) {
   linker = buildLinker();
   renderAll();
   if (ids[0]) go({ k: 'scene', id: ids[0] });
+}
+
+/* ---------- pasting formatted text ---------- */
+// Formatted text from the clipboard (Word, Google Docs, a web page, or Inkling itself) as characters with Inkling's
+// style flags: <b>, <i>, <u> and their inline-style versions (Google Docs marks bold with font-weight and wraps
+// everything in <b style="font-weight:normal">, so styles win over tags). Paragraphs and line breaks become lines;
+// spaces collapse as they do on a web page; blank lines stay single. Returns null when nothing is formatted.
+function htmlChars(html) {
+  const doc = new DOMParser().parseFromString(html, 'text/html'),
+    out = [],
+    BLOCK = /^(P|DIV|LI|H[1-6]|BLOCKQUOTE|TR|PRE|SECTION|ARTICLE|HEADER|FOOTER|UL|OL|TABLE|DL|DT|DD|FIGCAPTION)$/,
+    SKIP = /^(STYLE|SCRIPT|HEAD|TITLE|META|LINK|SVG|IMG|NOSCRIPT|TEMPLATE|BUTTON|SELECT|TEXTAREA|INPUT)$/;
+  const nl = () => {
+    while (out.length && out[out.length - 1][0] === ' ') out.pop();
+    if (out.length && out[out.length - 1][0] !== '\n') out.push(['\n', 0]);
+  };
+  const walk = (el, f) => {
+    for (const n of el.childNodes) {
+      if (n.nodeType === 3) {
+        for (const ch of n.data.replace(/[ \t\r\n\u00A0]+/g, ' ')) {
+          const prev = out.length ? out[out.length - 1][0] : '\n';
+          if (ch === ' ' && (prev === ' ' || prev === '\n')) continue;
+          out.push([ch, f]);
+        }
+        continue;
+      }
+      if (n.nodeType !== 1 || SKIP.test(n.tagName)) continue;
+      if (n.tagName === 'BR') {
+        while (out.length && out[out.length - 1][0] === ' ') out.pop();
+        out.push(['\n', 0]);
+        continue;
+      }
+      let g = f;
+      if (/^(B|STRONG)$/.test(n.tagName)) g |= 1;
+      if (/^(I|EM|CITE|DFN|VAR)$/.test(n.tagName)) g |= 2;
+      if (/^(U|INS)$/.test(n.tagName)) g |= 4;
+      const st = n.style;
+      if (st) {
+        const w = st.fontWeight;
+        if (w === 'bold' || w === 'bolder' || +w >= 600) g |= 1;
+        else if (w === 'normal' || w === 'lighter' || (+w && +w < 600)) g &= ~1;
+        if (st.fontStyle === 'italic' || st.fontStyle === 'oblique') g |= 2;
+        else if (st.fontStyle === 'normal') g &= ~2;
+        const td = st.textDecorationLine || st.textDecoration || '';
+        if (/underline/.test(td)) g |= 4;
+        else if (/none/.test(td)) g &= ~4;
+      }
+      const block = BLOCK.test(n.tagName);
+      if (block) nl();
+      // an empty paragraph (Word's way of leaving a blank line) is a blank line
+      if (block && /^(P|DIV)$/.test(n.tagName) && !n.textContent.replace(/[\s\u00A0]/g, '')) out.push(['\n', 0]);
+      else walk(n, g);
+      if (block) nl();
+    }
+  };
+  walk(doc.body, 0);
+  // no spaces at line ends, at most one blank line in a row, nothing around the whole
+  const res = [];
+  out.forEach(c => {
+    if (c[0] === '\n') {
+      while (res.length && res[res.length - 1][0] === ' ') res.pop();
+      const n = res.length,
+        twoBefore = n >= 2 && res[n - 1][0] === '\n' && res[n - 2][0] === '\n';
+      if (twoBefore || !n) return;
+    }
+    res.push(c);
+  });
+  while (res.length && /\s/.test(res[res.length - 1][0])) res.pop();
+  return res.some(c => c[1]) ? res : null;
 }
 
 /* ---------- choosing a file and the import dialog ---------- */
@@ -35104,6 +35338,11 @@ function init() {
     if (!e.shiftKey && (e.key === '\\' || e.code === 'Backslash')) {
       e.preventDefault();
       winAct('split', 'key');
+      return;
+    }
+    if (e.shiftKey && e.key.toLowerCase() === 'k') {
+      e.preventDefault();
+      winAct('splitScene', 'key');
       return;
     }
     if (e.shiftKey && /^Digit[123]$/.test(e.code)) {

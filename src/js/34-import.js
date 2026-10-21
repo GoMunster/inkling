@@ -15,6 +15,8 @@
  * Parts and prologues get their chapter kind. The import dialog (openDocxImport) shows what was found, lets the writer
  * change how chapters are found, and makes a new project (docxProject) or adds the chapters to this one (docxAppend).
  * Imported words are not counted as today's writing.
+ *
+ * htmlChars() reads formatted text from the clipboard the same way, so pasting into a scene keeps its italics.
  */
 const W_NS = 'http://schemas.openxmlformats.org/wordprocessingml/2006/main';
 // How chapters can be found: [key, name].
@@ -375,6 +377,75 @@ function docxAppend(plan) {
   linker = buildLinker();
   renderAll();
   if (ids[0]) go({ k: 'scene', id: ids[0] });
+}
+
+/* ---------- pasting formatted text ---------- */
+// Formatted text from the clipboard (Word, Google Docs, a web page, or Inkling itself) as characters with Inkling's
+// style flags: <b>, <i>, <u> and their inline-style versions (Google Docs marks bold with font-weight and wraps
+// everything in <b style="font-weight:normal">, so styles win over tags). Paragraphs and line breaks become lines;
+// spaces collapse as they do on a web page; blank lines stay single. Returns null when nothing is formatted.
+function htmlChars(html) {
+  const doc = new DOMParser().parseFromString(html, 'text/html'),
+    out = [],
+    BLOCK = /^(P|DIV|LI|H[1-6]|BLOCKQUOTE|TR|PRE|SECTION|ARTICLE|HEADER|FOOTER|UL|OL|TABLE|DL|DT|DD|FIGCAPTION)$/,
+    SKIP = /^(STYLE|SCRIPT|HEAD|TITLE|META|LINK|SVG|IMG|NOSCRIPT|TEMPLATE|BUTTON|SELECT|TEXTAREA|INPUT)$/;
+  const nl = () => {
+    while (out.length && out[out.length - 1][0] === ' ') out.pop();
+    if (out.length && out[out.length - 1][0] !== '\n') out.push(['\n', 0]);
+  };
+  const walk = (el, f) => {
+    for (const n of el.childNodes) {
+      if (n.nodeType === 3) {
+        for (const ch of n.data.replace(/[ \t\r\n\u00A0]+/g, ' ')) {
+          const prev = out.length ? out[out.length - 1][0] : '\n';
+          if (ch === ' ' && (prev === ' ' || prev === '\n')) continue;
+          out.push([ch, f]);
+        }
+        continue;
+      }
+      if (n.nodeType !== 1 || SKIP.test(n.tagName)) continue;
+      if (n.tagName === 'BR') {
+        while (out.length && out[out.length - 1][0] === ' ') out.pop();
+        out.push(['\n', 0]);
+        continue;
+      }
+      let g = f;
+      if (/^(B|STRONG)$/.test(n.tagName)) g |= 1;
+      if (/^(I|EM|CITE|DFN|VAR)$/.test(n.tagName)) g |= 2;
+      if (/^(U|INS)$/.test(n.tagName)) g |= 4;
+      const st = n.style;
+      if (st) {
+        const w = st.fontWeight;
+        if (w === 'bold' || w === 'bolder' || +w >= 600) g |= 1;
+        else if (w === 'normal' || w === 'lighter' || (+w && +w < 600)) g &= ~1;
+        if (st.fontStyle === 'italic' || st.fontStyle === 'oblique') g |= 2;
+        else if (st.fontStyle === 'normal') g &= ~2;
+        const td = st.textDecorationLine || st.textDecoration || '';
+        if (/underline/.test(td)) g |= 4;
+        else if (/none/.test(td)) g &= ~4;
+      }
+      const block = BLOCK.test(n.tagName);
+      if (block) nl();
+      // an empty paragraph (Word's way of leaving a blank line) is a blank line
+      if (block && /^(P|DIV)$/.test(n.tagName) && !n.textContent.replace(/[\s\u00A0]/g, '')) out.push(['\n', 0]);
+      else walk(n, g);
+      if (block) nl();
+    }
+  };
+  walk(doc.body, 0);
+  // no spaces at line ends, at most one blank line in a row, nothing around the whole
+  const res = [];
+  out.forEach(c => {
+    if (c[0] === '\n') {
+      while (res.length && res[res.length - 1][0] === ' ') res.pop();
+      const n = res.length,
+        twoBefore = n >= 2 && res[n - 1][0] === '\n' && res[n - 2][0] === '\n';
+      if (twoBefore || !n) return;
+    }
+    res.push(c);
+  });
+  while (res.length && /\s/.test(res[res.length - 1][0])) res.pop();
+  return res.some(c => c[1]) ? res : null;
 }
 
 /* ---------- choosing a file and the import dialog ---------- */

@@ -140,7 +140,11 @@ function winAct(a, src) {
   else if (a === 'book') go({ k: 'book' });
   else if (a === 'preview') go({ k: 'preview' });
   else if (a === 'docx') docxPick();
-  else if (a === 'search') go({ k: 'search' });
+  else if (a === 'splitScene' || a === 'mergeScene') {
+    if (ui.view.k !== 'scene') toast('Open a scene first.', { plain: true });
+    else if (a === 'splitScene') splitScene(ui.view.id);
+    else mergeNext(ui.view.id);
+  } else if (a === 'search') go({ k: 'search' });
   else if (a === 'qs') openQs();
   else if (a === 'next' || a === 'prev') sceneStep(a === 'next' ? 1 : -1);
   else if (a === 'back') goBack();

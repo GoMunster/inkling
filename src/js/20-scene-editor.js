@@ -170,10 +170,23 @@ function renderScene(el, v) {
     typed();
   });
   ed.addEventListener('paste', e => {
-    // pasted text arrives plain, line by line (Enter makes a line break, never a new block)
+    // formatted text (from Word, Google Docs, a web page or another scene) keeps its bold, italic and underlining;
+    // anything else arrives plain, line by line (Enter makes a line break, never a new block)
     e.preventDefault();
     ui.bigEdit = true;
-    const t = (e.clipboardData || window.clipboardData).getData('text/plain').replace(/\r\n?/g, '\n');
+    const cd = e.clipboardData || window.clipboardData,
+      rich = cd.getData && cd.getData('text/html') ? htmlChars(cd.getData('text/html')) : null,
+      sel = rich && edSel(ed);
+    if (rich && sel) {
+      const all = fmtChars(getText(ed)),
+        n = all.length;
+      // after an Enter at the very end the browser keeps a placeholder line break; what's pasted takes its place
+      if (sel.e === n - 1 && n > 1 && all[n - 1][0] === '\n' && all[n - 2][0] === '\n') all.pop();
+      all.splice(sel.s, sel.e - sel.s, ...rich);
+      edApply(v.id, ed, fmtSerialize(all), sel.s + rich.length, sel.s + rich.length);
+      return;
+    }
+    const t = cd.getData('text/plain').replace(/\r\n?/g, '\n');
     t.split('\n').forEach((ln, i) => {
       if (i) document.execCommand('insertLineBreak');
       if (ln) document.execCommand('insertText', false, ln);
@@ -711,6 +724,7 @@ function showKeys() {
       row('Tab', 'Indent (with lines selected: indent them all)') +
       row('Shift+Tab', 'Remove an indent') +
       row('Enter', 'New line (keeps the indent)') +
+      row('Mod+Shift+K', 'Split the scene at the cursor') +
       row('Mod+F', 'Find and replace') +
       row('Mod+S', 'Save now') +
       '<b>Window</b>' +

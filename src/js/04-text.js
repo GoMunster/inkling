@@ -150,6 +150,14 @@ const plainText = t => fmtParse(t).vis;
 const rawAt = (P, i) => (P.map ? (i < P.map.length ? P.map[i] : P.map.length ? P.map[P.map.length - 1] + 1 : 0) : i); // visible offset → stored offset
 // Turns the end of a visible range into the end in the stored text.
 const rawEnd = (P, e) => (P.map ? (e > 0 ? P.map[e - 1] + 1 : 0) : e);
+// Stored text as characters with their style flags ([char, 1 bold | 2 italic | 4 underline]), the form fmtSerialize()
+// writes back: for cutting, joining and pasting text without breaking its markers.
+function fmtChars(text) {
+  const p = fmtParse(text),
+    out = [];
+  for (let i = 0; i < p.vis.length; i++) out.push([p.vis[i], p.flags ? p.flags[i] : 0]);
+  return out;
+}
 // Characters with their styles back to stored text; spaces at the edges of a styled run stay outside the markers.
 function fmtSerialize(chars) {
   let out = '';

@@ -787,6 +787,8 @@ function buildMenu() {
         { label: 'Find and replace…', accelerator: 'CmdOrCtrl+Shift+F', click: () => send('find') },
         { label: 'Continuity check', click: () => send('cont') },
         { label: 'Scene snapshots…', click: () => send('snapshots') },
+        { label: 'Split scene at the cursor', accelerator: 'CmdOrCtrl+Shift+K', click: () => send('splitScene') },
+        { label: 'Merge with the next scene', click: () => send('mergeScene') },
         { type: 'separator' },
         { label: 'Trash', click: () => send('trash') }
       ]
