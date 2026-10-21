@@ -950,3 +950,46 @@ test('world-building: rules and glossary pages, invented calendars and money', a
   expect(Object.values(q.tl).find(t => t.axis.names).axis.fmt).toBe('{name} {cycle} AT');
   expect(errors).toEqual([]);
 });
+
+test('world maps: pins linked to places, scenes set there, drawing, and an uploaded map', async ({ page }) => {
+  const errors = await openApp(page, { project: STORY_PROJECT });
+  await page.click('.sc-btn[data-id="s1"]');
+  await page.selectOption('#sceneDet [data-sd="place"]', 'e3');
+  await page.click('[data-a="addnt"]'); await page.click('[data-a="addnt-map"]');
+  await expect(page.locator('#mpStage .mp-blank')).toBeVisible();
+  await expect(page.locator('.mp-hint')).toBeVisible();
+  // place a story page from the side list, then a free label by double-clicking
+  await page.click('[data-mp="place"][data-id="e3"]');
+  await page.locator('#mpStage').click({ position: { x: 200, y: 150 } });
+  await expect(page.locator('.mp-pin')).toHaveCount(1);
+  await expect(page.locator('.mp-pin span')).toHaveText('the market');
+  await expect(page.locator('#mpSide')).toContainText('Scenes set here 1');
+  await page.click('[data-mp="close"]');
+  await page.locator('#mpStage').dblclick({ position: { x: 400, y: 260 } });
+  await page.fill('[data-mpf="name"]', 'Old ruins');
+  await expect(page.locator('.mp-pin span').nth(1)).toHaveText('Old ruins');
+  // draw a stroke
+  await page.click('[data-mp="mode"][data-v="draw"]');
+  const box = await page.locator('#mpStage').boundingBox();
+  await page.mouse.move(box.x + 100, box.y + 100); await page.mouse.down();
+  await page.mouse.move(box.x + 160, box.y + 140, { steps: 5 }); await page.mouse.move(box.x + 220, box.y + 120, { steps: 5 }); await page.mouse.up();
+  await expect(page.locator('#mpInk polyline')).toHaveCount(1);
+  let p = await waitSaved(page, p => Object.values(p.nt || {}).some(d => d.pins && d.pins.length === 2 && d.ink && d.ink.length === 1));
+  const mapId = p.meta.nts.find(x => x.kind === 'map').id;
+  expect(p.nt[mapId].pins.map(x => x.ent || x.name).sort()).toEqual(['Old ruins', 'e3']);
+  // upload a map picture
+  const png = Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAIAAABLbSncAAAAEklEQVR4nGP4z8CAFWEXHbQSACj/P8Fu7N9hAAAAAElFTkSuQmCC', 'base64');
+  await page.setInputFiles('#mpFile', { name: 'map.png', mimeType: 'image/png', buffer: png });
+  await expect(page.locator('#mpImg')).toHaveAttribute('src', /^data:image/);
+  p = await waitSaved(page, p => p.nt[mapId].pic.l === true);
+  // the place's story page links back to the map
+  await page.click('.e-btn:has-text("the market")');
+  await page.click('.ap[data-mapof]');
+  await expect(page.locator('#mpSide h3')).toHaveText('the market');
+  // search finds the free pin
+  await page.click('#menuBtn'); await page.click('[data-m="search"]');
+  await page.fill('#saQ', 'ruins');
+  await expect(page.locator('.sa-hit').first()).toContainText('Old ruins');
+  expect(errors).toEqual([]);
+});
+

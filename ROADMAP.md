@@ -25,7 +25,7 @@ The full plan, KDP requirements and best practices are in [PUBLISHING-PLAN.md](P
 
 - [ ] Series bible: characters, places and timelines shared across books in a series
 - [x] World-building: magic/technology rules with costs and limits, languages and glossaries with pronunciation, invented calendars, currencies
-- [ ] Map maker: upload or draw a world map, pin story pages to it, see which scenes happen where
+- [x] Map maker: upload or draw a world map, pin story pages to it, see which scenes happen where
 - [x] Character arcs: goal, wound, lie and change per character across chapters, as a line chart
 - [x] Pacing graph: tension, action vs reflection and scene length across the book
 - [x] POV and screen-time balance: words per character and viewpoint, chapter by chapter

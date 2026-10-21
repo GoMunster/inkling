@@ -888,6 +888,35 @@ body.dnd,body.dnd *{cursor:grabbing!important;user-select:none}
 .w-u{display:flex;gap:6px;align-items:center;flex-wrap:wrap} .w-u input[type=number]{width:80px}
 .w-tool{display:flex;flex-wrap:wrap;gap:10px;align-items:end;margin-top:10px;padding:10px;border-radius:10px;background:var(--bg)}
 .w-tool label.f{width:130px} .w-out{font-weight:600;padding-bottom:7px}
+.mp-tools{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-left:auto}
+.mp-tools .seg button{display:inline-flex;align-items:center;gap:5px}
+.mp-pen{display:flex;flex-wrap:wrap;gap:10px;align-items:center;padding:8px 16px;border-bottom:1px solid var(--line);background:var(--panel)}
+.mp-wrap{display:grid;grid-template-columns:1fr 280px;height:calc(100vh - 120px);min-height:420px}
+@media (max-width:900px){.mp-wrap{grid-template-columns:1fr;grid-template-rows:60vh auto;height:auto}}
+.mp-stage{position:relative;overflow:hidden;background:var(--panel2);touch-action:none;cursor:grab;outline:none}
+.mp-stage.panning{cursor:grabbing} .mp-stage.m-pin{cursor:crosshair} .mp-stage.m-draw{cursor:crosshair}
+.mp-stage.drop{box-shadow:inset 0 0 0 3px var(--accent)}
+.mp-world{position:absolute;left:0;top:0;transform-origin:0 0;box-shadow:0 2px 18px rgba(0,0,0,.18)}
+.mp-world img,.mp-blank{display:block;width:100%;height:100%;user-select:none;pointer-events:none}
+.mp-blank{background:radial-gradient(ellipse at center,#f6ecd2 0%,#ead9b0 70%,#d9c08e 100%);background-color:#efe2c2}
+.mp-ink{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible}
+.mp-ink polyline{fill:none;stroke-linecap:round;stroke-linejoin:round;vector-effect:non-scaling-stroke}
+.mp-pins{position:absolute;inset:0}
+.mp-pin{position:absolute;transform:translate(-50%,-100%) scale(var(--ik,1));transform-origin:50% 100%;border:0;background:none;padding:0;display:flex;flex-direction:column;align-items:center;cursor:pointer}
+.mp-pin i{width:18px;height:18px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);background:var(--c);border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.35);order:2}
+.mp-pin span{order:1;margin-bottom:3px;font-size:12px;font-weight:650;color:#1d1a14;background:rgba(255,253,245,.92);border-radius:5px;padding:1px 6px;white-space:nowrap;box-shadow:0 1px 3px rgba(0,0,0,.2)}
+.mp-pin.sz-s i{width:12px;height:12px} .mp-pin.sz-s span{font-size:10.5px} .mp-pin.sz-l i{width:26px;height:26px} .mp-pin.sz-l span{font-size:14px}
+.mp-pin.on i{box-shadow:0 0 0 3px var(--accent),0 1px 4px rgba(0,0,0,.35)} .mp-pin.on span{outline:2px solid var(--accent)}
+.mp-hint{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);background:rgba(255,253,245,.92);color:#3a3226;border-radius:12px;padding:14px 18px;max-width:340px;text-align:center;display:grid;gap:4px;font-size:13px;pointer-events:none}
+.mp-side{border-left:1px solid var(--line);background:var(--panel);padding:14px;overflow:auto;display:grid;align-content:start;gap:8px}
+.mp-side h3{margin:0;font-size:14px} .mp-side h4{margin:8px 0 0;font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+.mp-sh{display:flex;justify-content:space-between;align-items:center}
+.mp-list{display:grid;gap:2px}
+.mp-li{display:flex;align-items:center;gap:8px;border:0;background:none;text-align:left;padding:5px 6px;border-radius:6px;font-size:13px}
+.mp-li:hover{background:var(--panel2)} .mp-li span{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap} .mp-li small{color:var(--muted);font-size:11.5px;display:inline-flex}
+.mp-li i{width:9px;height:9px;border-radius:50%;background:var(--c);flex:none}
+.mp-side label.f input,.mp-side label.f textarea,.mp-side select,.mp-cap{border:1px solid var(--line);background:var(--bg);border-radius:8px;padding:6px 8px;font:inherit;color:var(--ink);width:100%}
+.mp-del{justify-self:start;margin-top:6px}
 .sd-open{justify-self:start;display:inline-flex;align-items:center;gap:5px;font-size:12.5px}
 .pf-wrap{max-width:760px;margin:0 auto;padding:16px 16px 48px;display:grid;gap:14px}
 .pf{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:16px 18px}
@@ -1209,7 +1238,7 @@ const pick=a=>a[Math.floor(Math.random()*a.length)];
 const RM=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
 const RING=66;
 
-const ICO={plus:'M12 5v14M5 12h14',chart:'M3 3v18h18M7 15l4-4 3 3 5-6',down:'M6 9l6 6 6-6',right:'M9 6l6 6-6 6',up:'M6 15l6-6 6 6',back:'M15 6l-6 6 6 6',
+const ICO={plus:'M12 5v14M5 12h14',map:'M9 4L3 6v14l6-2 6 2 6-2V4l-6 2-6-2zM9 4v14M15 6v14',pin:'M12 21s-6-5.5-6-11a6 6 0 0112 0c0 5.5-6 11-6 11zM12 12.5a2.5 2.5 0 100-5 2.5 2.5 0 000 5z',pen2:'M4 20l4-1L19 8l-3-3L5 16zM14 6l3 3',chart:'M3 3v18h18M7 15l4-4 3 3 5-6',down:'M6 9l6 6 6-6',right:'M9 6l6 6-6 6',up:'M6 15l6-6 6 6',back:'M15 6l-6 6 6 6',
   trash:'M5 7h14M10 7V5h4v2M7 7l1 12h8l1-12',edit:'M4 20h4L19 9l-4-4L4 16v4z',dots:'M5 12h.01M12 12h.01M19 12h.01',
   card:'M4 6h7v6H4zM13 6h7v6h-7zM4 14h7v4H4zM13 14h7v4h-7z',book:'M5 5h6a2 2 0 012 2v12a2 2 0 00-2-2H5zM19 5h-6a2 2 0 00-2 2v12a2 2 0 012-2h6z',
   pen:'M4 20l1-4L16 5l3 3L8 19l-4 1z',focus:'M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5',link:'M10 14a4 4 0 005.7 0l3-3a4 4 0 00-5.7-5.7l-1 1M14 10a4 4 0 00-5.7 0l-3 3a4 4 0 005.7 5.7l1-1',
@@ -1396,9 +1425,10 @@ function normalize(o){
   meta.chapters.forEach(c=>{ cho[c.id]={notes:String((chi[c.id]||{}).notes||'')}; });
   const nti=o.nt&&typeof o.nt==='object'?o.nt:{}, nto={};
   if(!Array.isArray(meta.nts)) meta.nts=[{id:uid('n_'),name:'General notes',kind:'page'},{id:uid('n_'),name:'Brainstorming',kind:'board'}];
-  meta.nts=meta.nts.filter(x=>x&&x.id).map(x=>({id:String(x.id),name:String(x.name||'Notes'),kind:x.kind==='board'?'board':'page'}));
+  meta.nts=meta.nts.filter(x=>x&&x.id).map(x=>({id:String(x.id),name:String(x.name||'Notes'),kind:['board','map'].includes(x.kind)?x.kind:'page'}));
   meta.nts.forEach(x=>{ const d=nti[x.id]||{}; nto[x.id]={text:String(d.text||''),
-    ideas:(Array.isArray(d.ideas)?d.ideas:[]).filter(i=>i&&i.id).map(i=>({id:String(i.id),text:String(i.text||''),color:NT_COLORS.includes(i.color)?i.color:'thing'}))}; });
+    ideas:(Array.isArray(d.ideas)?d.ideas:[]).filter(i=>i&&i.id).map(i=>({id:String(i.id),text:String(i.text||''),color:NT_COLORS.includes(i.color)?i.color:'thing'}))};
+    if(x.kind==='map') Object.assign(nto[x.id],normMap(d,meta.ents)); });
   const oli=o.ol&&typeof o.ol==='object'?o.ol:{}, olo={};
   if(!Array.isArray(meta.ols)) meta.ols=[{id:uid('o_'),name:'Novel outline'}];
   meta.ols=meta.ols.filter(x=>x&&x.id).map(x=>({id:String(x.id),name:String(x.name||'Outline')}));
@@ -1482,8 +1512,10 @@ function picStyle(eid){ const p=(S.en[eid]||{}).pic; if(!p) return ''; const o=p
 function picSvg(eid,x,y,w,h){ const p=(S.en[eid]||{}).pic||{px:50,py:50,zoom:1}, z=p.zoom||1, W=w*z, H=h*z;
   const al=(p.px<34?'xMin':p.px>66?'xMax':'xMid')+(p.py<34?'YMin':p.py>66?'YMax':'YMid');
   return 'x="'+(x-(W-w)*p.px/100).toFixed(1)+'" y="'+(y-(H-h)*p.py/100).toFixed(1)+'" width="'+W.toFixed(1)+'" height="'+H.toFixed(1)+'" preserveAspectRatio="'+al+' slice"'; }
+// A picture belongs to a story page (S.en[id].pic) or a world map (S.nt[id].pic, a note of kind 'map').
+const picRec=id=>((S.en[id]||S.nt[id]||{}).pic)||null, picKey=id=>S.en[id]?'en_'+id:'nt_'+id, isMapPic=id=>!S.en[id]&&!!S.nt[id];
 function picSrc(eid){
-  const p=S.en[eid]&&S.en[eid].pic; if(!p) return '';
+  const p=picRec(eid); if(!p) return '';
   if(p.f) return DESK&&PJ.id?'inkpic://p/'+encodeURIComponent(PJ.id)+'/'+encodeURIComponent(p.f):'';
   if(p.a) return '/_blob/'+p.a;
   if(p.l){ try{ return localStorage.getItem(LOCAL_PIC+eid)||''; }catch(e){ return ''; } }
@@ -1494,7 +1526,7 @@ async function getAssets(){ try{ return window.claude&&window.claude.use?await w
 // Claude artifact, a browser and the desktop app with its pictures.
 async function collectImages(){
   const o={};
-  for(const id of Object.keys(S.en)){ const p=S.en[id].pic; try{
+  for(const id of Object.keys(S.en).concat(Object.keys(S.nt).filter(k=>S.nt[k].pic))){ const p=picRec(id); if(!p) continue; try{
     if(p.f&&DESK&&PJ.id) o[id]=await DESK.picRead(PJ.id,p.f);
     else if(p.l){ const d=localStorage.getItem(LOCAL_PIC+id); if(d) o[id]=d; }
     else if(p.a){ const r=await fetch('/_blob/'+p.a); if(r.ok) o[id]=await toDataUrl(await r.blob()); }
@@ -1503,8 +1535,8 @@ async function collectImages(){
 }
 async function adoptImages(np,imgs,deskId){
   imgs=imgs&&typeof imgs==='object'?imgs:{}; const inClaude=!!(window.claude&&window.claude.use);
-  for(const id of Object.keys(np.en)){
-    const p=np.en[id].pic, d=imgs[id], ok=typeof d==='string'&&/^data:image\/[\w+.-]+;base64,/.test(d);
+  for(const id of Object.keys(np.en).concat(Object.keys(np.nt||{}).filter(k=>np.nt[k].pic))){
+    const p=(np.en[id]||np.nt[id]).pic, d=imgs[id], ok=typeof d==='string'&&/^data:image\/[\w+.-]+;base64,/.test(d);
     if(deskId){ p.a=''; p.l=false; p.f=''; if(ok) try{ const b=await (await fetch(d)).blob(); p.f=await DESK.picSave(deskId,new Uint8Array(await b.arrayBuffer()),b.type); }catch(e){} continue; }
     p.f='';
     if(p.a&&inClaude) continue;   // the artifact still holds this picture
@@ -1513,7 +1545,7 @@ async function adoptImages(np,imgs,deskId){
   }
 }
 async function dropPic(eid,pic){
-  const p=pic||S.en[eid]&&S.en[eid].pic; if(!p) return;
+  const p=pic||picRec(eid); if(!p) return;
   if(p.l){ try{ localStorage.removeItem(LOCAL_PIC+eid); }catch(e){} }
   if(p.f&&DESK&&PJ.id) DESK.picDelete(PJ.id,p.f).catch(()=>{});
   if(p.a){ const as=await getAssets(); if(as) try{ await as.delete(p.a); }catch(e){} }
@@ -1532,30 +1564,30 @@ const toDataUrl=b=>new Promise(r=>{ const f=new FileReader(); f.onload=()=>r(f.r
 async function setPic(eid,file){
   if(!file||!/^image\/(png|jpeg|gif|webp|svg\+xml|avif|bmp)$/.test(file.type)){ toast('Choose an image file: JPG, PNG, WebP or GIF.',{plain:true}); return; }
   ui.imgBusy=eid; refreshPic();
-  const p=S.en[eid].pic, old={a:p.a,l:p.l,f:p.f};
+  const p=picRec(eid), old={a:p.a,l:p.l,f:p.f}, big=isMapPic(eid);
   try{
     const as=DESK?null:await getAssets();
     if(DESK){
-      const b=await shrink(file,2400,.9), name=await DESK.picSave(PJ.id,new Uint8Array(await b.arrayBuffer()),b.type||'image/webp');
+      const b=await shrink(file,big?4000:2400,.9), name=await DESK.picSave(PJ.id,new Uint8Array(await b.arrayBuffer()),b.type||'image/webp');
       p.f=name; p.a=''; p.l=false; if(old.f&&old.f!==name) DESK.picDelete(PJ.id,old.f).catch(()=>{});
     } else if(as){
-      const b=await shrink(file,2000,.88), r=await as.upload(b,{type:b.type});
+      const b=await shrink(file,big?3200:2000,.88), r=await as.upload(b,{type:b.type});
       p.a=r.id; p.l=false; if(old.l) try{ localStorage.removeItem(LOCAL_PIC+eid); }catch(e){}
       if(old.a&&old.a!==r.id) as.delete(old.a).catch(()=>{});
     } else {
-      const b=await shrink(file,1000,.82), url=await toDataUrl(b);
+      const b=await shrink(file,big?1800:1000,.82), url=await toDataUrl(b);
       try{ localStorage.setItem(LOCAL_PIC+eid,url); }catch(e){ throw {code:'local_full'}; }
       p.l=true; p.a='';
     }
-    dirty('en_'+eid);
+    if(big){ p.w=0; p.h=0; } dirty(picKey(eid));
   }catch(err){
     const c=err&&err.code;
     toast(c==='too_large'?'That image is too big. Try one under 20 MB.':c==='local_full'?'This browser is out of room for pictures. Remove one or use Inkling in Claude.':c==='quota_or_state'?'Picture storage for Inkling is full. Remove a picture you no longer need.':c==='unreadable'?'That file could not be opened as an image.':c==='rate_limited'?'Too many uploads at once. Try again in a moment.':'The picture could not be saved. Please try again.',{plain:true});
   }
-  ui.imgBusy=null; refreshPic(); renderBinder();
+  ui.imgBusy=null; refreshPic(); renderBinder(); if(big&&ui.view.k==='nt'&&ui.view.id===eid) renderMain();
 }
 async function removePic(eid){
-  await dropPic(eid); const p=S.en[eid].pic; p.a=''; p.l=false; p.f=''; p.cap=''; dirty('en_'+eid); refreshPic(); renderBinder();
+  await dropPic(eid); const p=picRec(eid); p.a=''; p.l=false; p.f=''; p.cap=''; dirty(picKey(eid)); refreshPic(); renderBinder();
 }
 function picHtml(e){
   const p=S.en[e.id].pic, src=picSrc(e.id), busy=ui.imgBusy===e.id;
@@ -3163,6 +3195,7 @@ function trashRestore(id){
 function trashDrop(id){
   const x=S.tr[id]; if(!x) return;
   if(x.kind==='ent'&&x.d.en&&x.d.en.pic&&!S.meta.ents[x.d.id]) dropPic(x.d.id,x.d.en.pic);
+  if(x.kind==='nt'&&x.d.rec&&x.d.rec.pic&&!S.nt[x.d.id]) dropPic(x.d.id,x.d.rec.pic);
   delete S.tr[id]; forget('tr_'+id);
 }
 function trashPurge(){
@@ -3224,7 +3257,9 @@ function searchAll(q,o){
     add('ent',e.name,LS(e.type),[e.name].concat(e.aliases||[]).join(', '),{k:'ent',id:e.id}); add('ent',e.name,LS(e.type)+' · tag',e.tag,{k:'ent',id:e.id});
     Object.keys(f).forEach(k=>add('ent',e.name,LS(e.type)+' · '+(k==='facts'?'Key facts':labels[k]||k),f[k],{k:'ent',id:e.id,field:k})); });
   m.nts.forEach(x=>{ const d=S.nt[x.id]; if(!d) return; add('nt',x.name,x.kind==='board'?'Brainstorm':'Notes page',x.name,{k:'nt',id:x.id});
-    if(x.kind==='board') d.ideas.forEach(i=>add('nt',x.name,'Brainstorm idea',i.text,{k:'nt',id:x.id,flash:'.idea[data-id="'+i.id+'"]'})); else add('nt',x.name,'Notes page',d.text,{k:'nt',id:x.id}); });
+    if(x.kind==='board') d.ideas.forEach(i=>add('nt',x.name,'Brainstorm idea',i.text,{k:'nt',id:x.id,flash:'.idea[data-id="'+i.id+'"]'}));
+    else if(x.kind==='map') (d.pins||[]).forEach(pn=>{ add('nt',mpName(pn),x.name+' · map pin',pn.ent?'':pn.name,{k:'nt',id:x.id,pin:pn.id}); add('nt',mpName(pn),x.name+' · pin note',pn.note,{k:'nt',id:x.id,pin:pn.id}); });
+    else add('nt',x.name,'Notes page',d.text,{k:'nt',id:x.id}); });
   m.ols.forEach(x=>{ const d=S.ol[x.id]; if(!d) return; add('ol',x.name,LS('ol'),x.name,{k:'ol',id:x.id});
     d.items.forEach(i=>{ add('ol',x.name,'Line',i.text,{k:'ol',id:x.id,flash:'.ol-row[data-i="'+i.id+'"]'}); add('ol',x.name,'Line note',i.note,{k:'ol',id:x.id,flash:'.ol-row[data-i="'+i.id+'"]'}); }); });
   m.tls.forEach(x=>{ const t=S.tl[x.id]; if(!t) return; add('tl',x.name,LS('tl'),x.name,{k:'tl',id:x.id});
@@ -3241,6 +3276,7 @@ function saOpen(o){
   if(o.k==='cork'){ ui.cork=o.ch; go({k:'cork'}); return; }
   if(o.k==='scene'){ if(o.text) ui.findSel={id:o.id,s:o.s,e:o.e}; go({k:'scene',id:o.id}); return; }
   if(o.k==='rm'||o.k==='ft'){ ui.cvFor=o.id; ui.cvSel=o.sel; go({k:o.k,id:o.id}); return; }
+  if(o.pin){ ui.mpSel=o.pin; go({k:'nt',id:o.id}); return; }
   go({k:o.k,id:o.id});
   if(o.k==='tl'&&o.card) tlOpenCard(o.card,true);
   const sel=o.flash||(o.field?'[data-k="'+o.field+'"]':''); if(!sel) return;
@@ -3309,7 +3345,7 @@ function renderSplit(){
       +((e.aliases||[]).length?'<p class="muted sp-sub">Also called '+esc(e.aliases.join(', '))+'</p>':'')+(e.tag?'<p class="sp-syn">'+esc(e.tag)+'</p>':'')
       +entFields(e.type).concat([['facts','Key facts']]).map(f=>'<label class="f">'+esc(f[1])+'<textarea data-spf="'+f[0]+'" rows="2">'+esc((b.fields||{})[f[0]]||'')+'</textarea></label>').join(''); }
   else if(v.k==='nt'){ const x=m.nts.find(y=>y.id===v.id), d=S.nt[v.id];
-    body='<h2 class="sp-h">'+esc(x.name)+'</h2>'+(x.kind==='board'?'<div class="sp-ideas">'+(d.ideas.map(i=>'<div class="sp-idea">'+esc(i.text||'…')+'</div>').join('')||'<p class="muted">No ideas yet.</p>')+'</div>'
+    body='<h2 class="sp-h">'+esc(x.name)+'</h2>'+(x.kind==='map'?(picSrc(x.id)?'<img class="sp-pic" src="'+esc(picSrc(x.id))+'" alt="">':'')+'<div class="sp-ideas">'+((d.pins||[]).map(pn=>'<div class="sp-idea"><b>'+esc(mpName(pn))+'</b>'+(pn.note?'<br>'+esc(pn.note):'')+'</div>').join('')||'<p class="muted">No pins yet.</p>')+'</div>':x.kind==='board'?'<div class="sp-ideas">'+(d.ideas.map(i=>'<div class="sp-idea">'+esc(i.text||'…')+'</div>').join('')||'<p class="muted">No ideas yet.</p>')+'</div>'
       :'<textarea class="sp-note" data-spn="1" placeholder="Notes…">'+esc(d.text)+'</textarea>'); }
   else if(v.k==='ol'){ const x=m.ols.find(y=>y.id===v.id), d=S.ol[v.id];
     body='<h2 class="sp-h">'+esc(x.name)+'</h2><p class="muted sp-sub">Read only</p><ul class="sp-ol">'+d.items.filter(i=>i.text||i.note).map(i=>'<li style="--d:'+i.depth+'" class="'+(i.done?'done':'')+'"><span>'+esc(i.text||'')+'</span>'+(i.note?'<small>'+esc(i.note)+'</small>':'')+'</li>').join('')+'</ul>'; }
@@ -3366,7 +3402,7 @@ function qsItems(){
   const m=S.meta, out=[], add=(v,label,sub,ico2)=>out.push({v,label:String(label||'Untitled'),sub,ico:ico2});
   m.chapters.forEach(c=>{ add({k:'cork',ch:c.id},c.title,'Chapter','book'); c.scenes.forEach(id=>{ const s=m.scenes[id]; if(s) add({k:'scene',id},s.title,c.title,'pen'); }); });
   Object.values(m.ents).forEach(e=>add({k:'ent',id:e.id},e.name,LS(e.type),'note'));
-  [['nt','note'],['ol','list'],['tl','time'],['rm','web'],['ft','tree']].forEach(([k,i])=>m[k+'s'].forEach(x=>add({k,id:x.id},x.name,k==='nt'&&x.kind==='board'?'Brainstorm':LS(k),i)));
+  [['nt','note'],['ol','list'],['tl','time'],['rm','web'],['ft','tree']].forEach(([k,i])=>m[k+'s'].forEach(x=>add({k,id:x.id},x.name,k==='nt'&&x.kind==='board'?'Brainstorm':k==='nt'&&x.kind==='map'?'World map':LS(k),k==='nt'&&x.kind==='map'?'map':i)));
   [[{k:'cork'},'Corkboard','card'],[{k:'search'},'Search everything','search'],[{k:'ss'},'Writing sessions','timer'],[{k:'plan'},'Deadline planner','cal'],[{k:'cont'},'Continuity check','search'],[{k:'story'},'Story insights','chart'],[{k:'world'},'Calendars & money','cal'],[{k:'trash'},'Trash','trash'],[{k:'layout'},'Project settings','layout'],[{k:'prefs'},'Settings','sliders']]
     .forEach(([v,l,i])=>add(v,l,'Screen',i));
   return out;
@@ -3468,7 +3504,7 @@ function dupEnt(id){
 function dupDoc(k,id){
   if(k==='tl'){ addTimeline(id); return; }
   const list=S.meta[k+'s'], it=list.find(x=>x.id===id); if(!it) return; const nid=uid(k+'_');
-  S[k][nid]=bare(S[k][id]); list.splice(list.indexOf(it)+1,0,Object.assign(bare(it),{id:nid,name:it.name+' (copy)'})); dirty('meta',k+'_'+nid); go({k,id:nid});
+  S[k][nid]=bare(S[k][id]); if(S[k][nid].pic) S[k][nid].pic=normPic(); list.splice(list.indexOf(it)+1,0,Object.assign(bare(it),{id:nid,name:it.name+' (copy)'})); dirty('meta',k+'_'+nid); go({k,id:nid});
 }
 function binderMenu(e){
   const row=e.target.closest('.sc-row,.ch-row,.e-row'); if(!row) return; e.preventDefault();
@@ -3594,11 +3630,11 @@ function addDocItem(k,kind){
   const id=uid(k+'_'), list=S.meta[k+'s'];
   if(k==='rm'||k==='ft'){ S[k][id]=k==='rm'?newRm():newFt(); list.push({id,name:LS(k)+(list.length?' '+(list.length+1):'')}); }
   else if(k==='ol'){ S.ol[id]={num:'decimal',showNotes:true,items:[{id:uid('i_'),text:'',note:'',depth:0,done:false,open:true,noteOpen:false,scene:''}]}; list.push({id,name:LS('ol')+' '+(list.length+1)}); }
-  else { S.nt[id]={text:'',ideas:[]}; list.push({id,name:kind==='board'?'Brainstorm '+(list.filter(x=>x.kind==='board').length+1):'Notes '+(list.filter(x=>x.kind==='page').length+1),kind}); }
+  else { S.nt[id]=Object.assign({text:'',ideas:[]},kind==='map'?normMap({}):{}); list.push({id,name:kind==='board'?'Brainstorm '+(list.filter(x=>x.kind==='board').length+1):kind==='map'?'World map'+(list.some(x=>x.kind==='map')?' '+(list.filter(x=>x.kind==='map').length+1):''):'Notes '+(list.filter(x=>x.kind==='page').length+1),kind}); }
   ui.openSec[k]=true; ui.focusName=true; dirty('meta',k+'_'+id); go({k,id});
 }
 function delDocItem(k,id){
-  const list=S.meta[k+'s'], it=list.find(x=>x.id===id); if(it) trashPut(k,it.name,k==='nt'&&it.kind==='board'?'Brainstorm':LS(k),{id,item:bare(it),i:list.indexOf(it),rec:bare(S[k][id])});
+  const list=S.meta[k+'s'], it=list.find(x=>x.id===id); if(it) trashPut(k,it.name,k==='nt'&&it.kind==='board'?'Brainstorm':k==='nt'&&it.kind==='map'?'World map':LS(k),{id,item:bare(it),i:list.indexOf(it),rec:bare(S[k][id])});
   S.meta[k+'s']=S.meta[k+'s'].filter(x=>x.id!==id); delete S[k][id]; forget(k+'_'+id); dirty('meta');
   if(!viewValid(ui.view)) ui.view=firstView(); ui.hist=ui.hist.filter(viewValid);
   renderAll();
@@ -3674,8 +3710,8 @@ function renderBinder0(){
   if(secOn('ol')) h+=secHead('ol',m.ols.length,'addol');
   if(secOn('ol')&&ui.openSec.ol){ h+='<div class="doc-list" data-list="ols">'; m.ols.forEach(x=>{ const it=S.ol[x.id].items; h+=docRow('ol',x,'list',it.filter(i=>i.done).length+'/'+it.length); }); h+='</div>'; if(!m.ols.length) h+='<div class="empty-s">No outline yet. Press + to start one.</div>'; }
   if(secOn('nt')) h+=secHead('nt',m.nts.length,'addnt');
-  if(secOn('nt')&&ui.ntAdd) h+='<div class="nt-add"><button class="btn sm" data-a="addnt-page">'+ico('note',14)+'<span>Notes page</span></button><button class="btn sm" data-a="addnt-board">'+ico('bulb',14)+'<span>Brainstorm board</span></button></div>';
-  if(secOn('nt')&&ui.openSec.nt){ h+='<div class="doc-list" data-list="nts">'; m.nts.forEach(x=>{ const d=S.nt[x.id]; h+=docRow('nt',x,x.kind==='board'?'bulb':'note',x.kind==='board'?d.ideas.length:fmt(wc(d.text))); }); h+='</div>'; if(!m.nts.length) h+='<div class="empty-s">No notes yet. Press + to add a page or a board.</div>'; }
+  if(secOn('nt')&&ui.ntAdd) h+='<div class="nt-add"><button class="btn sm" data-a="addnt-page">'+ico('note',14)+'<span>Notes page</span></button><button class="btn sm" data-a="addnt-map">'+ico('map',14)+'<span>World map</span></button><button class="btn sm" data-a="addnt-board">'+ico('bulb',14)+'<span>Brainstorm board</span></button></div>';
+  if(secOn('nt')&&ui.openSec.nt){ h+='<div class="doc-list" data-list="nts">'; m.nts.forEach(x=>{ const d=S.nt[x.id]; h+=docRow('nt',x,x.kind==='board'?'bulb':x.kind==='map'?'map':'note',x.kind==='board'?d.ideas.length:x.kind==='map'?(d.pins||[]).length:fmt(wc(d.text))); }); h+='</div>'; if(!m.nts.length) h+='<div class="empty-s">No notes yet. Press + to add a page or a board.</div>'; }
   if(secOn('tl')) h+='<div class="bsec"><button class="lbl" data-a="sec" data-t="tl" aria-expanded="'+(ui.openSec.tl?'true':'false')+'">'+ico(ui.openSec.tl?'down':'right',14)+'<span>'+esc(LP('tl'))+'</span><span class="n">'+m.tls.length+'</span></button><button class="ibtn" data-a="relabel" data-t="tl" aria-label="Rename this section" title="Rename this section">'+ico('edit',14)+'</button><button class="ibtn" data-a="addtl" aria-label="Add '+esc(LS('tl').toLowerCase())+'">'+ico('plus',14)+'</button></div>'+relabelForm('tl');
   if(secOn('tl')&&ui.openSec.tl){
     h+='<div class="doc-list" data-list="tls">';
@@ -3761,7 +3797,7 @@ function bindBinder(){
     else if(a==='open-nt') go({k:'nt',id});
     else if(a==='addol') addDocItem('ol');
     else if(a==='addnt'){ ui.ntAdd=!ui.ntAdd; ui.openSec.nt=true; renderBinder(); }
-    else if(a==='addnt-page'||a==='addnt-board'){ ui.ntAdd=false; addDocItem('nt',a==='addnt-board'?'board':'page'); }
+    else if(a==='addnt-page'||a==='addnt-board'||a==='addnt-map'){ ui.ntAdd=false; addDocItem('nt',a.slice(6)); }
     else if(a==='bcfg'){ ui.binderCfg=!ui.binderCfg; renderBinder(); }
     else if(a==='open-rm'||a==='open-ft') go({k:a.slice(5),id});
     else if(a==='addrm'||a==='addft') addDocItem(a.slice(3));
@@ -4118,7 +4154,7 @@ function renderEnt(el,v){
         const sn=(s>0?'…':'')+esc(x.text.slice(s,f.i).replace(/\s+/g,' '))+'<mark>'+esc(x.text.slice(f.i,f.i+f.l))+'</mark>'+esc(x.text.slice(f.i+f.l,en).replace(/\s+/g,' '))+(en<x.text.length?'…':'');
         return '<button class="ap" data-sc="'+x.id+'"><b><span>'+esc(m.scenes[x.id].title)+'</span><span class="mono muted">'+x.n+'×</span></b><span class="muted" style="font-size:12px">'+esc(x.ch.title)+'</span><span class="sn">'+sn+'</span></button>'; }).join('')
       :'<p class="sub">Not mentioned yet. Write this name in a scene and it will link here automatically.</p>')
-    +'</section>'+relHtml(e)+tlMentionsHtml(e)+'</article>';
+    +'</section>'+relHtml(e)+mapPinsHtml(e)+tlMentionsHtml(e)+'</article>';
   el.querySelector('.fields').insertAdjacentHTML('beforebegin',entContHtml(e));
   el.querySelectorAll('textarea').forEach(t=>{
     ag(t);
@@ -4136,6 +4172,7 @@ function renderEnt(el,v){
   $('#entType',el).addEventListener('change',ev=>{ e.type=ev.target.value; dirty('meta'); renderBinder(); renderEnt(el,v); });
   el.querySelectorAll('.ap[data-sc]').forEach(b=>b.addEventListener('click',()=>go({k:'scene',id:b.dataset.sc,flash:v.id})));
   el.querySelectorAll('.ap[data-cv]').forEach(b=>b.addEventListener('click',()=>{ ui.cvFor=b.dataset.id; ui.cvSel={k:b.dataset.sk,id:b.dataset.sel}; go({k:b.dataset.cv,id:b.dataset.id}); }));
+  el.querySelectorAll('.ap[data-mapof]').forEach(b=>b.addEventListener('click',()=>{ ui.mpSel=b.dataset.pin; go({k:'nt',id:b.dataset.mapof}); }));
   el.querySelectorAll('.ap[data-card]').forEach(b=>b.addEventListener('click',()=>{ go({k:'tl',id:b.dataset.tl}); tlOpenCard(b.dataset.card,true); }));
   if(ui.focusName){ ui.focusName=false; nm.focus(); nm.select(); }
 }
@@ -4187,8 +4224,138 @@ function namesHtml(text){
   const seen=[]; findLinks(text).forEach(l=>{ if(!seen.includes(l.id)) seen.push(l.id); });
   return seen.map(id=>{ const e=S.meta.ents[id]; return '<button class="cl t-'+e.type+'" data-ent="'+id+'"><i class="pip"></i><span class="nm">'+esc(e.name)+'</span></button>'; }).join('');
 }
+/* ---------- world maps: a note of kind 'map' ---------- */
+// S.nt[id] for a map also holds pic (the map image, stored like a story page picture; none = blank parchment),
+// pins[{id,ent,name,x,y,color,note}] (x, y: 0–1000 across and down the map; ent links a story page),
+// ink[{c,w,p}] (pen strokes: colour token, width, "x,y x,y…" in the same 0–1000 units) and pinSize.
+// The view (pan and zoom) is per device in ui.mpView; ui.mpSel is the selected pin, ui.mpMode 'move'|'pin'|'draw'.
+const MP_W=1500, MP_H=1000;   // the blank parchment's size
+const mpName=pn=>pn.ent&&S.meta.ents[pn.ent]?S.meta.ents[pn.ent].name:(pn.name||'Pin');
+function normMap(d,ents){
+  d=d&&typeof d==='object'?d:{}; const c=v=>Math.max(0,Math.min(1000,Math.round(+v||0)));
+  return {pic:normPic(d.pic),pinSize:[0,1,2].includes(d.pinSize)?d.pinSize:1,
+    pins:(Array.isArray(d.pins)?d.pins:[]).filter(p=>p&&/^[\w-]{1,40}$/.test(p.id)).slice(0,500).map(p=>({id:p.id,ent:typeof p.ent==='string'&&(!ents||ents[p.ent])?p.ent:'',name:String(p.name||'').slice(0,80),x:c(p.x),y:c(p.y),color:colOk(p.color)?p.color:'',note:String(p.note||'').slice(0,2000)})),
+    ink:(Array.isArray(d.ink)?d.ink:[]).filter(k=>k&&typeof k.p==='string'&&/^[\d., ]+$/.test(k.p)).slice(-3000).map(k=>({c:colOk(k.c)?k.c:'ink',w:[1,2,4,8].includes(k.w)?k.w:2,p:k.p.slice(0,20000)}))};
+}
+const mpCol=pn=>pn.color?cssCol(pn.color):pn.ent&&S.meta.ents[pn.ent]?'var(--'+S.meta.ents[pn.ent].type+')':'var(--danger)';
+const mpInk=c=>c==='ink'?'#2b2118':cssCol(c);
+function mpScenesAt(entId){ return entId?orderedScenes().filter(o=>S.meta.scenes[o.id].place===entId):[]; }
+function renderMap(el,v,x,d){
+  const src=picSrc(v.id), mode=ui.mpMode||'move', sel=d.pins.find(p=>p.id===ui.mpSel);
+  el.innerHTML='<div class="main-head">'+backBtn()+'<span class="kind">'+ico('map',16)+'</span>'
+    +'<input id="ntName" class="title-in" value="'+esc(x.name)+'" maxlength="80" aria-label="Map name">'
+    +'<div class="mp-tools"><div class="seg" role="group" aria-label="Tool">'+[['move','Move','fit'],['pin','Add pin','pin'],['draw','Draw','pen2']].map(([k,l,i])=>'<button data-mp="mode" data-v="'+k+'"'+(mode===k?' class="on" aria-pressed="true"':' aria-pressed="false"')+'>'+ico(i,13)+'<span>'+l+'</span></button>').join('')+'</div>'
+    +'<button class="ibtn" data-mp="zout" aria-label="Zoom out" title="Zoom out">'+ico('minus',16)+'</button><button class="ibtn" data-mp="zin" aria-label="Zoom in" title="Zoom in">'+ico('plus',16)+'</button><button class="btn sm" data-mp="fit">'+ico('fit',14)+'<span>Fit</span></button>'
+    +'<button class="btn sm" data-mp="pick">'+ico('upload',14)+'<span>'+(src?'Replace map':'Upload a map')+'</span></button></div></div>'
+    +(mode==='draw'?'<div class="mp-pen"><span class="sws">'+['ink','danger','accent','place','thing','char'].map(c=>'<button class="sw'+((ui.mpPen||'ink')===c?' on':'')+'" data-mp="pen" data-c="'+c+'" style="--c:'+mpInk(c)+'" aria-label="Pen colour"></button>').join('')+'</span>'
+      +'<span class="seg">'+[1,2,4,8].map(w=>'<button data-mp="pw" data-v="'+w+'"'+((ui.mpW||2)===w?' class="on"':'')+'>'+(w===1?'Fine':w===2?'Pen':w===4?'Marker':'Brush')+'</button>').join('')+'</span>'
+      +'<button class="btn sm" data-mp="undo"'+(d.ink.length?'':' disabled')+'>'+ico('undo',14)+'<span>Undo stroke</span></button><button class="btn sm'+(ui.confirm==='mpclear'?' danger':'')+'" data-mp="clear"'+(d.ink.length?'':' disabled')+'>'+(ui.confirm==='mpclear'?'Clear the drawing?':'Clear drawing')+'</button></div>':'')
+    +'<div class="mp-wrap"><div class="mp-stage m-'+mode+'" id="mpStage" tabindex="0" aria-label="Map. Drag to move around, scroll or pinch to zoom.">'
+    +'<div class="mp-world" id="mpWorld">'+(src?'<img id="mpImg" src="'+esc(src)+'" alt="'+esc(x.name)+'" draggable="false">':'<div class="mp-blank" id="mpImg" data-w="'+MP_W+'" data-h="'+MP_H+'"></div>')
+    +'<svg class="mp-ink" id="mpInk" viewBox="0 0 1000 1000" preserveAspectRatio="none">'+d.ink.map(k=>'<polyline points="'+k.p+'" stroke="'+mpInk(k.c)+'" stroke-width="'+k.w+'"/>').join('')+'</svg>'
+    +'<div class="mp-pins" id="mpPins"></div></div>'
+    +(!src&&!d.pins.length&&!d.ink.length?'<div class="mp-hint"><b>Drop a map here</b><span>Upload a map you drew, scanned or made in a map maker, or draw on this blank parchment and add pins for your places.</span></div>':'')
+    +(ui.imgBusy===v.id?'<span class="busy">Saving map…</span>':'')+'</div>'
+    +'<aside class="mp-side" id="mpSide"></aside></div><input type="file" id="mpFile" accept="image/*" hidden>';
+  const nm=$('#ntName',el); nm.addEventListener('input',()=>{ x.name=nm.value||'Untitled'; dirty('meta'); renderBinder(); });
+  if(ui.focusName){ ui.focusName=false; nm.focus(); nm.select(); }
+  const stage=$('#mpStage',el), world=$('#mpWorld',el), img=$('#mpImg',el), key='nt_'+v.id, VW=ui.mpView||(ui.mpView={});
+  let W=MP_W, H=MP_H;
+  const apply=()=>{ const q=VW[v.id]; world.style.width=W+'px'; world.style.height=H+'px'; world.style.transform='translate('+q.x+'px,'+q.y+'px) scale('+q.k+')'; world.style.setProperty('--ik',1/q.k); };
+  const fit=()=>{ const r=stage.getBoundingClientRect(), k=Math.min((r.width-32)/W,(r.height-32)/H)||1; VW[v.id]={k,x:(r.width-W*k)/2,y:(r.height-H*k)/2}; apply(); };
+  const ready=()=>{ if(src&&img.naturalWidth){ W=img.naturalWidth; H=img.naturalHeight; } if(!VW[v.id]||VW[v.id].src!==src){ fit(); VW[v.id].src=src; } else apply(); drawPins(); };
+  if(src&&!img.complete) img.addEventListener('load',ready,{once:true}); else requestAnimationFrame(ready);
+  const zoom=(f,cx,cy)=>{ const q=VW[v.id]; if(!q) return; const r=stage.getBoundingClientRect(); cx=cx==null?r.width/2:cx; cy=cy==null?r.height/2:cy;
+    const k=Math.max(.05,Math.min(8,q.k*f)); q.x=cx-(cx-q.x)*k/q.k; q.y=cy-(cy-q.y)*k/q.k; q.k=k; apply(); };
+  const toMap=ev=>{ const q=VW[v.id], r=stage.getBoundingClientRect(); return {x:Math.max(0,Math.min(1000,Math.round(((ev.clientX-r.left-q.x)/q.k)/W*1000))),y:Math.max(0,Math.min(1000,Math.round(((ev.clientY-r.top-q.y)/q.k)/H*1000)))}; };
+  function drawPins(){
+    const box=$('#mpPins',el); if(!box) return; const sz=['s','m','l'][d.pinSize];
+    box.innerHTML=d.pins.map(pn=>'<button class="mp-pin sz-'+sz+(pn.id===ui.mpSel?' on':'')+'" data-pin="'+pn.id+'" style="left:'+(pn.x/10)+'%;top:'+(pn.y/10)+'%;--c:'+mpCol(pn)+'" title="'+esc(mpName(pn))+'"><i></i><span>'+esc(mpName(pn))+'</span></button>').join('');
+  }
+  function side(){
+    const box=$('#mpSide',el); if(!box) return; const pn=d.pins.find(p=>p.id===ui.mpSel), m=S.meta;
+    if(!pn){ const placed=d.pins.slice().sort((a,b)=>mpName(a).localeCompare(mpName(b)));
+      const unplaced=Object.values(m.ents).filter(e=>e.type==='place'&&!d.pins.some(p=>p.ent===e.id)).sort((a,b)=>a.name.localeCompare(b.name));
+      box.innerHTML='<h3>Pins <span class="muted">'+d.pins.length+'</span></h3>'
+        +(placed.length?'<div class="mp-list">'+placed.map(p=>{ const n=mpScenesAt(p.ent).length; return '<button class="mp-li" data-mp="sel" data-id="'+p.id+'"><i style="--c:'+mpCol(p)+'"></i><span>'+esc(mpName(p))+'</span>'+(n?'<small>'+n+' scene'+(n===1?'':'s')+'</small>':'')+'</button>'; }).join('')+'</div>'
+          :'<p class="fine">Choose <b>Add pin</b> and click the map, or double-click anywhere on it.</p>')
+        +(unplaced.length?'<h4>'+esc(LP('place'))+' not on this map</h4><div class="mp-list">'+unplaced.map(e=>'<button class="mp-li" data-mp="place" data-id="'+e.id+'"><i style="--c:var(--place)"></i><span>'+esc(e.name)+'</span><small>'+ico('plus',12)+'</small></button>').join('')+'</div><p class="fine">Click one, then click the map to place it.</p>':'')
+        +'<h4>Pin size</h4><div class="seg">'+['Small','Medium','Large'].map((l,i)=>'<button data-mp="psize" data-v="'+i+'"'+(d.pinSize===i?' class="on"':'')+'>'+l+'</button>').join('')+'</div>'
+        +(src?'<h4>Map picture</h4><input class="mp-cap" id="mpCap" value="'+esc(d.pic.cap||'')+'" maxlength="200" placeholder="Caption or artist credit" aria-label="Map credit"><button class="btn sm'+(ui.confirm==='mprm'?' danger':'')+'" data-mp="rmpic">'+(ui.confirm==='mprm'?'Remove the picture? Pins stay':'Remove picture')+'</button>':'');
+      return; }
+    const ents=Object.values(m.ents).sort((a,b)=>a.name.localeCompare(b.name)), at=mpScenesAt(pn.ent), e=pn.ent&&m.ents[pn.ent];
+    box.innerHTML='<div class="mp-sh"><h3>'+esc(mpName(pn))+'</h3><button class="ibtn" data-mp="close" aria-label="Close">'+ico('x')+'</button></div>'
+      +'<label class="f">Story page<select data-mpf="ent"><option value="">None, just a label</option>'+TYPE_ORDER.map(t=>{ const l=ents.filter(q=>q.type===t); return l.length?'<optgroup label="'+esc(LP(t))+'">'+l.map(q=>'<option value="'+q.id+'"'+(pn.ent===q.id?' selected':'')+'>'+esc(q.name)+'</option>').join('')+'</optgroup>':''; }).join('')+'</select></label>'
+      +(e?'':'<label class="f">Label<input data-mpf="name" value="'+esc(pn.name)+'" maxlength="80" placeholder="A town, a ruin, a battle…"></label>')
+      +'<span class="sec-l">Colour</span><span class="sws">'+[['','Page colour']].concat(TL_COLORS).map(c=>'<button class="sw'+(pn.color===c[0]?' on':'')+'" data-mp="pcol" data-c="'+c[0]+'" style="--c:'+(c[0]?cssCol(c[0]):e?'var(--'+e.type+')':'var(--danger)')+'" title="'+c[1]+'" aria-label="'+c[1]+'"></button>').join('')+'</span>'
+      +'<label class="f">Notes<textarea data-mpf="note" rows="3" placeholder="What happens here, how far it is from…">'+esc(pn.note)+'</textarea></label>'
+      +(e?'<button class="btn sm" data-mp="openent">'+ico('note',13)+'<span>Open '+esc(e.name)+'</span></button>':'')
+      +(e&&e.type==='place'?'<h4>Scenes set here <span class="muted">'+at.length+'</span></h4>'+(at.length?'<div class="mp-list">'+at.map(o=>'<button class="mp-li" data-mp="scene" data-id="'+o.id+'"><span>'+esc(m.scenes[o.id].title)+'</span><small>'+esc(o.ch.title)+'</small></button>').join('')+'</div>':'<p class="fine">Set a scene’s place in the Inkling panel (This scene › '+esc(LS('place'))+').</p>'):'')
+      +'<button class="btn sm danger mp-del" data-mp="delpin">'+ico('trash',13)+'<span>Remove pin</span></button>';
+  }
+  side();
+  const save=()=>dirty(key);
+  // pointer: pan, drag pins, place pins, draw
+  let drag=null;
+  stage.addEventListener('pointerdown',ev=>{
+    if(ev.button>0) return; const q=VW[v.id]; if(!q) return; const pinEl=ev.target.closest('.mp-pin');
+    if(pinEl&&(ui.mpMode||'move')!=='draw'){ const pn=d.pins.find(p=>p.id===pinEl.dataset.pin); drag={k:'pin',pn,x0:ev.clientX,y0:ev.clientY,moved:false}; stage.setPointerCapture(ev.pointerId); ev.preventDefault(); return; }
+    const md=ui.mpMode||'move';
+    if(md==='pin'){ const at=toMap(ev), pn={id:uid('pn'),ent:ui.mpPlace||'',name:ui.mpPlace?'':'New place',x:at.x,y:at.y,color:'',note:''}; d.pins.push(pn); ui.mpPlace=''; ui.mpSel=pn.id; ui.mpMode='move'; save(); renderMap(el,v,x,d); renderBinder(); const n=$('[data-mpf="name"]',el); if(n){ n.focus(); n.select(); } return; }
+    if(md==='draw'){ const at=toMap(ev); drag={k:'ink',pts:[at.x+','+at.y],line:document.createElementNS('http://www.w3.org/2000/svg','polyline')};
+      drag.line.setAttribute('stroke',mpInk(ui.mpPen||'ink')); drag.line.setAttribute('stroke-width',ui.mpW||2); drag.line.setAttribute('points',drag.pts[0]); $('#mpInk',el).appendChild(drag.line); stage.setPointerCapture(ev.pointerId); ev.preventDefault(); return; }
+    drag={k:'pan',x0:ev.clientX,y0:ev.clientY,qx:q.x,qy:q.y}; stage.setPointerCapture(ev.pointerId); stage.classList.add('panning');
+  });
+  stage.addEventListener('pointermove',ev=>{ if(!drag) return; const q=VW[v.id];
+    if(drag.k==='pan'){ q.x=drag.qx+ev.clientX-drag.x0; q.y=drag.qy+ev.clientY-drag.y0; apply(); }
+    else if(drag.k==='pin'){ if(!drag.moved&&Math.hypot(ev.clientX-drag.x0,ev.clientY-drag.y0)<4) return; drag.moved=true; const at=toMap(ev); drag.pn.x=at.x; drag.pn.y=at.y; const b=$('.mp-pin[data-pin="'+drag.pn.id+'"]',el); if(b){ b.style.left=(at.x/10)+'%'; b.style.top=(at.y/10)+'%'; } }
+    else if(drag.k==='ink'){ const at=toMap(ev), last=drag.pts[drag.pts.length-1].split(','); if(Math.hypot(at.x-last[0],at.y-last[1])<2) return; drag.pts.push(at.x+','+at.y); drag.line.setAttribute('points',drag.pts.join(' ')); } });
+  const end=()=>{ if(!drag) return; const g=drag; drag=null; stage.classList.remove('panning');
+    if(g.k==='pin'){ if(g.moved) save(); else ui.mpSel=g.pn.id; drawPins(); side(); }
+    else if(g.k==='ink'){ if(g.pts.length>1){ d.ink.push({c:ui.mpPen||'ink',w:ui.mpW||2,p:g.pts.join(' ')}); save(); renderMap(el,v,x,d); } else g.line.remove(); } };
+  stage.addEventListener('pointerup',end); stage.addEventListener('pointercancel',end);
+  stage.addEventListener('dblclick',ev=>{ if((ui.mpMode||'move')!=='move'||ev.target.closest('.mp-pin')) return; const at=toMap(ev), pn={id:uid('pn'),ent:'',name:'New place',x:at.x,y:at.y,color:'',note:''}; d.pins.push(pn); ui.mpSel=pn.id; save(); drawPins(); side(); renderBinder(); const n=$('[data-mpf="name"]',el); if(n){ n.focus(); n.select(); } });
+  stage.addEventListener('wheel',ev=>{ ev.preventDefault(); const r=stage.getBoundingClientRect(); zoom(Math.exp(-ev.deltaY*(ev.ctrlKey?.01:.0015)),ev.clientX-r.left,ev.clientY-r.top); },{passive:false});
+  stage.addEventListener('keydown',ev=>{ if(ev.key==='+'||ev.key==='=') zoom(1.25); else if(ev.key==='-') zoom(.8); else if(ev.key==='Escape'&&ui.mpSel){ ui.mpSel=null; drawPins(); side(); } else if((ev.key==='Delete'||ev.key==='Backspace')&&ui.mpSel){ d.pins=d.pins.filter(p=>p.id!==ui.mpSel); ui.mpSel=null; save(); drawPins(); side(); renderBinder(); } });
+  // drop or paste a map picture
+  const isImg=l=>[...(l||[])].find(f=>/^image\//.test(f.type));
+  stage.addEventListener('dragover',ev=>{ if([...ev.dataTransfer.items||[]].some(i=>i.kind==='file')){ ev.preventDefault(); stage.classList.add('drop'); } });
+  stage.addEventListener('dragleave',()=>stage.classList.remove('drop'));
+  stage.addEventListener('drop',ev=>{ stage.classList.remove('drop'); const f=isImg(ev.dataTransfer.files); if(!f) return; ev.preventDefault(); setPic(v.id,f); });
+  stage.addEventListener('paste',ev=>{ const f=ev.clipboardData&&isImg(ev.clipboardData.files); if(f){ ev.preventDefault(); setPic(v.id,f); } });
+  $('#mpFile',el).addEventListener('change',ev=>{ const f=ev.target.files&&ev.target.files[0]; if(f) setPic(v.id,f); });
+  el.onclick=ev=>{ const b=ev.target.closest('[data-mp]'); if(!b) return; const k=b.dataset.mp, pn=d.pins.find(p=>p.id===ui.mpSel);
+    if(k==='mode'){ ui.mpMode=b.dataset.v; if(b.dataset.v!=='pin') ui.mpPlace=''; renderMap(el,v,x,d); }
+    else if(k==='zin') zoom(1.25); else if(k==='zout') zoom(.8); else if(k==='fit') fit();
+    else if(k==='pick'){ const f=$('#mpFile',el); f.value=''; f.click(); }
+    else if(k==='pen'){ ui.mpPen=b.dataset.c; renderMap(el,v,x,d); } else if(k==='pw'){ ui.mpW=+b.dataset.v; renderMap(el,v,x,d); }
+    else if(k==='undo'){ d.ink.pop(); save(); renderMap(el,v,x,d); }
+    else if(k==='clear') confirmDo('mpclear',()=>{ d.ink=[]; save(); renderMap(el,v,x,d); },()=>renderMap(el,v,x,d));
+    else if(k==='rmpic') confirmDo('mprm',()=>removePic(v.id).then(()=>renderMap(el,v,x,d)),side);
+    else if(k==='sel'){ ui.mpSel=b.dataset.id; drawPins(); side(); }
+    else if(k==='place'){ ui.mpPlace=b.dataset.id; ui.mpMode='pin'; renderMap(el,v,x,d); toast('Click the map where '+S.meta.ents[b.dataset.id].name+' is.',{plain:true}); }
+    else if(k==='psize'){ d.pinSize=+b.dataset.v; save(); drawPins(); side(); }
+    else if(k==='close'){ ui.mpSel=null; drawPins(); side(); }
+    else if(k==='pcol'&&pn){ pn.color=b.dataset.c; save(); drawPins(); side(); }
+    else if(k==='openent'&&pn) go({k:'ent',id:pn.ent});
+    else if(k==='scene') go({k:'scene',id:b.dataset.id});
+    else if(k==='delpin'&&pn){ d.pins=d.pins.filter(p=>p.id!==pn.id); ui.mpSel=null; save(); drawPins(); side(); renderBinder(); }
+  };
+  el.oninput=ev=>{ const k=ev.target.dataset.mpf, pn=d.pins.find(p=>p.id===ui.mpSel);
+    if(ev.target.id==='mpCap'){ d.pic.cap=ev.target.value.slice(0,200); save(); return; }
+    if(!pn||!k||k==='ent') return; if(k==='name'){ pn.name=ev.target.value.slice(0,80); const b=$('.mp-pin[data-pin="'+pn.id+'"] span',el); if(b) b.textContent=mpName(pn); } else if(k==='note') pn.note=ev.target.value.slice(0,2000); save(); };
+  el.onchange=ev=>{ const pn=d.pins.find(p=>p.id===ui.mpSel); if(ev.target.dataset.mpf==='ent'&&pn){ pn.ent=ev.target.value; if(pn.ent) pn.name=''; else pn.name=pn.name||'New place'; save(); drawPins(); side(); } };
+  const ro=new ResizeObserver(()=>{ if(!document.body.contains(stage)){ ro.disconnect(); return; } if(VW[v.id]) apply(); }); ro.observe(stage);
+}
+// Story pages list the maps they are pinned on.
+function mapPinsHtml(e){
+  const rows=[]; S.meta.nts.filter(x=>x.kind==='map').forEach(x=>{ const d=S.nt[x.id]; (d&&d.pins||[]).filter(p=>p.ent===e.id).forEach(p=>rows.push('<button class="ap" data-mapof="'+x.id+'" data-pin="'+p.id+'"><b><span>'+esc(x.name)+'</span></b>'+(p.note?'<span class="sn">'+esc(p.note.slice(0,140))+'</span>':'')+'</button>')); });
+  return rows.length?'<section class="appears"><h3>On the map</h3>'+rows.join('')+'</section>':'';
+}
+
 function renderNt(el,v){
   const x=S.meta.nts.find(y=>y.id===v.id), d=S.nt[v.id], board=x.kind==='board';
+  if(x.kind==='map') return renderMap(el,v,x,d);
   el.innerHTML='<div class="main-head">'+backBtn()+'<span class="kind">'+ico(board?'bulb':'note',16)+'</span>'
     +'<input id="ntName" class="title-in" value="'+esc(x.name)+'" maxlength="80" aria-label="Name">'
     +(board?'<span class="mono muted" id="ntCount">'+d.ideas.length+' idea'+(d.ideas.length===1?'':'s')+'</span>':'<span class="mono muted" id="ntCount">'+fmt(wc(d.text))+' words</span>')+'</div>'
