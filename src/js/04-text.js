@@ -1,4 +1,20 @@
-/* ---------- linking names ---------- */
+/*
+ * 04-text.js: Scene text: name links, bold/italic/underline, and the editor's caret
+ *
+ * Name links: every story page's name and aliases are compiled into one regular expression (buildLinker); findLinks()
+ * finds them in text, and the editor shows each one as a coloured, clickable name.
+ *
+ * Formatting: scene text is stored as plain text with markers, **bold**, *italic* and __underline__. fmtParse() turns
+ * stored text into what the writer sees (the visible text, a style per character, and a map back to stored
+ * positions); fmtSerialize() turns styled characters back into stored text. renderText() draws a scene for the
+ * editor.
+ *
+ * The editor: getText() reads the editor back into stored text, caretOffset() and setCaret() keep the caret in place
+ * by its position in the visible text when the editor is redrawn, and relinkEditor() redraws the name links only when
+ * they change.
+ */
+// One regular expression that matches any of these names as a whole word, longest names first so "Anna Bell" wins
+// over "Anna".
 function makeRe(names) {
   const a = [...new Set(names.map(n => (n || '').trim()).filter(n => n.length >= 2))]
     .sort((x, y) => y.length - x.length)
@@ -24,6 +40,7 @@ function entTip(e) {
   }
   return e.name + ' · ' + LS(e.type) + ' page';
 }
+// Compiles every story page name and alias into the matcher used for name links; names map back to their page ids.
 function buildLinker() {
   const map = new Map();
   Object.values(S.meta.ents).forEach(e => {
@@ -35,6 +52,7 @@ function buildLinker() {
   const re = makeRe([...map.keys()]);
   return re ? { re, map } : null;
 }
+// Every story page name in a text, as {s, e, id}: start, end and the page it links to.
 function findLinks(text) {
   if (!linker) return [];
   const out = [];
@@ -88,6 +106,9 @@ function fmtTokens(line) {
   });
   return toks.filter((k, n) => keep.has(n)); // a marker without a partner is just a character
 }
+// Reads stored text with formatting markers: returns the visible text (vis), a style bitmask per visible character
+// (flags: 1 bold, 2 italic, 4 underline; null when there is no formatting) and map, the stored position of each
+// visible character.
 function fmtParse(text) {
   text = String(text || '');
   if (!/[*_]/.test(text)) {
@@ -123,8 +144,11 @@ function fmtParse(text) {
   });
   return { vis, flags, map };
 }
+// The visible text of stored text: the markers removed. Use it wherever text is shown, counted, searched or checked.
 const plainText = t => fmtParse(t).vis;
+// Turns a position in the visible text into the position in the stored text.
 const rawAt = (P, i) => (P.map ? (i < P.map.length ? P.map[i] : P.map.length ? P.map[P.map.length - 1] + 1 : 0) : i); // visible offset → stored offset
+// Turns the end of a visible range into the end in the stored text.
 const rawEnd = (P, e) => (P.map ? (e > 0 ? P.map[e - 1] + 1 : 0) : e);
 // Characters with their styles back to stored text; spaces at the edges of a styled run stay outside the markers.
 function fmtSerialize(chars) {
@@ -162,6 +186,7 @@ function fmtSerialize(chars) {
   }
   return out;
 }
+// The visible text from s to e as HTML, with <b>, <i> and <u> where it is styled.
 function fmtHtml(vis, flags, s, e) {
   if (!flags) return esc(vis.slice(s, e));
   let h = '';
@@ -178,6 +203,7 @@ function fmtHtml(vis, flags, s, e) {
   }
   return h;
 }
+// A scene's stored text as the editor's HTML: formatting plus a coloured span for every name link.
 function renderText(text) {
   const P = fmtParse(text),
     vis = P.vis;
@@ -226,6 +252,7 @@ function getText(el) {
   })(el, 0);
   return fmtSerialize(chars);
 }
+// A fingerprint of where the editor's name links are, to tell whether they need redrawing.
 function domSig(el) {
   // where the name links are, by visible offset
   const sig = [];
@@ -237,6 +264,7 @@ function domSig(el) {
   });
   return sig.join('|');
 }
+// Where the caret is in the editor, as a position in the visible text (null when it is elsewhere).
 function caretOffset(el) {
   const sel = getSelection();
   if (!sel.rangeCount || !el.contains(sel.anchorNode)) return null;
@@ -246,6 +274,7 @@ function caretOffset(el) {
   pre.setEnd(r.endContainer, r.endOffset);
   return pre.toString().length;
 }
+// Puts the caret at a position in the editor's visible text.
 function setCaret(el, off) {
   const w = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
   let n,
@@ -268,6 +297,8 @@ function setCaret(el, off) {
   sel.removeAllRanges();
   sel.addRange(r);
 }
+// Redraws the editor's name links when the names in the text change (or always, with force), keeping the caret where
+// it was.
 function relinkEditor(force) {
   const ed = $('#ed');
   if (!ed) return;

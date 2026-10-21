@@ -1,4 +1,10 @@
-/* ---------- structure operations ---------- */
+/*
+ * 18-structure.js: Adding, moving and deleting scenes, chapters, story pages and documents
+ *
+ * The operations behind the binder's buttons and menus. Every delete goes to the Trash first (trashPut), so it can be
+ * undone.
+ */
+// Adds an empty scene to a chapter (the last one if none is given) and opens it if asked.
 function addScene(chId, thenOpen) {
   const m = S.meta,
     ch = m.chapters.find(c => c.id === chId) || m.chapters[m.chapters.length - 1];
@@ -17,6 +23,7 @@ function addScene(chId, thenOpen) {
     renderMain();
   }
 }
+// Adds a chapter with one empty scene.
 function addChapter() {
   const m = S.meta,
     id = uid('c_');
@@ -26,6 +33,7 @@ function addChapter() {
   addScene(id, true);
   say(pick(['A new chapter begins!', 'Chapter ' + m.chapters.length + '. Turning the page!']));
 }
+// Moves a scene up or down one place, across chapters at their edges.
 function moveScene(id, dir) {
   const cs = S.meta.chapters;
   let ci = cs.findIndex(c => c.scenes.includes(id));
@@ -55,6 +63,7 @@ function moveScene(id, dir) {
   renderBinder();
   if (ui.view.k === 'cork') renderMain();
 }
+// Moves a chapter up or down one place.
 function moveChapter(id, dir) {
   const cs = S.meta.chapters,
     i = cs.findIndex(c => c.id === id),
@@ -67,6 +76,7 @@ function moveChapter(id, dir) {
   renderBinder();
   if (ui.view.k === 'cork') renderMain();
 }
+// Moves a scene (with its snapshots) to the Trash.
 function delScene(id) {
   const m = S.meta,
     c = m.chapters.find(x => x.scenes.includes(id));
@@ -91,6 +101,7 @@ function delScene(id) {
   ui.hist = ui.hist.filter(viewValid);
   renderAll();
 }
+// Moves a chapter and all its scenes to the Trash.
 function delChapter(id) {
   const m = S.meta,
     c = m.chapters.find(x => x.id === id);
@@ -119,6 +130,7 @@ function delChapter(id) {
   ui.hist = ui.hist.filter(viewValid);
   renderAll();
 }
+// Adds a story page of a kind (and shows that kind's binder section if it was hidden). Inky notices.
 function addEntity(type, name) {
   const id = uid('e_');
   S.meta.ents[id] = { id, type, name, aliases: [], tag: '' };
@@ -156,6 +168,7 @@ function addEntity(type, name) {
   setTimeout(checkAch, 0);
   return id;
 }
+// Moves a story page to the Trash; its bubbles on maps and people in trees stay, unlinked.
 function delEntity(id) {
   const e = S.meta.ents[id];
   if (!e) return;
@@ -179,6 +192,7 @@ function delEntity(id) {
   ui.hist = ui.hist.filter(viewValid);
   renderAll();
 }
+// Adds an outline, note (a page, a brainstorm board or a world map), relationship map or family tree, and opens it.
 function addDocItem(k, kind) {
   const id = uid(k + '_'),
     list = S.meta[k + 's'];
@@ -211,6 +225,7 @@ function addDocItem(k, kind) {
   dirty('meta', k + '_' + id);
   go({ k, id });
 }
+// Moves an outline, note, map or tree to the Trash.
 function delDocItem(k, id) {
   const list = S.meta[k + 's'],
     it = list.find(x => x.id === id);
@@ -229,6 +244,7 @@ function delDocItem(k, id) {
   ui.hist = ui.hist.filter(viewValid);
   renderAll();
 }
+// Adds a timeline (a copy of src if given) and opens it.
 function addTimeline(src) {
   const id = uid('t_'),
     from = src && S.meta.tls.find(x => x.id === src);
@@ -239,6 +255,7 @@ function addTimeline(src) {
   dirty('meta', 'tl_' + id);
   go({ k: 'tl', id });
 }
+// Moves a timeline to the Trash.
 function delTimeline(id) {
   const it = S.meta.tls.find(x => x.id === id);
   if (it) trashPut('tl', it.name, LS('tl'), { id, item: bare(it), i: S.meta.tls.indexOf(it), rec: bare(S.tl[id]) });
@@ -250,6 +267,7 @@ function delTimeline(id) {
   ui.hist = ui.hist.filter(viewValid);
   renderAll();
 }
+// Two-click confirmation: the first click arms the button (rerender shows "click again"), the second runs fn.
 function confirmDo(key, fn, rerender) {
   if (ui.confirm === key) {
     ui.confirm = null;
@@ -266,6 +284,7 @@ function confirmDo(key, fn, rerender) {
     }
   }, 3200);
 }
+// Replaces the open project with another (a restore, the sample, a blank one): saves the timer, redraws everything.
 function replaceProject(np, keep) {
   pmHalt();
   if (keep) {

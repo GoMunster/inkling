@@ -1,19 +1,31 @@
-/* ---------- sidebar widths ---------- */
+/*
+ * 29-planner.js: Sidebar widths and the deadline planner
+ *
+ * Sidebar widths: the binder and the Inkling panel can be widened by dragging their edges (kept per device).
+ *
+ * The deadline planner (meta.plan, personal): pick a target and a date, the days you write and days off, and Inkling
+ * works out a daily goal that keeps you on track, rising when days are missed. planState() does the arithmetic; the
+ * planner screen draws progress against an even line (planChart) and a calendar (planCal).
+ */
 // Drag the edge of the binder or of the Inkling panel to widen it (or focus the edge and use the arrow keys);
 // double-click an edge to put it back. Kept per device, like the rest of the appearance (LOOK.bw, LOOK.iw).
 const SIDES = {
   bw: { def: 272, min: 200, max: 620, el: '#szL', dir: 1, label: 'binder' },
   iw: { def: 308, min: 260, max: 640, el: '#szR', dir: -1, label: 'Inkling panel' }
 };
+// The width the writer chose for a sidebar.
 const sideWant = k => {
   const v = +LOOK[k];
   return v > 0 ? v : SIDES[k].def;
 };
+// The widest a sidebar can be while leaving the page about 440 pixels.
 function sideRoom(k) {
   const o = k === 'bw' ? 'iw' : 'bw';
   return Math.max(SIDES[k].min, Math.min(SIDES[k].max, innerWidth - Math.min(sideWant(o), SIDES[o].max) - 440));
 }
+// A sidebar's width now: what was chosen, within its limits and the room there is.
 const sideW = k => Math.round(Math.max(SIDES[k].min, Math.min(sideWant(k), sideRoom(k))));
+// Applies both sidebar widths to the page.
 function applySides() {
   const r = document.documentElement;
   Object.keys(SIDES).forEach(k => {
@@ -27,10 +39,12 @@ function applySides() {
     }
   });
 }
+// Sets a sidebar's width and remembers it.
 function setSide(k, w) {
   LOOK[k] = Math.round(Math.max(SIDES[k].min, Math.min(w, sideRoom(k))));
   applySides();
 }
+// Makes the sidebar edges draggable (and adjustable with the arrow keys; double-click resets).
 function bindSizers() {
   Object.keys(SIDES).forEach(k => {
     const o = SIDES[k],
@@ -87,14 +101,19 @@ function bindSizers() {
 // eases off) the next day. With `auto`, meta.goal follows it. log{day:{p,g}} keeps each day's progress and goal for
 // the chart and the calendar.
 const PLAN_WD = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+// Whether a value is a "YYYY-MM-DD" day key.
 const isDayKey = v => /^\d{4}-\d{2}-\d{2}$/.test(v || '');
+// A day key as a date (at midday, so time zones never move it a day).
 const dayDate = k => new Date(k + 'T12:00');
+// The day key n days after another.
 const addDays = (k, n) => {
   const d = dayDate(k);
   d.setDate(d.getDate() + n);
   return keyOf(d);
 };
+// A day key as a short date for people.
 const fmtDay = (k, o) => dayDate(k).toLocaleDateString(undefined, o || { day: 'numeric', month: 'short' });
+// Checks a deadline plan.
 function normPlan(x, len) {
   x = x && typeof x === 'object' ? x : {};
   const wd =
@@ -147,6 +166,7 @@ function planDays(p, a, b) {
   }
   return out;
 }
+// New words written from day a to day b.
 function sumDays(a, b) {
   const d = S.meta.days;
   let n = 0;
@@ -155,6 +175,8 @@ function sumDays(a, b) {
   });
   return n;
 }
+// Where the plan stands today: today's goal, status (on track, ahead, behind, due soon, past, done), pace and
+// projected finish.
 function planState() {
   const p = S.meta.plan;
   if (!p || !p.on) return null;
@@ -238,6 +260,7 @@ function planState() {
     elapsed
   };
 }
+// The plan in one line, for the Inkling panel.
 function planLabel(st) {
   const by = fmtDay(st.p.by);
   if (st.status === 'done') return 'Deadline goal reached!';
@@ -297,6 +320,7 @@ function planSync() {
   }
   if (ch) dirty('meta');
 }
+// Shows the plan's line in the Today section of the Inkling panel.
 function planPaint() {
   const el = $('#planLine');
   if (!el) return;
@@ -313,6 +337,7 @@ function planGreet() {
     return 'We are a little behind the plan, but today’s ' + fmt(st.todayGoal) + ' words catch us up.';
   return st.writingToday ? 'Today’s plan: ' + fmt(st.todayGoal) + ' words. You can do this.' : '';
 }
+// The planner's chart: words so far against the even line to the deadline, and the projection.
 function planChart(st) {
   const p = st.p,
     W = 640,
@@ -409,6 +434,7 @@ function planChart(st) {
     '<div class="pl-key"><span><i class="k-act"></i>You</span><span><i class="k-ideal"></i>The plan</span></div>'
   );
 }
+// The planner's calendar: writing days, days off and words written, month by month.
 function planCal(st) {
   const p = st.p,
     span = Math.round((dayDate(p.by) - dayDate(p.start)) / 864e5);
@@ -489,6 +515,7 @@ function planCal(st) {
   }
   return note + h + '</div>';
 }
+// The Deadline planner screen.
 function renderPlan(el) {
   const m = S.meta,
     p = m.plan,

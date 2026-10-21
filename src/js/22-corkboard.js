@@ -1,4 +1,10 @@
-/* ---------- main: corkboard ---------- */
+/*
+ * 22-corkboard.js: The corkboard
+ *
+ * Every chapter's scenes as index cards with their synopses and status, all chapters or one. Cards can be dragged to
+ * reorder scenes, and each chapter has a notes box above its cards.
+ */
+// Draws the corkboard: chapter notes and the scenes as cards that can be dragged into a new order.
 function renderCork(el) {
   const m = S.meta;
   if (ui.cork !== 'all' && !m.chapters.find(c => c.id === ui.cork)) ui.cork = 'all';

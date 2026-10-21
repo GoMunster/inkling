@@ -6,6 +6,8 @@ The app ships as one file, `index.html` (markup, CSS and one IIFE of vanilla JS;
 
 The same file runs in three places: the Claude artifact, a plain browser, and the Electron desktop app in `desktop/` (see `desktop/README.md`). Keep `index.html` working in all three; never fork it for the desktop.
 
+How the parts fit together (source files, the flow of a change, views, sharing): ARCHITECTURE.md. Every file in `src/` opens with a comment on what it holds, and every function has a one-line comment above it; keep both up to date.
+
 ## Data model
 
 State `S = { meta, sc, en, tl, ch, nt, ol, rm, ft, ss, sn, tr }`. Every map except `meta` is listed in `DOCS`; each record saves as its own doc, so a new kind of record only needs adding there (plus a normalizer pushed onto `ADD_DOCS`, as `sn` does). Every saved record gets `_m` (last change, ms), `_dev` (the `DEVICE` id) and `_by` (writer name, `ME.name`) stamps in `dirty()`; deleting a record goes through `forget(key)`, which leaves a tombstone in `meta.gone{key:time}` (kept 180 days). Shared projects merge with these (see Sharing below):

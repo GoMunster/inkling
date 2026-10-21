@@ -89,4 +89,4 @@ The desktop tests need `npm ci` in `desktop/` first, and a screen (on Linux serv
 
 ## Notes
 
-See `CLAUDE.md` for architecture and conventions.
+See `ARCHITECTURE.md` for how the code is organized, and `CLAUDE.md` for every data field and convention.

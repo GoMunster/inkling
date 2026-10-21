@@ -1,4 +1,17 @@
-/* ---------- Inky reads over your shoulder ---------- */
+/*
+ * 07-inky-reads.js: Inky reads over your shoulder
+ *
+ * While a scene is open, Inky reads the passage around the caret, right here in the page (nothing is sent anywhere),
+ * and reacts: a face and something to hold for the mood or what just happened, the story's weather, time of day and
+ * setting in the room's window, and now and then a short remark using the names in the passage.
+ *
+ * How it reads: word lists (PK_MOOD, PK_WEATHER, PK_TIME, PK_PLACE) are compiled once into a fast lookup (pkLex);
+ * readPage() scores the sentences before the caret, recent ones counting most, and picks up events (PK_EV), who is in
+ * the scene, dialogue and pace. peekRun() runs it when the writer pauses or opens a scene, and peekLine() chooses at
+ * most one remark, never too often.
+ *
+ * This file also draws co-writers' pets during a shared sprint (paintPals) and Inky's room screen (renderDen).
+ */
 // While you write a scene, Inky reads the passage around the caret (in the page: nothing is sent anywhere) and reacts:
 // a face and something to hold for the mood or what just happened, the story's weather, time of day and setting in the
 // room's window, and now and then a remark that uses the names in the passage. readPage() reads, peekRun() reacts.
@@ -18,6 +31,7 @@ const PK_MOOD = {
   calm: 'quiet:.6 quietly:.5 calm* peace* gentle gently softly:.5 warm:.5 warmth:.6 tea:.5 cocoa blanket* hearth* fireplace cosy cozy serene* breeze:.4 meadow*:.5 purr*',
   sleepy: 'sleepy asleep:.8 slept:.6 yawn* drows* nap:.6 napping tired:.6 exhausted:.6 pillow*:.5 sleep:.6'
 };
+// Words that tell the story's weather.
 const PK_WEATHER = {
   rain: 'rain rains rained raining rainy rainfall raindrop* drizzl* downpour puddle* umbrella* drench* soaked damp:.5 wet:.4',
   storm: 'storm stormy storms thunder* lightning gale* tempest* hurricane* squall*',
@@ -26,6 +40,7 @@ const PK_WEATHER = {
   wind: 'wind:.8 windy gust* howling:.5 blustery',
   sun: 'sunny sunlight sunshine sunbeam* heat:.5 hot:.4 summer:.5 blazing:.5 scorching sweltering sun:.6'
 };
+// Words that tell the story's time of day.
 const PK_TIME = {
   night:
     'night nights nighttime tonight midnight moon moonlight moonlit stars:.7 starlight starry:.7 dark:.3 candle*:.4 lantern*:.3',
@@ -33,6 +48,7 @@ const PK_TIME = {
   dusk: 'dusk sunset twilight evening:.8 sundown nightfall:.6',
   day: 'noon midday afternoon daylight daytime lunchtime'
 };
+// Words that tell the kind of place the scene is in.
 const PK_PLACE = {
   sea: 'sea seas ocean* tide* ship ships harbo* dock docks docked sail sails sailed sailing sailor* deck:.5 shore* beach* quay* boat* mast* gull* waves:.6 salt:.4 port:.4 anchor*:.6 lighthouse* wharf*',
   forest:
@@ -103,7 +119,9 @@ const PK_EV = [
   ['dog', /\b(?:dog|dogs|puppy|puppies)\b/i, 'glee', '', 1],
   ['horse', /\b(?:horse|horses|pony|stallion)\b/i, 'happy', '', 1]
 ];
+// Words that cancel a mood word just after them ("not afraid").
 const PK_NEG = new Set(['not', 'no', 'never', 'nothing', 'without', 'nobody', 'hardly', 'barely', 'nor', 'cannot']);
+// Words that strengthen the mood word after them ("very afraid").
 const PK_AMP = new Set([
   'very',
   'so',
@@ -117,6 +135,7 @@ const PK_AMP = new Set([
   'totally',
   'incredibly'
 ]);
+// The face Inky makes for each mood it reads.
 const PK_FACE = {
   fear: 'scared',
   action: 'tense',
@@ -129,13 +148,17 @@ const PK_FACE = {
   calm: 'cozy',
   sleepy: 'sleepy'
 };
+// What Inky holds for some moods.
 const PK_HOLD = { fear: 'sweat', action: 'popcorn', love: 'hearts', mystery: 'magnifier' };
+// Common words that never count as "a word used again and again".
 const PK_STOP = new Set(
   'about above after again against along always among another around away back because been before behind being below beside between could didn down every first from going great have having here into just later like little looked looking might more most much never next nothing once only other over perhaps really right said says shall should since some something still such than that their them then there these they thing things think this those though thought through toward towards under until upon very want wanted well were what when where which while whole with within without would your'.split(
     ' '
   )
 );
+// The compiled word lists (built once by pkLex).
 let PK_LEX = null;
+// Compiles the word lists into lookups: exact words, and word starts for entries ending in *.
 function pkLex() {
   if (PK_LEX) return PK_LEX;
   const build = groups => {
@@ -156,6 +179,7 @@ function pkLex() {
   };
   return (PK_LEX = { mood: build(PK_MOOD), weather: build(PK_WEATHER), time: build(PK_TIME), place: build(PK_PLACE) });
 }
+// The [group, weight] pairs one word scores in a compiled list.
 function pkHits(L, w) {
   let out = L.ex.get(w) || [];
   for (let i = Math.min(w.length, 14); i >= 3; i--) {
@@ -167,6 +191,7 @@ function pkHits(L, w) {
   }
   return out;
 }
+// The strongest group in a score table, if it is strong enough (min) and clearly ahead of the next (lead).
 function pkTop(o, min, lead) {
   let k = null,
     v = 0,
@@ -335,6 +360,7 @@ function readPage(vis, at) {
   if (echo) R.echo = echo;
   return R;
 }
+// Inky's remarks: for events (ev), moods, weather and the pace, with {who} and {place} filled in from the passage.
 const PK_LINES = {
   ev: {
     kiss: [
@@ -458,6 +484,7 @@ const PK_LINES = {
     age: ['Hang on, isn’t {who} {fact}?', 'Hmm. {who}’s page says {fact}.']
   }
 };
+// How Inky says where the scene is.
 const PK_WHERE = {
   sea: 'by the sea',
   forest: 'in the woods',
@@ -468,6 +495,7 @@ const PK_WHERE = {
   castle: 'in the castle',
   cave: 'underground'
 };
+// How Inky says the time of day (PK_WX: the weather).
 const PK_WHEN = { night: 'at night', dawn: 'at dawn', dusk: 'at dusk', day: 'by day' },
   PK_WX = {
     rain: 'in the rain',
@@ -477,6 +505,7 @@ const PK_WHEN = { night: 'at night', dawn: 'at dawn', dusk: 'at dusk', day: 'by 
     wind: 'in the wind',
     sun: 'in the sun'
   };
+// Inky's one-line reaction to each mood, used when it says where we are.
 const PK_FEEL = {
   fear: 'Something’s wrong, I can tell.',
   action: 'And it’s all go.',
@@ -489,11 +518,14 @@ const PK_FEEL = {
   calm: 'All peaceful.',
   sleepy: 'Sleepily.'
 };
+// Picks a remark whose {placeholders} can all be filled, and fills them.
 function pkFill(list, v) {
   const ok = list.filter(s => (s.match(/\{(\w+)\}/g) || []).every(t => v[t.slice(1, -1)]));
   return ok.length ? pick(ok).replace(/\{(\w+)\}/g, (_, k) => v[k]) : '';
 }
+// Whether Inky is reading: switched on and a scene is open.
 const peekOn = () => LOOK.peek !== false && !!ui.view && ui.view.k === 'scene';
+// What Inky has read in the open scene (null when it is not reading).
 const peekNow = () => (peekOn() && ui.peek && ui.peek.id === ui.view.id ? ui.peek.r : null);
 // Inky's face and what it holds, from what it has read (null when it is not reading).
 function peekFace(r) {
@@ -516,11 +548,13 @@ function peekFace(r) {
   if (!face && r.time === 'night' && !r.weather) face = 'cozy';
   return { m: face, react: hold };
 }
+// Inky's face and props right now: the reading face if there is one, otherwise the mood from today's words.
 function petNow() {
   const md = curMood(),
     f = peekFace();
   return { m: (f && f.m) || md, react: f ? f.react : [] };
 }
+// Inky's look with something to hold added.
 function petLook(react) {
   return react && react.length ? Object.assign({}, S.meta.pet, { react }) : null;
 }
@@ -544,6 +578,7 @@ function paintPet(force) {
     pp.className = 'peek-pet m-' + f.m;
   }
 }
+// Inky says something it noticed while reading (remembered so the same kind of remark waits a while).
 function peekSay(msg) {
   say(msg);
   ui.sayKind = 'peek';
@@ -609,6 +644,7 @@ function peekCaret(ed) {
   d.appendChild(rg.cloneContents());
   return plainText(getText(d)).length;
 }
+// Chooses at most one remark from what Inky just read, rate-limited per kind, never over a recent cheer.
 function peekLine(r, prev, pk) {
   const now = Date.now(),
     since = now - pk.lineAt,
@@ -713,6 +749,7 @@ function paintPals() {
     )
     .join('');
 }
+// Joins a co-writer's sprint: starts a focus session that ends when theirs does.
 function pmJoin(end, who) {
   if (T.running && T.phase === 'focus') {
     toast('Your focus timer is already running.', { plain: true });
@@ -729,6 +766,7 @@ function pmJoin(end, who) {
   say('Sprinting with ' + who + '! Same finish line.');
   hereSoon();
 }
+// Inky's room screen: the room full size, Inky's name and colour, what it wears, achievements, and how chatty it is.
 function renderDen(el) {
   const p = S.meta.pet,
     st = petStats(),
@@ -944,6 +982,7 @@ function renderDen(el) {
     paintPet(true);
   });
 }
+// Redraws Inky (kept as a name other code calls).
 function updatePetArt() {
   paintPet(true);
 }

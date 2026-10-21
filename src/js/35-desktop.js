@@ -1,4 +1,10 @@
-/* ---------- dialog ---------- */
+/*
+ * 35-desktop.js: Dialogs, and the desktop app's projects
+ *
+ * ask() is the app's dialog (use it instead of confirm()). The rest runs only in the desktop app: opening, creating
+ * and importing projects (each a folder on the computer), saving through the desktop bridge (deskFlush), the Projects
+ * window, and update notices.
+ */
 // ask(title, html, [[value,label,style]]) resolves with the chosen value ('' when closed with Escape).
 function ask(title, html, buttons) {
   return new Promise(res => {
@@ -39,6 +45,7 @@ function ask(title, html, buttons) {
 }
 
 /* ---------- desktop projects ---------- */
+// A project's summary for the Projects window: title, words, when saved.
 const deskInfo = st => {
   st = st || S;
   return {
@@ -47,11 +54,13 @@ const deskInfo = st => {
     sample: !!st.meta.sample
   };
 };
+// Desktop: saves now and waits for it (before switching project or closing).
 async function deskFlush() {
   clearTimeout(P.timer);
   for (let i = 0; i < 60 && P.busy; i++) await new Promise(r => setTimeout(r, 100));
   if (P.dirty.size || P.gone.size) await flush();
 }
+// Desktop: opens a project folder: loads, checks, merges conflicted copies, and shows it.
 async function deskOpen(id) {
   const r = await DESK.load(id);
   const raw = r && r.data;
@@ -128,6 +137,7 @@ async function deskOpen(id) {
   setTimeout(syncCheck, 800); // conflicted copies a sync service left behind
   return true;
 }
+// Desktop: saves a new project (with its pictures) as a new folder and opens it.
 async function deskCreate(np, imgs) {
   np.meta.saved = Date.now();
   const id = await DESK.create(np.meta.title);
@@ -135,6 +145,7 @@ async function deskCreate(np, imgs) {
   await DESK.save(id, JSON.stringify(snapshot(np)), deskInfo(np));
   return id;
 }
+// Desktop: a new project, blank or the sample.
 async function deskNew(kind) {
   pmHalt();
   await deskFlush();
@@ -142,6 +153,7 @@ async function deskNew(kind) {
   await deskOpen(id);
   return id;
 }
+// Desktop: a backup file as a new project.
 async function deskImport(text) {
   let o, np;
   try {
@@ -164,6 +176,7 @@ async function deskImport(text) {
   toast('Imported “' + np.meta.title + '” as a new project. Your other projects are unchanged.', { plain: true });
   return id;
 }
+// Desktop: picks a backup file to import.
 async function deskImportPick() {
   try {
     const t = await DESK.openFile();
@@ -175,6 +188,7 @@ async function deskImportPick() {
     toast('Could not open that file.', { plain: true });
   }
 }
+// Desktop start-up: menu commands, closing, focus, updates, and opening the last project.
 async function deskBoot() {
   DESK.onMenu(a => {
     if (a === 'new' || a === 'projects') openProjects();
@@ -255,6 +269,7 @@ async function deskBoot() {
   } catch (e) {}
   startTour();
 }
+// The update bar: a new version is downloading, ready, or available to download.
 function showUpdate(st) {
   let bar = $('#updBar');
   if (!st || !/available|ready/.test(st.state)) {
@@ -298,6 +313,7 @@ function showUpdate(st) {
     ico('x', 14) +
     '</button>';
 }
+// Checks for an update now (Settings).
 async function checkUpdatesNow() {
   if (!DESK) {
     toast('This is Inkling ' + APP_VERSION + '. The online version updates itself.', { plain: true });
@@ -313,6 +329,7 @@ async function checkUpdatesNow() {
     toast('Downloading Inkling ' + r.version + '. You will be asked to restart when it is ready.', { plain: true });
   else showUpdate(r);
 }
+// How long ago a time was, in words.
 const ago = t => {
   const s = (Date.now() - t) / 1000;
   if (s < 60) return 'just now';
@@ -321,6 +338,7 @@ const ago = t => {
   if (s < 86400 * 7) return Math.round(s / 86400) + ' days ago';
   return new Date(t).toLocaleDateString();
 };
+// The Projects window.
 async function openProjects() {
   if (!DESK) return;
   await deskFlush();
@@ -345,10 +363,12 @@ async function openProjects() {
   const f = $('.pj-dlg [data-pj]', ov);
   if (f) f.focus();
 }
+// Closes the Projects window.
 function closeProjects() {
   const ov = $('#pj');
   if (ov) ov.hidden = true;
 }
+// Draws the Projects window: every project, with open, rename, duplicate, share, backups and delete.
 function drawProjects() {
   const ov = $('#pj'),
     st = ui.pj;
@@ -460,6 +480,7 @@ function drawProjects() {
     esc(st.dir) +
     '</code></span><button class="btn sm" data-pj="root">Open folder</button></footer></div>';
 }
+// The Projects window's actions.
 async function pjAct(a, id, name) {
   const st = ui.pj,
     refresh = async () => {

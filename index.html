@@ -9,6 +9,14 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Literata:ital,opsz,wght@0,7..72,400..700;1,7..72,400..700&family=IBM+Plex+Mono:wght@400;500&display=swap">
 <style>
+/*
+ * 01-base.css: Colours, layout and shared controls
+ *
+ * The colour tokens (light and dark palettes, used everywhere as var(--name)), the three-pane layout, and the
+ * buttons, inputs and other controls every screen shares.
+ *
+ * Styles apply in file-name order, so a later file can refine an earlier one.
+ */
 /* Layout concept: a three-pane writing desk. Binder (manuscript + story bible) on the left,
    the page in the middle, the Inkling pet and goals on the right. Under 1080px the panes
    become tabs. Ink-blue is the one UI accent; character / place / thing colours are semantic. */
@@ -347,6 +355,13 @@ button {
 .tabs {
   display: none;
 }
+/*
+ * 02-binder.css: The binder
+ *
+ * The left-hand pane: chapters, scenes, sections and story pages.
+ *
+ * Styles apply in file-name order, so a later file can refine an earlier one.
+ */
 /* binder */
 .pane-head {
   display: flex;
@@ -577,6 +592,13 @@ button {
   gap: 6px;
   flex-wrap: wrap;
 }
+/*
+ * 03-pages.css: The main pane: scenes, story pages and the corkboard
+ *
+ * The scene editor and its toolbar, story pages, and the corkboard's cards.
+ *
+ * Styles apply in file-name order, so a later file can refine an earlier one.
+ */
 /* main */
 .main-head {
   position: sticky;
@@ -1079,6 +1101,14 @@ label.f textarea:focus,
   color: var(--muted);
   font-size: 12px;
 }
+/*
+ * 04-inspector-pet.css: The Inkling panel and Inky
+ *
+ * The right-hand panel's sections, and how Inky is drawn and animated (animations only run when the computer allows
+ * motion).
+ *
+ * Styles apply in file-name order, so a later file can refine an earlier one.
+ */
 /* inspector */
 .psec {
   padding: 14px 16px;
@@ -1562,6 +1592,13 @@ label.f textarea:focus,
     opacity: 0;
   }
 }
+/*
+ * 05-timeline.css: Timelines
+ *
+ * The board, lanes, cards, marks and the side panel.
+ *
+ * Styles apply in file-name order, so a later file can refine an earlier one.
+ */
 /* timeline */
 .btn[aria-pressed='true'] {
   border-color: var(--accent);
@@ -2243,6 +2280,14 @@ label.f textarea:focus,
     display: none;
   }
 }
+/*
+ * 06-planning.css: Pictures, notes, outlines, maps and trees
+ *
+ * Story page pictures, notes pages and brainstorm boards, outlines, the Customize binder options, and relationship
+ * maps and family trees.
+ *
+ * Styles apply in file-name order, so a later file can refine an earlier one.
+ */
 /* binder extras */
 .bav {
   width: 18px;
@@ -3170,6 +3215,13 @@ dl.fam dd {
   flex: 0 0 42px;
   text-align: center;
 }
+/*
+ * 07-desktop-timer.css: Projects window, focus timer and writing sessions
+ *
+ * The desktop app's Projects window, the focus timer, and the Writing sessions screen with its word history chart.
+ *
+ * Styles apply in file-name order, so a later file can refine an earlier one.
+ */
 /* desktop projects */
 .pj-ov {
   position: fixed;
@@ -3675,6 +3727,11 @@ dl.fam dd {
 .ss-empty p {
   margin: 0;
 }
+/*
+ * 08-tools.css: Snapshots, find and replace, the tour, sticky notes, dragging, continuity
+ *
+ * Styles apply in file-name order, so a later file can refine an earlier one.
+ */
 /* outline: delete a section */
 .ol-del {
   display: flex;
@@ -4199,6 +4256,14 @@ body.dnd * {
   border-color: var(--thing);
   color: var(--ink);
 }
+/*
+ * 09-room-sharing.css: Inky's room, sharing, dialogs and the update bar
+ *
+ * The room screen, everything for shared projects (presence, the share dialog), dialogs, the update bar, and
+ * Settings.
+ *
+ * Styles apply in file-name order, so a later file can refine an earlier one.
+ */
 /* Inky's room */
 .pet-stage {
   position: relative;
@@ -4767,6 +4832,13 @@ body.dnd * {
 .upd-bar > .ico {
   color: var(--accent);
 }
+/*
+ * 10-story-tools.css: Story insights, story development tools and the series bible
+ *
+ * Scene details in the Inkling panel, the Story insights screen (pacing chart, point of view, plot threads, setups
+ * and payoffs, arcs), the character arc box, Calendars & money, world maps and the Series bible. Every class here
+ * has its own prefix (st-, th-, sd-, fs-, arc-, w-, mp-, sb-).
+ */
 .pf-wrap.st-wrap {
   max-width: 1040px;
 }
@@ -5634,6 +5706,14 @@ body.dnd * {
   gap: 5px;
   font-size: 12.5px;
 }
+/*
+ * 11-pages-and-settings.css: Full-page screens and Settings
+ *
+ * The layout shared by full-page screens (.pf-wrap, .pf sections: Settings, Continuity, Story insights and more),
+ * and the Settings screen.
+ *
+ * Styles apply in file-name order, so a later file can refine an earlier one.
+ */
 .pf-wrap {
   max-width: 760px;
   margin: 0 auto;
@@ -5684,6 +5764,16 @@ body.dnd * {
   font-family: var(--ed-font, var(--f-prose));
   line-height: var(--ed-lh, 1.8);
 }
+/*
+ * 12-later-features.css: Newer features
+ *
+ * Sidebar widths, the to-do list, Inky reading over your shoulder, editing tools, the writing report, Project
+ * settings, the deadline planner, the Trash, Search everything, side by side, the quick switcher, menus, word
+ * targets, story page fields, and the layout for
+ * narrow screens (tabs). Each part starts with a comment.
+ *
+ * Styles apply in file-name order, so a later file can refine an earlier one.
+ */
 /* sidebar edges: drag to widen */
 .sizer {
   position: absolute;
@@ -7390,26 +7480,49 @@ kbd {
 (function(){
 'use strict';
 
-/* ---------- helpers ---------- */
+/*
+ * 01-core.js: Shared helpers, constants and the app's state
+ *
+ * Everything else builds on this file: small helpers ($ to find an element, esc to make text safe inside HTML, uid
+ * for new ids, wc to count words, fmt for numbers), the icon set (ICO and ico()), the kinds of story page (TYPES),
+ * the binder's section names, Inky's ranks, and the state itself.
+ *
+ * The state: S is the open project, { meta, sc, en, tl, ch, nt, ol, rm, ft, ss, sn, tr } (see CLAUDE.md for every
+ * field). ui holds what is on screen right now and is never saved. P holds the saving machinery's own state. DESK is
+ * the desktop app's bridge (null in a browser), PJ the desktop project that is open, ME the writer's name on shared
+ * projects.
+ */
+// The first element matching a CSS selector, inside r (the whole page by default).
 const $ = (s, r) => (r || document).querySelector(s);
+// Makes any value safe to put inside HTML: escapes & < > " and '.
 const esc = s =>
   String(s == null ? '' : s).replace(
     /[&<>"']/g,
     c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]
   );
+// A new random id with a prefix, like "s_k3j9x1ab": random letters plus the time, so two devices never clash.
 const uid = p => p + Math.random().toString(36).slice(2, 7) + Date.now().toString(36).slice(-3);
+// Counts the words in a piece of text (runs of non-space characters).
 const wc = t => {
   const m = String(t || '').match(/\S+/g);
   return m ? m.length : 0;
 };
+// A number rounded and written with thousands separators: 12,345.
 const fmt = n => Math.round(n).toLocaleString('en-US');
+// Two digits with a leading zero, for dates: 7 → "07".
 const pad = n => String(n).padStart(2, '0');
+// A date as the "YYYY-MM-DD" key used for daily word counts.
 const keyOf = d => d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate());
+// Today's "YYYY-MM-DD" key.
 const todayKey = () => keyOf(new Date());
+// One random item from a list.
 const pick = a => a[Math.floor(Math.random() * a.length)];
+// True when the computer asks for reduced motion; animations are then kept to a minimum.
 const RM = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+// The length of the progress ring's arc in the top bar (its circumference in SVG units).
 const RING = 66;
 
+// The icon set: each icon is one SVG path, drawn by ico().
 const ICO = {
   plus: 'M12 5v14M5 12h14',
   map: 'M9 4L3 6v14l6-2 6 2 6-2V4l-6 2-6-2zM9 4v14M15 6v14',
@@ -7463,6 +7576,7 @@ const ICO = {
   swap: 'M7 7h13l-4-4M17 17H4l4 4',
   split: 'M4 4h16v16H4zM12 4v16'
 };
+// An icon as inline SVG markup, in the current text colour; s is its size in pixels (16 by default).
 const ico = (n, s) =>
   '<svg class="ico" width="' +
   (s || 16) +
@@ -7472,6 +7586,8 @@ const ico = (n, s) =>
   ICO[n] +
   '"/></svg>';
 
+// The kinds of story page, with their default fields ([key, label]). Writers can change the fields per project
+// (entFields).
 const TYPES = {
   char: {
     label: 'Character',
@@ -7537,7 +7653,9 @@ const TYPES = {
     ]
   }
 };
+// The order story page kinds are listed in, in the binder and in menus.
 const TYPE_ORDER = ['char', 'place', 'thing', 'rule', 'term'];
+// The binder's sections and their default names, plural and singular. Writers can rename them (LP, LS).
 const SEC_DEF = {
   ol: ['Outlines', 'Outline'],
   nt: ['Notes & ideas', 'Note'],
@@ -7551,10 +7669,13 @@ const SEC_DEF = {
   term: ['Glossary', 'Term']
 };
 const OPT_SECS = ['ol', 'nt', 'tl', 'rm', 'ft', 'place', 'thing', 'rule', 'term']; // binder sections a writer can switch off ('char' always stays)
+// Whether an optional binder section is switched on for this project.
 const secOn = k => !S.meta.secs || S.meta.secs[k] !== false;
 const LP = t => ((S && S.meta.labels[t]) || {}).p || SEC_DEF[t][0]; // section title, user-renamable
 const LS = t => ((S && S.meta.labels[t]) || {}).s || SEC_DEF[t][1]; // one item of that section
+// Scene statuses and how they are shown.
 const STATUS = { draft: 'Draft', revised: 'Revised', final: 'Final' };
+// Inky's ranks, from a blot of ink to a laureate. The words each one needs come from stageAt().
 const STAGES = [
   { n: 'Blot', at: 0 },
   { n: 'Inkling', at: 1000 },
@@ -7565,21 +7686,26 @@ const STAGES = [
 // Ranks follow the novel length goal: Inkling at 5%, Scribe at 25%, Bard at 50%, Laureate at 100% of meta.target
 // (words written in this project). A rank once reached is kept in pet.rank, so raising the goal never shrinks Inky.
 const STAGE_FR = [0, 0.05, 0.25, 0.5, 1];
+// Words needed for rank i: a share (STAGE_FR) of this project's novel length goal.
 const stageAt = i =>
   i
     ? Math.max(i * 50, Math.round(((typeof S !== 'undefined' && S && S.meta && S.meta.target) || 80000) * STAGE_FR[i]))
     : 0;
+// The highest rank a word total has reached.
 const stageOf = t => {
   let i = 0;
   for (let j = 1; j < STAGES.length; j++) if (t >= stageAt(j)) i = j;
   return i;
 };
+// Inky's rank now: the rank the words reach, or a higher one already earned (ranks are never lost).
 const petStage = () => Math.max(stageOf(S.meta.pet.total), S.meta.pet.rank || 0);
 
 /* ---------- state ---------- */
 let S = null; // {meta, sc:{id:{text,synopsis,notes}}, en:{id:{fields,pic}}, tl:{id:timeline}, ch:{id:{notes}}, nt:{id:{text,ideas}}, ol:{id:{num,showNotes,items}}}
+// The record maps of S that are saved one record per document, named "<prefix>_<id>".
 const DOCS = ['sc', 'en', 'tl', 'ch', 'nt', 'ol', 'rm', 'ft', 'ss', 'sn', 'tr']; // each record of these maps is its own saved doc, '<prefix>_<id>'
 const ADD_DOCS = []; // (raw, out) => out.<prefix> = normalized records, for doc types added after normalize() was written
+// The whole project as one plain object (meta plus every record map), ready to save or back up.
 const snapshot = st => {
   if (!st) stampMine(S);
   st = st || S;
@@ -7595,9 +7721,11 @@ const APP_VERSION = '1.10.1'; // the desktop build replaces this with desktop/pa
 // Saved-format version. When the shape of saved data changes: bump FORMAT and add MIGRATE[old] that upgrades a raw
 // project one step (it runs before normalize()). A project from a newer FORMAT is never loaded or overwritten.
 const FORMAT = 2;
+// Steps that upgrade a project saved in an older format, keyed by the old format number.
 const MIGRATE = {
   1: o => o // 1 → 2: records gain change stamps (_m, _dev) and meta.gone; nothing to convert
 };
+// Runs MIGRATE steps until a raw project is in the current format; refuses a project from a newer Inkling.
 function migrate(o) {
   const v = Math.max(1, Math.round(+(o.meta || {}).v || 1));
   if (v > FORMAT) {
@@ -7630,14 +7758,20 @@ const ME = { name: '' };
 try {
   ME.name = String(JSON.parse(localStorage.getItem('inkling:me') || '{}').name || '').slice(0, 60);
 } catch (e) {}
+// A writer's name as a key: trimmed and lower-cased, so "Sam" and "sam " are the same writer.
 const nameKey = n =>
   String(n || '')
     .trim()
     .toLowerCase();
+// This writer's key on a shared project.
 const myKey = () => nameKey(ME.name);
+// The meta fields that belong to each writer rather than to the book (word history, Inky, goals, timer, to-do,
+// layout, plan).
 const PERSONAL = ['days', 'pet', 'mark', 'goal', 'pomo', 'todo', 'layout', 'plan'];
 const PJ = { id: null, base: null }; // the desktop project that is open, and the version of it last read from or written to disk
+// The compiled name-link matcher (buildLinker()), rebuilt whenever story page names change.
 let linker = null;
+// What is on screen right now: the current view, history, open sections, selections, dialogs. Never saved.
 const ui = {
   view: null,
   hist: [],
@@ -7685,6 +7819,7 @@ const ui = {
   tlR: null,
   tlDragged: false
 };
+// The saving machinery: which records changed and wait to be saved, the active storage, the save timer.
 const P = {
   db: null,
   base: null,
@@ -7696,7 +7831,16 @@ const P = {
   again: false,
   fails: 0
 };
-/* ---------- sample + blank projects ---------- */
+/*
+ * 02-project-data.js: The sample project, a blank project, and checking every saved project as it opens
+ *
+ * sampleProject() is "The Lantern Tide", the small book a new writer sees first. blankProject() is an empty one.
+ * normalize() is the gatekeeper for everything loaded from storage, a backup or another computer: it fills in missing
+ * fields, drops broken references and makes every value the right type, so the rest of the app can trust the data.
+ *
+ * The second half holds the timeline's building blocks: colours, card styles, time-scale presets and normTl(), which
+ * checks one timeline.
+ */
 function sampleProject() {
   const t1 =
     'Ilsa Verrin stepped off the ferry with one bag, one coat, and no plan she was willing to say aloud. Marrow Quay smelled of tar and wet rope, and the fog had already swallowed the far end of the pier.\n\n"You\'ll be wanting the Gull," said the porter, not asking. "Everyone does, the first night."\n\nShe did not argue. The Gull & Lantern was the only lit window on the whole waterfront, and somewhere inside it, Tobias Crane was waiting with a story she had crossed the sea to hear.';
@@ -8025,6 +8169,7 @@ function sampleProject() {
   };
   return { meta, sc, en, tl, ch, nt, ol, rm: { m_main: rm }, ft: { f_main: ft }, ss };
 }
+// An empty project: one chapter with one empty scene.
 function blankProject() {
   const c = uid('c_'),
     s = uid('s_');
@@ -8048,6 +8193,8 @@ function blankProject() {
     en: {}
   };
 }
+// Checks and repairs a project as it is loaded, whatever its source: upgrades old formats, fills in defaults, keeps
+// only valid values and links, and collects change stamps. Returns a project the rest of the app can trust.
 function normalize(o) {
   o = JSON.parse(JSON.stringify(o));
   o.meta = o.meta || {};
@@ -8323,13 +8470,16 @@ const TL_COLORS = [
   ['danger', 'Red'],
   ['muted', 'Slate']
 ];
+// Timeline lane heights for each card density, in pixels.
 const TL_DENS = { compact: 46, normal: 112, tall: 176 };
+// How a timeline card can look.
 const TL_STYLES = [
   ['tint', 'Tinted'],
   ['outline', 'Outline'],
   ['dashed', 'Dashed'],
   ['solid', 'Solid']
 ];
+// How finely timeline cards snap when dragged, in axis units.
 const TL_SNAPS = [
   [0, 'Free'],
   [1, 'Whole units'],
@@ -8337,6 +8487,7 @@ const TL_SNAPS = [
   [0.25, 'Quarters'],
   [0.1, 'Tenths']
 ];
+// Ready-made time scales: [tick label template, list of names, menu label].
 const TL_PRESETS = [
   ['Day {n}', '', 'Days'],
   ['Week {n}', '', 'Weeks'],
@@ -8349,20 +8500,28 @@ const TL_PRESETS = [
   ['{name}, week {cycle}', 'Mon, Tue, Wed, Thu, Fri, Sat, Sun', 'Weekdays'],
   ['{n}', '', 'Plain numbers']
 ];
+// Whether a value is a #rrggbb colour.
 const hexOk = c => /^#[0-9a-f]{6}$/i.test(c || '');
+// Whether a value is a colour Inkling accepts: a named token or #rrggbb.
 const colOk = c => hexOk(c) || TL_COLORS.some(x => x[0] === c);
+// A colour as CSS: a token becomes var(--token); anything invalid falls back to the accent colour.
 const cssCol = c => (hexOk(c) ? c : 'var(--' + (colOk(c) ? c : 'accent') + ')');
+// A readable text colour (dark or light) to draw on top of a background colour.
 function inkOn(c) {
   if (!hexOk(c)) return 'var(--paper)';
   const n = parseInt(c.slice(1), 16);
   return (((n >> 16) & 255) * 299 + ((n >> 8) & 255) * 587 + (n & 255) * 114) / 1000 > 150 ? '#17202D' : '#FFFFFF';
 }
+// A number from any value, or the default d when it is not one.
 const num = (v, d) => {
   v = parseFloat(v);
   return isFinite(v) ? v : d;
 };
+// Keeps a number between a and b.
 const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+// A number with at most two decimals, for showing axis values.
 const nfmt = v => String(Math.round(v * 100) / 100);
+// A new timeline with three lanes and no cards.
 function newTl() {
   const l = (name, color) => ({ id: uid('l_'), name, color, hide: false });
   return {
@@ -8377,6 +8536,7 @@ function newTl() {
     marks: []
   };
 }
+// Checks one timeline: its time scale, lanes, cards, marks and settings, keeping only valid values.
 function normTl(t) {
   t = t && typeof t === 'object' ? t : {};
   const a = t.axis || {};
@@ -8442,7 +8602,18 @@ function normTl(t) {
     }));
   return t;
 }
-/* ---------- story page pictures ---------- */
+/*
+ * 03-pictures.js: Pictures on story pages and world maps
+ *
+ * A picture can live in three places, depending on where Inkling runs: in the Claude artifact it is uploaded as an
+ * asset and only its id is saved (pic.a); in the desktop app it is a file in the project's pictures folder (pic.f);
+ * in a plain browser a resized copy is kept in localStorage under its own key (pic.l). picSrc() turns any of these
+ * into an image address, setPic() stores a new picture wherever it belongs, and backups carry every picture inside
+ * the file (collectImages, adoptImages) so they move between all three.
+ *
+ * The rest is the picture block on a story page: shape, size, framing (which part shows, and how far zoomed in), and
+ * the full-size lightbox.
+ */
 // In the Claude artifact a picture is uploaded with the `assets` capability and only its id is saved.
 // In the desktop app it is a file in the project's pictures folder (`f`). In a plain browser a resized copy lives
 // in localStorage under its own key, outside the project record.
@@ -8453,12 +8624,15 @@ const PIC_SHAPES = [
   ['wide', 'Wide'],
   ['natural', 'Original']
 ];
+// Sizes a story page picture can be shown at.
 const PIC_SIZES = [
   ['s', 'Small'],
   ['m', 'Medium'],
   ['l', 'Banner']
 ];
+// The frame shape each kind of page starts with.
 const PIC_DEF_SHAPE = { char: 'portrait', place: 'wide', thing: 'square' };
+// Checks a picture record, keeping only valid values.
 function normPic(p) {
   p = p && typeof p === 'object' ? p : {};
   return {
@@ -8474,6 +8648,7 @@ function normPic(p) {
     zoom: clamp(num(p.zoom, 1), 1, 4)
   };
 }
+// The localStorage key prefix for pictures kept in a plain browser.
 const LOCAL_PIC = 'inkling:img:';
 // Framing: which part of the picture shows in its frame (px/py, % from left/top) and how far it is zoomed in.
 function picStyle(eid) {
@@ -8509,6 +8684,7 @@ function picSvg(eid, x, y, w, h) {
 const picRec = id => (S.en[id] || S.nt[id] || {}).pic || null,
   picKey = id => (S.en[id] ? 'en_' + id : 'nt_' + id),
   isMapPic = id => !S.en[id] && !!S.nt[id];
+// The address to show a page's or map's picture from, wherever it is stored ('' when there is none).
 function picSrc(eid) {
   const p = picRec(eid);
   if (!p) return '';
@@ -8523,6 +8699,7 @@ function picSrc(eid) {
   }
   return '';
 }
+// The Claude artifact's picture storage (the assets capability), or null outside the artifact.
 async function getAssets() {
   try {
     return window.claude && window.claude.use ? await window.claude.use('assets') : null;
@@ -8550,6 +8727,7 @@ async function collectImages() {
   }
   return o;
 }
+// After a restore or import: puts each picture from a backup where this environment keeps pictures.
 async function adoptImages(np, imgs, deskId) {
   imgs = imgs && typeof imgs === 'object' ? imgs : {};
   const inClaude = !!(window.claude && window.claude.use);
@@ -8581,6 +8759,7 @@ async function adoptImages(np, imgs, deskId) {
     } else if (!inClaude) p.a = '';
   }
 }
+// Deletes a picture's stored file or data (used when its page or map is gone for good, or the picture is replaced).
 async function dropPic(eid, pic) {
   const p = pic || picRec(eid);
   if (!p) return;
@@ -8598,6 +8777,7 @@ async function dropPic(eid, pic) {
       } catch (e) {}
   }
 }
+// Loads an image file into an <img> so it can be measured and resized.
 function loadImg(file) {
   return new Promise((ok, bad) => {
     const u = URL.createObjectURL(file),
@@ -8613,6 +8793,8 @@ function loadImg(file) {
     im.src = u;
   });
 }
+// Makes a picture smaller before storing it: at most max pixels on its longest side, as WebP (or JPEG) of quality q.
+// GIFs and SVGs are kept as they are.
 async function shrink(file, max, q) {
   if (/gif|svg/.test(file.type) && file.size < 6e6) return file; // keep animation and vectors as they are
   const im = await loadImg(file),
@@ -8625,12 +8807,14 @@ async function shrink(file, max, q) {
   const out = await new Promise(r => c.toBlob(r, 'image/webp', q));
   return out && out.type === 'image/webp' ? out : await new Promise(r => c.toBlob(r, 'image/jpeg', q));
 }
+// Reads a file or blob as a data: URL.
 const toDataUrl = b =>
   new Promise(r => {
     const f = new FileReader();
     f.onload = () => r(f.result);
     f.readAsDataURL(b);
   });
+// Stores a new picture for a story page or map, wherever this environment keeps pictures, and removes the old one.
 async function setPic(eid, file) {
   if (!file || !/^image\/(png|jpeg|gif|webp|svg\+xml|avif|bmp)$/.test(file.type)) {
     toast('Choose an image file: JPG, PNG, WebP or GIF.', { plain: true });
@@ -8698,6 +8882,7 @@ async function setPic(eid, file) {
   renderBinder();
   if (big && ui.view.k === 'nt' && ui.view.id === eid) renderMain();
 }
+// Removes a page's or map's picture.
 async function removePic(eid) {
   await dropPic(eid);
   const p = picRec(eid);
@@ -8709,6 +8894,7 @@ async function removePic(eid) {
   refreshPic();
   renderBinder();
 }
+// The picture block at the top of a story page: the picture (or a drop zone), its caption, and the layout options.
 function picHtml(e) {
   const p = S.en[e.id].pic,
     src = picSrc(e.id),
@@ -8811,6 +8997,7 @@ function picHtml(e) {
   }
   return h + '<input type="file" id="entFile" accept="image/*" hidden></figure>';
 }
+// Re-applies the framing to the page's picture while it is being dragged or zoomed.
 function applyFrame(eid) {
   const im = $('#entImg img');
   if (im) im.setAttribute('style', picStyle(eid));
@@ -8820,10 +9007,12 @@ function applyFrame(eid) {
     r.disabled = p.px === 50 && p.py === 50 && p.zoom === 1;
   }
 }
+// The CSS classes for a story page's top block: picture size, shape and fit.
 function picClass(e) {
   const p = S.en[e.id].pic;
   return 'ent-top pz-' + p.size + ' sh-' + (p.shape || PIC_DEF_SHAPE[e.type]) + ' fit-' + p.fit;
 }
+// Redraws just the picture block on the open story page.
 function refreshPic() {
   const v = ui.view;
   if (!v || v.k !== 'ent') return;
@@ -8834,6 +9023,7 @@ function refreshPic() {
   const f = $('.ent-fig', top);
   f.outerHTML = picHtml(e);
 }
+// Makes the picture block work: upload, remove, layout options, and dragging or zooming to frame it.
 function bindPic(el, e) {
   if (ui.framePage !== e.id) {
     ui.frame = false;
@@ -8968,6 +9158,7 @@ function bindPic(el, e) {
     }
   });
 }
+// Shows a picture full size over the page; a click or Escape closes it.
 function lightbox(src, cap) {
   const d = document.createElement('div');
   d.className = 'lightbox';
@@ -8998,7 +9189,23 @@ function lightbox(src, cap) {
   document.body.appendChild(d);
   $('button', d).focus();
 }
-/* ---------- linking names ---------- */
+/*
+ * 04-text.js: Scene text: name links, bold/italic/underline, and the editor's caret
+ *
+ * Name links: every story page's name and aliases are compiled into one regular expression (buildLinker); findLinks()
+ * finds them in text, and the editor shows each one as a coloured, clickable name.
+ *
+ * Formatting: scene text is stored as plain text with markers, **bold**, *italic* and __underline__. fmtParse() turns
+ * stored text into what the writer sees (the visible text, a style per character, and a map back to stored
+ * positions); fmtSerialize() turns styled characters back into stored text. renderText() draws a scene for the
+ * editor.
+ *
+ * The editor: getText() reads the editor back into stored text, caretOffset() and setCaret() keep the caret in place
+ * by its position in the visible text when the editor is redrawn, and relinkEditor() redraws the name links only when
+ * they change.
+ */
+// One regular expression that matches any of these names as a whole word, longest names first so "Anna Bell" wins
+// over "Anna".
 function makeRe(names) {
   const a = [...new Set(names.map(n => (n || '').trim()).filter(n => n.length >= 2))]
     .sort((x, y) => y.length - x.length)
@@ -9024,6 +9231,7 @@ function entTip(e) {
   }
   return e.name + ' · ' + LS(e.type) + ' page';
 }
+// Compiles every story page name and alias into the matcher used for name links; names map back to their page ids.
 function buildLinker() {
   const map = new Map();
   Object.values(S.meta.ents).forEach(e => {
@@ -9035,6 +9243,7 @@ function buildLinker() {
   const re = makeRe([...map.keys()]);
   return re ? { re, map } : null;
 }
+// Every story page name in a text, as {s, e, id}: start, end and the page it links to.
 function findLinks(text) {
   if (!linker) return [];
   const out = [];
@@ -9088,6 +9297,9 @@ function fmtTokens(line) {
   });
   return toks.filter((k, n) => keep.has(n)); // a marker without a partner is just a character
 }
+// Reads stored text with formatting markers: returns the visible text (vis), a style bitmask per visible character
+// (flags: 1 bold, 2 italic, 4 underline; null when there is no formatting) and map, the stored position of each
+// visible character.
 function fmtParse(text) {
   text = String(text || '');
   if (!/[*_]/.test(text)) {
@@ -9123,8 +9335,11 @@ function fmtParse(text) {
   });
   return { vis, flags, map };
 }
+// The visible text of stored text: the markers removed. Use it wherever text is shown, counted, searched or checked.
 const plainText = t => fmtParse(t).vis;
+// Turns a position in the visible text into the position in the stored text.
 const rawAt = (P, i) => (P.map ? (i < P.map.length ? P.map[i] : P.map.length ? P.map[P.map.length - 1] + 1 : 0) : i); // visible offset → stored offset
+// Turns the end of a visible range into the end in the stored text.
 const rawEnd = (P, e) => (P.map ? (e > 0 ? P.map[e - 1] + 1 : 0) : e);
 // Characters with their styles back to stored text; spaces at the edges of a styled run stay outside the markers.
 function fmtSerialize(chars) {
@@ -9162,6 +9377,7 @@ function fmtSerialize(chars) {
   }
   return out;
 }
+// The visible text from s to e as HTML, with <b>, <i> and <u> where it is styled.
 function fmtHtml(vis, flags, s, e) {
   if (!flags) return esc(vis.slice(s, e));
   let h = '';
@@ -9178,6 +9394,7 @@ function fmtHtml(vis, flags, s, e) {
   }
   return h;
 }
+// A scene's stored text as the editor's HTML: formatting plus a coloured span for every name link.
 function renderText(text) {
   const P = fmtParse(text),
     vis = P.vis;
@@ -9226,6 +9443,7 @@ function getText(el) {
   })(el, 0);
   return fmtSerialize(chars);
 }
+// A fingerprint of where the editor's name links are, to tell whether they need redrawing.
 function domSig(el) {
   // where the name links are, by visible offset
   const sig = [];
@@ -9237,6 +9455,7 @@ function domSig(el) {
   });
   return sig.join('|');
 }
+// Where the caret is in the editor, as a position in the visible text (null when it is elsewhere).
 function caretOffset(el) {
   const sel = getSelection();
   if (!sel.rangeCount || !el.contains(sel.anchorNode)) return null;
@@ -9246,6 +9465,7 @@ function caretOffset(el) {
   pre.setEnd(r.endContainer, r.endOffset);
   return pre.toString().length;
 }
+// Puts the caret at a position in the editor's visible text.
 function setCaret(el, off) {
   const w = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
   let n,
@@ -9268,6 +9488,8 @@ function setCaret(el, off) {
   sel.removeAllRanges();
   sel.addRange(r);
 }
+// Redraws the editor's name links when the names in the text change (or always, with force), keeping the caret where
+// it was.
 function relinkEditor(force) {
   const ed = $('#ed');
   if (!ed) return;
@@ -9285,7 +9507,20 @@ function relinkEditor(force) {
   if (focused && off != null) setCaret(ed, off);
   updateSceneChips();
 }
-/* ---------- persistence ---------- */
+/*
+ * 05-saving.js: Saving, and facts worked out from the project
+ *
+ * Saving: a change marks its record dirty (dirty("sc_<id>") for a scene, dirty("meta") for the project's index),
+ * which stamps the record with the time and this device and schedules a save. flush() then hands the changed records
+ * to the active store in STORES: localStorage in a plain browser, the Claude artifact's database, or the desktop
+ * app's project folder. Deleted records go through forget(), which leaves a dated marker in meta.gone so a shared
+ * copy knows they were deleted rather than never seen. Saving waits about 1.4 s after the last change, so typing is
+ * never slowed by it.
+ *
+ * Derived data: today's words, the total, the writing streak, Inky's mood, the scenes in book order, and the names of
+ * views.
+ */
+// Shows the save state in the top bar (saving, saved, offline, read-only...).
 function setStatus(k) {
   const el = $('#saveSt');
   if (!el) return;
@@ -9300,6 +9535,8 @@ function setStatus(k) {
       error: 'Could not save, retrying'
     }[k] || 'Saved';
 }
+// Marks records as changed: stamps each with the time, this device and the writer's name, and schedules a save. Takes
+// record keys such as 'meta' or 'sc_<id>'.
 function dirty() {
   ui.touched = true;
   const now = Date.now();
@@ -9325,16 +9562,19 @@ function forget(k) {
   P.dirty.delete(k);
   S.meta.gone[k] = Date.now();
 }
+// Saves after ms milliseconds, unless something else changes first (then the wait restarts).
 function schedule(ms) {
   clearTimeout(P.timer);
   P.timer = setTimeout(flush, ms);
 }
+// The record a save key refers to: 'meta' or '<prefix>_<id>'.
 function docData(k) {
   if (k === 'meta') return S.meta;
   const pre = k.slice(0, 2);
   if (k[2] === '_' && DOCS.includes(pre)) return S[pre][k.slice(3)] || null;
   return null;
 }
+// Makes the project read-only because a newer Inkling saved it, so this copy never overwrites newer work.
 function lockNewer(v) {
   ui.locked = v;
   clearTimeout(P.timer);
@@ -9346,6 +9586,7 @@ function lockNewer(v) {
     { plain: true }
   );
 }
+// Keeps a copy of the whole project in this browser's localStorage (not in the desktop app, which saves files).
 function mirrorLocal() {
   if (DESK || ui.locked) return;
   try {
@@ -9390,7 +9631,10 @@ const STORES = {
     }
   }
 };
+// The store the open project saves to (see STORES).
 let store = DESK ? STORES.desktop : STORES.local;
+// Saves everything that changed: hands changed and deleted records to the store, retries on failure and updates the
+// status.
 async function flush() {
   if (ui.locked) return; // a project from a newer Inkling is shown but never overwritten
   if (P.busy) {
@@ -9426,9 +9670,11 @@ async function flush() {
     }
   }
 }
+// The save keys of every record in a project.
 function allKeys(st) {
   return new Set(['meta'].concat(...DOCS.map(p => Object.keys(st[p] || {}).map(k => p + '_' + k))));
 }
+// Marks every record as changed, so the next save writes the whole project (after a restore or switching store).
 function markAllDirty() {
   const nk = allKeys(S);
   P.keys.forEach(k => {
@@ -9440,6 +9686,8 @@ function markAllDirty() {
   });
   schedule(600);
 }
+// In the Claude artifact: opens the artifact's database and loads the saved project from it (or saves this one to
+// it).
 async function connectDb(local) {
   try {
     const cl = window.claude;
@@ -9497,10 +9745,13 @@ async function connectDb(local) {
 }
 
 /* ---------- derived data ---------- */
+// New words written today.
 const todayWords = () => S.meta.days[todayKey()] || 0;
+// Words in the whole manuscript.
 function totalWords() {
   return Object.values(S.meta.scenes).reduce((a, s) => a + (s.words || 0), 0);
 }
+// Days in a row the daily goal was met, counting today only once it is met.
 function streak() {
   const g = S.meta.goal,
     d = S.meta.days;
@@ -9514,6 +9765,7 @@ function streak() {
   }
   return n;
 }
+// Inky's mood from today's words: sleepy, happy, hype (half the goal) or party (goal met).
 function curMood() {
   const w = todayWords(),
     g = S.meta.goal;
@@ -9522,15 +9774,18 @@ function curMood() {
   if (w > 0) return 'happy';
   return 'sleepy';
 }
+// Every scene in book order, each with its chapter: [{id, ch}].
 function orderedScenes() {
   const out = [];
   S.meta.chapters.forEach(c => c.scenes.forEach(id => out.push({ id, ch: c })));
   return out;
 }
+// The view to show when nothing else is chosen: the first scene, or the corkboard.
 function firstView() {
   const s = orderedScenes()[0];
   return s ? { k: 'scene', id: s.id } : { k: 'cork' };
 }
+// Whether a view still exists (its scene, page or document may have been deleted).
 function viewValid(v) {
   if (!v) return false;
   if (v.k === 'scene') return !!S.meta.scenes[v.id];
@@ -9557,6 +9812,7 @@ function viewValid(v) {
     v.k === 'series'
   );
 }
+// A view's name, as shown in history, the quick switcher and the back button.
 function viewName(v) {
   if (v.k === 'scene') return S.meta.scenes[v.id].title;
   if (v.k === 'ent') return S.meta.ents[v.id].name;
@@ -9580,7 +9836,17 @@ function viewName(v) {
   if (v.k === 'snap') return 'Snapshots: ' + S.meta.scenes[v.id].title;
   return 'Corkboard';
 }
-/* ---------- pet ---------- */
+/*
+ * 06-inky.js: Inky, the writing pet: drawing, talking, cheering, rewards and the room
+ *
+ * petSVG() draws Inky as inline SVG for any mood, rank and outfit. say(), toast() and cheer() let Inky talk (Settings
+ * in the room decide how chatty). credit() is where every new word lands: it adds to today's count and Inky's total,
+ * the running focus session and the to-do list, and triggers cheers, confetti and rank-ups.
+ *
+ * The second half is what Inky earns: colours, things to wear (PET_ITEMS, PET_ART), achievements (ACH, checked by
+ * checkAch), and the room behind Inky (roomSVG), whose window follows the time of day.
+ */
+// Inky's arm shapes (SVG paths, left and right) for each mood.
 const PET_ARMS = {
   sleepy: ['M34 108 q-10 8 -8 22', 'M126 108 q10 8 8 22'],
   happy: ['M34 106 q-14 2 -16 16', 'M126 106 q14 2 16 16'],
@@ -9596,6 +9862,7 @@ const PET_ARMS = {
   laugh: ['M34 106 q8 16 28 14', 'M126 106 q-8 16 -28 14'],
   cozy: ['M34 108 q-10 8 -8 22', 'M126 108 q10 8 8 22']
 };
+// Words for each mood, used in the pet's description for screen readers.
 const PET_FEEL = {
   sleepy: 'sleepy',
   party: 'ecstatic',
@@ -9614,6 +9881,7 @@ const PET_FEEL = {
 // Things Inky holds or shows while reading over your shoulder (look.react): right hand, left hand, or floating.
 const REACT_R = ['umbrella', 'popcorn', 'magnifier', 'wand'],
   REACT_L = ['tissue', 'cookie', 'letter', 'cake'];
+// Things Inky can hold or show while reading (an umbrella, popcorn, a tissue…), as SVG.
 const REACT_ART = {
   tissue:
     '<g class="pr"><path class="tis" d="M10 116 q6 -10 13 -4 q7 -7 13 2 l-3 18 h-20z"/><path class="tis2" d="M16 112 q4 -8 8 -2"/></g>',
@@ -9634,6 +9902,8 @@ const REACT_ART = {
   excl: '<text class="mark" x="14" y="48">!</text>',
   qmark: '<text class="mark" x="10" y="48">?</text>'
 };
+// Draws Inky as SVG: m is the mood (face and arms), stage the rank (which brings its own accessories), look the
+// colour and what Inky wears (from meta.pet unless given).
 function petSVG(m, stage, look) {
   look = look || (S && S.meta && S.meta.pet) || {};
   const wear = look.wear || {},
@@ -9851,6 +10121,7 @@ function petSVG(m, stage, look) {
     '</svg>'
   );
 }
+// What Inky says for each mood.
 const LINES = {
   sleepy: [
     'Zzz… write a sentence and I will wake up.',
@@ -9865,7 +10136,9 @@ const LINES = {
     'I am so proud I could spill.'
   ]
 };
+// Something Inky might say in this mood.
 const line = m => pick(LINES[m]);
+// Puts words in Inky's speech bubble.
 function say(msg) {
   ui.say = msg;
   ui.sayAt = Date.now();
@@ -9873,6 +10146,7 @@ function say(msg) {
   const b = $('#bubble');
   if (b) b.textContent = msg;
 }
+// Makes Inky hop once.
 function bump() {
   const w = $('#petBtn');
   if (!w) return;
@@ -9883,6 +10157,8 @@ function bump() {
   card.classList.add('hop');
   setTimeout(() => card.classList.remove('hop'), 700);
 }
+// A short message at the bottom of the screen, with Inky beside it unless o.plain. o.act adds one button: [label,
+// fn].
 function toast(msg, o) {
   const t = $('#toast'),
     withPet = !(o && o.plain);
@@ -9914,6 +10190,7 @@ function toast(msg, o) {
   clearTimeout(ui.tt2);
   ui.tt = setTimeout(hide, act ? 7000 : 4300);
 }
+// A burst of confetti (skipped when the computer asks for reduced motion, or when switched off in Settings).
 function confetti() {
   if (RM) return;
   const fx = $('#fx'),
@@ -9938,6 +10215,7 @@ function confetti() {
     setTimeout(() => s.remove(), 2000);
   }
 }
+// Inky celebrates: words in the bubble, and for big moments a toast and confetti, as the writer's settings allow.
 function cheer(msg, big) {
   // Settings in Inky's room: chatty (default), quiet (only big moments pop up) or silent (speech bubble only)
   say(msg);
@@ -9946,6 +10224,9 @@ function cheer(msg, big) {
   if (talk === 'chatty' || (talk === 'quiet' && big)) toast(msg);
   if (big && talk !== 'off' && LOOK.confetti !== false) confetti();
 }
+// Counts new writing: delta is the change in words. Only additions count, and a single jump of more than 600 words is
+// treated as a paste, not writing. Adds to today, Inky's total and the focus session, ticks to-do items, and cheers
+// at goals and new ranks.
 function credit(delta) {
   if (delta <= 0 || delta > 600) return; // pasted blocks do not count as writing
   if (T.cur && T.running && T.phase === 'focus') {
@@ -10038,6 +10319,7 @@ const PET_COLORS = [
   ['moss', 'Moss', ['#6FA34A', '#4C7A2E', '#14250A']],
   ['slate', 'Slate', ['#7C8BA1', '#56657A', '#121A26']]
 ];
+// Checks Inky's saved record: name, words, colour, what it wears, achievements and flags.
 function normPet(p) {
   p = p && typeof p === 'object' ? p : {};
   const wear = {};
@@ -10063,6 +10345,7 @@ function normPet(p) {
         : [0, 1000, 10000, 30000, 60000].filter(x => (+p.total || 0) >= x).length - 1
   }; // older projects keep the rank they had
 }
+// The CSS variables that recolour Inky, as a style attribute.
 const petStyle = look => {
   const c = PET_COLORS.find(x => x[0] === (look && look.color));
   return c && c[2] ? ' style="--pet:' + c[2][0] + ';--pet-deep:' + c[2][1] + ';--pet-ink:' + c[2][2] + '"' : '';
@@ -10093,6 +10376,7 @@ const PET_ART = {
     '<g class="it"><rect class="c3" x="126" y="92" width="24" height="32" rx="3"/><rect class="gold" x="132" y="88" width="12" height="7" rx="2"/><path class="chain" d="M131 104 h14 M131 111 h14 M131 118 h9"/></g>',
   mug: '<g class="it"><path class="steam" d="M134 98 q-4 -6 0 -12 M142 98 q-4 -6 0 -12"/><rect class="c3" x="128" y="102" width="20" height="22" rx="4"/><path class="c3" d="M148 108 q8 0 8 6 q0 6 -8 6" fill="none" stroke-width="4"/><rect class="c1" x="128" y="108" width="20" height="5"/></g>'
 };
+// Everything Inky can wear or put in the room: id → [slot, name].
 const PET_ITEMS = {
   // id: [slot, name]
   quill: ['hand', 'Quill'],
@@ -10118,6 +10402,7 @@ const PET_ITEMS = {
   shelf: ['room', 'Bookshelf'],
   hourglass: ['room', 'Hourglass']
 };
+// The numbers achievements are measured by: words, streak, days written, scenes finished, pages, sessions and more.
 function petStats() {
   const m = S.meta,
     d = m.days,
@@ -10180,6 +10465,7 @@ const ACH = [
   ['streak30', 'Month of ink', 'Reach your goal 30 days running.', 'crown', 'best', 30],
   ['laureate', 'Laureate', 'Reach your novel length goal.', 'laurel', 'stage', 4]
 ];
+// Whether Inky has earned an item (items without an achievement are always available).
 const owns = id => {
   const a = ACH.find(x => x[3] === id);
   return !a || !!S.meta.pet.got[a[0]];
@@ -10229,6 +10515,7 @@ function checkAch(quiet) {
   if (room) room.innerHTML = roomSVG();
   if (ui.view && ui.view.k === 'den') renderMain();
 }
+// A scene was marked Final: cheers, a to-do tick, and a note when a whole chapter is final.
 function sceneFinal(id) {
   const m = S.meta,
     ch = m.chapters.find(c => c.scenes.includes(id)),
@@ -10242,6 +10529,7 @@ function sceneFinal(id) {
   todoTick('fin', id);
   checkAch();
 }
+// What Inky says when a project opens: a welcome back, the streak, or the deadline plan.
 function greet() {
   // said once when a project opens
   const d = S.meta.days,
@@ -10269,6 +10557,7 @@ function greet() {
 // While Inky reads a scene, the window shows the story instead: its time of day, weather and setting, and the room
 // takes on the scene's mood.
 let WIN_ID = 0;
+// The view through the room's window: sea, forest, city and so on, by day or night.
 function winView(place, night) {
   const dk = (a, b) => (night ? b : a);
   if (place === 'sea')
@@ -10354,6 +10643,7 @@ function winView(place, night) {
     return '<path d="M20 18 H82 V70 H20Z M28 70 Q24 50 34 36 Q44 26 56 30 Q72 32 76 48 Q80 60 74 70Z" fill="#3B3430" fill-rule="evenodd"/>';
   return '';
 }
+// Rain, snow, fog or storm drawn over the window view.
 function winWeather(w) {
   let h = '';
   if (w === 'rain' || w === 'storm') {
@@ -10388,6 +10678,8 @@ function winWeather(w) {
       '<path class="windl" d="M22 32 q14 -6 26 0 t22 -2"/><path class="windl" d="M28 48 q12 -5 24 0 t18 -1" style="animation-delay:.8s"/><ellipse cx="40" cy="40" rx="3" ry="1.6" fill="#6FA34A" class="windl" style="animation-delay:1.4s;stroke:none;fill:#6FA34A"/>';
   return h;
 }
+// The room behind Inky: the window (the real time of day, or the story's while Inky reads), a plant that grows with
+// the streak, and earned things on the walls and floor.
 function roomSVG() {
   const st = petStats(),
     hr = new Date().getHours(),
@@ -10515,7 +10807,20 @@ function roomSVG() {
   if (wx === 'storm') h += '<rect class="flash" x="0" y="0" width="300" height="190"/>';
   return h + '</svg>';
 }
-/* ---------- Inky reads over your shoulder ---------- */
+/*
+ * 07-inky-reads.js: Inky reads over your shoulder
+ *
+ * While a scene is open, Inky reads the passage around the caret, right here in the page (nothing is sent anywhere),
+ * and reacts: a face and something to hold for the mood or what just happened, the story's weather, time of day and
+ * setting in the room's window, and now and then a short remark using the names in the passage.
+ *
+ * How it reads: word lists (PK_MOOD, PK_WEATHER, PK_TIME, PK_PLACE) are compiled once into a fast lookup (pkLex);
+ * readPage() scores the sentences before the caret, recent ones counting most, and picks up events (PK_EV), who is in
+ * the scene, dialogue and pace. peekRun() runs it when the writer pauses or opens a scene, and peekLine() chooses at
+ * most one remark, never too often.
+ *
+ * This file also draws co-writers' pets during a shared sprint (paintPals) and Inky's room screen (renderDen).
+ */
 // While you write a scene, Inky reads the passage around the caret (in the page: nothing is sent anywhere) and reacts:
 // a face and something to hold for the mood or what just happened, the story's weather, time of day and setting in the
 // room's window, and now and then a remark that uses the names in the passage. readPage() reads, peekRun() reacts.
@@ -10535,6 +10840,7 @@ const PK_MOOD = {
   calm: 'quiet:.6 quietly:.5 calm* peace* gentle gently softly:.5 warm:.5 warmth:.6 tea:.5 cocoa blanket* hearth* fireplace cosy cozy serene* breeze:.4 meadow*:.5 purr*',
   sleepy: 'sleepy asleep:.8 slept:.6 yawn* drows* nap:.6 napping tired:.6 exhausted:.6 pillow*:.5 sleep:.6'
 };
+// Words that tell the story's weather.
 const PK_WEATHER = {
   rain: 'rain rains rained raining rainy rainfall raindrop* drizzl* downpour puddle* umbrella* drench* soaked damp:.5 wet:.4',
   storm: 'storm stormy storms thunder* lightning gale* tempest* hurricane* squall*',
@@ -10543,6 +10849,7 @@ const PK_WEATHER = {
   wind: 'wind:.8 windy gust* howling:.5 blustery',
   sun: 'sunny sunlight sunshine sunbeam* heat:.5 hot:.4 summer:.5 blazing:.5 scorching sweltering sun:.6'
 };
+// Words that tell the story's time of day.
 const PK_TIME = {
   night:
     'night nights nighttime tonight midnight moon moonlight moonlit stars:.7 starlight starry:.7 dark:.3 candle*:.4 lantern*:.3',
@@ -10550,6 +10857,7 @@ const PK_TIME = {
   dusk: 'dusk sunset twilight evening:.8 sundown nightfall:.6',
   day: 'noon midday afternoon daylight daytime lunchtime'
 };
+// Words that tell the kind of place the scene is in.
 const PK_PLACE = {
   sea: 'sea seas ocean* tide* ship ships harbo* dock docks docked sail sails sailed sailing sailor* deck:.5 shore* beach* quay* boat* mast* gull* waves:.6 salt:.4 port:.4 anchor*:.6 lighthouse* wharf*',
   forest:
@@ -10620,7 +10928,9 @@ const PK_EV = [
   ['dog', /\b(?:dog|dogs|puppy|puppies)\b/i, 'glee', '', 1],
   ['horse', /\b(?:horse|horses|pony|stallion)\b/i, 'happy', '', 1]
 ];
+// Words that cancel a mood word just after them ("not afraid").
 const PK_NEG = new Set(['not', 'no', 'never', 'nothing', 'without', 'nobody', 'hardly', 'barely', 'nor', 'cannot']);
+// Words that strengthen the mood word after them ("very afraid").
 const PK_AMP = new Set([
   'very',
   'so',
@@ -10634,6 +10944,7 @@ const PK_AMP = new Set([
   'totally',
   'incredibly'
 ]);
+// The face Inky makes for each mood it reads.
 const PK_FACE = {
   fear: 'scared',
   action: 'tense',
@@ -10646,13 +10957,17 @@ const PK_FACE = {
   calm: 'cozy',
   sleepy: 'sleepy'
 };
+// What Inky holds for some moods.
 const PK_HOLD = { fear: 'sweat', action: 'popcorn', love: 'hearts', mystery: 'magnifier' };
+// Common words that never count as "a word used again and again".
 const PK_STOP = new Set(
   'about above after again against along always among another around away back because been before behind being below beside between could didn down every first from going great have having here into just later like little looked looking might more most much never next nothing once only other over perhaps really right said says shall should since some something still such than that their them then there these they thing things think this those though thought through toward towards under until upon very want wanted well were what when where which while whole with within without would your'.split(
     ' '
   )
 );
+// The compiled word lists (built once by pkLex).
 let PK_LEX = null;
+// Compiles the word lists into lookups: exact words, and word starts for entries ending in *.
 function pkLex() {
   if (PK_LEX) return PK_LEX;
   const build = groups => {
@@ -10673,6 +10988,7 @@ function pkLex() {
   };
   return (PK_LEX = { mood: build(PK_MOOD), weather: build(PK_WEATHER), time: build(PK_TIME), place: build(PK_PLACE) });
 }
+// The [group, weight] pairs one word scores in a compiled list.
 function pkHits(L, w) {
   let out = L.ex.get(w) || [];
   for (let i = Math.min(w.length, 14); i >= 3; i--) {
@@ -10684,6 +11000,7 @@ function pkHits(L, w) {
   }
   return out;
 }
+// The strongest group in a score table, if it is strong enough (min) and clearly ahead of the next (lead).
 function pkTop(o, min, lead) {
   let k = null,
     v = 0,
@@ -10852,6 +11169,7 @@ function readPage(vis, at) {
   if (echo) R.echo = echo;
   return R;
 }
+// Inky's remarks: for events (ev), moods, weather and the pace, with {who} and {place} filled in from the passage.
 const PK_LINES = {
   ev: {
     kiss: [
@@ -10975,6 +11293,7 @@ const PK_LINES = {
     age: ['Hang on, isn’t {who} {fact}?', 'Hmm. {who}’s page says {fact}.']
   }
 };
+// How Inky says where the scene is.
 const PK_WHERE = {
   sea: 'by the sea',
   forest: 'in the woods',
@@ -10985,6 +11304,7 @@ const PK_WHERE = {
   castle: 'in the castle',
   cave: 'underground'
 };
+// How Inky says the time of day (PK_WX: the weather).
 const PK_WHEN = { night: 'at night', dawn: 'at dawn', dusk: 'at dusk', day: 'by day' },
   PK_WX = {
     rain: 'in the rain',
@@ -10994,6 +11314,7 @@ const PK_WHEN = { night: 'at night', dawn: 'at dawn', dusk: 'at dusk', day: 'by 
     wind: 'in the wind',
     sun: 'in the sun'
   };
+// Inky's one-line reaction to each mood, used when it says where we are.
 const PK_FEEL = {
   fear: 'Something’s wrong, I can tell.',
   action: 'And it’s all go.',
@@ -11006,11 +11327,14 @@ const PK_FEEL = {
   calm: 'All peaceful.',
   sleepy: 'Sleepily.'
 };
+// Picks a remark whose {placeholders} can all be filled, and fills them.
 function pkFill(list, v) {
   const ok = list.filter(s => (s.match(/\{(\w+)\}/g) || []).every(t => v[t.slice(1, -1)]));
   return ok.length ? pick(ok).replace(/\{(\w+)\}/g, (_, k) => v[k]) : '';
 }
+// Whether Inky is reading: switched on and a scene is open.
 const peekOn = () => LOOK.peek !== false && !!ui.view && ui.view.k === 'scene';
+// What Inky has read in the open scene (null when it is not reading).
 const peekNow = () => (peekOn() && ui.peek && ui.peek.id === ui.view.id ? ui.peek.r : null);
 // Inky's face and what it holds, from what it has read (null when it is not reading).
 function peekFace(r) {
@@ -11033,11 +11357,13 @@ function peekFace(r) {
   if (!face && r.time === 'night' && !r.weather) face = 'cozy';
   return { m: face, react: hold };
 }
+// Inky's face and props right now: the reading face if there is one, otherwise the mood from today's words.
 function petNow() {
   const md = curMood(),
     f = peekFace();
   return { m: (f && f.m) || md, react: f ? f.react : [] };
 }
+// Inky's look with something to hold added.
 function petLook(react) {
   return react && react.length ? Object.assign({}, S.meta.pet, { react }) : null;
 }
@@ -11061,6 +11387,7 @@ function paintPet(force) {
     pp.className = 'peek-pet m-' + f.m;
   }
 }
+// Inky says something it noticed while reading (remembered so the same kind of remark waits a while).
 function peekSay(msg) {
   say(msg);
   ui.sayKind = 'peek';
@@ -11126,6 +11453,7 @@ function peekCaret(ed) {
   d.appendChild(rg.cloneContents());
   return plainText(getText(d)).length;
 }
+// Chooses at most one remark from what Inky just read, rate-limited per kind, never over a recent cheer.
 function peekLine(r, prev, pk) {
   const now = Date.now(),
     since = now - pk.lineAt,
@@ -11230,6 +11558,7 @@ function paintPals() {
     )
     .join('');
 }
+// Joins a co-writer's sprint: starts a focus session that ends when theirs does.
 function pmJoin(end, who) {
   if (T.running && T.phase === 'focus') {
     toast('Your focus timer is already running.', { plain: true });
@@ -11246,6 +11575,7 @@ function pmJoin(end, who) {
   say('Sprinting with ' + who + '! Same finish line.');
   hereSoon();
 }
+// Inky's room screen: the room full size, Inky's name and colour, what it wears, achievements, and how chatty it is.
 function renderDen(el) {
   const p = S.meta.pet,
     st = petStats(),
@@ -11461,10 +11791,17 @@ function renderDen(el) {
     paintPet(true);
   });
 }
+// Redraws Inky (kept as a name other code calls).
 function updatePetArt() {
   paintPet(true);
 }
-/* ---------- drag to reorder ---------- */
+/*
+ * 08-drag.js: Drag to reorder
+ *
+ * One small engine for every list that can be rearranged by dragging: scenes and chapters in the binder, planning
+ * lists, corkboard cards, outline lines and brainstorm ideas. Mouse drags start after a few pixels; touch needs a
+ * short press and hold so lists still scroll. moveSceneTo() and moveInList() apply the result.
+ */
 // dragSort(root, {item, handle?, zones?, grid?, drop(el, beforeEl|null, zoneEl)}): mouse drags after a few pixels,
 // touch after a short press and hold, so lists still scroll. A bar shows where the item will land.
 function dragSort(root, o) {
@@ -11614,6 +11951,7 @@ function dragSort(root, o) {
     document.addEventListener('touchmove', tm, { passive: false });
   });
 }
+// Moves a scene into a chapter, before another scene (or to the end).
 function moveSceneTo(id, chId, beforeId) {
   const cs = S.meta.chapters,
     to = cs.find(c => c.id === chId);
@@ -11629,6 +11967,7 @@ function moveSceneTo(id, chId, beforeId) {
   renderBinder();
   if (ui.view.k === 'cork') renderMain();
 }
+// Moves the item with this id in a list to just before another item (or to the end).
 function moveInList(arr, id, beforeId, key) {
   key = key || (x => x.id);
   const i = arr.findIndex(x => key(x) === id);
@@ -11638,13 +11977,22 @@ function moveInList(arr, id, beforeId, key) {
   arr.splice(j < 0 ? arr.length : j, 0, x);
   return true;
 }
-/* ---------- continuity ---------- */
+/*
+ * 09-continuity.js: The continuity check
+ *
+ * contCheck() reads every scene and lists what may be inconsistent: a fact that disagrees with a story page's Key
+ * facts (eyes, hair, age), a capitalised word one letter away from a name (a likely typo), a character who stops
+ * appearing or vanishes for five or more chapters, and pages never mentioned. The result is cached for a few seconds,
+ * since the binder, the Inkling panel and story pages all ask for it. Items the writer hides are kept in
+ * meta.contIgnore.
+ */
 // Checks the scenes against the story pages: facts that disagree (eyes, hair, age), names that look misspelled,
 // characters who drop out of the story, and pages never mentioned. Results are cached for a few seconds.
 const CONT_COLORS =
   'blue green brown hazel grey gray black amber violet red auburn blond blonde brunette ginger silver white golden gold dark fair copper chestnut raven pale yellow purple pink orange'.split(
     ' '
   );
+// Number words, for ages written out ("thirty-four").
 const CONT_NUMS = {
   one: 1,
   two: 2,
@@ -11674,6 +12022,7 @@ const CONT_NUMS = {
   eighty: 80,
   ninety: 90
 };
+// Reads a page's Key facts box ("eyes: green", "age: 34") into {eyes, hair, age}.
 function parseFacts(t) {
   const f = {};
   String(t || '')
@@ -11694,12 +12043,14 @@ function parseFacts(t) {
     });
   return f;
 }
+// An age written as digits or words, as a number.
 const ageNum = w => {
   w = String(w).toLowerCase();
   if (/^\d+$/.test(w)) return +w;
   const p = w.split(/[- ]/);
   return p.reduce((a, x) => a + (CONT_NUMS[x] || 0), 0) || null;
 };
+// Whether two words differ by exactly one letter (added, removed or changed): a likely misspelling of a name.
 function lev1(a, b) {
   if (a === b) return false;
   if (Math.abs(a.length - b.length) > 1) return false;
@@ -11712,7 +12063,10 @@ function lev1(a, b) {
   const [s2, l2] = a.length < b.length ? [a, b] : [b, a];
   return s2.slice(i) === l2.slice(i + 1);
 }
+// A stable key for one continuity item, used to remember that the writer hid it.
 const contKey = x => [x.kind, x.ent || '', x.scene || '', x.word || x.said || ''].join(':');
+// Reads every scene and lists continuity issues: facts that disagree, look-alike names, characters who drop out,
+// pages never mentioned. Also records where each page is first and last seen. Cached for a few seconds unless force.
 function contCheck(force) {
   if (!force && ui.cont && Date.now() - ui.cont.at < 4000 && ui.cont.v === S.meta.saved) return ui.cont.list;
   const m = S.meta,
@@ -11897,7 +12251,9 @@ function contCheck(force) {
   ui.cont = { at: Date.now(), v: S.meta.saved, list, seen };
   return list;
 }
+// How many issues need attention (disagreeing facts and likely typos), for the Inkling panel's button.
 const contCount = () => contCheck().filter(x => x.kind === 'fact' || x.kind === 'spell').length;
+// A one-line description of an issue.
 function contLabel(x) {
   const m = S.meta,
     e = x.ent && m.ents[x.ent],
@@ -11934,6 +12290,7 @@ function contLabel(x) {
   if (x.kind === 'unused') return '<b>' + esc(nm) + '</b> is not mentioned in any scene yet.';
   return '';
 }
+// One issue as HTML, with buttons to open the scene or hide the issue.
 function contItem(x) {
   const sc = x.scene && S.meta.scenes[x.scene];
   return (
@@ -11962,6 +12319,7 @@ function contItem(x) {
     '</button></div></div>'
   );
 }
+// Handles clicks on issues: open the scene at the spot, or hide the issue.
 function contClick(e) {
   const b = e.target.closest('[data-ct]');
   if (!b) return false;
@@ -11980,6 +12338,7 @@ function contClick(e) {
   }
   return true;
 }
+// The Continuity screen: every issue, grouped by kind.
 function renderCont(el) {
   const list = contCheck(true),
     g = k => list.filter(x => x.kind === k),
@@ -12037,6 +12396,7 @@ function renderCont(el) {
     contClick(e);
   };
 }
+// A story page's Key facts box, where its name is first and last seen, and its own issues.
 function entContHtml(e) {
   const list = contCheck(),
     mine = list.filter(x => x.ent === e.id && x.kind !== 'unused'),
@@ -12070,6 +12430,7 @@ function entContHtml(e) {
     '</section>'
   );
 }
+// How many times each story page is mentioned in the manuscript (shown in the binder).
 function mentionCounts() {
   contCheck();
   const out = {},
@@ -12077,16 +12438,32 @@ function mentionCounts() {
   Object.keys(sn).forEach(k => (out[k] = sn[k].n));
   return out;
 }
-/* ---------- story insights: scene details, pacing, point of view, plot threads ---------- */
+/*
+ * 10-story-insights.js: Story insights, scene details, setups and payoffs, and character arcs
+ *
+ * Scene details: each scene can name its point-of-view character, its place, its tension (1–5) and the plot threads
+ * it moves on. They are kept in meta.scenes[id] and edited in the Inkling panel (sceneDetailsHtml, bindSceneDetails).
+ * Setups and payoffs (foreshadowing) are kept in meta.setups.
+ *
+ * The Story insights screen ({k:'story'}) reads the book through storyRows(): one row per scene, in order, with its
+ * words, tension (set by the writer, or estimated from the words), dialogue, action and reflection, and who is named.
+ * Its tabs: Pacing (a chart across the book), Point of view (who gets the page, and screen time by chapter), Arcs,
+ * Plot threads (a grid by chapter, with warnings) and Setups & payoffs.
+ *
+ * Character arcs live on each character's story page (S.en[id].arc): the kind of arc, goal, wound, lie and truth, and
+ * how far along the change they are in each chapter.
+ */
 // Each scene can name its point-of-view character (meta.scenes[id].pov), where it happens (place), how tense it is
 // (tension 1–5) and the plot threads it moves on (threads: ids from meta.threads). The Story insights view
 // ({k:'story'}, tabs in ui.stTab) draws pacing across the book, who gets the page, and threads by chapter.
 const THREAD_GAP = 3; // chapters a thread may go missing before it is flagged
+// Words that suggest a character thinking or remembering (reflection rather than action).
 const REFLECT = new Set(
   'thought thoughts think thinks thinking wondered wonder wonders wondering remembered remember remembers remembering memory memories realised realized realise realize knew felt feel feels feeling feelings wished wish hoped hope hopes considered imagined believed supposed perhaps maybe somehow regret regretted'.split(
     ' '
   )
 );
+// Checks the list of plot threads.
 function normThreads(x) {
   const seen = new Set();
   return (Array.isArray(x) ? x : [])
@@ -12100,6 +12477,8 @@ function normThreads(x) {
       done: typeof t.done === 'string' ? t.done : ''
     }));
 }
+// Checks every scene's details: drops a point of view, place or thread that no longer exists, and keeps tension
+// between 1 and 5.
 function normSceneDetails(meta) {
   const ids = new Set(meta.threads.map(t => t.id));
   Object.values(meta.scenes).forEach(s => {
@@ -12134,12 +12513,14 @@ function normSetups(x) {
       pay: typeof t.pay === 'string' ? t.pay : ''
     }));
 }
+// Adds a setup (a clue or promise to pay off later) planted in a scene.
 function setupAdd(text, scene) {
   const x = { id: uid('fs'), text: String(text).trim().slice(0, 300), note: '', scene: scene || '', pay: '' };
   S.meta.setups.push(x);
   dirty('meta');
   return x;
 }
+// Each scene's position in the book: {sceneId: index}.
 function sceneOrder() {
   const o = {};
   orderedScenes().forEach((x, i) => {
@@ -12147,6 +12528,7 @@ function sceneOrder() {
   });
   return o;
 }
+// Setups to check: never paid off, paid off before they are set up or in the same scene, or with no scene.
 function setupWarnings() {
   const ord = sceneOrder(),
     m = S.meta,
@@ -12244,7 +12626,9 @@ function storyRows() {
   ui.stRows = { v: m.saved, n: Object.keys(m.scenes).length, at: Date.now(), rows };
   return rows;
 }
+// A scene's tension: the writer's own, or the estimate.
 const stTen = r => r.tension || r.est;
+// "Chapter › Scene", for lists and tooltips.
 function stLabel(r) {
   return r.ch.title + ' › ' + r.title;
 }
@@ -12318,6 +12702,8 @@ function sceneDetailsHtml(id) {
     '<span>Story insights</span></button></div>'
   );
 }
+// The Setups and payoffs part of the scene panel: what is set up and paid off here, a box to plant a new one, and a
+// list to pay off an earlier one.
 function sceneSetupsHtml(id) {
   const m = S.meta,
     ord = sceneOrder(),
@@ -12355,6 +12741,7 @@ function sceneSetupsHtml(id) {
     '</div></div>'
   );
 }
+// Makes the scene details panel work: point of view, place, tension, threads (and new ones), and setups.
 function bindSceneDetails(id) {
   const box = $('#sceneDet');
   if (!box) return;
@@ -12439,6 +12826,7 @@ function bindSceneDetails(id) {
     });
   });
 }
+// Adds a plot thread with the next colour.
 function threadAdd(name) {
   const m = S.meta,
     t = {
@@ -12609,9 +12997,12 @@ function renderStory(el, v) {
     renderStory(el, v);
   };
 }
+// What Story insights shows before there is any writing.
 function stEmpty() {
   return '<section class="pf"><p class="ct-none">Write a scene or two first. Story insights reads your scenes in order.</p></section>';
 }
+// The Pacing tab: a chart of tension, length and the mix of each scene, and what stands out (quiet stretches, where
+// the most intense scene falls).
 function stPaceHtml() {
   const rows = storyRows();
   if (!rows.some(r => r.words)) return stEmpty();
@@ -12861,10 +13252,12 @@ function stPaceHtml() {
       : '')
   );
 }
+// Shortens a label to n characters with an ellipsis.
 function stClip(s, n) {
   s = String(s);
   return n < 4 ? '' : s.length > n ? s.slice(0, n - 1) + '…' : s;
 }
+// The Point of view tab: words per point-of-view character, and a grid of mentions by chapter.
 function stCastHtml() {
   const rows = storyRows(),
     m = S.meta;
@@ -12975,6 +13368,7 @@ function stCastHtml() {
     : '<p class="ct-none">No characters are mentioned yet. Add character pages and use their names in your scenes.</p>';
   return pov + '<section class="pf"><h2>Screen time</h2>' + grid + '</section>';
 }
+// Plot threads to check: missing for THREAD_GAP or more chapters, never resolved, or in no scene.
 function threadWarnings() {
   const m = S.meta,
     chs = m.chapters.filter(c => c.scenes.length),
@@ -13023,6 +13417,7 @@ function threadWarnings() {
   });
   return out;
 }
+// The Setups & payoffs tab: add setups, see what to check, and edit every setup in book order.
 function stSetupsHtml() {
   const m = S.meta,
     ord = sceneOrder(),
@@ -13139,12 +13534,14 @@ const ARC_TYPES = [
   ['neg', 'Falls'],
   ['flat', 'Holds firm']
 ];
+// The four questions of an arc: [key, label, hint].
 const ARC_F = [
   ['goal', 'Goal', 'What they want'],
   ['wound', 'Wound', 'What hurt them before the story'],
   ['lie', 'Lie', 'What they wrongly believe'],
   ['truth', 'Truth', 'What they need to learn']
 ];
+// Checks a character's arc; returns null when there is nothing in it.
 function normArc(a) {
   if (!a || typeof a !== 'object') return null;
   const o = { type: ARC_TYPES.some(t => t[0] === a.type) ? a.type : 'pos', pts: {} };
@@ -13171,7 +13568,9 @@ function normArc(a) {
     });
   return any || (a.type && a.type !== 'pos') ? o : null;
 }
+// A character's arc, or null.
 const arcOf = id => (S.en[id] && S.en[id].arc) || null;
+// A character's arc, created empty if needed, ready to change.
 function arcEdit(id) {
   const b = S.en[id];
   if (!b.arc) b.arc = { type: 'pos', pts: {} };
@@ -13273,6 +13672,8 @@ function arcSvg(series, chs, o) {
   });
   return h + '</svg>';
 }
+// The Character arc box on a character's page: kind of arc, the four questions, the chart (click to set a chapter)
+// and a note for the selected chapter.
 function drawArcBox(e) {
   const box = $('#arcBox');
   if (!box) return;
@@ -13391,6 +13792,7 @@ function drawArcBox(e) {
     });
   }
 }
+// The Arcs tab: every charted arc on one chart, and a table of lies and truths.
 function stArcsHtml() {
   const m = S.meta,
     chs = m.chapters,
@@ -13477,7 +13879,191 @@ function stArcsHtml() {
       : '')
   );
 }
-/* ---------- world: calendars and money ---------- */
+// The Plot threads tab: a grid of threads by chapter, warnings, and each thread's details.
+function stThreadsHtml() {
+  const m = S.meta,
+    rows = storyRows(),
+    chs = m.chapters.filter(c => c.scenes.length),
+    idx = {};
+  chs.forEach((c, i) => {
+    idx[c.id] = i;
+  });
+  const add =
+    '<div class="th-add"><input id="thName" maxlength="80" placeholder="A subplot, mystery or relationship, like “Who sank the Lantern?”" aria-label="New plot thread"><button class="btn pri" data-st="thadd">' +
+    ico('plus', 14) +
+    '<span>Add thread</span></button></div>';
+  if (!m.threads.length)
+    return (
+      '<section class="pf"><h2>Plot threads</h2><p class="fine">Plot threads are the storylines that run through your book: subplots, mysteries, relationships. Tag the scenes that move each one on (Inkling panel › This scene › Plot threads) and see where each thread goes quiet or is left hanging.</p>' +
+      add +
+      '</section>'
+    );
+  const doneAt = {};
+  m.threads.forEach(t => {
+    const r = t.done && rows.find(x => x.id === t.done);
+    if (r) doneAt[t.id] = idx[r.ch.id];
+  });
+  const grid =
+    '<div class="st-grid-wrap"><table class="st-tab th-tab"><thead><tr><th></th>' +
+    chs.map((c, i) => '<th title="' + esc(c.title) + '">' + (i + 1) + '</th>').join('') +
+    '</tr></thead><tbody>' +
+    m.threads
+      .map(t => {
+        const n = {};
+        rows.forEach(r => {
+          if (r.threads.includes(t.id)) n[idx[r.ch.id]] = (n[idx[r.ch.id]] || 0) + 1;
+        });
+        return (
+          '<tr><th><span class="th-dot" style="--c:' +
+          cssCol(t.color) +
+          '"></span>' +
+          esc(t.name) +
+          '</th>' +
+          chs
+            .map((c, i) => {
+              const k = n[i] || 0,
+                after = doneAt[t.id] != null && i > doneAt[t.id];
+              return (
+                '<td class="th-c' +
+                (k ? ' on' : '') +
+                (after ? ' after' : '') +
+                (doneAt[t.id] === i ? ' done' : '') +
+                '" style="--c:' +
+                cssCol(t.color) +
+                '" title="' +
+                esc(
+                  t.name +
+                    ' · ' +
+                    c.title +
+                    ': ' +
+                    k +
+                    ' scene' +
+                    (k === 1 ? '' : 's') +
+                    (doneAt[t.id] === i ? ' · resolved here' : '')
+                ) +
+                '">' +
+                (doneAt[t.id] === i ? '✓' : k > 1 ? k : '') +
+                '</td>'
+              );
+            })
+            .join('') +
+          '</tr>'
+        );
+      })
+      .join('') +
+    '</tbody></table></div>';
+  const warn = threadWarnings();
+  const scOpts = sel =>
+    '<option value="">Not resolved yet</option>' +
+    m.chapters
+      .map(
+        ch =>
+          '<optgroup label="' +
+          esc(ch.title) +
+          '">' +
+          ch.scenes
+            .map(
+              id =>
+                '<option value="' +
+                id +
+                '"' +
+                (sel === id ? ' selected' : '') +
+                '>' +
+                esc(m.scenes[id].title) +
+                '</option>'
+            )
+            .join('') +
+          '</optgroup>'
+      )
+      .join('');
+  const cards = m.threads
+    .map(t => {
+      const sc = rows.filter(r => r.threads.includes(t.id));
+      return (
+        '<div class="th-card" style="--c:' +
+        cssCol(t.color) +
+        '"><div class="th-row"><input data-th="name" data-id="' +
+        t.id +
+        '" value="' +
+        esc(t.name) +
+        '" maxlength="80" aria-label="Thread name">' +
+        '<span class="sws mini">' +
+        TL_COLORS.map(
+          c =>
+            '<button class="sw' +
+            (c[0] === t.color ? ' on' : '') +
+            '" data-st="thcol" data-id="' +
+            t.id +
+            '" data-c="' +
+            c[0] +
+            '" style="--c:var(--' +
+            c[0] +
+            ')" title="' +
+            c[1] +
+            '" aria-label="' +
+            c[1] +
+            '"></button>'
+        ).join('') +
+        '</span>' +
+        '<button class="ibtn" data-st="thdel" data-id="' +
+        t.id +
+        '" aria-label="Delete thread" title="Delete thread">' +
+        ico('trash', 14) +
+        '</button></div>' +
+        '<textarea data-th="note" data-id="' +
+        t.id +
+        '" rows="2" placeholder="What this thread is about, and how it should end." aria-label="Thread notes">' +
+        esc(t.note) +
+        '</textarea>' +
+        '<label class="f">Resolved in<select data-th="done" data-id="' +
+        t.id +
+        '">' +
+        scOpts(t.done) +
+        '</select></label>' +
+        '<p class="fine">' +
+        (sc.length
+          ? 'In ' +
+            sc.length +
+            ' scene' +
+            (sc.length === 1 ? '' : 's') +
+            ': ' +
+            sc
+              .slice(0, 8)
+              .map(r => '<button class="lnk" data-open="' + r.id + '">' + esc(r.title) + '</button>')
+              .join(', ') +
+            (sc.length > 8 ? ' and more' : '')
+          : 'Not in any scene yet.') +
+        '</p></div>'
+      );
+    })
+    .join('');
+  return (
+    '<section class="pf"><h2>Plot threads</h2><p class="fine">Each row is a thread, each column a chapter. Tag scenes in the Inkling panel (This scene › Plot threads); mark where a thread is resolved below.</p>' +
+    grid +
+    '</section>' +
+    '<section class="pf"><h2>Threads to check <span class="muted">' +
+    warn.length +
+    '</span></h2>' +
+    (warn.length
+      ? '<ul class="st-notes">' +
+        warn.map(w => '<li class="th-w ' + w.kind + '">' + esc(w.text) + '</li>').join('') +
+        '</ul>'
+      : '<p class="ct-none">Every thread keeps turning up and is resolved.</p>') +
+    '</section>' +
+    '<section class="pf"><h2>Your threads</h2>' +
+    add +
+    '<div class="th-cards">' +
+    cards +
+    '</div></section>'
+  );
+}
+/*
+ * 11-world.js: Calendars and money for invented worlds
+ *
+ * The Calendars & money screen ({k:'world'}): calendars with their own months, weekdays and era, with a converter
+ * from a day number to a date (and back, calDay), and currencies with any number of coins and a converter between
+ * them. A calendar can also be used as a timeline's time scale. Kept in meta.world.
+ */
 // meta.world.cals: invented calendars {id,name,months[[name,days]],week (comma list),era,first (number of the first year)};
 // meta.world.coins: currencies {id,name,units[[name,per]],note}: units from largest to smallest, per = how many of the
 // next unit make one of this. View {k:'world'} (renderWorld). A calendar can set a timeline's scale (TL presets).
@@ -13517,7 +14103,9 @@ function normWorld(w) {
       }))
   };
 }
+// Days in one year of a calendar.
 const calYear = c => c.months.reduce((a, x) => a + x[1], 0) || 1;
+// A calendar's weekday names.
 const calWeek = c =>
   c.week
     .split(',')
@@ -13537,13 +14125,16 @@ function calDate(c, n) {
   const wk = calWeek(c);
   return { y: c.first + yi, mi, d: r + 1, wd: wk.length ? wk[(((n - 1) % wk.length) + wk.length) % wk.length] : '' };
 }
+// The day number of a date (year, month index, day).
 function calDay(c, y, mi, d) {
   let n = (y - c.first) * calYear(c);
   for (let i = 0; i < mi; i++) n += c.months[i][1];
   return n + d;
 }
+// A date as words: "Moonday, 10 Ebb, year 3 AR".
 const calFmt = (c, o) =>
   (o.wd ? o.wd + ', ' : '') + o.d + ' ' + (c.months[o.mi] || ['?'])[0] + ', year ' + o.y + (c.era ? ' ' + c.era : '');
+// An amount in the smallest coin, broken into coins: "2 Crowns, 3 Shillings".
 function coinBreak(c, total) {
   // an amount in the smallest unit → "2 Crowns, 3 Shillings"
   const vals = coinVals(c),
@@ -13558,17 +14149,20 @@ function coinBreak(c, total) {
   });
   return out.join(', ') || '0 ' + (c.units[c.units.length - 1] || ['coins'])[0];
 }
+// The converter's result line: the total in the smallest coin and broken into coins.
 const coinOut = (c, tot) =>
   '= ' +
   fmt(tot) +
   ' ' +
   (c.units[c.units.length - 1] || [''])[0] +
   (c.units.length > 1 ? ' · ' + coinBreak(c, tot) : '');
+// What each coin is worth in the smallest coin.
 function coinVals(c) {
   const v = new Array(c.units.length).fill(1);
   for (let i = c.units.length - 2; i >= 0; i--) v[i] = v[i + 1] * c.units[i][1];
   return v;
 }
+// A new calendar to start from: twelve months and a six-day week.
 function worldDefCal() {
   return {
     id: uid('cal'),
@@ -13592,6 +14186,7 @@ function worldDefCal() {
     first: 1
   };
 }
+// A new currency to start from: crowns, shillings and pennies.
 function worldDefCoin() {
   return {
     id: uid('cn'),
@@ -13604,6 +14199,7 @@ function worldDefCoin() {
     note: ''
   };
 }
+// The Calendars & money screen.
 function renderWorld(el) {
   const W = S.meta.world,
     f = ui.wf || (ui.wf = {});
@@ -13855,7 +14451,15 @@ function renderWorld(el) {
   el.oninput = e => upd(e.target, true);
   el.onchange = e => upd(e.target, false);
 }
-/* ---------- series bible: bring story pages, timelines, maps and world details in from another book ---------- */
+/*
+ * 12-series.js: Series bible: sharing a world between the books of a series
+ *
+ * The Series bible screen ({k:'series'}) names the series and the book's number, and brings story pages, timelines,
+ * world maps, calendars and money in from another book: another project on this computer (desktop) or a backup file.
+ * A page brought in remembers where it came from (meta.ents[id].from), so a later import updates it instead of making
+ * a copy. It also exports a story bible: every page, arc, thread, calendar and currency as one Word or Markdown
+ * document.
+ */
 // meta.series{name,num}. A page brought in keeps from{book,src,id,at} (src: the desktop project id, '' for a backup
 // file) so it can be updated later from that book. View {k:'series'} (renderSeries); ui.sb holds the open source:
 // {title,src,data (normalized),imgs (backup pictures)}. A story bible document exports every page (bibleBlocks).
@@ -13863,6 +14467,7 @@ function normSeries(x) {
   x = x && typeof x === 'object' ? x : {};
   return { name: String(x.name || '').slice(0, 120), num: Math.max(0, Math.min(999, Math.round(+x.num || 0))) };
 }
+// Checks where a page came from: {book, src (desktop project id), id (the page there), at}.
 function normFrom(f) {
   return f && typeof f === 'object' && typeof f.id === 'string'
     ? {
@@ -13873,6 +14478,7 @@ function normFrom(f) {
       }
     : null;
 }
+// Opens another project on this computer as the source to bring things in from.
 async function sbOpenDesk(id) {
   try {
     const r = await DESK.read(id);
@@ -13890,6 +14496,7 @@ async function sbOpenDesk(id) {
   }
   renderMain();
 }
+// Opens a backup file as the source to bring things in from.
 function sbOpenFile(f) {
   const r = new FileReader();
   r.onload = () => {
@@ -13919,10 +14526,12 @@ function sbMatch(e, src) {
     null
   );
 }
+// A fingerprint of a page's content, to tell whether it differs between the two books.
 const sbPageSig = (meta, en, id) => {
   const e = meta.ents[id];
   return canon({ n: e.name, a: e.aliases, t: e.tag, ty: e.type, f: (en[id] || {}).fields || {} });
 };
+// Copies a picture from the source book onto a page or map here.
 async function sbPic(srcId, srcPic, id) {
   // copies a picture from the source book onto the page or map `id` here
   let url = '';
@@ -13944,6 +14553,8 @@ async function sbPic(srcId, srcPic, id) {
     if (srcPic[k] != null) p[k] = srcPic[k];
   });
 }
+// Brings the chosen pages, timelines, maps and calendars/money in from the source book. Matching pages are updated,
+// not duplicated. Returns how many things came in.
 async function sbBring(sel) {
   const sb = ui.sb,
     src = sb.data,
@@ -14039,6 +14650,7 @@ async function sbBring(sel) {
   renderBinder();
   return n;
 }
+// The Series bible screen.
 function renderSeries(el) {
   const m = S.meta,
     sb = ui.sb,
@@ -14332,6 +14944,7 @@ function bibleBlocks() {
   }
   return out;
 }
+// The story bible as Markdown.
 function bibleMd() {
   return (
     bibleBlocks()
@@ -14352,6 +14965,7 @@ function bibleMd() {
       .join('\n\n') + '\n'
   );
 }
+// The story bible as a Word document.
 function bibleDocx() {
   const W = 'xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"';
   const r = (t, o) =>
@@ -14433,184 +15047,15 @@ function bibleDocx() {
     ['word/styles.xml', styles]
   ]);
 }
-function stThreadsHtml() {
-  const m = S.meta,
-    rows = storyRows(),
-    chs = m.chapters.filter(c => c.scenes.length),
-    idx = {};
-  chs.forEach((c, i) => {
-    idx[c.id] = i;
-  });
-  const add =
-    '<div class="th-add"><input id="thName" maxlength="80" placeholder="A subplot, mystery or relationship, like “Who sank the Lantern?”" aria-label="New plot thread"><button class="btn pri" data-st="thadd">' +
-    ico('plus', 14) +
-    '<span>Add thread</span></button></div>';
-  if (!m.threads.length)
-    return (
-      '<section class="pf"><h2>Plot threads</h2><p class="fine">Plot threads are the storylines that run through your book: subplots, mysteries, relationships. Tag the scenes that move each one on (Inkling panel › This scene › Plot threads) and see where each thread goes quiet or is left hanging.</p>' +
-      add +
-      '</section>'
-    );
-  const doneAt = {};
-  m.threads.forEach(t => {
-    const r = t.done && rows.find(x => x.id === t.done);
-    if (r) doneAt[t.id] = idx[r.ch.id];
-  });
-  const grid =
-    '<div class="st-grid-wrap"><table class="st-tab th-tab"><thead><tr><th></th>' +
-    chs.map((c, i) => '<th title="' + esc(c.title) + '">' + (i + 1) + '</th>').join('') +
-    '</tr></thead><tbody>' +
-    m.threads
-      .map(t => {
-        const n = {};
-        rows.forEach(r => {
-          if (r.threads.includes(t.id)) n[idx[r.ch.id]] = (n[idx[r.ch.id]] || 0) + 1;
-        });
-        return (
-          '<tr><th><span class="th-dot" style="--c:' +
-          cssCol(t.color) +
-          '"></span>' +
-          esc(t.name) +
-          '</th>' +
-          chs
-            .map((c, i) => {
-              const k = n[i] || 0,
-                after = doneAt[t.id] != null && i > doneAt[t.id];
-              return (
-                '<td class="th-c' +
-                (k ? ' on' : '') +
-                (after ? ' after' : '') +
-                (doneAt[t.id] === i ? ' done' : '') +
-                '" style="--c:' +
-                cssCol(t.color) +
-                '" title="' +
-                esc(
-                  t.name +
-                    ' · ' +
-                    c.title +
-                    ': ' +
-                    k +
-                    ' scene' +
-                    (k === 1 ? '' : 's') +
-                    (doneAt[t.id] === i ? ' · resolved here' : '')
-                ) +
-                '">' +
-                (doneAt[t.id] === i ? '✓' : k > 1 ? k : '') +
-                '</td>'
-              );
-            })
-            .join('') +
-          '</tr>'
-        );
-      })
-      .join('') +
-    '</tbody></table></div>';
-  const warn = threadWarnings();
-  const scOpts = sel =>
-    '<option value="">Not resolved yet</option>' +
-    m.chapters
-      .map(
-        ch =>
-          '<optgroup label="' +
-          esc(ch.title) +
-          '">' +
-          ch.scenes
-            .map(
-              id =>
-                '<option value="' +
-                id +
-                '"' +
-                (sel === id ? ' selected' : '') +
-                '>' +
-                esc(m.scenes[id].title) +
-                '</option>'
-            )
-            .join('') +
-          '</optgroup>'
-      )
-      .join('');
-  const cards = m.threads
-    .map(t => {
-      const sc = rows.filter(r => r.threads.includes(t.id));
-      return (
-        '<div class="th-card" style="--c:' +
-        cssCol(t.color) +
-        '"><div class="th-row"><input data-th="name" data-id="' +
-        t.id +
-        '" value="' +
-        esc(t.name) +
-        '" maxlength="80" aria-label="Thread name">' +
-        '<span class="sws mini">' +
-        TL_COLORS.map(
-          c =>
-            '<button class="sw' +
-            (c[0] === t.color ? ' on' : '') +
-            '" data-st="thcol" data-id="' +
-            t.id +
-            '" data-c="' +
-            c[0] +
-            '" style="--c:var(--' +
-            c[0] +
-            ')" title="' +
-            c[1] +
-            '" aria-label="' +
-            c[1] +
-            '"></button>'
-        ).join('') +
-        '</span>' +
-        '<button class="ibtn" data-st="thdel" data-id="' +
-        t.id +
-        '" aria-label="Delete thread" title="Delete thread">' +
-        ico('trash', 14) +
-        '</button></div>' +
-        '<textarea data-th="note" data-id="' +
-        t.id +
-        '" rows="2" placeholder="What this thread is about, and how it should end." aria-label="Thread notes">' +
-        esc(t.note) +
-        '</textarea>' +
-        '<label class="f">Resolved in<select data-th="done" data-id="' +
-        t.id +
-        '">' +
-        scOpts(t.done) +
-        '</select></label>' +
-        '<p class="fine">' +
-        (sc.length
-          ? 'In ' +
-            sc.length +
-            ' scene' +
-            (sc.length === 1 ? '' : 's') +
-            ': ' +
-            sc
-              .slice(0, 8)
-              .map(r => '<button class="lnk" data-open="' + r.id + '">' + esc(r.title) + '</button>')
-              .join(', ') +
-            (sc.length > 8 ? ' and more' : '')
-          : 'Not in any scene yet.') +
-        '</p></div>'
-      );
-    })
-    .join('');
-  return (
-    '<section class="pf"><h2>Plot threads</h2><p class="fine">Each row is a thread, each column a chapter. Tag scenes in the Inkling panel (This scene › Plot threads); mark where a thread is resolved below.</p>' +
-    grid +
-    '</section>' +
-    '<section class="pf"><h2>Threads to check <span class="muted">' +
-    warn.length +
-    '</span></h2>' +
-    (warn.length
-      ? '<ul class="st-notes">' +
-        warn.map(w => '<li class="th-w ' + w.kind + '">' + esc(w.text) + '</li>').join('') +
-        '</ul>'
-      : '<p class="ct-none">Every thread keeps turning up and is resolved.</p>') +
-    '</section>' +
-    '<section class="pf"><h2>Your threads</h2>' +
-    add +
-    '<div class="th-cards">' +
-    cards +
-    '</div></section>'
-  );
-}
-/* ---------- header / stats ---------- */
+/*
+ * 13-navigation.js: Moving between views, and the numbers in the top bar and the Inkling panel
+ *
+ * A view is what the main pane shows: {k:'scene', id}, {k:'ent', id} for a story page, {k:'cork'}, {k:'tl', id} and
+ * so on. go() opens a view and keeps the history for Back (goBack) and Forward. updateStats() refreshes today's
+ * words, the goal ring, the manuscript total and the streak wherever they are shown.
+ */
+// Refreshes every word count on screen: today's words and goal ring, the manuscript total and bar, the streak, and
+// the deadline plan.
 function updateStats() {
   planSync();
   planPaint();
@@ -14707,6 +15152,7 @@ function go(v, o) {
     v.flash = null;
   }
 }
+// Back to the previous view (the current one can then be reached again with Forward).
 function goBack() {
   let v = ui.hist.pop();
   while (v && !viewValid(v)) v = ui.hist.pop();
@@ -14718,6 +15164,7 @@ function goBack() {
   if (v) go(v, { push: false });
   else go(firstView(), { push: false });
 }
+// On narrow screens: shows the chosen tab (binder, page or Inkling panel).
 function syncTab() {
   $('#app').dataset.tab = ui.tab;
   $('#app').classList.toggle('focus', ui.focus);
@@ -14728,6 +15175,7 @@ function syncTab() {
       b.setAttribute('aria-selected', b.dataset.tab === ui.tab ? 'true' : 'false')
     );
 }
+// The Back button at the top of a view, plus a Forward button when there is somewhere to go forward to.
 const backBtn = () => {
   const f = (ui.fwd || [])[(ui.fwd || []).length - 1],
     fw =
@@ -14754,12 +15202,19 @@ const backBtn = () => {
     fw
   );
 };
-/* ---------- trash ---------- */
+/*
+ * 14-trash.js: The Trash
+ *
+ * Deleting a scene, chapter, story page, timeline, outline, note, map or tree moves it to the Trash (S.tr) with
+ * everything needed to put it back: its records, its place, a scene's snapshots, a page's links from maps and trees.
+ * Each delete offers Undo; items stay 30 days.
+ */
 // Deleting a scene, chapter, story page, timeline, outline, notes page, map or tree moves it to S.tr (one doc per
 // item, so it syncs and merges like everything else): {kind, at, by, title, sub, d}, where d holds everything needed
 // to put it back (a scene's snapshots, a page's picture and its links from maps and trees). Items older than
 // TRASH_DAYS go for good when a project loads (trashPurge); that is also when a page's picture is removed.
 const TRASH_DAYS = 30;
+// How each kind of Trash item is labelled, with its icon.
 const TRASH_KINDS = {
   scene: ['Scene', 'pen'],
   chapter: ['Chapter', 'book'],
@@ -14770,6 +15225,7 @@ const TRASH_KINDS = {
   rm: ['Relationship map', 'web'],
   ft: ['Family tree', 'tree']
 };
+// A copy of a record without its change stamps (_m, _dev, _by), for keeping in the Trash.
 const bare = x => {
   const o = clone(x);
   if (o && typeof o === 'object')
@@ -14778,6 +15234,7 @@ const bare = x => {
     });
   return o;
 };
+// A scene's snapshots, for keeping with it in the Trash.
 const snOf = sid =>
   Object.keys(S.sn)
     .filter(k => S.sn[k].scene === sid)
@@ -14799,6 +15256,7 @@ ADD_DOCS.push((o, out) => {
   });
   out.tr = r;
 });
+// Moves something to the Trash and shows a toast with Undo.
 function trashPut(kind, title, sub, d) {
   const id = uid('x_');
   S.tr[id] = {
@@ -14816,6 +15274,7 @@ function trashPut(kind, title, sub, d) {
   });
   return id;
 }
+// Puts a scene back: its text, its index entry and its snapshots.
 function putScene(sid, meta, sc, sn) {
   S.sc[sid] = Object.assign({ text: '', synopsis: '', notes: '' }, sc);
   S.sc[sid].stickies = normStickies(S.sc[sid].stickies);
@@ -14904,6 +15363,7 @@ function trashRestore(id) {
   renderAll();
   return to;
 }
+// Deletes a Trash item for good (and a page's or map's picture with it).
 function trashDrop(id) {
   const x = S.tr[id];
   if (!x) return;
@@ -14912,6 +15372,7 @@ function trashDrop(id) {
   delete S.tr[id];
   forget('tr_' + id);
 }
+// Deletes Trash items older than TRASH_DAYS (runs when a project opens).
 function trashPurge() {
   if (!S || !S.tr || ui.locked) return;
   const cut = Date.now() - TRASH_DAYS * 864e5;
@@ -14924,6 +15385,7 @@ function trashPurge() {
   });
   if (n) dirty('meta');
 }
+// A short preview of a Trash item: the first words of a scene, a page's fields, how many cards…
 function trashPeek(x) {
   const d = x.d;
   if (x.kind === 'scene')
@@ -14958,6 +15420,7 @@ function trashPeek(x) {
   if (x.kind === 'tl') return Object.keys((d.rec || {}).cards || {}).length + ' cards';
   return '';
 }
+// The Trash screen: everything deleted, newest first, to restore or delete for good.
 function renderTrash(el) {
   trashPurge();
   const list = Object.keys(S.tr)
@@ -15058,7 +15521,12 @@ function renderTrash(el) {
       });
   };
 }
-/* ---------- search everything ---------- */
+/*
+ * 15-search.js: Search everything
+ *
+ * One search box (Ctrl+K, or the binder's search) over the whole project, with match case and whole words, and a
+ * filter by kind. Each result knows how to open its own place.
+ */
 // One search over scenes (text, titles, synopses, notes, sticky notes), chapters, story pages, notes and
 // brainstorms, outlines, timelines, maps and trees. Each hit knows how to open its place (saOpen): a scene selects
 // the match (ui.findSel), others open the item and flash the line, card, idea or bubble.
@@ -15070,6 +15538,7 @@ const SA_AREAS = [
   ['tl', 'Timelines'],
   ['cv', 'Maps and trees']
 ];
+// The search as a regular expression: the words escaped, with match case and whole words as asked.
 function saRegex(q, o) {
   const e = q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
   try {
@@ -15078,6 +15547,8 @@ function saRegex(q, o) {
     return null;
   }
 }
+// Searches the whole project. Returns hits {area, label, where, n (matches), snip (the words around the first), open
+// (how to go there)}; scenes come first.
 function searchAll(q, o) {
   const out = [],
     re = q && q.trim() ? saRegex(q.trim(), o) : null;
@@ -15219,6 +15690,8 @@ function searchAll(q, o) {
     .sort((a, b) => a[0].pri - b[0].pri || a[1] - b[1])
     .map(x => x[0]); // what is written first, then titles and names
 }
+// Opens a search result at its place: selects the words in a scene, opens a timeline card, a map pin, a bubble, or
+// flashes the line.
 function saOpen(o) {
   if (o.k === 'cork') {
     ui.cork = o.ch;
@@ -15254,6 +15727,7 @@ function saOpen(o) {
     if (o.field && x.focus) x.focus();
   }, 80);
 }
+// The Search screen: the box, filters and results.
 function renderSearch(el) {
   const sa = (ui.sa = ui.sa || { q: '', mc: false, ww: false, area: '' });
   el.innerHTML =
@@ -15369,13 +15843,22 @@ function renderSearch(el) {
     }
   };
 }
-/* ---------- split view ---------- */
+/*
+ * 16-getting-around.js: Getting around: side by side, remembering your place, the quick switcher
+ *
+ * Side by side: a second pane beside the page (#split) for a story page, a note, an outline, a timeline or another
+ * scene. Remembering your place: the last view, and each scene's caret and scroll position, are kept per device in
+ * localStorage and restored when you come back. The quick switcher (Ctrl+P) finds anything by a few letters of its
+ * name. Also next and previous scene, and Forward.
+ */
 // A second pane beside the page (#split), so a scene can be written with a story page, a note, an outline, a
 // timeline or another scene in view. ui.split is that view. Scenes, outlines and timelines show read-only there (⇄
 // swaps the two sides to edit); a story page's fields and a notes page can be edited in place. The grid's columns
 // come from applyCols(), which accounts for focus mode, hidden panels and the split.
 const SPLIT_KINDS = ['scene', 'ent', 'nt', 'ol', 'tl'];
+// Whether a view can be shown side by side.
 const splitOk = v => !!v && SPLIT_KINDS.includes(v.k) && viewValid(v);
+// Sets the page's columns (--cols on #app) for the panes that are shown: binder, page, side by side, Inkling panel.
 function applyCols() {
   const app = $('#app');
   if (!app || !S) return;
@@ -15393,6 +15876,7 @@ function applyCols() {
       .join(' ')
   );
 }
+// Opens a view side by side (or a picker of things to open). Not on narrow screens.
 function splitOpen(v) {
   if (innerWidth < 1080) {
     toast('Side by side needs a wider window.', { plain: true });
@@ -15414,10 +15898,12 @@ function splitOpen(v) {
   ui.split = ui.lastSplit = v;
   renderSplit();
 }
+// Closes the side-by-side pane.
 function splitClose() {
   ui.split = null;
   renderSplit();
 }
+// Swaps the main page and the side-by-side pane.
 function splitSwap() {
   const a = ui.view,
     b = ui.split;
@@ -15426,6 +15912,7 @@ function splitSwap() {
   go(b);
   renderSplit();
 }
+// The list of things that can be opened side by side.
 function splitPicker(cur) {
   const m = S.meta,
     o = (v, label) => '<option value="' + v + '"' + (v === cur ? ' selected' : '') + '>' + esc(label) + '</option>',
@@ -15457,6 +15944,7 @@ function splitPicker(cur) {
     grp(LP('tl'), m.tls.map(x => o('tl:' + x.id, x.name)).join(''))
   );
 }
+// Draws the side-by-side pane for its view.
 function renderSplit() {
   const el = $('#split'),
     app = $('#app');
@@ -15611,6 +16099,7 @@ function renderSplit() {
     '</div>';
   el.querySelectorAll('textarea').forEach(ag);
 }
+// Shows whether side by side is open on the button above a scene.
 function paintSplitBtn() {
   const b = $('#spBtn');
   if (b) {
@@ -15618,6 +16107,7 @@ function paintSplitBtn() {
     b.classList.toggle('on', !!ui.split);
   }
 }
+// Makes the side-by-side pane's buttons and editable fields work.
 function bindSplit() {
   const el = $('#split');
   el.addEventListener('change', e => {
@@ -15683,6 +16173,7 @@ function splitTouch(keys) {
 // Per device and project (localStorage inkling:pos:<project>): the last view opened, and for each scene the caret
 // (visible-text offset) and how far down the page was scrolled. renderMain() puts a scene back as it was left.
 const posKey = () => 'inkling:pos:' + (DESK ? PJ.id || 'none' : P.db ? 'claude' : 'local');
+// Reads the saved positions: the last view and each scene's caret and scroll.
 function posGet() {
   try {
     const o = JSON.parse(localStorage.getItem(posKey()) || '{}');
@@ -15691,6 +16182,7 @@ function posGet() {
     return {};
   }
 }
+// Saves part of the positions.
 function posPut(f) {
   try {
     const o = posGet();
@@ -15701,11 +16193,14 @@ function posPut(f) {
     localStorage.setItem(posKey(), JSON.stringify(o));
   } catch (e) {}
 }
+// The kinds of view worth reopening when the project opens again.
 const POS_KINDS = ['scene', 'ent', 'tl', 'ol', 'nt', 'rm', 'ft', 'cork'];
+// The view to open with: the last one used, if it still exists.
 function startView() {
   const v = posGet().last;
   return v && POS_KINDS.includes(v.k) && viewValid(v) ? { k: v.k, id: v.id } : firstView();
 }
+// Saves the open scene's caret and scroll position.
 function posSaveScene() {
   const v = ui.view,
     ed = $('#ed'),
@@ -15722,6 +16217,7 @@ function posSaveScene() {
     o.sc[v.id] = p;
   });
 }
+// Puts the caret and scroll back where they were in a scene.
 function posRestore(id) {
   const p = (posGet().sc || {})[id],
     ed = $('#ed'),
@@ -15801,6 +16297,7 @@ function qsScore(q, s) {
   }
   return i === q.length ? sc : 0;
 }
+// Opens a quick-switcher result (side by side with Alt+Enter).
 function qsOpen(o, side) {
   closeQs();
   const v = o.v;
@@ -15815,10 +16312,12 @@ function qsOpen(o, side) {
   }
   go(v);
 }
+// Closes the quick switcher.
 function closeQs() {
   const x = $('#qs');
   if (x) x.remove();
 }
+// Opens the quick switcher (Ctrl+P): type a few letters, use the arrow keys and Enter.
 function openQs() {
   closeQs();
   const all = qsItems(),
@@ -15919,6 +16418,7 @@ function openQs() {
     else if (e.target === ov) closeQs();
   });
 }
+// Opens the next (d = 1) or previous (d = -1) scene in book order.
 function sceneStep(d) {
   const all = orderedScenes();
   if (!all.length) return;
@@ -15931,18 +16431,27 @@ function sceneStep(d) {
   }
   go({ k: 'scene', id: all[j].id });
 }
+// Forward to the view Back left.
 function goFwd() {
   let v = (ui.fwd || []).pop();
   while (v && !viewValid(v)) v = ui.fwd.pop();
   if (v) go(v, { fwd: true });
 }
-/* ---------- right-click menus in the binder ---------- */
+/*
+ * 17-binder-menus.js: Right-click menus, word targets, duplicates, and story page fields
+ *
+ * Right-clicking a scene, chapter or story page in the binder opens a menu (binderMenu) with everything that can be
+ * done to it: rename, duplicate, move, set a word target, open side by side, delete. This file also holds the dialog
+ * for typing a value (askValue), the duplicate functions, the editor for a project's own story page fields
+ * (entFields, fieldsEditHtml), and dropping or pasting a picture onto a page.
+ */
 // ctxMenu(x, y, items): items are [label, fn, opts] (opts.danger, opts.on for a tick, opts.sub: a list shown in its
 // place), or '-' for a line. Closes on a click elsewhere, Escape or scrolling.
 function ctxClose() {
   const x = $('#ctx');
   if (x) x.remove();
 }
+// Opens a menu at x, y. items: [label, fn, {danger, on, sub}] or '-' for a dividing line.
 function ctxMenu(x, y, items, title) {
   ctxClose();
   const box = document.createElement('div');
@@ -16060,10 +16569,12 @@ function askValue(title, label, value, hint) {
     inp().select();
   });
 }
+// A small progress bar towards a word target (empty when there is no target).
 const tgBar = (w, g) =>
   g
     ? '<i class="tg' + (w >= g ? ' met' : '') + '" style="--p:' + Math.min(100, (w / g) * 100).toFixed(1) + '%"></i>'
     : ''; // a word target's thin bar in the binder
+// Asks for a word target for a scene or chapter and saves it (0 removes it).
 function setTarget(kind, id) {
   const m = S.meta,
     o = kind === 'scene' ? m.scenes[id] : m.chapters.find(c => c.id === id);
@@ -16086,6 +16597,7 @@ function setTarget(kind, id) {
     renderInspector();
   });
 }
+// Duplicates a scene (text, notes, details) just after it, or into another chapter.
 function dupScene(id, toCh, at) {
   const m = S.meta,
     c = toCh || m.chapters.find(x => x.scenes.includes(id)),
@@ -16101,6 +16613,7 @@ function dupScene(id, toCh, at) {
   dirty('meta', 'sc_' + sid);
   return sid;
 }
+// Duplicates a chapter with copies of all its scenes.
 function dupChapter(id) {
   const m = S.meta,
     c = m.chapters.find(x => x.id === id);
@@ -16117,6 +16630,7 @@ function dupChapter(id) {
     plain: true
   });
 }
+// Duplicates a story page (without its picture, which belongs to the original).
 function dupEnt(id) {
   const m = S.meta,
     e = m.ents[id];
@@ -16129,6 +16643,7 @@ function dupEnt(id) {
   linker = buildLinker();
   go({ k: 'ent', id: nid });
 }
+// Duplicates a timeline, outline, note, map or tree.
 function dupDoc(k, id) {
   if (k === 'tl') {
     addTimeline(id);
@@ -16144,6 +16659,7 @@ function dupDoc(k, id) {
   dirty('meta', k + '_' + nid);
   go({ k, id: nid });
 }
+// The right-click menu for a scene, chapter or story page in the binder.
 function binderMenu(e) {
   const row = e.target.closest('.sc-row,.ch-row,.e-row');
   if (!row) return;
@@ -16325,6 +16841,7 @@ function binderMenu(e) {
 // meta.fields{char|place|thing: [[key,label]]} replaces TYPES[t].fields for this project when set (entFields).
 // Removing a field hides it; what was written in it stays in en.fields and comes back if the field does.
 const entFields = t => (S.meta.fields && S.meta.fields[t]) || (TYPES[t] || TYPES.thing).fields;
+// Checks a project's own story page fields.
 function normFields(x) {
   const out = {};
   if (!x || typeof x !== 'object') return out;
@@ -16340,6 +16857,7 @@ function normFields(x) {
   });
   return out;
 }
+// The editor for a kind of page's fields: rename, reorder, add and remove.
 function fieldsEditHtml(t) {
   return (
     '<div class="fe"><p class="fine">These fields are on every ' +
@@ -16374,6 +16892,7 @@ function fieldsEditHtml(t) {
     '<button class="btn sm pri" data-fe="done">Done</button></div></div>'
   );
 }
+// Makes the fields editor work.
 function bindFieldsEdit(el, e, v) {
   const box = $('.fields-box', el);
   if (!box) return;
@@ -16437,6 +16956,7 @@ function bindFieldsEdit(el, e, v) {
     }
   });
 }
+// Lets a picture be dropped or pasted onto a story page.
 function bindPicDrop(el, e) {
   const page = $('.ent-page', el);
   if (!page) return;
@@ -16465,7 +16985,13 @@ function bindPicDrop(el, e) {
     setPic(e.id, f);
   });
 }
-/* ---------- structure operations ---------- */
+/*
+ * 18-structure.js: Adding, moving and deleting scenes, chapters, story pages and documents
+ *
+ * The operations behind the binder's buttons and menus. Every delete goes to the Trash first (trashPut), so it can be
+ * undone.
+ */
+// Adds an empty scene to a chapter (the last one if none is given) and opens it if asked.
 function addScene(chId, thenOpen) {
   const m = S.meta,
     ch = m.chapters.find(c => c.id === chId) || m.chapters[m.chapters.length - 1];
@@ -16484,6 +17010,7 @@ function addScene(chId, thenOpen) {
     renderMain();
   }
 }
+// Adds a chapter with one empty scene.
 function addChapter() {
   const m = S.meta,
     id = uid('c_');
@@ -16493,6 +17020,7 @@ function addChapter() {
   addScene(id, true);
   say(pick(['A new chapter begins!', 'Chapter ' + m.chapters.length + '. Turning the page!']));
 }
+// Moves a scene up or down one place, across chapters at their edges.
 function moveScene(id, dir) {
   const cs = S.meta.chapters;
   let ci = cs.findIndex(c => c.scenes.includes(id));
@@ -16522,6 +17050,7 @@ function moveScene(id, dir) {
   renderBinder();
   if (ui.view.k === 'cork') renderMain();
 }
+// Moves a chapter up or down one place.
 function moveChapter(id, dir) {
   const cs = S.meta.chapters,
     i = cs.findIndex(c => c.id === id),
@@ -16534,6 +17063,7 @@ function moveChapter(id, dir) {
   renderBinder();
   if (ui.view.k === 'cork') renderMain();
 }
+// Moves a scene (with its snapshots) to the Trash.
 function delScene(id) {
   const m = S.meta,
     c = m.chapters.find(x => x.scenes.includes(id));
@@ -16558,6 +17088,7 @@ function delScene(id) {
   ui.hist = ui.hist.filter(viewValid);
   renderAll();
 }
+// Moves a chapter and all its scenes to the Trash.
 function delChapter(id) {
   const m = S.meta,
     c = m.chapters.find(x => x.id === id);
@@ -16586,6 +17117,7 @@ function delChapter(id) {
   ui.hist = ui.hist.filter(viewValid);
   renderAll();
 }
+// Adds a story page of a kind (and shows that kind's binder section if it was hidden). Inky notices.
 function addEntity(type, name) {
   const id = uid('e_');
   S.meta.ents[id] = { id, type, name, aliases: [], tag: '' };
@@ -16623,6 +17155,7 @@ function addEntity(type, name) {
   setTimeout(checkAch, 0);
   return id;
 }
+// Moves a story page to the Trash; its bubbles on maps and people in trees stay, unlinked.
 function delEntity(id) {
   const e = S.meta.ents[id];
   if (!e) return;
@@ -16646,6 +17179,7 @@ function delEntity(id) {
   ui.hist = ui.hist.filter(viewValid);
   renderAll();
 }
+// Adds an outline, note (a page, a brainstorm board or a world map), relationship map or family tree, and opens it.
 function addDocItem(k, kind) {
   const id = uid(k + '_'),
     list = S.meta[k + 's'];
@@ -16678,6 +17212,7 @@ function addDocItem(k, kind) {
   dirty('meta', k + '_' + id);
   go({ k, id });
 }
+// Moves an outline, note, map or tree to the Trash.
 function delDocItem(k, id) {
   const list = S.meta[k + 's'],
     it = list.find(x => x.id === id);
@@ -16696,6 +17231,7 @@ function delDocItem(k, id) {
   ui.hist = ui.hist.filter(viewValid);
   renderAll();
 }
+// Adds a timeline (a copy of src if given) and opens it.
 function addTimeline(src) {
   const id = uid('t_'),
     from = src && S.meta.tls.find(x => x.id === src);
@@ -16706,6 +17242,7 @@ function addTimeline(src) {
   dirty('meta', 'tl_' + id);
   go({ k: 'tl', id });
 }
+// Moves a timeline to the Trash.
 function delTimeline(id) {
   const it = S.meta.tls.find(x => x.id === id);
   if (it) trashPut('tl', it.name, LS('tl'), { id, item: bare(it), i: S.meta.tls.indexOf(it), rec: bare(S.tl[id]) });
@@ -16717,6 +17254,7 @@ function delTimeline(id) {
   ui.hist = ui.hist.filter(viewValid);
   renderAll();
 }
+// Two-click confirmation: the first click arms the button (rerender shows "click again"), the second runs fn.
 function confirmDo(key, fn, rerender) {
   if (ui.confirm === key) {
     ui.confirm = null;
@@ -16733,6 +17271,7 @@ function confirmDo(key, fn, rerender) {
     }
   }, 3200);
 }
+// Replaces the open project with another (a restore, the sample, a blank one): saves the timer, redraws everything.
 function replaceProject(np, keep) {
   pmHalt();
   if (keep) {
@@ -16761,7 +17300,14 @@ function replaceProject(np, keep) {
   renderAll();
   schedule(300);
 }
-/* ---------- binder ---------- */
+/*
+ * 19-binder.js: The binder: the left-hand pane
+ *
+ * renderBinder() draws the whole binder: the manuscript (chapters and scenes with word counts, targets and status),
+ * then the planning sections (outlines, notes, timelines, maps, trees) and the story pages by kind, plus the
+ * Customize binder options. bindBinder() handles every click, rename, drag and right-click in it, once.
+ */
+// The small form for renaming a binder section (plural and singular).
 function relabelForm(t) {
   if (ui.relabel !== t) return '';
   return (
@@ -16780,6 +17326,7 @@ function relabelForm(t) {
     '</button></div></div>'
   );
 }
+// Saves (or cancels) a section's new name.
 function saveRelabel(ok) {
   const t = ui.relabel;
   if (!t) return;
@@ -16795,10 +17342,12 @@ function saveRelabel(ok) {
   dirty('meta');
   renderAll();
 }
+// Redraws the binder, then marks who else is in which scene on a shared project.
 function renderBinder() {
   renderBinder0();
   if (ui.others && ui.others.length) paintHere();
 }
+// Draws the binder: manuscript, planning sections, story pages and Customize binder.
 function renderBinder0() {
   const m = S.meta,
     cur = ui.view,
@@ -17283,6 +17832,7 @@ function renderBinder0() {
     rn.addEventListener('blur', () => done(true));
   }
 }
+// Handles everything in the binder (clicks, renames, drags, right-clicks), set up once.
 function bindBinder() {
   $('#binder').addEventListener('contextmenu', binderMenu);
   $('#binder').addEventListener('click', e => {
@@ -17388,7 +17938,18 @@ function bindBinder() {
     else if (a === 'deltl') confirmDo('tl' + id, () => delTimeline(id), rr);
   });
 }
-/* ---------- main: scene ---------- */
+/*
+ * 20-scene-editor.js: The main pane and the scene editor
+ *
+ * renderMain() draws whatever view is open in the main pane, choosing the right render function for its kind. The
+ * rest of the file is the scene editor: renderScene() builds the page (title, status, toolbar, the editable text and
+ * its margins), and onType() runs on every change to save the text, count new words for Inky and the daily goal, keep
+ * name links and word counts up to date, and keep the caret on screen.
+ *
+ * Also here: Inkling's own undo and redo per scene, Tab indents, the word count of a selection, reading aloud, the
+ * keyboard shortcuts list, and sticky notes in the page margins.
+ */
+// Draws the open view in the main pane, and keeps the scroll position when the same view is redrawn.
 function renderMain() {
   const v = ui.view,
     el = $('#main');
@@ -17424,6 +17985,8 @@ function renderMain() {
   el.scrollTop = reset ? 0 : keep;
   if (reset && v.k === 'scene') posRestore(v.id);
 }
+// Draws the scene editor: title, status, word count, the toolbar, the text with its name links and formatting, sticky
+// notes, and the next and previous scene buttons. Also wires up typing, shortcuts and pasting.
 function renderScene(el, v) {
   const m = S.meta,
     sc = m.scenes[v.id],
@@ -17777,9 +18340,12 @@ function renderScene(el, v) {
 // grouped into steps at pauses of a second or more; pastes, formatting and indents are steps of their own. Offsets
 // here are in the visible text with its line breaks (edSel); right after renderText() they match the DOM's offsets.
 const UNDO = {};
+// A scene's undo history, started from its current text.
 function undoOf(id) {
   return UNDO[id] || (UNDO[id] = { cur: { text: S.sc[id].text }, undo: [], redo: [], at: 0, big: false });
 }
+// Records the scene's text for undo: a new step after a pause in typing (or for big changes), otherwise part of the
+// current step.
 function undoNote(id, text, big) {
   const h = undoOf(id),
     now = Date.now();
@@ -17793,6 +18359,7 @@ function undoNote(id, text, big) {
   h.at = now;
   h.big = !!big;
 }
+// A DOM position in the editor as a position in its visible text (line breaks counted).
 function visAt(ed, node, off) {
   const rg = document.createRange();
   rg.selectNodeContents(ed);
@@ -17801,12 +18368,14 @@ function visAt(ed, node, off) {
   d.appendChild(rg.cloneContents());
   return plainText(getText(d)).length;
 }
+// The editor's selection as {s, e} in its visible text, or null.
 function edSel(ed) {
   const s = getSelection();
   if (!s.rangeCount || !ed.contains(s.anchorNode)) return null;
   const r = s.getRangeAt(0);
   return { s: visAt(ed, r.startContainer, r.startOffset), e: visAt(ed, r.endContainer, r.endOffset) };
 }
+// Undo (or redo with redo = true) in the open scene.
 function edHist(redo) {
   const v = ui.view,
     ed = $('#ed');
@@ -17957,6 +18526,7 @@ function followCaret() {
 // Read aloud: the selection, or from the caret's paragraph to the end, one paragraph at a time, each one
 // highlighted while it is read (CSS custom highlights, where the browser has them).
 const canSpeak = () => !!(window.speechSynthesis && window.SpeechSynthesisUtterance);
+// Shows whether reading aloud is on, on its button.
 function raPaint() {
   const b = $('#raBtn');
   if (b) {
@@ -17964,6 +18534,7 @@ function raPaint() {
     b.setAttribute('aria-pressed', ui.ra ? 'true' : 'false');
   }
 }
+// Stops reading aloud.
 function raStop() {
   if (!ui.ra) return;
   ui.ra = false;
@@ -17975,6 +18546,7 @@ function raStop() {
   } catch (e) {}
   raPaint();
 }
+// Highlights the words being read aloud.
 function raMark(ed, a, z) {
   if (!window.Highlight || !window.CSS || !CSS.highlights || !ed.isConnected) return;
   const w = document.createTreeWalker(ed, NodeFilter.SHOW_TEXT),
@@ -18001,6 +18573,7 @@ function raMark(ed, a, z) {
   if (b.top < 80 || b.bottom > innerHeight - 80)
     (r.startContainer.parentElement || ed).scrollIntoView({ block: 'center' });
 }
+// Reads the selection aloud, or from the caret's paragraph to the end, one paragraph at a time.
 function readAloud() {
   if (!canSpeak()) return;
   if (ui.ra) {
@@ -18047,7 +18620,9 @@ function readAloud() {
     speechSynthesis.speak(u);
   });
 }
+// The shortcut key name for this computer: ⌘ on a Mac, Ctrl elsewhere.
 const MODK = /Mac|iPhone|iPad/.test(navigator.platform || '') ? '⌘' : 'Ctrl';
+// The keyboard shortcuts dialog.
 function showKeys() {
   const k = s =>
       s
@@ -18084,6 +18659,7 @@ function showKeys() {
 // when there is room for them; otherwise as small coloured tabs on the page edge that open when clicked.
 const STK_COLORS = ['thing', 'char', 'accent', 'place'],
   STK_W = 172;
+// Checks a scene's sticky notes.
 function normStickies(a) {
   return (Array.isArray(a) ? a : [])
     .filter(x => x && x.id)
@@ -18096,6 +18672,7 @@ function normStickies(a) {
       y: Math.max(0, Math.round(+x.y || 0))
     }));
 }
+// Where the margins are, beside the page, and whether notes fit in them or fold into tabs.
 function stkGeo() {
   const w = $('#sheetWrap'),
     sh = w && $('.sheet', w);
@@ -18116,6 +18693,7 @@ function stkGeo() {
     roomR: R >= STK_W + 20
   };
 }
+// Draws a scene's sticky notes in the margins (or as tabs on the page edge when the margins are narrow).
 function stkDraw(sid) {
   const lay = $('#stkLayer'),
     g = stkGeo(),
@@ -18183,6 +18761,7 @@ function stkDraw(sid) {
     .join('');
   lay.querySelectorAll('textarea').forEach(ag);
 }
+// Adds a sticky note in a margin at a height on the page.
 function stkAdd(sid, side, y) {
   const d = S.sc[sid],
     g = stkGeo();
@@ -18205,6 +18784,7 @@ function stkAdd(sid, side, y) {
   const t = $('#stkLayer .stk[data-id="' + n.id + '"] textarea');
   if (t) t.focus();
 }
+// Makes sticky notes work: add (button or double-click in a margin), edit, recolour, delete and drag.
 function stkBind(sid) {
   const wrap = $('#sheetWrap'),
     lay = $('#stkLayer');
@@ -18337,12 +18917,14 @@ function stkBind(sid) {
     document.addEventListener('pointerup', up);
   });
 }
+// Bold, italic or underline from a button or shortcut: one undo step.
 function fmtCmd(cmd) {
   ui.bigEdit = true;
   document.execCommand(cmd);
   const ed = $('#ed');
   if (ed) ed.dispatchEvent(new Event('input', { bubbles: true }));
 }
+// Selects visible-text positions s to e in an element.
 function selectRange(el, s, e) {
   const w = document.createTreeWalker(el, NodeFilter.SHOW_TEXT),
     r = document.createRange();
@@ -18371,6 +18953,8 @@ function selectRange(el, s, e) {
   if (b.top < 80 || b.bottom > innerHeight - 80)
     (r.startContainer.parentElement || el).scrollIntoView({ block: 'center' });
 }
+// Runs after every change in the editor: saves the text, credits new words, takes the day's first snapshot, updates
+// counts, name links and targets, lets Inky read, and keeps the caret in view.
 function onType(id, ed) {
   snDaily(id);
   const text = getText(ed),
@@ -18430,6 +19014,7 @@ function onType(id, ed) {
     ui.pkT = setTimeout(() => peekRun('type'), Date.now() - (ui.pkAt || 0) > 6000 ? 150 : 1100);
   }
 }
+// The "Linked in this scene" list in the Inkling panel: every story page named in the scene.
 function updateSceneChips() {
   const box = $('#sceneChips');
   if (!box || ui.view.k !== 'scene') return;
@@ -18456,7 +19041,14 @@ function updateSceneChips() {
         .join('')
     : '<span class="muted" style="font-size:12.5px">No linked names in this scene yet.</span>';
 }
-/* ---------- main: entity page ---------- */
+/*
+ * 21-story-pages.js: Story pages (characters, places, things, rules, glossary words)
+ *
+ * renderEnt() draws a story page: its picture, name, aliases and summary, its fields, Key facts and continuity, the
+ * character arc box for characters, where the page is mentioned, and its links from relationship maps, family trees,
+ * world maps and timelines.
+ */
+// Every scene that names a page (or one of its aliases), with the first match in each.
 function mentionsOf(e) {
   const re = makeRe([e.name].concat(e.aliases || []));
   const out = [];
@@ -18476,10 +19068,12 @@ function mentionsOf(e) {
   });
   return out;
 }
+// Grows a text box to fit its text.
 const ag = el => {
   el.style.height = 'auto';
   el.style.height = el.scrollHeight + 2 + 'px';
 };
+// The timeline cards that mention a page, as a list on the page.
 function tlMentionsHtml(e) {
   const re = makeRe([e.name].concat(e.aliases || [])),
     out = [];
@@ -18523,6 +19117,7 @@ function tlMentionsHtml(e) {
     '</section>'
   );
 }
+// Draws a story page and wires up its fields, name, aliases, type, picture and links.
 function renderEnt(el, v) {
   const m = S.meta,
     e = m.ents[v.id],
@@ -18726,7 +19321,13 @@ function renderEnt(el, v) {
     nm.select();
   }
 }
-/* ---------- main: corkboard ---------- */
+/*
+ * 22-corkboard.js: The corkboard
+ *
+ * Every chapter's scenes as index cards with their synopses and status, all chapters or one. Cards can be dragged to
+ * reorder scenes, and each chapter has a notes box above its cards.
+ */
+// Draws the corkboard: chapter notes and the scenes as cards that can be dragged into a new order.
 function renderCork(el) {
   const m = S.meta;
   if (ui.cork !== 'all' && !m.chapters.find(c => c.id === ui.cork)) ui.cork = 'all';
@@ -18896,8 +19497,19 @@ function renderCork(el) {
     }
   };
 }
-/* ---------- main: notes and brainstorm boards ---------- */
+/*
+ * 23-notes-maps.js: Notes pages, brainstorm boards and world maps
+ *
+ * A note (meta.nts, S.nt) is one of three kinds: a page of free text, a brainstorm board of coloured idea cards, or a
+ * world map. renderNt() draws the first two; renderMap() draws a map.
+ *
+ * World maps: an uploaded picture (or blank parchment) with pins and pen strokes on top. Pins are placed in 0–1000
+ * units across and down the map, so they stay put whatever the picture's size. The view can be panned and zoomed;
+ * pins and strokes are part of the saved note, the pan and zoom are per device.
+ */
+// Colours for brainstorm idea cards.
 const NT_COLORS = ['thing', 'pet', 'char', 'accent', 'place', 'muted'];
+// The story pages named in a note, as clickable chips.
 function namesHtml(text) {
   const seen = [];
   findLinks(text).forEach(l => {
@@ -18925,7 +19537,9 @@ function namesHtml(text) {
 // The view (pan and zoom) is per device in ui.mpView; ui.mpSel is the selected pin, ui.mpMode 'move'|'pin'|'draw'.
 const MP_W = 1500,
   MP_H = 1000; // the blank parchment's size
+// A pin's name: its story page's name, or its own label.
 const mpName = pn => (pn.ent && S.meta.ents[pn.ent] ? S.meta.ents[pn.ent].name : pn.name || 'Pin');
+// Checks a world map's record: picture, pins, pen strokes and pin size.
 function normMap(d, ents) {
   d = d && typeof d === 'object' ? d : {};
   const c = v => Math.max(0, Math.min(1000, Math.round(+v || 0)));
@@ -18950,16 +19564,20 @@ function normMap(d, ents) {
       .map(k => ({ c: colOk(k.c) ? k.c : 'ink', w: [1, 2, 4, 8].includes(k.w) ? k.w : 2, p: k.p.slice(0, 20000) }))
   };
 }
+// A pin's colour: its own, its page kind's, or red.
 const mpCol = pn =>
   pn.color
     ? cssCol(pn.color)
     : pn.ent && S.meta.ents[pn.ent]
       ? 'var(--' + S.meta.ents[pn.ent].type + ')'
       : 'var(--danger)';
+// A pen colour as CSS (the default ink is a dark brown).
 const mpInk = c => (c === 'ink' ? '#2b2118' : cssCol(c));
+// The scenes whose place is this story page, in book order.
 function mpScenesAt(entId) {
   return entId ? orderedScenes().filter(o => S.meta.scenes[o.id].place === entId) : [];
 }
+// The world map screen: tools, the map with pins and drawing, and the side panel for pins.
 function renderMap(el, v, x, d) {
   const src = picSrc(v.id),
     mode = ui.mpMode || 'move',
@@ -19629,6 +20247,7 @@ function mapPinsHtml(e) {
   return rows.length ? '<section class="appears"><h3>On the map</h3>' + rows.join('') + '</section>' : '';
 }
 
+// Draws a notes page or a brainstorm board (a world map goes to renderMap).
 function renderNt(el, v) {
   const x = S.meta.nts.find(y => y.id === v.id),
     d = S.nt[v.id],
@@ -19808,14 +20427,25 @@ function renderNt(el, v) {
     dirty('nt_' + v.id);
   });
 }
-/* ---------- main: outline ---------- */
+/*
+ * 24-outline.js: Outlines
+ *
+ * An outline is one flat list of lines, each with a depth (up to OL_MAX); a line's children are the lines after it
+ * with a greater depth. Indenting, outdenting, moving and deleting always carry a line's whole block. Lines can be
+ * numbered, ticked off, given notes and linked to scenes.
+ *
+ * Templates (OL_TPL: three acts, the Hero's Journey, Save the Cat and more) fill an outline with story beats.
+ * Switching template keeps what the writer typed: their notes and lines move with the matching beat.
+ */
 const OL_MAX = 5;
+// Ways an outline can be numbered.
 const OL_NUMS = [
   ['decimal', '1.2.3'],
   ['classic', 'I. A. 1. a.'],
   ['bullets', 'Bullets'],
   ['none', 'None']
 ];
+// Outline templates: each a list of [beat, hint, depth].
 const OL_TPL = {
   three: [
     'Three-act structure',
@@ -19927,7 +20557,9 @@ const OL_POS = {
   seven: [1, 20, 35, 50, 62, 81, 99],
   romance: [0, 1, 5, 10, 15, 20, 20, 25, 30, 37, 43, 50, 55, 55, 62, 68, 72, 75, 78, 78, 82, 88, 94, 99]
 };
+// The outline that is open.
 const curOl = () => S.ol[ui.view.id];
+// A new outline line.
 const olItem = (text, depth, o) =>
   Object.assign(
     {
@@ -19951,6 +20583,7 @@ const olKey = s =>
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, ' ')
     .trim();
+// Switches an outline to another template, keeping everything the writer added or changed.
 function olApplyTemplate(old, key) {
   const beats = new Map();
   Object.values(OL_TPL).forEach(t =>
@@ -20057,12 +20690,15 @@ function olApplyTemplate(old, key) {
   });
   return { items: out, kept };
 }
+// The index just past a line's block (the line and all its children).
 const olEnd = (it, i) => {
   let j = i + 1;
   while (j < it.length && it[j].depth > it[i].depth) j++;
   return j;
 }; // end of item i's block
+// Whether a line has children.
 const olHasKids = (it, i) => i + 1 < it.length && it[i + 1].depth > it[i].depth;
+// The lines to show: children of folded lines are hidden.
 function olVisible(it) {
   const out = [];
   let hide = 99;
@@ -20074,6 +20710,7 @@ function olVisible(it) {
   });
   return out;
 }
+// A number in Roman numerals, for outline numbering.
 const ROMAN = n => {
   let r = '',
     v = [
@@ -20099,6 +20736,7 @@ const ROMAN = n => {
   });
   return r;
 };
+// Each line's number (1.2.3, I.A.1 and so on) in the chosen style.
 function olNumbers(o) {
   const c = [],
     out = [];
@@ -20124,6 +20762,7 @@ function olNumbers(o) {
   });
   return out;
 }
+// Draws the outline screen: toolbar, templates and the list.
 function renderOl(el, v) {
   const x = S.meta.ols.find(y => y.id === v.id),
     o = S.ol[v.id];
@@ -20365,10 +21004,12 @@ function renderOl(el, v) {
     nm.select();
   }
 }
+// Shows or hides the outline's one-step Undo button.
 function olUndoBtn() {
   const b = $('#olUndo');
   if (b) b.hidden = !(ui.olUndo && ui.olUndo.id === ui.view.id);
 }
+// Puts the caret in an outline line.
 function olFocus(id, end) {
   const i = $('#olList [data-i="' + id + '"] .ol-tx');
   if (i) {
@@ -20379,6 +21020,7 @@ function olFocus(id, end) {
     } catch (e) {}
   }
 }
+// Deletes a line (with its block if all), with one step of undo.
 function olDelete(i, all) {
   const o = curOl(),
     it = o.items,
@@ -20393,6 +21035,7 @@ function olDelete(i, all) {
   drawOl();
   renderBinder();
 }
+// Outline actions from keys and buttons: add, indent, outdent, move, fold, tick.
 function olOp(a, i, keep) {
   const o = curOl(),
     it = o.items,
@@ -20425,6 +21068,7 @@ function olOp(a, i, keep) {
   dirty('ol_' + ui.view.id);
   drawOl(keep ? x.id : null);
 }
+// Moves a line and everything under it before another line, at that line's depth.
 function olDrop(id, beforeId) {
   // move a line and everything under it before another line, at that line's depth
   const o = curOl(),
@@ -20446,6 +21090,7 @@ function olDrop(id, beforeId) {
   dirty('ol_' + ui.view.id);
   drawOl();
 }
+// Redraws the outline's lines (keeps the toolbar), optionally focusing one.
 function drawOl(focusId) {
   const list = $('#olList'),
     o = curOl();
@@ -20575,16 +21220,29 @@ function drawOl(focusId) {
   if (pg) pg.textContent = done + ' of ' + it.length + ' done';
   if (focusId) olFocus(focusId);
 }
-/* ---------- main: relationship maps and family trees ---------- */
+/*
+ * 25-relationships-trees.js: Relationship maps and family trees
+ *
+ * Both draw into one pan-and-zoom SVG canvas (the cv* functions). A relationship map is free-form: bubbles (a story
+ * page or a free label) joined by lines of different kinds (family, romance, rivals…), each with a direction, a label
+ * and a note. A family tree lays itself out (ftLayout): the writer only says who are partners and whose children are
+ * whose, and generations, rows and order follow.
+ *
+ * Selecting a bubble, line, person or partnership opens the side panel (cvSide) to edit it; cvBar is the toolbar.
+ * Deleting a story page leaves its bubbles and people in place, unlinked (unlinkEnt).
+ */
 // Both draw into one pan-and-zoom SVG (cv*). A map is free-form bubbles and lines; a tree lays itself out
 // from parents and partnerships (ftLayout), so a writer only says who is related to whom.
 const RM_R = { s: 22, m: 30, l: 40 };
+// Line dash patterns.
 const DASH = { solid: '', dashed: '7 5', dotted: '1.5 5' };
+// Line styles a kind of relationship can use.
 const LINE_STYLES = [
   ['solid', 'Solid'],
   ['dashed', 'Dashed'],
   ['dotted', 'Dotted']
 ];
+// How a child is related to their parents (by birth, adopted…), shown by the line's style.
 const PTYPES = [
   ['bio', 'By birth'],
   ['adopted', 'Adopted'],
@@ -20592,9 +21250,13 @@ const PTYPES = [
   ['step', 'Step-child'],
   ['rumoured', 'Rumoured']
 ];
+// The line style for each kind of parentage.
 const PT_DASH = { bio: '', adopted: '7 5', fostered: '7 5', step: '2 5', rumoured: '1 6' };
+// Family tree spacing (between people, between generations) for each setting.
 const FT_GAP = { compact: [18, 56], normal: [36, 84], roomy: [64, 120] };
+// A value as text, cut to n characters.
 const str = (v, n) => String(v == null ? '' : v).slice(0, n || 200);
+// The kinds of relationship a new map starts with.
 function rmKindsDef() {
   return [
     ['Family', 'place', 'solid'],
@@ -20606,6 +21268,7 @@ function rmKindsDef() {
     ['Secret', 'muted', 'dotted']
   ].map(k => ({ id: uid('r_'), name: k[0], color: k[1], dash: k[2], hide: false }));
 }
+// The kinds of partnership a new family tree starts with.
 function ftKindsDef() {
   return [
     ['Married', 'char', 'solid', '♥'],
@@ -20615,6 +21278,7 @@ function ftKindsDef() {
     ['Separated', 'muted', 'dashed', '✕']
   ].map(k => ({ id: uid('u_'), name: k[0], color: k[1], dash: k[2], sym: k[3] }));
 }
+// A new, empty relationship map.
 function newRm() {
   return {
     kinds: rmKindsDef(),
@@ -20627,6 +21291,7 @@ function newRm() {
     def: ''
   };
 }
+// A new, empty family tree.
 function newFt() {
   return {
     kinds: ftKindsDef(),
@@ -20640,6 +21305,7 @@ function newFt() {
     pics: true
   };
 }
+// Checks a list of relationship or partnership kinds.
 function normKinds(a, def, sym) {
   const out = (Array.isArray(a) ? a : [])
     .filter(k => k && k.id)
@@ -20656,10 +21322,12 @@ function normKinds(a, def, sym) {
     });
   return out.length ? out : def();
 }
+// Checks a saved pan and zoom.
 const normView = (v, d) => {
   v = v || {};
   return { x: num(v.x, d.x), y: num(v.y, d.y), k: clamp(num(v.k, 1), 0.2, 3) };
 };
+// Checks a relationship map: kinds, bubbles, lines and settings, dropping lines to missing bubbles.
 function normRm(m, ents) {
   m = m && typeof m === 'object' ? m : {};
   const kinds = normKinds(m.kinds, rmKindsDef, false),
@@ -20699,6 +21367,7 @@ function normRm(m, ents) {
     def: ks.has(m.def) ? m.def : ''
   };
 }
+// Checks a family tree: kinds, people, partnerships and settings, dropping broken links.
 function normFt(f, ents) {
   f = f && typeof f === 'object' ? f : {};
   const kinds = normKinds(f.kinds, ftKindsDef, true),
@@ -20780,26 +21449,32 @@ function unlinkEnt(id) {
     if (ch) dirty('ft_' + k);
   });
 }
+// A bubble's name: its story page's name or its own label.
 const rmName = n => {
   const e = n.ent && S.meta.ents[n.ent];
   return e ? e.name : n.name || 'Unnamed';
 };
+// A person's name in a tree: their story page's name or their own.
 const ftName = p => {
   const e = p.ent && S.meta.ents[p.ent];
   return e ? e.name : p.name || 'Unnamed';
 };
+// A bubble's colour: its own, or its page kind's.
 const rmCol = n => {
   if (n.color) return cssCol(n.color);
   const e = n.ent && S.meta.ents[n.ent];
   return e ? 'var(--' + e.type + ')' : 'var(--muted)';
 };
+// Up to two initials from a name, for bubbles without a picture.
 const initials = s =>
   (s.match(/\p{L}[\p{L}'’-]*/gu) || ['?'])
     .slice(0, 2)
     .map(w => w[0])
     .join('')
     .toUpperCase();
+// Shortens text to n characters with an ellipsis.
 const trunc = (s, n) => (s.length > n ? s.slice(0, Math.max(1, n - 1)) + '…' : s);
+// A story page's relationships and family, from every map and tree, as a list on the page.
 function relHtml(e) {
   const rows = [];
   S.meta.rms.forEach(x => {
@@ -20873,7 +21548,9 @@ function relHtml(e) {
 
 /* canvas: pan, zoom, fit */
 const cvDoc = () => S[ui.view.k][ui.view.id];
+// The open map or tree's save key.
 const cvKey = () => ui.view.k + '_' + ui.view.id;
+// Applies the saved pan and zoom to the canvas.
 function cvApply() {
   const v = cvDoc().view,
     t = 'translate(' + v.x + ' ' + v.y + ') scale(' + v.k + ')';
@@ -20887,11 +21564,13 @@ function cvApply() {
     w.style.backgroundPosition = v.x + 'px ' + v.y + 'px';
   }
 }
+// A mouse position as a point on the canvas (before pan and zoom).
 function cvWorld(e) {
   const r = $('#cv').getBoundingClientRect(),
     v = cvDoc().view;
   return { x: (e.clientX - r.left - v.x) / v.k, y: (e.clientY - r.top - v.y) / v.k };
 }
+// Zooms by factor f around a point on the screen.
 function cvZoom(f, cx, cy) {
   const v = cvDoc().view,
     r = $('#cv').getBoundingClientRect();
@@ -20906,6 +21585,7 @@ function cvZoom(f, cx, cy) {
   cvApply();
   dirty(cvKey());
 }
+// Pans and zooms so everything is in view.
 function cvFit() {
   const g = $('#cvRoot'),
     svg = $('#cv');
@@ -20926,16 +21606,19 @@ function cvFit() {
   cvApply();
   dirty(cvKey());
 }
+// Redraws the open map or tree.
 function cvDraw() {
   if (ui.view.k === 'rm') drawRm();
   else if (ui.view.k === 'ft') drawFt();
   cvApply();
 }
+// Redraws the canvas, the side panel and the toolbar.
 function cvRefresh() {
   cvDraw();
   cvSide();
   cvBar();
 }
+// Selects a bubble, line, person or partnership (k, id): opens the side panel and keeps it in view.
 function cvSelect(k, id, focus) {
   ui.cvSel = k ? { k, id } : null;
   ui.confirm = null;
@@ -21277,6 +21960,7 @@ function ftLayout(f) {
   ui.ftGen = gen;
   return { pos, W, H, gy };
 }
+// Draws a family tree: people as cards in generations, partnerships, and lines to their children.
 function drawFt() {
   const f = cvDoc(),
     g = $('#cvRoot');
@@ -21461,14 +22145,17 @@ function ftPerson(f, o, after) {
   else f.people.push(p);
   return p;
 }
+// Adds a partnership between two people (or a single parent).
 function ftUnion(f, a, b) {
   const u = { id: uid('u_'), a, b: b || '', kind: f.kinds[0].id, label: '', note: '' };
   f.unions.push(u);
   return u;
 }
+// A person's single-parent "partnership", created if needed, so they can have children on their own.
 function ftSoloUnion(f, pid) {
   return f.unions.find(u => u.a === pid && !u.b) || ftUnion(f, pid, '');
 }
+// Removes partnerships left with nobody, or with one parent and no children.
 function ftTidy(f) {
   const live = new Set(f.people.map(p => p.id));
   f.unions.forEach(u => {
@@ -21485,6 +22172,7 @@ function ftTidy(f) {
     if (!us.has(p.of)) p.of = '';
   });
 }
+// Family tree actions: add a person, partner, parent or child, move, link to a page, delete.
 function ftAct(a, b) {
   const f = cvDoc(),
     sel = ui.cvSel || {},
@@ -21605,6 +22293,7 @@ function ftAct(a, b) {
     cvSelect('person', n.id);
   }
 }
+// Relationship map actions: add a bubble, link to a page, change kind or direction, delete.
 function rmAct(a, b) {
   const m = cvDoc(),
     sel = ui.cvSel || {},
@@ -21731,6 +22420,7 @@ function rmAct(a, b) {
       cvSide
     );
 }
+// Joins two bubbles with a line of the last-used kind (or selects the line if they are joined already).
 function rmConnect(m, a, b2) {
   if (a === b2) return;
   const k = (m.def && m.kinds.find(x => x.id === m.def && !x.hide)) || m.kinds.find(x => !x.hide) || m.kinds[0];
@@ -22219,6 +22909,7 @@ function cvSide() {
   box.scrollTop = keep;
   box.querySelectorAll('textarea').forEach(ag);
 }
+// The toolbar above a map or tree.
 function cvBar() {
   const bar = $('#cvBar');
   if (!bar) return;
@@ -22316,6 +23007,8 @@ function cvBar() {
     }
   }
 }
+// The relationship map or family tree screen: toolbar, canvas and side panel, with dragging, panning, zooming and
+// keys.
 function renderCv(el, v) {
   const rm = v.k === 'rm',
     x = S.meta[v.k + 's'].find(y => y.id === v.id),
@@ -22662,19 +23355,39 @@ function renderCv(el, v) {
   );
   cvRefresh();
 }
-/* ---------- main: timeline ---------- */
+/*
+ * 26-timeline.js: Timelines
+ *
+ * A timeline has lanes (rows) and cards placed along a time scale (axis) in its own units: days, years, chapters or
+ * an invented calendar. Positions are kept in those units, never in pixels, so zooming and changing the scale never
+ * move anything. Cards that overlap in a lane stack into rows. Marks are labelled spans across all lanes (an era, a
+ * war).
+ *
+ * drawTl() redraws only the board and drawSide() only the side panel (a card's details or the timeline's settings),
+ * so typing in the panel never loses focus while the board updates. Mouse drags a whole card; on touch screens only
+ * its grip or resize edge drags, so the board still scrolls.
+ */
+// Whether this is a touch screen without a mouse.
 const TOUCH = !!(window.matchMedia && matchMedia('(hover: none)').matches);
+// The height of the time scale at the top, in pixels.
 const AXH = 48;
+// The width of the lane names column, narrower on phones.
 const lw = () => (window.innerWidth < 600 ? 108 : 156);
 let D = null; // card being dragged or resized
+// The timeline that is open.
 const curTl = () => (ui.view && ui.view.k === 'tl' ? S.tl[ui.view.id] : null);
+// The open timeline's save key.
 const tlKey = () => 'tl_' + ui.view.id;
+// The timeline's list of names for its ticks (months, seasons…).
 const tlNames = t =>
   t.axis.names
     .split(/[,\n]/)
     .map(s => s.trim())
     .filter(Boolean);
+// The column (tick) a time value falls in.
 const tlIdx = (t, v) => Math.floor((v - t.axis.start) / t.axis.step + 1e-9);
+// The label for a time value: the column's own label if the writer renamed it, else the template ({n}, {name},
+// {cycle}, {i}).
 function tlLabel(t, v, auto) {
   const a = t.axis,
     idx = tlIdx(t, v),
@@ -22693,13 +23406,17 @@ function tlLabel(t, v, auto) {
           : nfmt((L ? Math.floor(idx / L) : idx) + a.cycle)
   );
 }
+// A span of time as words: "Day 3 – Day 5".
 const tlSpan = (t, at, len) => tlLabel(t, at) + (len ? ' – ' + tlLabel(t, at + len) : '');
+// When a card happens: its own words, or its span on the scale.
 const tlWhen = (t, c) => c.when || tlSpan(t, c.at, c.len);
+// Rounds a time value to the timeline's snap setting.
 function tlSnap(t, v) {
   const a = t.axis,
     u = a.step * (a.snap || 0);
   return +(u ? a.start + Math.round((v - a.start) / u) * u : v).toFixed(4);
 }
+// The span of time the board shows: everything on it, with room around, and at least the width of the window.
 function tlRange(t, vw) {
   const a = t.axis;
   let lo = a.start,
@@ -22720,6 +23437,7 @@ function tlRange(t, vw) {
   );
   return { from, n, w: n * a.px };
 }
+// Places cards in rows within each lane so overlapping cards stack.
 function tlLayout(t, R) {
   const a = t.axis,
     out = {},
@@ -22745,6 +23463,7 @@ function tlLayout(t, R) {
     });
   return out;
 }
+// One card on the board.
 function tlCardHtml(t, it, l, H, hit) {
   const c = it.c,
     col = c.color || l.color,
@@ -22799,6 +23518,7 @@ function tlCardHtml(t, it, l, H, hit) {
     '</span></div>'
   );
 }
+// Redraws the board: time scale, marks, lanes and cards.
 function drawTl() {
   const sc = $('#tlScroll'),
     t = curTl();
@@ -22935,6 +23655,7 @@ function drawTl() {
   sc.scrollTop = kt;
   ui.tlR = R;
 }
+// The lane buttons above the board (click to show or hide a lane).
 function drawLaneChips() {
   const b = $('#tlLanes'),
     t = curTl();
@@ -22956,6 +23677,7 @@ function drawLaneChips() {
     )
     .join('');
 }
+// Colour choices for a card, lane or mark.
 function swatches(cur, kind, id, laneCol, defLabel) {
   let h = '<div class="sws">';
   defLabel = defLabel || 'Same as its lane';
@@ -23007,6 +23729,7 @@ function swatches(cur, kind, id, laneCol, defLabel) {
     '" aria-label="Pick any colour"></label></div>'
   );
 }
+// The story pages named on a card, as chips in the side panel.
 function tsNames(c) {
   const box = $('#tsNames');
   if (!box) return;
@@ -23031,6 +23754,7 @@ function tsNames(c) {
         .join('')
     : '<span class="muted" style="font-size:12.5px">Write the name of any story page in the title or notes to link it.</span>';
 }
+// The side panel for a card: title, notes, when, lane, length, look, linked scene, duplicate, delete.
 function sideCard(t, c) {
   const l = t.lanes.find(x => x.id === c.lane) || t.lanes[0],
     cf = ui.confirm,
@@ -23133,6 +23857,7 @@ function sideCard(t, c) {
     '</span></button></div>'
   );
 }
+// The side panel with the timeline's settings: time scale, lanes, marks, look.
 function sideSet(t) {
   const a = t.axis,
     cf = ui.confirm,
@@ -23310,6 +24035,7 @@ function sideSet(t) {
     '</span></button></div>';
   return h;
 }
+// Redraws the side panel (keeping its scroll position).
 function drawSide() {
   const box = $('#tlSide'),
     t = curTl();
@@ -23334,11 +24060,13 @@ function drawSide() {
   } else box.innerHTML = sideSet(t);
   box.scrollTop = keep;
 }
+// Scrolls the board so the start of time is in view.
 function tlCenter(t) {
   const sc = $('#tlScroll'),
     R = ui.tlR;
   return R.from + ((sc.scrollLeft + (sc.clientWidth - lw()) / 2) / t.axis.px) * t.axis.step;
 }
+// Scrolls a card into view and focuses it.
 function tlRefocus(id) {
   const el = $('#tlScroll [data-card="' + id + '"]');
   if (el) {
@@ -23346,6 +24074,7 @@ function tlRefocus(id) {
     el.scrollIntoView({ block: 'nearest', inline: 'nearest' });
   }
 }
+// Selects a card and opens it in the side panel.
 function tlOpenCard(id, focus) {
   ui.tlSel = id;
   ui.tlSide = { k: 'card', id };
@@ -23354,6 +24083,7 @@ function tlOpenCard(id, focus) {
   drawTl();
   if (focus) tlRefocus(id);
 }
+// Adds a card in a lane at a time value, and opens it.
 function tlNewCard(lane, at) {
   const t = curTl(),
     vis = t.lanes.filter(l => !l.hide);
@@ -23384,6 +24114,7 @@ function tlNewCard(lane, at) {
   const ti = $('#tlSide [data-cf="title"]');
   if (ti) ti.focus();
 }
+// Zooms the time scale by factor f, keeping the middle in place.
 function tlZoom(f) {
   const t = curTl(),
     a = t.axis,
@@ -23396,6 +24127,7 @@ function tlZoom(f) {
   const z = $('#tlSide [data-sf="px"]');
   if (z) z.value = a.px;
 }
+// Zooms and scrolls so every card fits.
 function tlFit() {
   const t = curTl(),
     a = t.axis,
@@ -23413,6 +24145,7 @@ function tlFit() {
   const z = $('#tlSide [data-sf="px"]');
   if (z) z.value = a.px;
 }
+// Saves a card field edited in the side panel.
 function tlCardField(t, x) {
   const c = ui.tlSide && t.cards[ui.tlSide.id];
   if (!c) return;
@@ -23430,6 +24163,7 @@ function tlCardField(t, x) {
   if (w) w.textContent = tlSpan(t, c.at, c.len);
   if (k === 'title' || k === 'body') tsNames(c);
 }
+// Saves a timeline setting edited in the side panel (time scale, lanes, look).
 function tlSetField(t, x) {
   const k = x.dataset.sf,
     a = t.axis,
@@ -23470,6 +24204,7 @@ function tlSetField(t, x) {
   dirty(tlKey());
   drawTl();
 }
+// Sets the colour of a card, lane or mark.
 function tlColor(t, kind, id, val, full) {
   const o = kind === 'ccol' ? t.cards[id] : (kind === 'lcol' ? t.lanes : t.marks).find(x => x.id === id);
   if (!o) return;
@@ -23480,6 +24215,7 @@ function tlColor(t, kind, id, val, full) {
   if (kind === 'lcol') drawLaneChips();
   if (full) drawSide();
 }
+// Timeline buttons: add, delete, move and edit lanes, marks and cards; presets; zoom.
 function tlAction(act, b) {
   const t = curTl(),
     a = t.axis,
@@ -23673,6 +24409,7 @@ function tlAction(act, b) {
     confirmDo('tl' + tid, () => delTimeline(tid), side);
   }
 }
+// Renames a lane in place.
 function tlEditLane(b) {
   const t = curTl(),
     l = t.lanes.find(x => x.id === b.dataset.id);
@@ -23709,6 +24446,7 @@ function tlEditLane(b) {
   });
   inp.addEventListener('blur', () => fin(true));
 }
+// Renames a column of the time scale (or the corner label) in place.
 function tlEditHead(b) {
   const t = curTl(),
     corner = b.dataset.tl === 'corner',
@@ -23749,6 +24487,7 @@ function tlEditHead(b) {
   });
   inp.addEventListener('blur', () => fin(true));
 }
+// While dragging a card or its edge: moves or resizes it.
 function tlMove(e) {
   const t = curTl(),
     sc = $('#tlScroll');
@@ -23805,6 +24544,7 @@ function tlMove(e) {
     if (lbl) lbl.textContent = tlWhen(t, { when: D.c.when, at: D.nat, len: D.len });
   }
 }
+// The end of a drag: snaps and saves.
 function tlUp(e) {
   window.removeEventListener('pointermove', tlMove);
   window.removeEventListener('pointerup', tlUp);
@@ -23830,6 +24570,7 @@ function tlUp(e) {
   }
   drawTl();
 }
+// Handles everything on the timeline screen: clicks, double-clicks, drags and keys.
 function bindTl(tv) {
   tv.addEventListener('click', e => {
     if (ui.tlDragged) {
@@ -23972,6 +24713,7 @@ function bindTl(tv) {
     else if (x.dataset.hex) drawSide();
   });
 }
+// The timeline screen: name, toolbar, search and lane filters, the board and the side panel.
 function renderTl(el, v) {
   const name = S.meta.tls.find(x => x.id === v.id).name;
   if (ui.tlFor !== v.id) {
@@ -24044,10 +24786,21 @@ function renderTl(el, v) {
   drawTl();
   bindTl($('#tlv', el));
 }
-/* ---------- scene snapshots ---------- */
+/*
+ * 27-snapshots-find.js: Scene snapshots and Find and replace
+ *
+ * Snapshots: saved copies of a scene's text (S.sn), taken by hand, automatically before the first change of each day,
+ * and before anything Inkling changes for you (restoring a snapshot, replacing text, merging two writers' changes).
+ * The Snapshots screen compares any snapshot with the current text, paragraph by paragraph and word by word
+ * (diffHtml), and restores it.
+ *
+ * Find and replace: searches every scene (or one chapter) with match case and whole words, and replaces one match or
+ * all of them, after taking a snapshot of each scene it changes.
+ */
 // sn[id] = {scene, at, name, text, words, auto}. Saved by hand, automatically once a day when a scene is first
 // changed (auto 'daily'), and before restoring a snapshot ('restore') or replacing text ('replace').
 const SN_AUTO_MAX = 30;
+// How each kind of automatic snapshot is labelled.
 const SN_AUTO = {
   daily: 'Start of the day',
   restore: 'Before restoring a snapshot',
@@ -24071,12 +24824,15 @@ ADD_DOCS.push((o, out) => {
   });
   out.sn = r;
 });
+// A scene's snapshots, newest first.
 const snList = sid =>
   Object.keys(S.sn)
     .filter(k => S.sn[k].scene === sid)
     .map(k => Object.assign({ id: k }, S.sn[k]))
     .sort((a, b) => b.at - a.at);
+// A snapshot's name: the writer's, or what took it.
 const snLabel = x => x.name || SN_AUTO[x.auto] || 'Snapshot';
+// When a snapshot was taken, as a short date and time.
 const snWhen = t =>
   new Date(t).toLocaleString([], {
     weekday: 'short',
@@ -24086,6 +24842,7 @@ const snWhen = t =>
     hour: 'numeric',
     minute: '2-digit'
   });
+// Takes a snapshot of a scene (automatic ones are capped at SN_AUTO_MAX per scene, oldest dropped first).
 function snTake(sid, name, auto) {
   const t = (S.sc[sid] || {}).text || '';
   if (!t.trim()) return null;
@@ -24111,6 +24868,7 @@ function snTake(sid, name, auto) {
       });
   return id;
 }
+// Takes the day's snapshot of a scene before its first change today.
 function snDaily(sid) {
   // the scene as it was before today's first change
   const day = todayKey();
@@ -24120,6 +24878,7 @@ function snDaily(sid) {
   if (snList(sid).some(x => keyOf(new Date(x.at)) === day)) return;
   snTake(sid, '', 'daily');
 }
+// Deletes all of a scene's snapshots.
 function snDrop(sid) {
   Object.keys(S.sn).forEach(k => {
     if (S.sn[k].scene === sid) {
@@ -24128,6 +24887,7 @@ function snDrop(sid) {
     }
   });
 }
+// Changes a scene's text on the writer's behalf (replace, restore): saves it, but gives Inky no credit.
 function setSceneText(sid, text) {
   // changes made by Inkling, not typing: no pet credit
   const sc = S.meta.scenes[sid];
@@ -24185,6 +24945,7 @@ function wordOps(a, b) {
   });
   return out;
 }
+// Shows what changed between two texts: paragraphs added, removed or changed, and within changed ones the words.
 function diffHtml(from, to) {
   const pa = t =>
       t
@@ -24262,6 +25023,7 @@ function diffHtml(from, to) {
   flushSame();
   return { html, add, del };
 }
+// The Snapshots screen for a scene: the list, a comparison with the current text, restore, rename, delete.
 function renderSnap(el, v) {
   const sid = v.id,
     sc = S.meta.scenes[sid],
@@ -24424,6 +25186,7 @@ function findRe(f) {
     return null;
   }
 }
+// Every match of a Find search, grouped by scene.
 function findAll(f) {
   const re = findRe(f),
     out = [];
@@ -24450,6 +25213,7 @@ function findAll(f) {
   });
   return out;
 }
+// The Find and replace screen.
 function renderFind(el) {
   const f = (ui.find = ui.find || { q: '', r: '', mc: false, ww: false, scope: 'all' });
   if (f.scope !== 'all' && !S.meta.chapters.some(c => c.id === f.scope)) f.scope = 'all';
@@ -24632,6 +25396,7 @@ document.addEventListener('keydown', e => {
     saveNow();
   }
 });
+// Opens Find and replace with the selected words as the search.
 function openFind() {
   const s = getSelection(),
     t = s && $('#ed') && $('#ed').contains(s.anchorNode) ? s.toString().trim() : '';
@@ -24641,7 +25406,13 @@ function openFind() {
   }
   go({ k: 'find' });
 }
-/* ---------- first-run tour ---------- */
+/*
+ * 28-tour-todo.js: The first-run tour and today's to-do list
+ *
+ * The tour: a few coach marks pointing at the main parts of the screen, shown once per device. The to-do list
+ * (meta.todo, personal): tasks for today in the Inkling panel. Some tick themselves (reach the daily goal, finish a
+ * focus sprint, mark a scene Final); unfinished tasks carry over to the next day.
+ */
 // A few coach marks, shown once per device (localStorage 'inkling:tour'); Show the tour replays them.
 const TOUR = [
   [
@@ -24675,6 +25446,7 @@ const TOUR = [
     'Export to Word, PDF or EPUB, find and replace, settings, writing history and backups.'
   ]
 ];
+// Starts the tour (once per device unless force).
 function startTour(force) {
   try {
     if (!force && localStorage.getItem('inkling:tour')) return;
@@ -24763,6 +25535,7 @@ function startTour(force) {
   addEventListener('resize', ui.tourResize);
   show();
 }
+// Ends the tour and remembers it was seen.
 function endTour() {
   ['#tour', '#tourRing'].forEach(q => {
     const x = $(q);
@@ -24784,6 +25557,7 @@ const TODO_AUTO = {
   sprint: 'Ticks itself when a focus session ends',
   fin: 'Ticks itself when the scene is marked Final'
 };
+// Checks today's to-do list.
 function normTodo(t) {
   t = t && typeof t === 'object' ? t : {};
   return {
@@ -24801,6 +25575,7 @@ function normTodo(t) {
       })
   };
 }
+// On a new day: clears finished tasks and marks the ones carried over.
 function todoRoll() {
   const t = S.meta.todo,
     k = todayKey();
@@ -24813,6 +25588,7 @@ function todoRoll() {
   dirty('meta');
   return true;
 }
+// Ticks a task off and counts it for Inky.
 function todoDone(x) {
   x.done = true;
   if (!x.c) {
@@ -24846,6 +25622,7 @@ function todoTick(kind, sc) {
     drawTodo(n);
   }
 }
+// Suggested tasks to add with one click (only the ones not already on the list).
 function todoIdeas() {
   const m = S.meta,
     it = m.todo.items,
@@ -24868,6 +25645,7 @@ function todoIdeas() {
   });
   return out.slice(0, 4);
 }
+// Draws the to-do list in the Inkling panel.
 function drawTodo(justTicked) {
   const box = $('#tdBox');
   if (!box) return;
@@ -24932,6 +25710,7 @@ function drawTodo(justTicked) {
   box._ideas = ideas;
   if (justTicked) box.querySelectorAll('.td.done').forEach(li => li.classList.add('just'));
 }
+// Makes the to-do list work: add, tick, edit, delete, drag to reorder, add a suggestion.
 function bindTodo() {
   const box = $('#tdBox');
   if (!box) return;
@@ -25037,22 +25816,34 @@ function bindTodo() {
     }
   });
 }
-/* ---------- sidebar widths ---------- */
+/*
+ * 29-planner.js: Sidebar widths and the deadline planner
+ *
+ * Sidebar widths: the binder and the Inkling panel can be widened by dragging their edges (kept per device).
+ *
+ * The deadline planner (meta.plan, personal): pick a target and a date, the days you write and days off, and Inkling
+ * works out a daily goal that keeps you on track, rising when days are missed. planState() does the arithmetic; the
+ * planner screen draws progress against an even line (planChart) and a calendar (planCal).
+ */
 // Drag the edge of the binder or of the Inkling panel to widen it (or focus the edge and use the arrow keys);
 // double-click an edge to put it back. Kept per device, like the rest of the appearance (LOOK.bw, LOOK.iw).
 const SIDES = {
   bw: { def: 272, min: 200, max: 620, el: '#szL', dir: 1, label: 'binder' },
   iw: { def: 308, min: 260, max: 640, el: '#szR', dir: -1, label: 'Inkling panel' }
 };
+// The width the writer chose for a sidebar.
 const sideWant = k => {
   const v = +LOOK[k];
   return v > 0 ? v : SIDES[k].def;
 };
+// The widest a sidebar can be while leaving the page about 440 pixels.
 function sideRoom(k) {
   const o = k === 'bw' ? 'iw' : 'bw';
   return Math.max(SIDES[k].min, Math.min(SIDES[k].max, innerWidth - Math.min(sideWant(o), SIDES[o].max) - 440));
 }
+// A sidebar's width now: what was chosen, within its limits and the room there is.
 const sideW = k => Math.round(Math.max(SIDES[k].min, Math.min(sideWant(k), sideRoom(k))));
+// Applies both sidebar widths to the page.
 function applySides() {
   const r = document.documentElement;
   Object.keys(SIDES).forEach(k => {
@@ -25066,10 +25857,12 @@ function applySides() {
     }
   });
 }
+// Sets a sidebar's width and remembers it.
 function setSide(k, w) {
   LOOK[k] = Math.round(Math.max(SIDES[k].min, Math.min(w, sideRoom(k))));
   applySides();
 }
+// Makes the sidebar edges draggable (and adjustable with the arrow keys; double-click resets).
 function bindSizers() {
   Object.keys(SIDES).forEach(k => {
     const o = SIDES[k],
@@ -25126,14 +25919,19 @@ function bindSizers() {
 // eases off) the next day. With `auto`, meta.goal follows it. log{day:{p,g}} keeps each day's progress and goal for
 // the chart and the calendar.
 const PLAN_WD = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+// Whether a value is a "YYYY-MM-DD" day key.
 const isDayKey = v => /^\d{4}-\d{2}-\d{2}$/.test(v || '');
+// A day key as a date (at midday, so time zones never move it a day).
 const dayDate = k => new Date(k + 'T12:00');
+// The day key n days after another.
 const addDays = (k, n) => {
   const d = dayDate(k);
   d.setDate(d.getDate() + n);
   return keyOf(d);
 };
+// A day key as a short date for people.
 const fmtDay = (k, o) => dayDate(k).toLocaleDateString(undefined, o || { day: 'numeric', month: 'short' });
+// Checks a deadline plan.
 function normPlan(x, len) {
   x = x && typeof x === 'object' ? x : {};
   const wd =
@@ -25186,6 +25984,7 @@ function planDays(p, a, b) {
   }
   return out;
 }
+// New words written from day a to day b.
 function sumDays(a, b) {
   const d = S.meta.days;
   let n = 0;
@@ -25194,6 +25993,8 @@ function sumDays(a, b) {
   });
   return n;
 }
+// Where the plan stands today: today's goal, status (on track, ahead, behind, due soon, past, done), pace and
+// projected finish.
 function planState() {
   const p = S.meta.plan;
   if (!p || !p.on) return null;
@@ -25277,6 +26078,7 @@ function planState() {
     elapsed
   };
 }
+// The plan in one line, for the Inkling panel.
 function planLabel(st) {
   const by = fmtDay(st.p.by);
   if (st.status === 'done') return 'Deadline goal reached!';
@@ -25336,6 +26138,7 @@ function planSync() {
   }
   if (ch) dirty('meta');
 }
+// Shows the plan's line in the Today section of the Inkling panel.
 function planPaint() {
   const el = $('#planLine');
   if (!el) return;
@@ -25352,6 +26155,7 @@ function planGreet() {
     return 'We are a little behind the plan, but today’s ' + fmt(st.todayGoal) + ' words catch us up.';
   return st.writingToday ? 'Today’s plan: ' + fmt(st.todayGoal) + ' words. You can do this.' : '';
 }
+// The planner's chart: words so far against the even line to the deadline, and the projection.
 function planChart(st) {
   const p = st.p,
     W = 640,
@@ -25448,6 +26252,7 @@ function planChart(st) {
     '<div class="pl-key"><span><i class="k-act"></i>You</span><span><i class="k-ideal"></i>The plan</span></div>'
   );
 }
+// The planner's calendar: writing days, days off and words written, month by month.
 function planCal(st) {
   const p = st.p,
     span = Math.round((dayDate(p.by) - dayDate(p.start)) / 864e5);
@@ -25528,6 +26333,7 @@ function planCal(st) {
   }
   return note + h + '</div>';
 }
+// The Deadline planner screen.
 function renderPlan(el) {
   const m = S.meta,
     p = m.plan,
@@ -25746,7 +26552,16 @@ function renderPlan(el) {
     }
   };
 }
-/* ---------- your screen: what shows (Window › Project settings) ---------- */
+/*
+ * 30-screen-settings.js: What shows on screen, window actions, and appearance settings
+ *
+ * Project settings (Window › Project settings, meta.layout, personal): which parts of the screen show, the order of
+ * the Inkling panel's sections, and presets. winAct() is the one place window actions arrive, from the ⋯ menu, the
+ * desktop menus and the keyboard.
+ *
+ * Settings ({k:'prefs'}): appearance (theme, font, line height, page width, Inky's chattiness) is kept per device in
+ * LOOK (localStorage inkling:look); the desktop app adds its own sections (projects folder, updates, spelling).
+ */
 // meta.layout = {hide:{key:true}, order:[Inkling panel sections]}. Personal and per project: it follows the writer on
 // a shared project. Projects without one start from this device's default (LOOK.layoutDef, "Use for new projects").
 // Hidden things get an lo-<key> class on #app; the Inkling panel is built in layout order without hidden sections.
@@ -25758,6 +26573,7 @@ const LO_INSP = [
   ['ms', 'Manuscript'],
   ['scene', 'This scene (synopsis and notes)']
 ];
+// Everything else on screen that can be hidden, in groups.
 const LO_GROUPS = [
   [
     'Panels',
@@ -25796,7 +26612,9 @@ const LO_GROUPS = [
     ]
   ]
 ];
+// Every key that can be hidden.
 const LO_ALL = LO_INSP.map(x => x[0]).concat(...LO_GROUPS.map(g => g[1].map(x => x[0])));
+// Ready-made layouts: [name, keys hidden].
 const LO_PRESETS = {
   standard: ['Everything', []],
   calm: ['Calm', ['saveSt', 'hint', 'link', 'size', 'snapBtn', 'read', 'ms', 'scene']],
@@ -25805,6 +26623,7 @@ const LO_PRESETS = {
     ['binder', 'insp', 'saveSt', 'hint', 'link', 'size', 'stk', 'snapBtn', 'read', 'status', 'swc']
   ]
 };
+// Checks a layout: what is hidden and the panel's order.
 function normLayout(x) {
   x = x && typeof x === 'object' ? x : {};
   const hide = {},
@@ -25818,7 +26637,9 @@ function normLayout(x) {
   });
   return { hide, order };
 }
+// Whether a part of the screen is hidden.
 const loHidden = k => !!(S && S.meta.layout && S.meta.layout.hide[k]);
+// Applies the layout: an lo-<key> class on #app for each hidden part.
 function applyLayout() {
   const app = $('#app');
   if (!app || !S) return;
@@ -25826,6 +26647,7 @@ function applyLayout() {
   Object.keys(S.meta.layout.hide).forEach(k => app.classList.add('lo-' + k));
   applyCols();
 }
+// Hides or shows a part of the screen.
 function loSet(k, hide) {
   const h = S.meta.layout.hide;
   if (hide) h[k] = true;
@@ -25834,6 +26656,7 @@ function loSet(k, hide) {
   applyLayout();
   if (LO_INSP.some(s => s[0] === k)) renderInspector();
 }
+// Toggles a part of the screen (with a short note saying how to bring it back).
 function loToggle(k) {
   loSet(k, !loHidden(k));
   if (ui.view.k === 'layout') renderMain();
@@ -25896,6 +26719,7 @@ function winAct(a, src) {
     else document.execCommand(a);
   }
 }
+// The Project settings screen.
 function renderLayout(el) {
   const m = S.meta,
     L = m.layout,
@@ -26073,6 +26897,7 @@ function renderLayout(el) {
 /* ---------- settings ---------- */
 // Appearance is per device (localStorage), not per project: theme, writing font, line spacing, page width, spellcheck.
 const LOOK_DEF = { theme: 'system', font: 'literata', lh: 1.8, width: 'standard', spell: true };
+// Fonts the writer can choose for the page: [id, name, CSS font-family].
 const FONTS = [
   ['literata', 'Literata (book serif)', "'Literata',Georgia,serif"],
   ['georgia', 'Georgia', "Georgia,'Times New Roman',serif"],
@@ -26081,11 +26906,14 @@ const FONTS = [
   ['mono', 'Typewriter (IBM Plex Mono)', "'IBM Plex Mono',ui-monospace,monospace"],
   ['system', 'This computer’s font', "system-ui,-apple-system,'Segoe UI',sans-serif"]
 ];
+// Page widths: [name, pixels].
 const WIDTHS = { narrow: ['Narrow', 640], standard: ['Standard', 780], wide: ['Wide', 980] };
+// This device's appearance settings, loaded from localStorage.
 let LOOK = Object.assign({}, LOOK_DEF);
 try {
   LOOK = Object.assign(LOOK, JSON.parse(localStorage.getItem('inkling:look') || '{}'));
 } catch (e) {}
+// Applies the appearance settings to the page (theme, font, line height, width).
 function applyLook() {
   const r = document.documentElement,
     f = FONTS.find(x => x[0] === LOOK.font) || FONTS[0];
@@ -26100,6 +26928,7 @@ function applyLook() {
   if (app) app.classList.toggle('tw', !!LOOK.typewriter);
   applySides();
 }
+// Saves the appearance settings on this device.
 function saveLook() {
   try {
     localStorage.setItem('inkling:look', JSON.stringify(LOOK));
@@ -26107,6 +26936,7 @@ function saveLook() {
   applyLook();
 }
 applyLook();
+// The Settings screen.
 async function renderPrefs(el) {
   const pf = DESK ? await DESK.prefs().catch(() => null) : null;
   const seg = (k, opts) =>
@@ -26294,6 +27124,7 @@ async function renderPrefs(el) {
     if (x.dataset.pf === 'spell') await DESK.setPrefs({ spell: x.value });
   };
 }
+// Desktop: moves the projects folder somewhere else (or back to the default).
 async function changeFolder(toDefault) {
   const pf = await DESK.prefs(),
     dir = toDefault ? pf.defaultDir : await DESK.chooseDir();
@@ -26340,11 +27171,23 @@ async function changeFolder(toDefault) {
     { plain: true }
   );
 }
-/* ---------- focus timer (pomodoro) and writing sessions ---------- */
+/*
+ * 31-focus-timer.js: The focus timer, writing sessions, the writing report and word history
+ *
+ * The focus timer (pomodoro) runs from end times (T.endAt), not a counting loop, so it stays right in a background
+ * tab or a sleeping laptop. Its state (T) is never saved; each focus session is saved to S.ss when it ends or is
+ * stopped, with the new words written during it (same rules as the daily goal) and the scenes typed in. After the
+ * last session before a long break, a writing report shows words per minute.
+ *
+ * The Writing sessions screen lists past sessions and, at the top, the word history: one bar per day with the goal as
+ * a line (drawWcBox).
+ */
 // Timer state lives only in this page (T); each finished or stopped focus session is saved to S.ss with the
 // new words credited while it ran (same rules as the daily goal) and the scenes typed in.
 const T = { phase: 'focus', running: false, endAt: 0, left: null, count: 0, cur: null, tick: null };
+// The timer's phases and how they are shown.
 const PM_PHASE = { focus: 'Focus', short: 'Short break', long: 'Long break' };
+// Checks the timer settings (minutes for focus and breaks, how many sessions before a long break, sounds…).
 function normPomo(p) {
   p = p && typeof p === 'object' ? p : {};
   const n = (v, d, a, b) => clamp(Math.round(num(v, d)), a, b);
@@ -26359,19 +27202,25 @@ function normPomo(p) {
     sound: p.sound !== false
   };
 }
+// How long a phase lasts, in milliseconds.
 const pmLen = ph => S.meta.pomo[ph] * 60000;
+// Time left in the current phase.
 const pmLeft = () => (T.running ? Math.max(0, T.endAt - Date.now()) : T.left != null ? T.left : pmLen(T.phase));
+// Milliseconds as "mm:ss".
 const mmss = ms => {
   const s = Math.ceil(ms / 1000);
   return Math.floor(s / 60) + ':' + pad(s % 60);
 };
+// The sound player for the timer's chime (created on the first click, as browsers require).
 let AC = null;
+// Gets the chime's sound player ready.
 function pmAudio() {
   try {
     if (!AC && S.meta.pomo.sound) AC = new (window.AudioContext || window.webkitAudioContext)();
     if (AC && AC.state === 'suspended') AC.resume();
   } catch (e) {}
 }
+// Plays the chime: rising for a break, falling for back to work. Made with Web Audio, no sound files.
 function pmChime(up) {
   if (!S.meta.pomo.sound || !AC) return;
   try {
@@ -26392,6 +27241,7 @@ function pmChime(up) {
     });
   } catch (e) {}
 }
+// Starts or resumes the timer.
 function pmStart() {
   if (T.running) return;
   const left = pmLeft();
@@ -26416,6 +27266,7 @@ function pmStart() {
   T.tick = setInterval(pmTick, 250);
   pmPaint();
 }
+// Pauses the timer.
 function pmPause() {
   if (!T.running) return;
   hereSoon();
@@ -26425,6 +27276,8 @@ function pmPause() {
   if (T.cur) T.cur.ms += Date.now() - T.cur.since;
   pmPaint();
 }
+// Saves the focus session that is running (done: it ran to the end). Sessions under a minute with no words are
+// dropped.
 function pmRecord(done) {
   const c = T.cur;
   T.cur = null;
@@ -26449,16 +27302,19 @@ function pmRecord(done) {
   if (ui.view && ui.view.k === 'ss') renderMain();
   return S.ss[id];
 }
+// Four times a second while running: updates the display and moves on when time is up.
 function pmTick() {
   if (!T.running) return;
   if (Date.now() >= T.endAt) pmEnd();
   else pmPaint();
 }
+// Moves to the next phase: a short or long break after focus, focus after a break.
 function pmNext(rec) {
   T.count++;
   T.phase = T.count % S.meta.pomo.every === 0 ? 'long' : 'short';
   return rec;
 }
+// A phase ran out: saves the session, chimes, moves on, and starts the next phase if set to.
 function pmEnd() {
   clearInterval(T.tick);
   const P2 = S.meta.pomo,
@@ -26497,6 +27353,7 @@ function pmEnd() {
   }
   pmPaint();
 }
+// Stops the timer and resets the phase.
 function pmStop() {
   const wasFocus = T.phase === 'focus' && T.cur,
     r = wasFocus ? pmRecord(false) : null;
@@ -26508,6 +27365,7 @@ function pmStop() {
   hereSoon();
   if (r) toast('Saved this session: ' + fmt(r.words) + ' new words in ' + r.mins + ' min.', { plain: true });
 }
+// Skips to the next phase (a focus session skipped counts as stopped early).
 function pmSkip() {
   if (T.phase === 'focus') {
     const r = pmRecord(false);
@@ -26525,6 +27383,7 @@ function pmSkip() {
   }
   pmPaint();
 }
+// Saves a running session and stops the timer before the project changes or the window closes.
 function pmHalt() {
   if (T.cur) pmRecord(false);
   clearInterval(T.tick);
@@ -26534,7 +27393,9 @@ function pmHalt() {
   T.phase = 'focus';
   pmPaint();
 }
+// The circumference of the timer's ring, in SVG units.
 const RING2 = 2 * Math.PI * 52;
+// Updates the timer: time left, ring, phase, buttons and the dots for sessions done.
 function pmPaint() {
   if (!S) return;
   const left = pmLeft(),
@@ -26590,6 +27451,7 @@ function pmPaint() {
         ' new words.'
       : 'Write in focused bursts. Each session and its word count is saved.';
 }
+// The Focus timer section of the Inkling panel, with its settings.
 function pomoHtml() {
   const P2 = S.meta.pomo,
     n = mySs().length,
@@ -26654,6 +27516,7 @@ function pomoHtml() {
     ')</span></button></section>'
   );
 }
+// Makes the timer's buttons and settings work.
 function bindPomo() {
   const box = $('#pomo');
   if (!box) return;
@@ -26690,6 +27553,7 @@ function bindPomo() {
 // the long break ends, a report shows words per minute for each session and on average, against your usual pace.
 const wpmOf = x => (x.mins > 0 ? x.words / x.mins : 0),
   wpmFmt = v => (Math.round(v * 10) / 10).toLocaleString();
+// The writing report after a run of sessions (cyc): words, minutes, words per minute and the scenes worked on.
 function pmReport(cyc) {
   const all = mySs(),
     list = all.filter(x => x.cyc === cyc).sort((a, b) => a.start - b.start);
@@ -26838,6 +27702,7 @@ const mySs = () =>
   Object.keys(S.ss)
     .map(id => Object.assign({ id }, S.ss[id]))
     .filter(x => (x._by ? nameKey(x._by) === myKey() : !myKey() || !x._dev || x._dev === DEVICE));
+// The Writing sessions screen: word history, then each session with its words and scenes.
 function renderSs(el) {
   const list = mySs().sort((a, b) => b.start - a.start),
     cf = ui.confirm;
@@ -27068,12 +27933,14 @@ function wcSeries(range) {
   }
   return out;
 }
+// A round number just above v, for a chart's top.
 function niceMax(v) {
   if (v <= 0) return 100;
   const e = Math.pow(10, Math.floor(Math.log10(v))),
     f = v / e;
   return (f <= 1 ? 1 : f <= 2 ? 2 : f <= 2.5 ? 2.5 : f <= 5 ? 5 : 10) * e;
 }
+// The word history chart: one bar per day, the goal as a dashed line, a tooltip, and a table view.
 function drawWcBox(box) {
   if (!box) return;
   const range = ['30', '90', 'year'].includes(ui.wcRange) ? ui.wcRange : '30',
@@ -27340,7 +28207,14 @@ function drawWcBox(box) {
     ro.observe(svg.parentNode);
   }
 }
-/* ---------- inspector ---------- */
+/*
+ * 32-inspector.js: The Inkling panel (right-hand pane)
+ *
+ * renderInspector() builds the panel from its sections, in the writer's order (Project settings): Inky and the room,
+ * the focus timer, today's goal, the to-do list, the manuscript totals, and for an open scene its synopsis, details,
+ * target and notes.
+ */
+// Builds the Inkling panel and wires up its sections.
 function renderInspector() {
   applyLayout();
   const m = S.meta,
@@ -27508,7 +28382,15 @@ function renderInspector() {
     dirty('sc_' + v.id);
   });
 }
-/* ---------- menu, export, restore ---------- */
+/*
+ * 33-export.js: The menu, backups, export, and saving files
+ *
+ * Export makes Word (.docx), PDF, EPUB, Markdown and plain text, all in the page: Word and EPUB files are built with
+ * a small zip writer (zip, crc32), PDF goes to the desktop's PDF maker or the browser's print window. Word and PDF
+ * follow standard manuscript format, for sending to agents and editors. saveFile() saves a file the right way for
+ * each environment. The ⋯ menu (renderMenu, bindMenu) is here too.
+ */
+// A title as a safe file name: "The Lantern Tide" → "the-lantern-tide".
 function slug(s) {
   return (
     (s || 'novel')
@@ -27517,6 +28399,8 @@ function slug(s) {
       .replace(/^-+|-+$/g, '') || 'novel'
   );
 }
+// Saves a file for the writer: a save dialog on the desktop, the artifact's downloads in Claude, a download in a
+// browser.
 async function saveFile(name, data) {
   if (DESK) {
     try {
@@ -27547,6 +28431,7 @@ async function saveFile(name, data) {
   a.remove();
   setTimeout(() => URL.revokeObjectURL(u), 5000);
 }
+// Saves the whole project, with every picture inside it, as a .json backup.
 async function doBackup() {
   const imgs = await collectImages();
   saveFile(
@@ -27565,6 +28450,7 @@ const EXP_FMTS = {
   md: ['Markdown', '.md'],
   txt: ['Plain text', '.txt']
 };
+// Checks the export choices.
 function normExp(x) {
   x = x && typeof x === 'object' ? x : {};
   return {
@@ -27579,6 +28465,7 @@ function normExp(x) {
     uid: /^[\w-]{8,64}$/.test(x.uid || '') ? x.uid : ''
   };
 }
+// The book to export: chapters with their scenes as paragraphs (one chapter, or all).
 function expBook(scope) {
   return S.meta.chapters
     .filter(c => scope === 'all' || c.id === scope)
@@ -27594,6 +28481,7 @@ function expBook(scope) {
         .filter(x => x.length)
     }));
 }
+// One paragraph of stored text as runs of text with their styles: [[text, styles]] (1 bold, 2 italic, 4 underline).
 function runs(p) {
   // one line of stored text → [[text, styles]] (1 bold, 2 italic, 4 underline)
   const P = fmtParse(p);
@@ -27608,16 +28496,19 @@ function runs(p) {
   }
   return out;
 }
+// Makes text safe for XML (Word and EPUB files).
 const xe = s =>
   String(s)
     .replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F]/g, '')
     .replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
+// A word count rounded the way manuscripts state it ("about 80,000 words").
 const roundWords = n =>
   n < 1000
     ? Math.max(100, Math.round(n / 100) * 100)
     : n < 10000
       ? Math.round(n / 500) * 500
       : Math.round(n / 1000) * 1000;
+// Everything the export formats need: the book, word count, author, byline, header and font.
 function expInfo(scope) {
   const m = S.meta,
     o = m.exp,
@@ -27657,11 +28548,13 @@ const CRC = (() => {
   }
   return t;
 })();
+// The CRC-32 checksum a zip file needs for each file.
 function crc32(b) {
   let c = 0xffffffff;
   for (let i = 0; i < b.length; i++) c = CRC[(c ^ b[i]) & 255] ^ (c >>> 8);
   return (c ^ 0xffffffff) >>> 0;
 }
+// Packs files into a zip (stored, not compressed), as a Uint8Array.
 function zip(files) {
   const te = new TextEncoder(),
     parts = [],
@@ -27714,6 +28607,7 @@ function zip(files) {
   });
   return out;
 }
+// The manuscript as a Word document.
 function expDocx(scope) {
   const I = expInfo(scope),
     o = I.o,
@@ -27859,6 +28753,7 @@ function expDocx(scope) {
     ['word/header1.xml', header]
   ]);
 }
+// One paragraph as HTML with its bold, italic and underline.
 const htmlRuns = l =>
   runs(l)
     .map(r => {
@@ -27869,6 +28764,7 @@ const htmlRuns = l =>
       return t;
     })
     .join('');
+// The manuscript as a printable HTML page, for PDF.
 function expPdfHtml(scope) {
   const I = expInfo(scope),
     o = I.o,
@@ -27906,6 +28802,7 @@ function expPdfHtml(scope) {
   if (I.full) h += '<p class="c" style="margin-top:1em">END</p>';
   return { html: h + '</body></html>', I };
 }
+// The manuscript as an EPUB ebook.
 function expEpub(scope) {
   const I = expInfo(scope),
     o = I.o,
@@ -27999,6 +28896,7 @@ function expEpub(scope) {
   ]);
   return zip(files);
 }
+// The manuscript as Markdown.
 function manuscriptMd(scope) {
   const I = expInfo(scope || 'all');
   let out = '# ' + I.title + '\n\n' + (I.byline ? 'by ' + I.byline + '\n\n' : '');
@@ -28012,6 +28910,7 @@ function manuscriptMd(scope) {
   });
   return out.trim() + '\n';
 }
+// The manuscript as plain text.
 function manuscriptTxt(scope) {
   const I = expInfo(scope);
   let out = I.title + '\n' + (I.byline ? 'by ' + I.byline + '\n' : '') + '\n\n';
@@ -28024,6 +28923,7 @@ function manuscriptTxt(scope) {
   });
   return out.trim() + '\n';
 }
+// Opens the browser's print window for a page (the writer chooses Save as PDF).
 async function printHtml(html) {
   // the browser's print window; the writer chooses "Save as PDF"
   const f = document.createElement('iframe');
@@ -28043,6 +28943,7 @@ async function printHtml(html) {
   }
   setTimeout(() => f.remove(), 60000);
 }
+// Exports in a format: builds the file and saves it.
 async function doExport(fmt, scope) {
   const m = S.meta,
     ch = scope !== 'all' && m.chapters.find(c => c.id === scope),
@@ -28069,6 +28970,7 @@ async function doExport(fmt, scope) {
   }
   printHtml(r.html);
 }
+// The Export dialog: format, what to include, and the manuscript details.
 function openExport() {
   const m = S.meta,
     o = m.exp;
@@ -28205,6 +29107,7 @@ function openExport() {
   document.body.appendChild(ov);
   $('[data-fmt].on', ov).focus();
 }
+// Fills the ⋯ menu for this environment (desktop or browser).
 function renderMenu() {
   const cf = ui.confirm,
     el = $('#menu');
@@ -28287,6 +29190,7 @@ function renderMenu() {
       : 'Your project saves on this device only. Back it up from here when you can.') +
     '</small>';
 }
+// Makes the ⋯ menu and the restore-from-backup file picker work.
 function bindMenu() {
   $('#menuBtn').innerHTML = ico('dots', 18);
   $('#menuBtn').addEventListener('click', e => {
@@ -28430,12 +29334,25 @@ async function saveNow() {
       { plain: true }
     );
 }
+// Closes the ⋯ menu.
 function closeMenu() {
   ui.menu = false;
   ui.confirm = null;
   $('#menu').hidden = true;
 }
-/* ---------- shared projects: merging ---------- */
+/*
+ * 34-sharing.js: Shared projects: merging two writers' work, presence, and setting up sharing
+ *
+ * Two computers can save one project through a sync folder (Dropbox, Google Drive, OneDrive, iCloud). Saves are
+ * compare-and-swap: if the file changed since this computer last read it, the two versions are merged record by
+ * record (mergeProjects): a record only one side changed takes that change, a true clash goes to the newer change,
+ * and a scene clash keeps the other text as a snapshot. Deletions are known from meta.gone. patchState() then updates
+ * the screen in place.
+ *
+ * Presence: each computer writes a small file saying who has the project open and which scene they are in (hereTick),
+ * shown as letters in the binder and a chip in the top bar (paintHere). Setting up: openShare() moves a project into
+ * a sync folder, openSharedPick() opens one there, setMyName() sets the writer's name.
+ */
 // Two computers can save the same project through a sync folder. Instead of one version replacing the other, the two
 // are merged record by record: a scene, a story page, a timeline... each is one record with a change stamp (_m) and
 // author (_by). PJ.base is the version this computer last read or wrote, so a record that only one side changed is
@@ -28450,8 +29367,11 @@ function canon(x) {
       : v
   );
 }
+// Whether two values are the same, ignoring change stamps.
 const same = (a, b) => canon(a) === canon(b);
+// A deep copy of a plain value.
 const clone = x => (x === undefined ? undefined : JSON.parse(JSON.stringify(x)));
+// Three-way choice for one value: base, ours, theirs. If only one side changed it, that change wins.
 function pick3(b, o, t) {
   if (same(o, t)) return o;
   if (b !== undefined && same(o, b)) return t;
@@ -28473,6 +29393,7 @@ function mergeOrder(b, o, t) {
   });
   return out;
 }
+// A record's name, for the "merged with…" message.
 function recName(p, id, m) {
   if (p === 'sc') return (m.scenes[id] || {}).title;
   if (p === 'en') return (m.ents[id] || {}).name;
@@ -28481,6 +29402,8 @@ function recName(p, id, m) {
   if (p === 'ch') return ((m.chapters || []).find(x => x.id === id) || {}).title + ' notes';
   return '';
 }
+// Merges one kind of record (scenes, pages…) three ways, using change times for true clashes and meta.gone for
+// deletions.
 function mergeRecords(p, b, o, t, goneO, goneT, rep, mo, mt) {
   const out = {};
   new Set([...Object.keys(o), ...Object.keys(t)]).forEach(id => {
@@ -28511,6 +29434,7 @@ function mergeRecords(p, b, o, t, goneO, goneT, rep, mo, mt) {
   });
   return out;
 }
+// Merges the project's index (meta) field by field, keeping both sides' list order changes.
 function mergeMeta(b, o, t) {
   b = b || {};
   const out = clone(o),
@@ -28596,6 +29520,7 @@ function mergeMeta(b, o, t) {
   });
   return out;
 }
+// After a merge: makes the indexes in meta match the records that survived (no lost or orphaned scenes).
 function fixMerged(out, o, t) {
   // the indexes in meta follow the records that survived
   const m = out.meta,
@@ -28710,7 +29635,9 @@ function mergeProjects(base, ours, theirs) {
   fixMerged(out, ours, theirs);
   return { out, rep };
 }
+// Meta fields ignored when comparing projects (each device's own working copies).
 const PROJ_SKIP = new Set(PERSONAL.concat(['saved']));
+// Whether two versions of a project hold the same work.
 function sameProject(a, b) {
   // ignoring the per-device copies of personal stats at the top of meta
   const strip = x => {
@@ -28741,6 +29668,7 @@ function stampMine(st) {
   if (!w || canon(Object.assign({}, w, { at: 0 })) !== canon(Object.assign({}, cur, { at: 0 })))
     m.writers[k] = Object.assign(clone(cur), { at: Date.now() });
 }
+// Takes this writer's personal stats from meta.writers into the working copy.
 function adoptMine(st) {
   const m = st.meta,
     wr = m.writers || {};
@@ -28797,6 +29725,7 @@ function patchState(ns) {
     });
   });
 }
+// A fingerprint of the data a view shows, to tell whether a merge changed it.
 function viewSig(v) {
   if (!v) return '';
   const m = S.meta;
@@ -28807,6 +29736,8 @@ function viewSig(v) {
   if (v.k === 'prefs' || v.k === 'help' || v.k === 'find') return v.k;
   return canon([m.chapters, m.scenes, Object.keys(S.ss).length]);
 }
+// Merges another computer's version (and any conflicted copies) into this one, updates the screen and says what
+// changed.
 function mergeIn(theirs, strays) {
   const ours = clone(snapshot(S));
   let r = mergeProjects(PJ.base, ours, theirs);
@@ -28900,6 +29831,7 @@ async function deskSync() {
   }
   throw new Error('the shared folder keeps changing; trying again shortly');
 }
+// Checks whether another computer saved the project (every 8 s and on focus), and merges if so.
 async function syncCheck() {
   if (!PJ.id || ui.locked || P.busy) return;
   try {
@@ -28919,6 +29851,7 @@ async function syncCheck() {
     }
   }
 }
+// Tells the writer what came in from another computer.
 function announceMerge(rep) {
   const who = [...rep.by].join(' and ') || 'another computer',
     names = [...new Set(rep.items.map(x => x.name).filter(Boolean))];
@@ -28971,7 +29904,9 @@ function announceMerge(rep) {
 }
 
 /* ---------- shared projects: who else is here ---------- */
+// A co-writer's name (or their computer's name).
 const whoName = o => o.name || o.host || 'Someone';
+// Writes this computer's presence file and reads the others'.
 async function hereTick() {
   if (!DESK || !PJ.id) return;
   const v = ui.view,
@@ -28990,11 +29925,13 @@ async function hereTick() {
   }
   paintHere();
 }
+// Updates presence shortly (after opening a scene).
 function hereSoon() {
   if (!DESK) return;
   clearTimeout(ui.hereT);
   ui.hereT = setTimeout(hereTick, 400);
 }
+// Shows who else is here: the top bar chip, letters in the binder, a note on a scene someone else has open.
 function paintHere() {
   const others = ui.others || [];
   let chip = $('#hereChip');
@@ -29085,11 +30022,13 @@ function paintHere() {
     );
   }
 }
+// A stable colour for a name.
 const hue = n => {
   let h = 0;
   for (const c of String(n)) h = (h * 31 + c.charCodeAt(0)) % 360;
   return h;
 };
+// The popup listing who else has the project open.
 function openHerePop() {
   const pop = document.createElement('div');
   pop.id = 'herePop';
@@ -29249,6 +30188,7 @@ async function openShare(id) {
   const f = $('[data-sh]', ov);
   if (f) f.focus();
 }
+// Opens a project from a shared folder.
 async function openSharedPick() {
   try {
     pmHalt();
@@ -29269,6 +30209,7 @@ async function openSharedPick() {
     toast('Could not open that folder: ' + ((e && e.message) || e), { plain: true });
   }
 }
+// Sets the writer's name and moves their personal stats to the new name.
 function setMyName(n) {
   const old = myKey();
   ME.name = String(n || '')
@@ -29285,6 +30226,7 @@ function setMyName(n) {
   dirty('meta');
   hereSoon();
 }
+// The "How sharing works" guide.
 function helpShareHtml() {
   const sec = (t, b) => '<section class="pf hs"><h2>' + t + '</h2>' + b + '</section>';
   return (
@@ -29323,6 +30265,7 @@ function helpShareHtml() {
     '</div>'
   );
 }
+// The "How sharing works" screen.
 function renderHelp(el) {
   el.innerHTML =
     '<div class="main-head">' +
@@ -29337,7 +30280,13 @@ function renderHelp(el) {
     if (e.target.closest('[data-hs="share"]')) openShare();
   };
 }
-/* ---------- dialog ---------- */
+/*
+ * 35-desktop.js: Dialogs, and the desktop app's projects
+ *
+ * ask() is the app's dialog (use it instead of confirm()). The rest runs only in the desktop app: opening, creating
+ * and importing projects (each a folder on the computer), saving through the desktop bridge (deskFlush), the Projects
+ * window, and update notices.
+ */
 // ask(title, html, [[value,label,style]]) resolves with the chosen value ('' when closed with Escape).
 function ask(title, html, buttons) {
   return new Promise(res => {
@@ -29378,6 +30327,7 @@ function ask(title, html, buttons) {
 }
 
 /* ---------- desktop projects ---------- */
+// A project's summary for the Projects window: title, words, when saved.
 const deskInfo = st => {
   st = st || S;
   return {
@@ -29386,11 +30336,13 @@ const deskInfo = st => {
     sample: !!st.meta.sample
   };
 };
+// Desktop: saves now and waits for it (before switching project or closing).
 async function deskFlush() {
   clearTimeout(P.timer);
   for (let i = 0; i < 60 && P.busy; i++) await new Promise(r => setTimeout(r, 100));
   if (P.dirty.size || P.gone.size) await flush();
 }
+// Desktop: opens a project folder: loads, checks, merges conflicted copies, and shows it.
 async function deskOpen(id) {
   const r = await DESK.load(id);
   const raw = r && r.data;
@@ -29467,6 +30419,7 @@ async function deskOpen(id) {
   setTimeout(syncCheck, 800); // conflicted copies a sync service left behind
   return true;
 }
+// Desktop: saves a new project (with its pictures) as a new folder and opens it.
 async function deskCreate(np, imgs) {
   np.meta.saved = Date.now();
   const id = await DESK.create(np.meta.title);
@@ -29474,6 +30427,7 @@ async function deskCreate(np, imgs) {
   await DESK.save(id, JSON.stringify(snapshot(np)), deskInfo(np));
   return id;
 }
+// Desktop: a new project, blank or the sample.
 async function deskNew(kind) {
   pmHalt();
   await deskFlush();
@@ -29481,6 +30435,7 @@ async function deskNew(kind) {
   await deskOpen(id);
   return id;
 }
+// Desktop: a backup file as a new project.
 async function deskImport(text) {
   let o, np;
   try {
@@ -29503,6 +30458,7 @@ async function deskImport(text) {
   toast('Imported “' + np.meta.title + '” as a new project. Your other projects are unchanged.', { plain: true });
   return id;
 }
+// Desktop: picks a backup file to import.
 async function deskImportPick() {
   try {
     const t = await DESK.openFile();
@@ -29514,6 +30470,7 @@ async function deskImportPick() {
     toast('Could not open that file.', { plain: true });
   }
 }
+// Desktop start-up: menu commands, closing, focus, updates, and opening the last project.
 async function deskBoot() {
   DESK.onMenu(a => {
     if (a === 'new' || a === 'projects') openProjects();
@@ -29594,6 +30551,7 @@ async function deskBoot() {
   } catch (e) {}
   startTour();
 }
+// The update bar: a new version is downloading, ready, or available to download.
 function showUpdate(st) {
   let bar = $('#updBar');
   if (!st || !/available|ready/.test(st.state)) {
@@ -29637,6 +30595,7 @@ function showUpdate(st) {
     ico('x', 14) +
     '</button>';
 }
+// Checks for an update now (Settings).
 async function checkUpdatesNow() {
   if (!DESK) {
     toast('This is Inkling ' + APP_VERSION + '. The online version updates itself.', { plain: true });
@@ -29652,6 +30611,7 @@ async function checkUpdatesNow() {
     toast('Downloading Inkling ' + r.version + '. You will be asked to restart when it is ready.', { plain: true });
   else showUpdate(r);
 }
+// How long ago a time was, in words.
 const ago = t => {
   const s = (Date.now() - t) / 1000;
   if (s < 60) return 'just now';
@@ -29660,6 +30620,7 @@ const ago = t => {
   if (s < 86400 * 7) return Math.round(s / 86400) + ' days ago';
   return new Date(t).toLocaleDateString();
 };
+// The Projects window.
 async function openProjects() {
   if (!DESK) return;
   await deskFlush();
@@ -29684,10 +30645,12 @@ async function openProjects() {
   const f = $('.pj-dlg [data-pj]', ov);
   if (f) f.focus();
 }
+// Closes the Projects window.
 function closeProjects() {
   const ov = $('#pj');
   if (ov) ov.hidden = true;
 }
+// Draws the Projects window: every project, with open, rename, duplicate, share, backups and delete.
 function drawProjects() {
   const ov = $('#pj'),
     st = ui.pj;
@@ -29799,6 +30762,7 @@ function drawProjects() {
     esc(st.dir) +
     '</code></span><button class="btn sm" data-pj="root">Open folder</button></footer></div>';
 }
+// The Projects window's actions.
 async function pjAct(a, id, name) {
   const st = ui.pj,
     refresh = async () => {
@@ -29907,7 +30871,13 @@ async function pjAct(a, id, name) {
     toast('Something went wrong: ' + ((e && e.message) || e), { plain: true });
   }
 }
-/* ---------- boot ---------- */
+/*
+ * 36-boot.js: Start-up
+ *
+ * init() loads the project (from localStorage, the Claude artifact or the desktop), sets up every part of the screen
+ * once, then draws it all (renderAll). This is the last file, so everything it uses is defined by now.
+ */
+// Draws everything: binder, main pane, Inkling panel, tabs and stats.
 function renderAll() {
   trashPurge();
   $('#projTitle').value = S.meta.title;
@@ -29918,6 +30888,7 @@ function renderAll() {
   syncTab();
   renderSplit();
 }
+// Starts Inkling: loads the project, sets up the screen and its handlers, and draws everything.
 function init() {
   try {
     const f = +localStorage.getItem('inkling:fs');

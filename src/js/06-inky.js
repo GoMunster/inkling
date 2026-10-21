@@ -1,4 +1,14 @@
-/* ---------- pet ---------- */
+/*
+ * 06-inky.js: Inky, the writing pet: drawing, talking, cheering, rewards and the room
+ *
+ * petSVG() draws Inky as inline SVG for any mood, rank and outfit. say(), toast() and cheer() let Inky talk (Settings
+ * in the room decide how chatty). credit() is where every new word lands: it adds to today's count and Inky's total,
+ * the running focus session and the to-do list, and triggers cheers, confetti and rank-ups.
+ *
+ * The second half is what Inky earns: colours, things to wear (PET_ITEMS, PET_ART), achievements (ACH, checked by
+ * checkAch), and the room behind Inky (roomSVG), whose window follows the time of day.
+ */
+// Inky's arm shapes (SVG paths, left and right) for each mood.
 const PET_ARMS = {
   sleepy: ['M34 108 q-10 8 -8 22', 'M126 108 q10 8 8 22'],
   happy: ['M34 106 q-14 2 -16 16', 'M126 106 q14 2 16 16'],
@@ -14,6 +24,7 @@ const PET_ARMS = {
   laugh: ['M34 106 q8 16 28 14', 'M126 106 q-8 16 -28 14'],
   cozy: ['M34 108 q-10 8 -8 22', 'M126 108 q10 8 8 22']
 };
+// Words for each mood, used in the pet's description for screen readers.
 const PET_FEEL = {
   sleepy: 'sleepy',
   party: 'ecstatic',
@@ -32,6 +43,7 @@ const PET_FEEL = {
 // Things Inky holds or shows while reading over your shoulder (look.react): right hand, left hand, or floating.
 const REACT_R = ['umbrella', 'popcorn', 'magnifier', 'wand'],
   REACT_L = ['tissue', 'cookie', 'letter', 'cake'];
+// Things Inky can hold or show while reading (an umbrella, popcorn, a tissue…), as SVG.
 const REACT_ART = {
   tissue:
     '<g class="pr"><path class="tis" d="M10 116 q6 -10 13 -4 q7 -7 13 2 l-3 18 h-20z"/><path class="tis2" d="M16 112 q4 -8 8 -2"/></g>',
@@ -52,6 +64,8 @@ const REACT_ART = {
   excl: '<text class="mark" x="14" y="48">!</text>',
   qmark: '<text class="mark" x="10" y="48">?</text>'
 };
+// Draws Inky as SVG: m is the mood (face and arms), stage the rank (which brings its own accessories), look the
+// colour and what Inky wears (from meta.pet unless given).
 function petSVG(m, stage, look) {
   look = look || (S && S.meta && S.meta.pet) || {};
   const wear = look.wear || {},
@@ -269,6 +283,7 @@ function petSVG(m, stage, look) {
     '</svg>'
   );
 }
+// What Inky says for each mood.
 const LINES = {
   sleepy: [
     'Zzz… write a sentence and I will wake up.',
@@ -283,7 +298,9 @@ const LINES = {
     'I am so proud I could spill.'
   ]
 };
+// Something Inky might say in this mood.
 const line = m => pick(LINES[m]);
+// Puts words in Inky's speech bubble.
 function say(msg) {
   ui.say = msg;
   ui.sayAt = Date.now();
@@ -291,6 +308,7 @@ function say(msg) {
   const b = $('#bubble');
   if (b) b.textContent = msg;
 }
+// Makes Inky hop once.
 function bump() {
   const w = $('#petBtn');
   if (!w) return;
@@ -301,6 +319,8 @@ function bump() {
   card.classList.add('hop');
   setTimeout(() => card.classList.remove('hop'), 700);
 }
+// A short message at the bottom of the screen, with Inky beside it unless o.plain. o.act adds one button: [label,
+// fn].
 function toast(msg, o) {
   const t = $('#toast'),
     withPet = !(o && o.plain);
@@ -332,6 +352,7 @@ function toast(msg, o) {
   clearTimeout(ui.tt2);
   ui.tt = setTimeout(hide, act ? 7000 : 4300);
 }
+// A burst of confetti (skipped when the computer asks for reduced motion, or when switched off in Settings).
 function confetti() {
   if (RM) return;
   const fx = $('#fx'),
@@ -356,6 +377,7 @@ function confetti() {
     setTimeout(() => s.remove(), 2000);
   }
 }
+// Inky celebrates: words in the bubble, and for big moments a toast and confetti, as the writer's settings allow.
 function cheer(msg, big) {
   // Settings in Inky's room: chatty (default), quiet (only big moments pop up) or silent (speech bubble only)
   say(msg);
@@ -364,6 +386,9 @@ function cheer(msg, big) {
   if (talk === 'chatty' || (talk === 'quiet' && big)) toast(msg);
   if (big && talk !== 'off' && LOOK.confetti !== false) confetti();
 }
+// Counts new writing: delta is the change in words. Only additions count, and a single jump of more than 600 words is
+// treated as a paste, not writing. Adds to today, Inky's total and the focus session, ticks to-do items, and cheers
+// at goals and new ranks.
 function credit(delta) {
   if (delta <= 0 || delta > 600) return; // pasted blocks do not count as writing
   if (T.cur && T.running && T.phase === 'focus') {
@@ -456,6 +481,7 @@ const PET_COLORS = [
   ['moss', 'Moss', ['#6FA34A', '#4C7A2E', '#14250A']],
   ['slate', 'Slate', ['#7C8BA1', '#56657A', '#121A26']]
 ];
+// Checks Inky's saved record: name, words, colour, what it wears, achievements and flags.
 function normPet(p) {
   p = p && typeof p === 'object' ? p : {};
   const wear = {};
@@ -481,6 +507,7 @@ function normPet(p) {
         : [0, 1000, 10000, 30000, 60000].filter(x => (+p.total || 0) >= x).length - 1
   }; // older projects keep the rank they had
 }
+// The CSS variables that recolour Inky, as a style attribute.
 const petStyle = look => {
   const c = PET_COLORS.find(x => x[0] === (look && look.color));
   return c && c[2] ? ' style="--pet:' + c[2][0] + ';--pet-deep:' + c[2][1] + ';--pet-ink:' + c[2][2] + '"' : '';
@@ -511,6 +538,7 @@ const PET_ART = {
     '<g class="it"><rect class="c3" x="126" y="92" width="24" height="32" rx="3"/><rect class="gold" x="132" y="88" width="12" height="7" rx="2"/><path class="chain" d="M131 104 h14 M131 111 h14 M131 118 h9"/></g>',
   mug: '<g class="it"><path class="steam" d="M134 98 q-4 -6 0 -12 M142 98 q-4 -6 0 -12"/><rect class="c3" x="128" y="102" width="20" height="22" rx="4"/><path class="c3" d="M148 108 q8 0 8 6 q0 6 -8 6" fill="none" stroke-width="4"/><rect class="c1" x="128" y="108" width="20" height="5"/></g>'
 };
+// Everything Inky can wear or put in the room: id → [slot, name].
 const PET_ITEMS = {
   // id: [slot, name]
   quill: ['hand', 'Quill'],
@@ -536,6 +564,7 @@ const PET_ITEMS = {
   shelf: ['room', 'Bookshelf'],
   hourglass: ['room', 'Hourglass']
 };
+// The numbers achievements are measured by: words, streak, days written, scenes finished, pages, sessions and more.
 function petStats() {
   const m = S.meta,
     d = m.days,
@@ -598,6 +627,7 @@ const ACH = [
   ['streak30', 'Month of ink', 'Reach your goal 30 days running.', 'crown', 'best', 30],
   ['laureate', 'Laureate', 'Reach your novel length goal.', 'laurel', 'stage', 4]
 ];
+// Whether Inky has earned an item (items without an achievement are always available).
 const owns = id => {
   const a = ACH.find(x => x[3] === id);
   return !a || !!S.meta.pet.got[a[0]];
@@ -647,6 +677,7 @@ function checkAch(quiet) {
   if (room) room.innerHTML = roomSVG();
   if (ui.view && ui.view.k === 'den') renderMain();
 }
+// A scene was marked Final: cheers, a to-do tick, and a note when a whole chapter is final.
 function sceneFinal(id) {
   const m = S.meta,
     ch = m.chapters.find(c => c.scenes.includes(id)),
@@ -660,6 +691,7 @@ function sceneFinal(id) {
   todoTick('fin', id);
   checkAch();
 }
+// What Inky says when a project opens: a welcome back, the streak, or the deadline plan.
 function greet() {
   // said once when a project opens
   const d = S.meta.days,
@@ -687,6 +719,7 @@ function greet() {
 // While Inky reads a scene, the window shows the story instead: its time of day, weather and setting, and the room
 // takes on the scene's mood.
 let WIN_ID = 0;
+// The view through the room's window: sea, forest, city and so on, by day or night.
 function winView(place, night) {
   const dk = (a, b) => (night ? b : a);
   if (place === 'sea')
@@ -772,6 +805,7 @@ function winView(place, night) {
     return '<path d="M20 18 H82 V70 H20Z M28 70 Q24 50 34 36 Q44 26 56 30 Q72 32 76 48 Q80 60 74 70Z" fill="#3B3430" fill-rule="evenodd"/>';
   return '';
 }
+// Rain, snow, fog or storm drawn over the window view.
 function winWeather(w) {
   let h = '';
   if (w === 'rain' || w === 'storm') {
@@ -806,6 +840,8 @@ function winWeather(w) {
       '<path class="windl" d="M22 32 q14 -6 26 0 t22 -2"/><path class="windl" d="M28 48 q12 -5 24 0 t18 -1" style="animation-delay:.8s"/><ellipse cx="40" cy="40" rx="3" ry="1.6" fill="#6FA34A" class="windl" style="animation-delay:1.4s;stroke:none;fill:#6FA34A"/>';
   return h;
 }
+// The room behind Inky: the window (the real time of day, or the story's while Inky reads), a plant that grows with
+// the streak, and earned things on the walls and floor.
 function roomSVG() {
   const st = petStats(),
     hr = new Date().getHours(),

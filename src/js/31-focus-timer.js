@@ -1,8 +1,20 @@
-/* ---------- focus timer (pomodoro) and writing sessions ---------- */
+/*
+ * 31-focus-timer.js: The focus timer, writing sessions, the writing report and word history
+ *
+ * The focus timer (pomodoro) runs from end times (T.endAt), not a counting loop, so it stays right in a background
+ * tab or a sleeping laptop. Its state (T) is never saved; each focus session is saved to S.ss when it ends or is
+ * stopped, with the new words written during it (same rules as the daily goal) and the scenes typed in. After the
+ * last session before a long break, a writing report shows words per minute.
+ *
+ * The Writing sessions screen lists past sessions and, at the top, the word history: one bar per day with the goal as
+ * a line (drawWcBox).
+ */
 // Timer state lives only in this page (T); each finished or stopped focus session is saved to S.ss with the
 // new words credited while it ran (same rules as the daily goal) and the scenes typed in.
 const T = { phase: 'focus', running: false, endAt: 0, left: null, count: 0, cur: null, tick: null };
+// The timer's phases and how they are shown.
 const PM_PHASE = { focus: 'Focus', short: 'Short break', long: 'Long break' };
+// Checks the timer settings (minutes for focus and breaks, how many sessions before a long break, sounds…).
 function normPomo(p) {
   p = p && typeof p === 'object' ? p : {};
   const n = (v, d, a, b) => clamp(Math.round(num(v, d)), a, b);
@@ -17,19 +29,25 @@ function normPomo(p) {
     sound: p.sound !== false
   };
 }
+// How long a phase lasts, in milliseconds.
 const pmLen = ph => S.meta.pomo[ph] * 60000;
+// Time left in the current phase.
 const pmLeft = () => (T.running ? Math.max(0, T.endAt - Date.now()) : T.left != null ? T.left : pmLen(T.phase));
+// Milliseconds as "mm:ss".
 const mmss = ms => {
   const s = Math.ceil(ms / 1000);
   return Math.floor(s / 60) + ':' + pad(s % 60);
 };
+// The sound player for the timer's chime (created on the first click, as browsers require).
 let AC = null;
+// Gets the chime's sound player ready.
 function pmAudio() {
   try {
     if (!AC && S.meta.pomo.sound) AC = new (window.AudioContext || window.webkitAudioContext)();
     if (AC && AC.state === 'suspended') AC.resume();
   } catch (e) {}
 }
+// Plays the chime: rising for a break, falling for back to work. Made with Web Audio, no sound files.
 function pmChime(up) {
   if (!S.meta.pomo.sound || !AC) return;
   try {
@@ -50,6 +68,7 @@ function pmChime(up) {
     });
   } catch (e) {}
 }
+// Starts or resumes the timer.
 function pmStart() {
   if (T.running) return;
   const left = pmLeft();
@@ -74,6 +93,7 @@ function pmStart() {
   T.tick = setInterval(pmTick, 250);
   pmPaint();
 }
+// Pauses the timer.
 function pmPause() {
   if (!T.running) return;
   hereSoon();
@@ -83,6 +103,8 @@ function pmPause() {
   if (T.cur) T.cur.ms += Date.now() - T.cur.since;
   pmPaint();
 }
+// Saves the focus session that is running (done: it ran to the end). Sessions under a minute with no words are
+// dropped.
 function pmRecord(done) {
   const c = T.cur;
   T.cur = null;
@@ -107,16 +129,19 @@ function pmRecord(done) {
   if (ui.view && ui.view.k === 'ss') renderMain();
   return S.ss[id];
 }
+// Four times a second while running: updates the display and moves on when time is up.
 function pmTick() {
   if (!T.running) return;
   if (Date.now() >= T.endAt) pmEnd();
   else pmPaint();
 }
+// Moves to the next phase: a short or long break after focus, focus after a break.
 function pmNext(rec) {
   T.count++;
   T.phase = T.count % S.meta.pomo.every === 0 ? 'long' : 'short';
   return rec;
 }
+// A phase ran out: saves the session, chimes, moves on, and starts the next phase if set to.
 function pmEnd() {
   clearInterval(T.tick);
   const P2 = S.meta.pomo,
@@ -155,6 +180,7 @@ function pmEnd() {
   }
   pmPaint();
 }
+// Stops the timer and resets the phase.
 function pmStop() {
   const wasFocus = T.phase === 'focus' && T.cur,
     r = wasFocus ? pmRecord(false) : null;
@@ -166,6 +192,7 @@ function pmStop() {
   hereSoon();
   if (r) toast('Saved this session: ' + fmt(r.words) + ' new words in ' + r.mins + ' min.', { plain: true });
 }
+// Skips to the next phase (a focus session skipped counts as stopped early).
 function pmSkip() {
   if (T.phase === 'focus') {
     const r = pmRecord(false);
@@ -183,6 +210,7 @@ function pmSkip() {
   }
   pmPaint();
 }
+// Saves a running session and stops the timer before the project changes or the window closes.
 function pmHalt() {
   if (T.cur) pmRecord(false);
   clearInterval(T.tick);
@@ -192,7 +220,9 @@ function pmHalt() {
   T.phase = 'focus';
   pmPaint();
 }
+// The circumference of the timer's ring, in SVG units.
 const RING2 = 2 * Math.PI * 52;
+// Updates the timer: time left, ring, phase, buttons and the dots for sessions done.
 function pmPaint() {
   if (!S) return;
   const left = pmLeft(),
@@ -248,6 +278,7 @@ function pmPaint() {
         ' new words.'
       : 'Write in focused bursts. Each session and its word count is saved.';
 }
+// The Focus timer section of the Inkling panel, with its settings.
 function pomoHtml() {
   const P2 = S.meta.pomo,
     n = mySs().length,
@@ -312,6 +343,7 @@ function pomoHtml() {
     ')</span></button></section>'
   );
 }
+// Makes the timer's buttons and settings work.
 function bindPomo() {
   const box = $('#pomo');
   if (!box) return;
@@ -348,6 +380,7 @@ function bindPomo() {
 // the long break ends, a report shows words per minute for each session and on average, against your usual pace.
 const wpmOf = x => (x.mins > 0 ? x.words / x.mins : 0),
   wpmFmt = v => (Math.round(v * 10) / 10).toLocaleString();
+// The writing report after a run of sessions (cyc): words, minutes, words per minute and the scenes worked on.
 function pmReport(cyc) {
   const all = mySs(),
     list = all.filter(x => x.cyc === cyc).sort((a, b) => a.start - b.start);
@@ -496,6 +529,7 @@ const mySs = () =>
   Object.keys(S.ss)
     .map(id => Object.assign({ id }, S.ss[id]))
     .filter(x => (x._by ? nameKey(x._by) === myKey() : !myKey() || !x._dev || x._dev === DEVICE));
+// The Writing sessions screen: word history, then each session with its words and scenes.
 function renderSs(el) {
   const list = mySs().sort((a, b) => b.start - a.start),
     cf = ui.confirm;
@@ -726,12 +760,14 @@ function wcSeries(range) {
   }
   return out;
 }
+// A round number just above v, for a chart's top.
 function niceMax(v) {
   if (v <= 0) return 100;
   const e = Math.pow(10, Math.floor(Math.log10(v))),
     f = v / e;
   return (f <= 1 ? 1 : f <= 2 ? 2 : f <= 2.5 ? 2.5 : f <= 5 ? 5 : 10) * e;
 }
+// The word history chart: one bar per day, the goal as a dashed line, a tooltip, and a table view.
 function drawWcBox(box) {
   if (!box) return;
   const range = ['30', '90', 'year'].includes(ui.wcRange) ? ui.wcRange : '30',

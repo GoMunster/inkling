@@ -1,3 +1,8 @@
+/*
+ * 08-tools.css: Snapshots, find and replace, the tour, sticky notes, dragging, continuity
+ *
+ * Styles apply in file-name order, so a later file can refine an earlier one.
+ */
 /* outline: delete a section */
 .ol-del {
   display: flex;

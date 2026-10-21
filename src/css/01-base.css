@@ -1,3 +1,11 @@
+/*
+ * 01-base.css: Colours, layout and shared controls
+ *
+ * The colour tokens (light and dark palettes, used everywhere as var(--name)), the three-pane layout, and the
+ * buttons, inputs and other controls every screen shares.
+ *
+ * Styles apply in file-name order, so a later file can refine an earlier one.
+ */
 /* Layout concept: a three-pane writing desk. Binder (manuscript + story bible) on the left,
    the page in the middle, the Inkling pet and goals on the right. Under 1080px the panes
    become tabs. Ink-blue is the one UI accent; character / place / thing colours are semantic. */

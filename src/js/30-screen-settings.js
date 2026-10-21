@@ -1,4 +1,13 @@
-/* ---------- your screen: what shows (Window › Project settings) ---------- */
+/*
+ * 30-screen-settings.js: What shows on screen, window actions, and appearance settings
+ *
+ * Project settings (Window › Project settings, meta.layout, personal): which parts of the screen show, the order of
+ * the Inkling panel's sections, and presets. winAct() is the one place window actions arrive, from the ⋯ menu, the
+ * desktop menus and the keyboard.
+ *
+ * Settings ({k:'prefs'}): appearance (theme, font, line height, page width, Inky's chattiness) is kept per device in
+ * LOOK (localStorage inkling:look); the desktop app adds its own sections (projects folder, updates, spelling).
+ */
 // meta.layout = {hide:{key:true}, order:[Inkling panel sections]}. Personal and per project: it follows the writer on
 // a shared project. Projects without one start from this device's default (LOOK.layoutDef, "Use for new projects").
 // Hidden things get an lo-<key> class on #app; the Inkling panel is built in layout order without hidden sections.
@@ -10,6 +19,7 @@ const LO_INSP = [
   ['ms', 'Manuscript'],
   ['scene', 'This scene (synopsis and notes)']
 ];
+// Everything else on screen that can be hidden, in groups.
 const LO_GROUPS = [
   [
     'Panels',
@@ -48,7 +58,9 @@ const LO_GROUPS = [
     ]
   ]
 ];
+// Every key that can be hidden.
 const LO_ALL = LO_INSP.map(x => x[0]).concat(...LO_GROUPS.map(g => g[1].map(x => x[0])));
+// Ready-made layouts: [name, keys hidden].
 const LO_PRESETS = {
   standard: ['Everything', []],
   calm: ['Calm', ['saveSt', 'hint', 'link', 'size', 'snapBtn', 'read', 'ms', 'scene']],
@@ -57,6 +69,7 @@ const LO_PRESETS = {
     ['binder', 'insp', 'saveSt', 'hint', 'link', 'size', 'stk', 'snapBtn', 'read', 'status', 'swc']
   ]
 };
+// Checks a layout: what is hidden and the panel's order.
 function normLayout(x) {
   x = x && typeof x === 'object' ? x : {};
   const hide = {},
@@ -70,7 +83,9 @@ function normLayout(x) {
   });
   return { hide, order };
 }
+// Whether a part of the screen is hidden.
 const loHidden = k => !!(S && S.meta.layout && S.meta.layout.hide[k]);
+// Applies the layout: an lo-<key> class on #app for each hidden part.
 function applyLayout() {
   const app = $('#app');
   if (!app || !S) return;
@@ -78,6 +93,7 @@ function applyLayout() {
   Object.keys(S.meta.layout.hide).forEach(k => app.classList.add('lo-' + k));
   applyCols();
 }
+// Hides or shows a part of the screen.
 function loSet(k, hide) {
   const h = S.meta.layout.hide;
   if (hide) h[k] = true;
@@ -86,6 +102,7 @@ function loSet(k, hide) {
   applyLayout();
   if (LO_INSP.some(s => s[0] === k)) renderInspector();
 }
+// Toggles a part of the screen (with a short note saying how to bring it back).
 function loToggle(k) {
   loSet(k, !loHidden(k));
   if (ui.view.k === 'layout') renderMain();
@@ -148,6 +165,7 @@ function winAct(a, src) {
     else document.execCommand(a);
   }
 }
+// The Project settings screen.
 function renderLayout(el) {
   const m = S.meta,
     L = m.layout,
@@ -325,6 +343,7 @@ function renderLayout(el) {
 /* ---------- settings ---------- */
 // Appearance is per device (localStorage), not per project: theme, writing font, line spacing, page width, spellcheck.
 const LOOK_DEF = { theme: 'system', font: 'literata', lh: 1.8, width: 'standard', spell: true };
+// Fonts the writer can choose for the page: [id, name, CSS font-family].
 const FONTS = [
   ['literata', 'Literata (book serif)', "'Literata',Georgia,serif"],
   ['georgia', 'Georgia', "Georgia,'Times New Roman',serif"],
@@ -333,11 +352,14 @@ const FONTS = [
   ['mono', 'Typewriter (IBM Plex Mono)', "'IBM Plex Mono',ui-monospace,monospace"],
   ['system', 'This computer’s font', "system-ui,-apple-system,'Segoe UI',sans-serif"]
 ];
+// Page widths: [name, pixels].
 const WIDTHS = { narrow: ['Narrow', 640], standard: ['Standard', 780], wide: ['Wide', 980] };
+// This device's appearance settings, loaded from localStorage.
 let LOOK = Object.assign({}, LOOK_DEF);
 try {
   LOOK = Object.assign(LOOK, JSON.parse(localStorage.getItem('inkling:look') || '{}'));
 } catch (e) {}
+// Applies the appearance settings to the page (theme, font, line height, width).
 function applyLook() {
   const r = document.documentElement,
     f = FONTS.find(x => x[0] === LOOK.font) || FONTS[0];
@@ -352,6 +374,7 @@ function applyLook() {
   if (app) app.classList.toggle('tw', !!LOOK.typewriter);
   applySides();
 }
+// Saves the appearance settings on this device.
 function saveLook() {
   try {
     localStorage.setItem('inkling:look', JSON.stringify(LOOK));
@@ -359,6 +382,7 @@ function saveLook() {
   applyLook();
 }
 applyLook();
+// The Settings screen.
 async function renderPrefs(el) {
   const pf = DESK ? await DESK.prefs().catch(() => null) : null;
   const seg = (k, opts) =>
@@ -546,6 +570,7 @@ async function renderPrefs(el) {
     if (x.dataset.pf === 'spell') await DESK.setPrefs({ spell: x.value });
   };
 }
+// Desktop: moves the projects folder somewhere else (or back to the default).
 async function changeFolder(toDefault) {
   const pf = await DESK.prefs(),
     dir = toDefault ? pf.defaultDir : await DESK.chooseDir();

@@ -1,3 +1,11 @@
+/*
+ * 06-planning.css: Pictures, notes, outlines, maps and trees
+ *
+ * Story page pictures, notes pages and brainstorm boards, outlines, the Customize binder options, and relationship
+ * maps and family trees.
+ *
+ * Styles apply in file-name order, so a later file can refine an earlier one.
+ */
 /* binder extras */
 .bav {
   width: 18px;

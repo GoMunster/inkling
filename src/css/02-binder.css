@@ -1,3 +1,10 @@
+/*
+ * 02-binder.css: The binder
+ *
+ * The left-hand pane: chapters, scenes, sections and story pages.
+ *
+ * Styles apply in file-name order, so a later file can refine an earlier one.
+ */
 /* binder */
 .pane-head {
   display: flex;

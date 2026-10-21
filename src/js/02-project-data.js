@@ -1,4 +1,13 @@
-/* ---------- sample + blank projects ---------- */
+/*
+ * 02-project-data.js: The sample project, a blank project, and checking every saved project as it opens
+ *
+ * sampleProject() is "The Lantern Tide", the small book a new writer sees first. blankProject() is an empty one.
+ * normalize() is the gatekeeper for everything loaded from storage, a backup or another computer: it fills in missing
+ * fields, drops broken references and makes every value the right type, so the rest of the app can trust the data.
+ *
+ * The second half holds the timeline's building blocks: colours, card styles, time-scale presets and normTl(), which
+ * checks one timeline.
+ */
 function sampleProject() {
   const t1 =
     'Ilsa Verrin stepped off the ferry with one bag, one coat, and no plan she was willing to say aloud. Marrow Quay smelled of tar and wet rope, and the fog had already swallowed the far end of the pier.\n\n"You\'ll be wanting the Gull," said the porter, not asking. "Everyone does, the first night."\n\nShe did not argue. The Gull & Lantern was the only lit window on the whole waterfront, and somewhere inside it, Tobias Crane was waiting with a story she had crossed the sea to hear.';
@@ -327,6 +336,7 @@ function sampleProject() {
   };
   return { meta, sc, en, tl, ch, nt, ol, rm: { m_main: rm }, ft: { f_main: ft }, ss };
 }
+// An empty project: one chapter with one empty scene.
 function blankProject() {
   const c = uid('c_'),
     s = uid('s_');
@@ -350,6 +360,8 @@ function blankProject() {
     en: {}
   };
 }
+// Checks and repairs a project as it is loaded, whatever its source: upgrades old formats, fills in defaults, keeps
+// only valid values and links, and collects change stamps. Returns a project the rest of the app can trust.
 function normalize(o) {
   o = JSON.parse(JSON.stringify(o));
   o.meta = o.meta || {};
@@ -625,13 +637,16 @@ const TL_COLORS = [
   ['danger', 'Red'],
   ['muted', 'Slate']
 ];
+// Timeline lane heights for each card density, in pixels.
 const TL_DENS = { compact: 46, normal: 112, tall: 176 };
+// How a timeline card can look.
 const TL_STYLES = [
   ['tint', 'Tinted'],
   ['outline', 'Outline'],
   ['dashed', 'Dashed'],
   ['solid', 'Solid']
 ];
+// How finely timeline cards snap when dragged, in axis units.
 const TL_SNAPS = [
   [0, 'Free'],
   [1, 'Whole units'],
@@ -639,6 +654,7 @@ const TL_SNAPS = [
   [0.25, 'Quarters'],
   [0.1, 'Tenths']
 ];
+// Ready-made time scales: [tick label template, list of names, menu label].
 const TL_PRESETS = [
   ['Day {n}', '', 'Days'],
   ['Week {n}', '', 'Weeks'],
@@ -651,20 +667,28 @@ const TL_PRESETS = [
   ['{name}, week {cycle}', 'Mon, Tue, Wed, Thu, Fri, Sat, Sun', 'Weekdays'],
   ['{n}', '', 'Plain numbers']
 ];
+// Whether a value is a #rrggbb colour.
 const hexOk = c => /^#[0-9a-f]{6}$/i.test(c || '');
+// Whether a value is a colour Inkling accepts: a named token or #rrggbb.
 const colOk = c => hexOk(c) || TL_COLORS.some(x => x[0] === c);
+// A colour as CSS: a token becomes var(--token); anything invalid falls back to the accent colour.
 const cssCol = c => (hexOk(c) ? c : 'var(--' + (colOk(c) ? c : 'accent') + ')');
+// A readable text colour (dark or light) to draw on top of a background colour.
 function inkOn(c) {
   if (!hexOk(c)) return 'var(--paper)';
   const n = parseInt(c.slice(1), 16);
   return (((n >> 16) & 255) * 299 + ((n >> 8) & 255) * 587 + (n & 255) * 114) / 1000 > 150 ? '#17202D' : '#FFFFFF';
 }
+// A number from any value, or the default d when it is not one.
 const num = (v, d) => {
   v = parseFloat(v);
   return isFinite(v) ? v : d;
 };
+// Keeps a number between a and b.
 const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+// A number with at most two decimals, for showing axis values.
 const nfmt = v => String(Math.round(v * 100) / 100);
+// A new timeline with three lanes and no cards.
 function newTl() {
   const l = (name, color) => ({ id: uid('l_'), name, color, hide: false });
   return {
@@ -679,6 +703,7 @@ function newTl() {
     marks: []
   };
 }
+// Checks one timeline: its time scale, lanes, cards, marks and settings, keeping only valid values.
 function normTl(t) {
   t = t && typeof t === 'object' ? t : {};
   const a = t.axis || {};

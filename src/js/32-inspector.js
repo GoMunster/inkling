@@ -1,4 +1,11 @@
-/* ---------- inspector ---------- */
+/*
+ * 32-inspector.js: The Inkling panel (right-hand pane)
+ *
+ * renderInspector() builds the panel from its sections, in the writer's order (Project settings): Inky and the room,
+ * the focus timer, today's goal, the to-do list, the manuscript totals, and for an open scene its synopsis, details,
+ * target and notes.
+ */
+// Builds the Inkling panel and wires up its sections.
 function renderInspector() {
   applyLayout();
   const m = S.meta,

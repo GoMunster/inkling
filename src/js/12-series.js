@@ -1,4 +1,12 @@
-/* ---------- series bible: bring story pages, timelines, maps and world details in from another book ---------- */
+/*
+ * 12-series.js: Series bible: sharing a world between the books of a series
+ *
+ * The Series bible screen ({k:'series'}) names the series and the book's number, and brings story pages, timelines,
+ * world maps, calendars and money in from another book: another project on this computer (desktop) or a backup file.
+ * A page brought in remembers where it came from (meta.ents[id].from), so a later import updates it instead of making
+ * a copy. It also exports a story bible: every page, arc, thread, calendar and currency as one Word or Markdown
+ * document.
+ */
 // meta.series{name,num}. A page brought in keeps from{book,src,id,at} (src: the desktop project id, '' for a backup
 // file) so it can be updated later from that book. View {k:'series'} (renderSeries); ui.sb holds the open source:
 // {title,src,data (normalized),imgs (backup pictures)}. A story bible document exports every page (bibleBlocks).
@@ -6,6 +14,7 @@ function normSeries(x) {
   x = x && typeof x === 'object' ? x : {};
   return { name: String(x.name || '').slice(0, 120), num: Math.max(0, Math.min(999, Math.round(+x.num || 0))) };
 }
+// Checks where a page came from: {book, src (desktop project id), id (the page there), at}.
 function normFrom(f) {
   return f && typeof f === 'object' && typeof f.id === 'string'
     ? {
@@ -16,6 +25,7 @@ function normFrom(f) {
       }
     : null;
 }
+// Opens another project on this computer as the source to bring things in from.
 async function sbOpenDesk(id) {
   try {
     const r = await DESK.read(id);
@@ -33,6 +43,7 @@ async function sbOpenDesk(id) {
   }
   renderMain();
 }
+// Opens a backup file as the source to bring things in from.
 function sbOpenFile(f) {
   const r = new FileReader();
   r.onload = () => {
@@ -62,10 +73,12 @@ function sbMatch(e, src) {
     null
   );
 }
+// A fingerprint of a page's content, to tell whether it differs between the two books.
 const sbPageSig = (meta, en, id) => {
   const e = meta.ents[id];
   return canon({ n: e.name, a: e.aliases, t: e.tag, ty: e.type, f: (en[id] || {}).fields || {} });
 };
+// Copies a picture from the source book onto a page or map here.
 async function sbPic(srcId, srcPic, id) {
   // copies a picture from the source book onto the page or map `id` here
   let url = '';
@@ -87,6 +100,8 @@ async function sbPic(srcId, srcPic, id) {
     if (srcPic[k] != null) p[k] = srcPic[k];
   });
 }
+// Brings the chosen pages, timelines, maps and calendars/money in from the source book. Matching pages are updated,
+// not duplicated. Returns how many things came in.
 async function sbBring(sel) {
   const sb = ui.sb,
     src = sb.data,
@@ -182,6 +197,7 @@ async function sbBring(sel) {
   renderBinder();
   return n;
 }
+// The Series bible screen.
 function renderSeries(el) {
   const m = S.meta,
     sb = ui.sb,
@@ -475,6 +491,7 @@ function bibleBlocks() {
   }
   return out;
 }
+// The story bible as Markdown.
 function bibleMd() {
   return (
     bibleBlocks()
@@ -495,6 +512,7 @@ function bibleMd() {
       .join('\n\n') + '\n'
   );
 }
+// The story bible as a Word document.
 function bibleDocx() {
   const W = 'xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"';
   const r = (t, o) =>
@@ -575,181 +593,4 @@ function bibleDocx() {
     ],
     ['word/styles.xml', styles]
   ]);
-}
-function stThreadsHtml() {
-  const m = S.meta,
-    rows = storyRows(),
-    chs = m.chapters.filter(c => c.scenes.length),
-    idx = {};
-  chs.forEach((c, i) => {
-    idx[c.id] = i;
-  });
-  const add =
-    '<div class="th-add"><input id="thName" maxlength="80" placeholder="A subplot, mystery or relationship, like “Who sank the Lantern?”" aria-label="New plot thread"><button class="btn pri" data-st="thadd">' +
-    ico('plus', 14) +
-    '<span>Add thread</span></button></div>';
-  if (!m.threads.length)
-    return (
-      '<section class="pf"><h2>Plot threads</h2><p class="fine">Plot threads are the storylines that run through your book: subplots, mysteries, relationships. Tag the scenes that move each one on (Inkling panel › This scene › Plot threads) and see where each thread goes quiet or is left hanging.</p>' +
-      add +
-      '</section>'
-    );
-  const doneAt = {};
-  m.threads.forEach(t => {
-    const r = t.done && rows.find(x => x.id === t.done);
-    if (r) doneAt[t.id] = idx[r.ch.id];
-  });
-  const grid =
-    '<div class="st-grid-wrap"><table class="st-tab th-tab"><thead><tr><th></th>' +
-    chs.map((c, i) => '<th title="' + esc(c.title) + '">' + (i + 1) + '</th>').join('') +
-    '</tr></thead><tbody>' +
-    m.threads
-      .map(t => {
-        const n = {};
-        rows.forEach(r => {
-          if (r.threads.includes(t.id)) n[idx[r.ch.id]] = (n[idx[r.ch.id]] || 0) + 1;
-        });
-        return (
-          '<tr><th><span class="th-dot" style="--c:' +
-          cssCol(t.color) +
-          '"></span>' +
-          esc(t.name) +
-          '</th>' +
-          chs
-            .map((c, i) => {
-              const k = n[i] || 0,
-                after = doneAt[t.id] != null && i > doneAt[t.id];
-              return (
-                '<td class="th-c' +
-                (k ? ' on' : '') +
-                (after ? ' after' : '') +
-                (doneAt[t.id] === i ? ' done' : '') +
-                '" style="--c:' +
-                cssCol(t.color) +
-                '" title="' +
-                esc(
-                  t.name +
-                    ' · ' +
-                    c.title +
-                    ': ' +
-                    k +
-                    ' scene' +
-                    (k === 1 ? '' : 's') +
-                    (doneAt[t.id] === i ? ' · resolved here' : '')
-                ) +
-                '">' +
-                (doneAt[t.id] === i ? '✓' : k > 1 ? k : '') +
-                '</td>'
-              );
-            })
-            .join('') +
-          '</tr>'
-        );
-      })
-      .join('') +
-    '</tbody></table></div>';
-  const warn = threadWarnings();
-  const scOpts = sel =>
-    '<option value="">Not resolved yet</option>' +
-    m.chapters
-      .map(
-        ch =>
-          '<optgroup label="' +
-          esc(ch.title) +
-          '">' +
-          ch.scenes
-            .map(
-              id =>
-                '<option value="' +
-                id +
-                '"' +
-                (sel === id ? ' selected' : '') +
-                '>' +
-                esc(m.scenes[id].title) +
-                '</option>'
-            )
-            .join('') +
-          '</optgroup>'
-      )
-      .join('');
-  const cards = m.threads
-    .map(t => {
-      const sc = rows.filter(r => r.threads.includes(t.id));
-      return (
-        '<div class="th-card" style="--c:' +
-        cssCol(t.color) +
-        '"><div class="th-row"><input data-th="name" data-id="' +
-        t.id +
-        '" value="' +
-        esc(t.name) +
-        '" maxlength="80" aria-label="Thread name">' +
-        '<span class="sws mini">' +
-        TL_COLORS.map(
-          c =>
-            '<button class="sw' +
-            (c[0] === t.color ? ' on' : '') +
-            '" data-st="thcol" data-id="' +
-            t.id +
-            '" data-c="' +
-            c[0] +
-            '" style="--c:var(--' +
-            c[0] +
-            ')" title="' +
-            c[1] +
-            '" aria-label="' +
-            c[1] +
-            '"></button>'
-        ).join('') +
-        '</span>' +
-        '<button class="ibtn" data-st="thdel" data-id="' +
-        t.id +
-        '" aria-label="Delete thread" title="Delete thread">' +
-        ico('trash', 14) +
-        '</button></div>' +
-        '<textarea data-th="note" data-id="' +
-        t.id +
-        '" rows="2" placeholder="What this thread is about, and how it should end." aria-label="Thread notes">' +
-        esc(t.note) +
-        '</textarea>' +
-        '<label class="f">Resolved in<select data-th="done" data-id="' +
-        t.id +
-        '">' +
-        scOpts(t.done) +
-        '</select></label>' +
-        '<p class="fine">' +
-        (sc.length
-          ? 'In ' +
-            sc.length +
-            ' scene' +
-            (sc.length === 1 ? '' : 's') +
-            ': ' +
-            sc
-              .slice(0, 8)
-              .map(r => '<button class="lnk" data-open="' + r.id + '">' + esc(r.title) + '</button>')
-              .join(', ') +
-            (sc.length > 8 ? ' and more' : '')
-          : 'Not in any scene yet.') +
-        '</p></div>'
-      );
-    })
-    .join('');
-  return (
-    '<section class="pf"><h2>Plot threads</h2><p class="fine">Each row is a thread, each column a chapter. Tag scenes in the Inkling panel (This scene › Plot threads); mark where a thread is resolved below.</p>' +
-    grid +
-    '</section>' +
-    '<section class="pf"><h2>Threads to check <span class="muted">' +
-    warn.length +
-    '</span></h2>' +
-    (warn.length
-      ? '<ul class="st-notes">' +
-        warn.map(w => '<li class="th-w ' + w.kind + '">' + esc(w.text) + '</li>').join('') +
-        '</ul>'
-      : '<p class="ct-none">Every thread keeps turning up and is resolved.</p>') +
-    '</section>' +
-    '<section class="pf"><h2>Your threads</h2>' +
-    add +
-    '<div class="th-cards">' +
-    cards +
-    '</div></section>'
-  );
 }

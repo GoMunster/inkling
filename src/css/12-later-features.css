@@ -1,3 +1,13 @@
+/*
+ * 12-later-features.css: Newer features
+ *
+ * Sidebar widths, the to-do list, Inky reading over your shoulder, editing tools, the writing report, Project
+ * settings, the deadline planner, the Trash, Search everything, side by side, the quick switcher, menus, word
+ * targets, story page fields, and the layout for
+ * narrow screens (tabs). Each part starts with a comment.
+ *
+ * Styles apply in file-name order, so a later file can refine an earlier one.
+ */
 /* sidebar edges: drag to widen */
 .sizer {
   position: absolute;

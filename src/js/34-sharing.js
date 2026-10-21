@@ -1,4 +1,16 @@
-/* ---------- shared projects: merging ---------- */
+/*
+ * 34-sharing.js: Shared projects: merging two writers' work, presence, and setting up sharing
+ *
+ * Two computers can save one project through a sync folder (Dropbox, Google Drive, OneDrive, iCloud). Saves are
+ * compare-and-swap: if the file changed since this computer last read it, the two versions are merged record by
+ * record (mergeProjects): a record only one side changed takes that change, a true clash goes to the newer change,
+ * and a scene clash keeps the other text as a snapshot. Deletions are known from meta.gone. patchState() then updates
+ * the screen in place.
+ *
+ * Presence: each computer writes a small file saying who has the project open and which scene they are in (hereTick),
+ * shown as letters in the binder and a chip in the top bar (paintHere). Setting up: openShare() moves a project into
+ * a sync folder, openSharedPick() opens one there, setMyName() sets the writer's name.
+ */
 // Two computers can save the same project through a sync folder. Instead of one version replacing the other, the two
 // are merged record by record: a scene, a story page, a timeline... each is one record with a change stamp (_m) and
 // author (_by). PJ.base is the version this computer last read or wrote, so a record that only one side changed is
@@ -13,8 +25,11 @@ function canon(x) {
       : v
   );
 }
+// Whether two values are the same, ignoring change stamps.
 const same = (a, b) => canon(a) === canon(b);
+// A deep copy of a plain value.
 const clone = x => (x === undefined ? undefined : JSON.parse(JSON.stringify(x)));
+// Three-way choice for one value: base, ours, theirs. If only one side changed it, that change wins.
 function pick3(b, o, t) {
   if (same(o, t)) return o;
   if (b !== undefined && same(o, b)) return t;
@@ -36,6 +51,7 @@ function mergeOrder(b, o, t) {
   });
   return out;
 }
+// A record's name, for the "merged with…" message.
 function recName(p, id, m) {
   if (p === 'sc') return (m.scenes[id] || {}).title;
   if (p === 'en') return (m.ents[id] || {}).name;
@@ -44,6 +60,8 @@ function recName(p, id, m) {
   if (p === 'ch') return ((m.chapters || []).find(x => x.id === id) || {}).title + ' notes';
   return '';
 }
+// Merges one kind of record (scenes, pages…) three ways, using change times for true clashes and meta.gone for
+// deletions.
 function mergeRecords(p, b, o, t, goneO, goneT, rep, mo, mt) {
   const out = {};
   new Set([...Object.keys(o), ...Object.keys(t)]).forEach(id => {
@@ -74,6 +92,7 @@ function mergeRecords(p, b, o, t, goneO, goneT, rep, mo, mt) {
   });
   return out;
 }
+// Merges the project's index (meta) field by field, keeping both sides' list order changes.
 function mergeMeta(b, o, t) {
   b = b || {};
   const out = clone(o),
@@ -159,6 +178,7 @@ function mergeMeta(b, o, t) {
   });
   return out;
 }
+// After a merge: makes the indexes in meta match the records that survived (no lost or orphaned scenes).
 function fixMerged(out, o, t) {
   // the indexes in meta follow the records that survived
   const m = out.meta,
@@ -273,7 +293,9 @@ function mergeProjects(base, ours, theirs) {
   fixMerged(out, ours, theirs);
   return { out, rep };
 }
+// Meta fields ignored when comparing projects (each device's own working copies).
 const PROJ_SKIP = new Set(PERSONAL.concat(['saved']));
+// Whether two versions of a project hold the same work.
 function sameProject(a, b) {
   // ignoring the per-device copies of personal stats at the top of meta
   const strip = x => {
@@ -304,6 +326,7 @@ function stampMine(st) {
   if (!w || canon(Object.assign({}, w, { at: 0 })) !== canon(Object.assign({}, cur, { at: 0 })))
     m.writers[k] = Object.assign(clone(cur), { at: Date.now() });
 }
+// Takes this writer's personal stats from meta.writers into the working copy.
 function adoptMine(st) {
   const m = st.meta,
     wr = m.writers || {};
@@ -360,6 +383,7 @@ function patchState(ns) {
     });
   });
 }
+// A fingerprint of the data a view shows, to tell whether a merge changed it.
 function viewSig(v) {
   if (!v) return '';
   const m = S.meta;
@@ -370,6 +394,8 @@ function viewSig(v) {
   if (v.k === 'prefs' || v.k === 'help' || v.k === 'find') return v.k;
   return canon([m.chapters, m.scenes, Object.keys(S.ss).length]);
 }
+// Merges another computer's version (and any conflicted copies) into this one, updates the screen and says what
+// changed.
 function mergeIn(theirs, strays) {
   const ours = clone(snapshot(S));
   let r = mergeProjects(PJ.base, ours, theirs);
@@ -463,6 +489,7 @@ async function deskSync() {
   }
   throw new Error('the shared folder keeps changing; trying again shortly');
 }
+// Checks whether another computer saved the project (every 8 s and on focus), and merges if so.
 async function syncCheck() {
   if (!PJ.id || ui.locked || P.busy) return;
   try {
@@ -482,6 +509,7 @@ async function syncCheck() {
     }
   }
 }
+// Tells the writer what came in from another computer.
 function announceMerge(rep) {
   const who = [...rep.by].join(' and ') || 'another computer',
     names = [...new Set(rep.items.map(x => x.name).filter(Boolean))];
@@ -534,7 +562,9 @@ function announceMerge(rep) {
 }
 
 /* ---------- shared projects: who else is here ---------- */
+// A co-writer's name (or their computer's name).
 const whoName = o => o.name || o.host || 'Someone';
+// Writes this computer's presence file and reads the others'.
 async function hereTick() {
   if (!DESK || !PJ.id) return;
   const v = ui.view,
@@ -553,11 +583,13 @@ async function hereTick() {
   }
   paintHere();
 }
+// Updates presence shortly (after opening a scene).
 function hereSoon() {
   if (!DESK) return;
   clearTimeout(ui.hereT);
   ui.hereT = setTimeout(hereTick, 400);
 }
+// Shows who else is here: the top bar chip, letters in the binder, a note on a scene someone else has open.
 function paintHere() {
   const others = ui.others || [];
   let chip = $('#hereChip');
@@ -648,11 +680,13 @@ function paintHere() {
     );
   }
 }
+// A stable colour for a name.
 const hue = n => {
   let h = 0;
   for (const c of String(n)) h = (h * 31 + c.charCodeAt(0)) % 360;
   return h;
 };
+// The popup listing who else has the project open.
 function openHerePop() {
   const pop = document.createElement('div');
   pop.id = 'herePop';
@@ -812,6 +846,7 @@ async function openShare(id) {
   const f = $('[data-sh]', ov);
   if (f) f.focus();
 }
+// Opens a project from a shared folder.
 async function openSharedPick() {
   try {
     pmHalt();
@@ -832,6 +867,7 @@ async function openSharedPick() {
     toast('Could not open that folder: ' + ((e && e.message) || e), { plain: true });
   }
 }
+// Sets the writer's name and moves their personal stats to the new name.
 function setMyName(n) {
   const old = myKey();
   ME.name = String(n || '')
@@ -848,6 +884,7 @@ function setMyName(n) {
   dirty('meta');
   hereSoon();
 }
+// The "How sharing works" guide.
 function helpShareHtml() {
   const sec = (t, b) => '<section class="pf hs"><h2>' + t + '</h2>' + b + '</section>';
   return (
@@ -886,6 +923,7 @@ function helpShareHtml() {
     '</div>'
   );
 }
+// The "How sharing works" screen.
 function renderHelp(el) {
   el.innerHTML =
     '<div class="main-head">' +

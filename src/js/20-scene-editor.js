@@ -1,4 +1,15 @@
-/* ---------- main: scene ---------- */
+/*
+ * 20-scene-editor.js: The main pane and the scene editor
+ *
+ * renderMain() draws whatever view is open in the main pane, choosing the right render function for its kind. The
+ * rest of the file is the scene editor: renderScene() builds the page (title, status, toolbar, the editable text and
+ * its margins), and onType() runs on every change to save the text, count new words for Inky and the daily goal, keep
+ * name links and word counts up to date, and keep the caret on screen.
+ *
+ * Also here: Inkling's own undo and redo per scene, Tab indents, the word count of a selection, reading aloud, the
+ * keyboard shortcuts list, and sticky notes in the page margins.
+ */
+// Draws the open view in the main pane, and keeps the scroll position when the same view is redrawn.
 function renderMain() {
   const v = ui.view,
     el = $('#main');
@@ -34,6 +45,8 @@ function renderMain() {
   el.scrollTop = reset ? 0 : keep;
   if (reset && v.k === 'scene') posRestore(v.id);
 }
+// Draws the scene editor: title, status, word count, the toolbar, the text with its name links and formatting, sticky
+// notes, and the next and previous scene buttons. Also wires up typing, shortcuts and pasting.
 function renderScene(el, v) {
   const m = S.meta,
     sc = m.scenes[v.id],
@@ -387,9 +400,12 @@ function renderScene(el, v) {
 // grouped into steps at pauses of a second or more; pastes, formatting and indents are steps of their own. Offsets
 // here are in the visible text with its line breaks (edSel); right after renderText() they match the DOM's offsets.
 const UNDO = {};
+// A scene's undo history, started from its current text.
 function undoOf(id) {
   return UNDO[id] || (UNDO[id] = { cur: { text: S.sc[id].text }, undo: [], redo: [], at: 0, big: false });
 }
+// Records the scene's text for undo: a new step after a pause in typing (or for big changes), otherwise part of the
+// current step.
 function undoNote(id, text, big) {
   const h = undoOf(id),
     now = Date.now();
@@ -403,6 +419,7 @@ function undoNote(id, text, big) {
   h.at = now;
   h.big = !!big;
 }
+// A DOM position in the editor as a position in its visible text (line breaks counted).
 function visAt(ed, node, off) {
   const rg = document.createRange();
   rg.selectNodeContents(ed);
@@ -411,12 +428,14 @@ function visAt(ed, node, off) {
   d.appendChild(rg.cloneContents());
   return plainText(getText(d)).length;
 }
+// The editor's selection as {s, e} in its visible text, or null.
 function edSel(ed) {
   const s = getSelection();
   if (!s.rangeCount || !ed.contains(s.anchorNode)) return null;
   const r = s.getRangeAt(0);
   return { s: visAt(ed, r.startContainer, r.startOffset), e: visAt(ed, r.endContainer, r.endOffset) };
 }
+// Undo (or redo with redo = true) in the open scene.
 function edHist(redo) {
   const v = ui.view,
     ed = $('#ed');
@@ -567,6 +586,7 @@ function followCaret() {
 // Read aloud: the selection, or from the caret's paragraph to the end, one paragraph at a time, each one
 // highlighted while it is read (CSS custom highlights, where the browser has them).
 const canSpeak = () => !!(window.speechSynthesis && window.SpeechSynthesisUtterance);
+// Shows whether reading aloud is on, on its button.
 function raPaint() {
   const b = $('#raBtn');
   if (b) {
@@ -574,6 +594,7 @@ function raPaint() {
     b.setAttribute('aria-pressed', ui.ra ? 'true' : 'false');
   }
 }
+// Stops reading aloud.
 function raStop() {
   if (!ui.ra) return;
   ui.ra = false;
@@ -585,6 +606,7 @@ function raStop() {
   } catch (e) {}
   raPaint();
 }
+// Highlights the words being read aloud.
 function raMark(ed, a, z) {
   if (!window.Highlight || !window.CSS || !CSS.highlights || !ed.isConnected) return;
   const w = document.createTreeWalker(ed, NodeFilter.SHOW_TEXT),
@@ -611,6 +633,7 @@ function raMark(ed, a, z) {
   if (b.top < 80 || b.bottom > innerHeight - 80)
     (r.startContainer.parentElement || ed).scrollIntoView({ block: 'center' });
 }
+// Reads the selection aloud, or from the caret's paragraph to the end, one paragraph at a time.
 function readAloud() {
   if (!canSpeak()) return;
   if (ui.ra) {
@@ -657,7 +680,9 @@ function readAloud() {
     speechSynthesis.speak(u);
   });
 }
+// The shortcut key name for this computer: ⌘ on a Mac, Ctrl elsewhere.
 const MODK = /Mac|iPhone|iPad/.test(navigator.platform || '') ? '⌘' : 'Ctrl';
+// The keyboard shortcuts dialog.
 function showKeys() {
   const k = s =>
       s
@@ -694,6 +719,7 @@ function showKeys() {
 // when there is room for them; otherwise as small coloured tabs on the page edge that open when clicked.
 const STK_COLORS = ['thing', 'char', 'accent', 'place'],
   STK_W = 172;
+// Checks a scene's sticky notes.
 function normStickies(a) {
   return (Array.isArray(a) ? a : [])
     .filter(x => x && x.id)
@@ -706,6 +732,7 @@ function normStickies(a) {
       y: Math.max(0, Math.round(+x.y || 0))
     }));
 }
+// Where the margins are, beside the page, and whether notes fit in them or fold into tabs.
 function stkGeo() {
   const w = $('#sheetWrap'),
     sh = w && $('.sheet', w);
@@ -726,6 +753,7 @@ function stkGeo() {
     roomR: R >= STK_W + 20
   };
 }
+// Draws a scene's sticky notes in the margins (or as tabs on the page edge when the margins are narrow).
 function stkDraw(sid) {
   const lay = $('#stkLayer'),
     g = stkGeo(),
@@ -793,6 +821,7 @@ function stkDraw(sid) {
     .join('');
   lay.querySelectorAll('textarea').forEach(ag);
 }
+// Adds a sticky note in a margin at a height on the page.
 function stkAdd(sid, side, y) {
   const d = S.sc[sid],
     g = stkGeo();
@@ -815,6 +844,7 @@ function stkAdd(sid, side, y) {
   const t = $('#stkLayer .stk[data-id="' + n.id + '"] textarea');
   if (t) t.focus();
 }
+// Makes sticky notes work: add (button or double-click in a margin), edit, recolour, delete and drag.
 function stkBind(sid) {
   const wrap = $('#sheetWrap'),
     lay = $('#stkLayer');
@@ -947,12 +977,14 @@ function stkBind(sid) {
     document.addEventListener('pointerup', up);
   });
 }
+// Bold, italic or underline from a button or shortcut: one undo step.
 function fmtCmd(cmd) {
   ui.bigEdit = true;
   document.execCommand(cmd);
   const ed = $('#ed');
   if (ed) ed.dispatchEvent(new Event('input', { bubbles: true }));
 }
+// Selects visible-text positions s to e in an element.
 function selectRange(el, s, e) {
   const w = document.createTreeWalker(el, NodeFilter.SHOW_TEXT),
     r = document.createRange();
@@ -981,6 +1013,8 @@ function selectRange(el, s, e) {
   if (b.top < 80 || b.bottom > innerHeight - 80)
     (r.startContainer.parentElement || el).scrollIntoView({ block: 'center' });
 }
+// Runs after every change in the editor: saves the text, credits new words, takes the day's first snapshot, updates
+// counts, name links and targets, lets Inky read, and keeps the caret in view.
 function onType(id, ed) {
   snDaily(id);
   const text = getText(ed),
@@ -1040,6 +1074,7 @@ function onType(id, ed) {
     ui.pkT = setTimeout(() => peekRun('type'), Date.now() - (ui.pkAt || 0) > 6000 ? 150 : 1100);
   }
 }
+// The "Linked in this scene" list in the Inkling panel: every story page named in the scene.
 function updateSceneChips() {
   const box = $('#sceneChips');
   if (!box || ui.view.k !== 'scene') return;

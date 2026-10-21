@@ -1,10 +1,18 @@
-/* ---------- right-click menus in the binder ---------- */
+/*
+ * 17-binder-menus.js: Right-click menus, word targets, duplicates, and story page fields
+ *
+ * Right-clicking a scene, chapter or story page in the binder opens a menu (binderMenu) with everything that can be
+ * done to it: rename, duplicate, move, set a word target, open side by side, delete. This file also holds the dialog
+ * for typing a value (askValue), the duplicate functions, the editor for a project's own story page fields
+ * (entFields, fieldsEditHtml), and dropping or pasting a picture onto a page.
+ */
 // ctxMenu(x, y, items): items are [label, fn, opts] (opts.danger, opts.on for a tick, opts.sub: a list shown in its
 // place), or '-' for a line. Closes on a click elsewhere, Escape or scrolling.
 function ctxClose() {
   const x = $('#ctx');
   if (x) x.remove();
 }
+// Opens a menu at x, y. items: [label, fn, {danger, on, sub}] or '-' for a dividing line.
 function ctxMenu(x, y, items, title) {
   ctxClose();
   const box = document.createElement('div');
@@ -122,10 +130,12 @@ function askValue(title, label, value, hint) {
     inp().select();
   });
 }
+// A small progress bar towards a word target (empty when there is no target).
 const tgBar = (w, g) =>
   g
     ? '<i class="tg' + (w >= g ? ' met' : '') + '" style="--p:' + Math.min(100, (w / g) * 100).toFixed(1) + '%"></i>'
     : ''; // a word target's thin bar in the binder
+// Asks for a word target for a scene or chapter and saves it (0 removes it).
 function setTarget(kind, id) {
   const m = S.meta,
     o = kind === 'scene' ? m.scenes[id] : m.chapters.find(c => c.id === id);
@@ -148,6 +158,7 @@ function setTarget(kind, id) {
     renderInspector();
   });
 }
+// Duplicates a scene (text, notes, details) just after it, or into another chapter.
 function dupScene(id, toCh, at) {
   const m = S.meta,
     c = toCh || m.chapters.find(x => x.scenes.includes(id)),
@@ -163,6 +174,7 @@ function dupScene(id, toCh, at) {
   dirty('meta', 'sc_' + sid);
   return sid;
 }
+// Duplicates a chapter with copies of all its scenes.
 function dupChapter(id) {
   const m = S.meta,
     c = m.chapters.find(x => x.id === id);
@@ -179,6 +191,7 @@ function dupChapter(id) {
     plain: true
   });
 }
+// Duplicates a story page (without its picture, which belongs to the original).
 function dupEnt(id) {
   const m = S.meta,
     e = m.ents[id];
@@ -191,6 +204,7 @@ function dupEnt(id) {
   linker = buildLinker();
   go({ k: 'ent', id: nid });
 }
+// Duplicates a timeline, outline, note, map or tree.
 function dupDoc(k, id) {
   if (k === 'tl') {
     addTimeline(id);
@@ -206,6 +220,7 @@ function dupDoc(k, id) {
   dirty('meta', k + '_' + nid);
   go({ k, id: nid });
 }
+// The right-click menu for a scene, chapter or story page in the binder.
 function binderMenu(e) {
   const row = e.target.closest('.sc-row,.ch-row,.e-row');
   if (!row) return;
@@ -387,6 +402,7 @@ function binderMenu(e) {
 // meta.fields{char|place|thing: [[key,label]]} replaces TYPES[t].fields for this project when set (entFields).
 // Removing a field hides it; what was written in it stays in en.fields and comes back if the field does.
 const entFields = t => (S.meta.fields && S.meta.fields[t]) || (TYPES[t] || TYPES.thing).fields;
+// Checks a project's own story page fields.
 function normFields(x) {
   const out = {};
   if (!x || typeof x !== 'object') return out;
@@ -402,6 +418,7 @@ function normFields(x) {
   });
   return out;
 }
+// The editor for a kind of page's fields: rename, reorder, add and remove.
 function fieldsEditHtml(t) {
   return (
     '<div class="fe"><p class="fine">These fields are on every ' +
@@ -436,6 +453,7 @@ function fieldsEditHtml(t) {
     '<button class="btn sm pri" data-fe="done">Done</button></div></div>'
   );
 }
+// Makes the fields editor work.
 function bindFieldsEdit(el, e, v) {
   const box = $('.fields-box', el);
   if (!box) return;
@@ -499,6 +517,7 @@ function bindFieldsEdit(el, e, v) {
     }
   });
 }
+// Lets a picture be dropped or pasted onto a story page.
 function bindPicDrop(el, e) {
   const page = $('.ent-page', el);
   if (!page) return;

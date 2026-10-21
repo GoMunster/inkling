@@ -1,7 +1,18 @@
-/* ---------- scene snapshots ---------- */
+/*
+ * 27-snapshots-find.js: Scene snapshots and Find and replace
+ *
+ * Snapshots: saved copies of a scene's text (S.sn), taken by hand, automatically before the first change of each day,
+ * and before anything Inkling changes for you (restoring a snapshot, replacing text, merging two writers' changes).
+ * The Snapshots screen compares any snapshot with the current text, paragraph by paragraph and word by word
+ * (diffHtml), and restores it.
+ *
+ * Find and replace: searches every scene (or one chapter) with match case and whole words, and replaces one match or
+ * all of them, after taking a snapshot of each scene it changes.
+ */
 // sn[id] = {scene, at, name, text, words, auto}. Saved by hand, automatically once a day when a scene is first
 // changed (auto 'daily'), and before restoring a snapshot ('restore') or replacing text ('replace').
 const SN_AUTO_MAX = 30;
+// How each kind of automatic snapshot is labelled.
 const SN_AUTO = {
   daily: 'Start of the day',
   restore: 'Before restoring a snapshot',
@@ -25,12 +36,15 @@ ADD_DOCS.push((o, out) => {
   });
   out.sn = r;
 });
+// A scene's snapshots, newest first.
 const snList = sid =>
   Object.keys(S.sn)
     .filter(k => S.sn[k].scene === sid)
     .map(k => Object.assign({ id: k }, S.sn[k]))
     .sort((a, b) => b.at - a.at);
+// A snapshot's name: the writer's, or what took it.
 const snLabel = x => x.name || SN_AUTO[x.auto] || 'Snapshot';
+// When a snapshot was taken, as a short date and time.
 const snWhen = t =>
   new Date(t).toLocaleString([], {
     weekday: 'short',
@@ -40,6 +54,7 @@ const snWhen = t =>
     hour: 'numeric',
     minute: '2-digit'
   });
+// Takes a snapshot of a scene (automatic ones are capped at SN_AUTO_MAX per scene, oldest dropped first).
 function snTake(sid, name, auto) {
   const t = (S.sc[sid] || {}).text || '';
   if (!t.trim()) return null;
@@ -65,6 +80,7 @@ function snTake(sid, name, auto) {
       });
   return id;
 }
+// Takes the day's snapshot of a scene before its first change today.
 function snDaily(sid) {
   // the scene as it was before today's first change
   const day = todayKey();
@@ -74,6 +90,7 @@ function snDaily(sid) {
   if (snList(sid).some(x => keyOf(new Date(x.at)) === day)) return;
   snTake(sid, '', 'daily');
 }
+// Deletes all of a scene's snapshots.
 function snDrop(sid) {
   Object.keys(S.sn).forEach(k => {
     if (S.sn[k].scene === sid) {
@@ -82,6 +99,7 @@ function snDrop(sid) {
     }
   });
 }
+// Changes a scene's text on the writer's behalf (replace, restore): saves it, but gives Inky no credit.
 function setSceneText(sid, text) {
   // changes made by Inkling, not typing: no pet credit
   const sc = S.meta.scenes[sid];
@@ -139,6 +157,7 @@ function wordOps(a, b) {
   });
   return out;
 }
+// Shows what changed between two texts: paragraphs added, removed or changed, and within changed ones the words.
 function diffHtml(from, to) {
   const pa = t =>
       t
@@ -216,6 +235,7 @@ function diffHtml(from, to) {
   flushSame();
   return { html, add, del };
 }
+// The Snapshots screen for a scene: the list, a comparison with the current text, restore, rename, delete.
 function renderSnap(el, v) {
   const sid = v.id,
     sc = S.meta.scenes[sid],
@@ -378,6 +398,7 @@ function findRe(f) {
     return null;
   }
 }
+// Every match of a Find search, grouped by scene.
 function findAll(f) {
   const re = findRe(f),
     out = [];
@@ -404,6 +425,7 @@ function findAll(f) {
   });
   return out;
 }
+// The Find and replace screen.
 function renderFind(el) {
   const f = (ui.find = ui.find || { q: '', r: '', mc: false, ww: false, scope: 'all' });
   if (f.scope !== 'all' && !S.meta.chapters.some(c => c.id === f.scope)) f.scope = 'all';
@@ -586,6 +608,7 @@ document.addEventListener('keydown', e => {
     saveNow();
   }
 });
+// Opens Find and replace with the selected words as the search.
 function openFind() {
   const s = getSelection(),
     t = s && $('#ed') && $('#ed').contains(s.anchorNode) ? s.toString().trim() : '';

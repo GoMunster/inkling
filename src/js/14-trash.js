@@ -1,9 +1,16 @@
-/* ---------- trash ---------- */
+/*
+ * 14-trash.js: The Trash
+ *
+ * Deleting a scene, chapter, story page, timeline, outline, note, map or tree moves it to the Trash (S.tr) with
+ * everything needed to put it back: its records, its place, a scene's snapshots, a page's links from maps and trees.
+ * Each delete offers Undo; items stay 30 days.
+ */
 // Deleting a scene, chapter, story page, timeline, outline, notes page, map or tree moves it to S.tr (one doc per
 // item, so it syncs and merges like everything else): {kind, at, by, title, sub, d}, where d holds everything needed
 // to put it back (a scene's snapshots, a page's picture and its links from maps and trees). Items older than
 // TRASH_DAYS go for good when a project loads (trashPurge); that is also when a page's picture is removed.
 const TRASH_DAYS = 30;
+// How each kind of Trash item is labelled, with its icon.
 const TRASH_KINDS = {
   scene: ['Scene', 'pen'],
   chapter: ['Chapter', 'book'],
@@ -14,6 +21,7 @@ const TRASH_KINDS = {
   rm: ['Relationship map', 'web'],
   ft: ['Family tree', 'tree']
 };
+// A copy of a record without its change stamps (_m, _dev, _by), for keeping in the Trash.
 const bare = x => {
   const o = clone(x);
   if (o && typeof o === 'object')
@@ -22,6 +30,7 @@ const bare = x => {
     });
   return o;
 };
+// A scene's snapshots, for keeping with it in the Trash.
 const snOf = sid =>
   Object.keys(S.sn)
     .filter(k => S.sn[k].scene === sid)
@@ -43,6 +52,7 @@ ADD_DOCS.push((o, out) => {
   });
   out.tr = r;
 });
+// Moves something to the Trash and shows a toast with Undo.
 function trashPut(kind, title, sub, d) {
   const id = uid('x_');
   S.tr[id] = {
@@ -60,6 +70,7 @@ function trashPut(kind, title, sub, d) {
   });
   return id;
 }
+// Puts a scene back: its text, its index entry and its snapshots.
 function putScene(sid, meta, sc, sn) {
   S.sc[sid] = Object.assign({ text: '', synopsis: '', notes: '' }, sc);
   S.sc[sid].stickies = normStickies(S.sc[sid].stickies);
@@ -148,6 +159,7 @@ function trashRestore(id) {
   renderAll();
   return to;
 }
+// Deletes a Trash item for good (and a page's or map's picture with it).
 function trashDrop(id) {
   const x = S.tr[id];
   if (!x) return;
@@ -156,6 +168,7 @@ function trashDrop(id) {
   delete S.tr[id];
   forget('tr_' + id);
 }
+// Deletes Trash items older than TRASH_DAYS (runs when a project opens).
 function trashPurge() {
   if (!S || !S.tr || ui.locked) return;
   const cut = Date.now() - TRASH_DAYS * 864e5;
@@ -168,6 +181,7 @@ function trashPurge() {
   });
   if (n) dirty('meta');
 }
+// A short preview of a Trash item: the first words of a scene, a page's fields, how many cards…
 function trashPeek(x) {
   const d = x.d;
   if (x.kind === 'scene')
@@ -202,6 +216,7 @@ function trashPeek(x) {
   if (x.kind === 'tl') return Object.keys((d.rec || {}).cards || {}).length + ' cards';
   return '';
 }
+// The Trash screen: everything deleted, newest first, to restore or delete for good.
 function renderTrash(el) {
   trashPurge();
   const list = Object.keys(S.tr)

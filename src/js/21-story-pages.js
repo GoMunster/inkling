@@ -1,4 +1,11 @@
-/* ---------- main: entity page ---------- */
+/*
+ * 21-story-pages.js: Story pages (characters, places, things, rules, glossary words)
+ *
+ * renderEnt() draws a story page: its picture, name, aliases and summary, its fields, Key facts and continuity, the
+ * character arc box for characters, where the page is mentioned, and its links from relationship maps, family trees,
+ * world maps and timelines.
+ */
+// Every scene that names a page (or one of its aliases), with the first match in each.
 function mentionsOf(e) {
   const re = makeRe([e.name].concat(e.aliases || []));
   const out = [];
@@ -18,10 +25,12 @@ function mentionsOf(e) {
   });
   return out;
 }
+// Grows a text box to fit its text.
 const ag = el => {
   el.style.height = 'auto';
   el.style.height = el.scrollHeight + 2 + 'px';
 };
+// The timeline cards that mention a page, as a list on the page.
 function tlMentionsHtml(e) {
   const re = makeRe([e.name].concat(e.aliases || [])),
     out = [];
@@ -65,6 +74,7 @@ function tlMentionsHtml(e) {
     '</section>'
   );
 }
+// Draws a story page and wires up its fields, name, aliases, type, picture and links.
 function renderEnt(el, v) {
   const m = S.meta,
     e = m.ents[v.id],

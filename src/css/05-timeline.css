@@ -1,3 +1,10 @@
+/*
+ * 05-timeline.css: Timelines
+ *
+ * The board, lanes, cards, marks and the side panel.
+ *
+ * Styles apply in file-name order, so a later file can refine an earlier one.
+ */
 /* timeline */
 .btn[aria-pressed='true'] {
   border-color: var(--accent);

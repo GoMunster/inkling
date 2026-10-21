@@ -1,10 +1,19 @@
-/* ---------- continuity ---------- */
+/*
+ * 09-continuity.js: The continuity check
+ *
+ * contCheck() reads every scene and lists what may be inconsistent: a fact that disagrees with a story page's Key
+ * facts (eyes, hair, age), a capitalised word one letter away from a name (a likely typo), a character who stops
+ * appearing or vanishes for five or more chapters, and pages never mentioned. The result is cached for a few seconds,
+ * since the binder, the Inkling panel and story pages all ask for it. Items the writer hides are kept in
+ * meta.contIgnore.
+ */
 // Checks the scenes against the story pages: facts that disagree (eyes, hair, age), names that look misspelled,
 // characters who drop out of the story, and pages never mentioned. Results are cached for a few seconds.
 const CONT_COLORS =
   'blue green brown hazel grey gray black amber violet red auburn blond blonde brunette ginger silver white golden gold dark fair copper chestnut raven pale yellow purple pink orange'.split(
     ' '
   );
+// Number words, for ages written out ("thirty-four").
 const CONT_NUMS = {
   one: 1,
   two: 2,
@@ -34,6 +43,7 @@ const CONT_NUMS = {
   eighty: 80,
   ninety: 90
 };
+// Reads a page's Key facts box ("eyes: green", "age: 34") into {eyes, hair, age}.
 function parseFacts(t) {
   const f = {};
   String(t || '')
@@ -54,12 +64,14 @@ function parseFacts(t) {
     });
   return f;
 }
+// An age written as digits or words, as a number.
 const ageNum = w => {
   w = String(w).toLowerCase();
   if (/^\d+$/.test(w)) return +w;
   const p = w.split(/[- ]/);
   return p.reduce((a, x) => a + (CONT_NUMS[x] || 0), 0) || null;
 };
+// Whether two words differ by exactly one letter (added, removed or changed): a likely misspelling of a name.
 function lev1(a, b) {
   if (a === b) return false;
   if (Math.abs(a.length - b.length) > 1) return false;
@@ -72,7 +84,10 @@ function lev1(a, b) {
   const [s2, l2] = a.length < b.length ? [a, b] : [b, a];
   return s2.slice(i) === l2.slice(i + 1);
 }
+// A stable key for one continuity item, used to remember that the writer hid it.
 const contKey = x => [x.kind, x.ent || '', x.scene || '', x.word || x.said || ''].join(':');
+// Reads every scene and lists continuity issues: facts that disagree, look-alike names, characters who drop out,
+// pages never mentioned. Also records where each page is first and last seen. Cached for a few seconds unless force.
 function contCheck(force) {
   if (!force && ui.cont && Date.now() - ui.cont.at < 4000 && ui.cont.v === S.meta.saved) return ui.cont.list;
   const m = S.meta,
@@ -257,7 +272,9 @@ function contCheck(force) {
   ui.cont = { at: Date.now(), v: S.meta.saved, list, seen };
   return list;
 }
+// How many issues need attention (disagreeing facts and likely typos), for the Inkling panel's button.
 const contCount = () => contCheck().filter(x => x.kind === 'fact' || x.kind === 'spell').length;
+// A one-line description of an issue.
 function contLabel(x) {
   const m = S.meta,
     e = x.ent && m.ents[x.ent],
@@ -294,6 +311,7 @@ function contLabel(x) {
   if (x.kind === 'unused') return '<b>' + esc(nm) + '</b> is not mentioned in any scene yet.';
   return '';
 }
+// One issue as HTML, with buttons to open the scene or hide the issue.
 function contItem(x) {
   const sc = x.scene && S.meta.scenes[x.scene];
   return (
@@ -322,6 +340,7 @@ function contItem(x) {
     '</button></div></div>'
   );
 }
+// Handles clicks on issues: open the scene at the spot, or hide the issue.
 function contClick(e) {
   const b = e.target.closest('[data-ct]');
   if (!b) return false;
@@ -340,6 +359,7 @@ function contClick(e) {
   }
   return true;
 }
+// The Continuity screen: every issue, grouped by kind.
 function renderCont(el) {
   const list = contCheck(true),
     g = k => list.filter(x => x.kind === k),
@@ -397,6 +417,7 @@ function renderCont(el) {
     contClick(e);
   };
 }
+// A story page's Key facts box, where its name is first and last seen, and its own issues.
 function entContHtml(e) {
   const list = contCheck(),
     mine = list.filter(x => x.ent === e.id && x.kind !== 'unused'),
@@ -430,6 +451,7 @@ function entContHtml(e) {
     '</section>'
   );
 }
+// How many times each story page is mentioned in the manuscript (shown in the binder).
 function mentionCounts() {
   contCheck();
   const out = {},

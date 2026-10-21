@@ -1,4 +1,12 @@
-/* ---------- menu, export, restore ---------- */
+/*
+ * 33-export.js: The menu, backups, export, and saving files
+ *
+ * Export makes Word (.docx), PDF, EPUB, Markdown and plain text, all in the page: Word and EPUB files are built with
+ * a small zip writer (zip, crc32), PDF goes to the desktop's PDF maker or the browser's print window. Word and PDF
+ * follow standard manuscript format, for sending to agents and editors. saveFile() saves a file the right way for
+ * each environment. The ⋯ menu (renderMenu, bindMenu) is here too.
+ */
+// A title as a safe file name: "The Lantern Tide" → "the-lantern-tide".
 function slug(s) {
   return (
     (s || 'novel')
@@ -7,6 +15,8 @@ function slug(s) {
       .replace(/^-+|-+$/g, '') || 'novel'
   );
 }
+// Saves a file for the writer: a save dialog on the desktop, the artifact's downloads in Claude, a download in a
+// browser.
 async function saveFile(name, data) {
   if (DESK) {
     try {
@@ -37,6 +47,7 @@ async function saveFile(name, data) {
   a.remove();
   setTimeout(() => URL.revokeObjectURL(u), 5000);
 }
+// Saves the whole project, with every picture inside it, as a .json backup.
 async function doBackup() {
   const imgs = await collectImages();
   saveFile(
@@ -55,6 +66,7 @@ const EXP_FMTS = {
   md: ['Markdown', '.md'],
   txt: ['Plain text', '.txt']
 };
+// Checks the export choices.
 function normExp(x) {
   x = x && typeof x === 'object' ? x : {};
   return {
@@ -69,6 +81,7 @@ function normExp(x) {
     uid: /^[\w-]{8,64}$/.test(x.uid || '') ? x.uid : ''
   };
 }
+// The book to export: chapters with their scenes as paragraphs (one chapter, or all).
 function expBook(scope) {
   return S.meta.chapters
     .filter(c => scope === 'all' || c.id === scope)
@@ -84,6 +97,7 @@ function expBook(scope) {
         .filter(x => x.length)
     }));
 }
+// One paragraph of stored text as runs of text with their styles: [[text, styles]] (1 bold, 2 italic, 4 underline).
 function runs(p) {
   // one line of stored text → [[text, styles]] (1 bold, 2 italic, 4 underline)
   const P = fmtParse(p);
@@ -98,16 +112,19 @@ function runs(p) {
   }
   return out;
 }
+// Makes text safe for XML (Word and EPUB files).
 const xe = s =>
   String(s)
     .replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F]/g, '')
     .replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
+// A word count rounded the way manuscripts state it ("about 80,000 words").
 const roundWords = n =>
   n < 1000
     ? Math.max(100, Math.round(n / 100) * 100)
     : n < 10000
       ? Math.round(n / 500) * 500
       : Math.round(n / 1000) * 1000;
+// Everything the export formats need: the book, word count, author, byline, header and font.
 function expInfo(scope) {
   const m = S.meta,
     o = m.exp,
@@ -147,11 +164,13 @@ const CRC = (() => {
   }
   return t;
 })();
+// The CRC-32 checksum a zip file needs for each file.
 function crc32(b) {
   let c = 0xffffffff;
   for (let i = 0; i < b.length; i++) c = CRC[(c ^ b[i]) & 255] ^ (c >>> 8);
   return (c ^ 0xffffffff) >>> 0;
 }
+// Packs files into a zip (stored, not compressed), as a Uint8Array.
 function zip(files) {
   const te = new TextEncoder(),
     parts = [],
@@ -204,6 +223,7 @@ function zip(files) {
   });
   return out;
 }
+// The manuscript as a Word document.
 function expDocx(scope) {
   const I = expInfo(scope),
     o = I.o,
@@ -349,6 +369,7 @@ function expDocx(scope) {
     ['word/header1.xml', header]
   ]);
 }
+// One paragraph as HTML with its bold, italic and underline.
 const htmlRuns = l =>
   runs(l)
     .map(r => {
@@ -359,6 +380,7 @@ const htmlRuns = l =>
       return t;
     })
     .join('');
+// The manuscript as a printable HTML page, for PDF.
 function expPdfHtml(scope) {
   const I = expInfo(scope),
     o = I.o,
@@ -396,6 +418,7 @@ function expPdfHtml(scope) {
   if (I.full) h += '<p class="c" style="margin-top:1em">END</p>';
   return { html: h + '</body></html>', I };
 }
+// The manuscript as an EPUB ebook.
 function expEpub(scope) {
   const I = expInfo(scope),
     o = I.o,
@@ -489,6 +512,7 @@ function expEpub(scope) {
   ]);
   return zip(files);
 }
+// The manuscript as Markdown.
 function manuscriptMd(scope) {
   const I = expInfo(scope || 'all');
   let out = '# ' + I.title + '\n\n' + (I.byline ? 'by ' + I.byline + '\n\n' : '');
@@ -502,6 +526,7 @@ function manuscriptMd(scope) {
   });
   return out.trim() + '\n';
 }
+// The manuscript as plain text.
 function manuscriptTxt(scope) {
   const I = expInfo(scope);
   let out = I.title + '\n' + (I.byline ? 'by ' + I.byline + '\n' : '') + '\n\n';
@@ -514,6 +539,7 @@ function manuscriptTxt(scope) {
   });
   return out.trim() + '\n';
 }
+// Opens the browser's print window for a page (the writer chooses Save as PDF).
 async function printHtml(html) {
   // the browser's print window; the writer chooses "Save as PDF"
   const f = document.createElement('iframe');
@@ -533,6 +559,7 @@ async function printHtml(html) {
   }
   setTimeout(() => f.remove(), 60000);
 }
+// Exports in a format: builds the file and saves it.
 async function doExport(fmt, scope) {
   const m = S.meta,
     ch = scope !== 'all' && m.chapters.find(c => c.id === scope),
@@ -559,6 +586,7 @@ async function doExport(fmt, scope) {
   }
   printHtml(r.html);
 }
+// The Export dialog: format, what to include, and the manuscript details.
 function openExport() {
   const m = S.meta,
     o = m.exp;
@@ -695,6 +723,7 @@ function openExport() {
   document.body.appendChild(ov);
   $('[data-fmt].on', ov).focus();
 }
+// Fills the ⋯ menu for this environment (desktop or browser).
 function renderMenu() {
   const cf = ui.confirm,
     el = $('#menu');
@@ -777,6 +806,7 @@ function renderMenu() {
       : 'Your project saves on this device only. Back it up from here when you can.') +
     '</small>';
 }
+// Makes the ⋯ menu and the restore-from-backup file picker work.
 function bindMenu() {
   $('#menuBtn').innerHTML = ico('dots', 18);
   $('#menuBtn').addEventListener('click', e => {
@@ -920,6 +950,7 @@ async function saveNow() {
       { plain: true }
     );
 }
+// Closes the ⋯ menu.
 function closeMenu() {
   ui.menu = false;
   ui.confirm = null;

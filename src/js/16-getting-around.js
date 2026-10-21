@@ -1,10 +1,19 @@
-/* ---------- split view ---------- */
+/*
+ * 16-getting-around.js: Getting around: side by side, remembering your place, the quick switcher
+ *
+ * Side by side: a second pane beside the page (#split) for a story page, a note, an outline, a timeline or another
+ * scene. Remembering your place: the last view, and each scene's caret and scroll position, are kept per device in
+ * localStorage and restored when you come back. The quick switcher (Ctrl+P) finds anything by a few letters of its
+ * name. Also next and previous scene, and Forward.
+ */
 // A second pane beside the page (#split), so a scene can be written with a story page, a note, an outline, a
 // timeline or another scene in view. ui.split is that view. Scenes, outlines and timelines show read-only there (⇄
 // swaps the two sides to edit); a story page's fields and a notes page can be edited in place. The grid's columns
 // come from applyCols(), which accounts for focus mode, hidden panels and the split.
 const SPLIT_KINDS = ['scene', 'ent', 'nt', 'ol', 'tl'];
+// Whether a view can be shown side by side.
 const splitOk = v => !!v && SPLIT_KINDS.includes(v.k) && viewValid(v);
+// Sets the page's columns (--cols on #app) for the panes that are shown: binder, page, side by side, Inkling panel.
 function applyCols() {
   const app = $('#app');
   if (!app || !S) return;
@@ -22,6 +31,7 @@ function applyCols() {
       .join(' ')
   );
 }
+// Opens a view side by side (or a picker of things to open). Not on narrow screens.
 function splitOpen(v) {
   if (innerWidth < 1080) {
     toast('Side by side needs a wider window.', { plain: true });
@@ -43,10 +53,12 @@ function splitOpen(v) {
   ui.split = ui.lastSplit = v;
   renderSplit();
 }
+// Closes the side-by-side pane.
 function splitClose() {
   ui.split = null;
   renderSplit();
 }
+// Swaps the main page and the side-by-side pane.
 function splitSwap() {
   const a = ui.view,
     b = ui.split;
@@ -55,6 +67,7 @@ function splitSwap() {
   go(b);
   renderSplit();
 }
+// The list of things that can be opened side by side.
 function splitPicker(cur) {
   const m = S.meta,
     o = (v, label) => '<option value="' + v + '"' + (v === cur ? ' selected' : '') + '>' + esc(label) + '</option>',
@@ -86,6 +99,7 @@ function splitPicker(cur) {
     grp(LP('tl'), m.tls.map(x => o('tl:' + x.id, x.name)).join(''))
   );
 }
+// Draws the side-by-side pane for its view.
 function renderSplit() {
   const el = $('#split'),
     app = $('#app');
@@ -240,6 +254,7 @@ function renderSplit() {
     '</div>';
   el.querySelectorAll('textarea').forEach(ag);
 }
+// Shows whether side by side is open on the button above a scene.
 function paintSplitBtn() {
   const b = $('#spBtn');
   if (b) {
@@ -247,6 +262,7 @@ function paintSplitBtn() {
     b.classList.toggle('on', !!ui.split);
   }
 }
+// Makes the side-by-side pane's buttons and editable fields work.
 function bindSplit() {
   const el = $('#split');
   el.addEventListener('change', e => {
@@ -312,6 +328,7 @@ function splitTouch(keys) {
 // Per device and project (localStorage inkling:pos:<project>): the last view opened, and for each scene the caret
 // (visible-text offset) and how far down the page was scrolled. renderMain() puts a scene back as it was left.
 const posKey = () => 'inkling:pos:' + (DESK ? PJ.id || 'none' : P.db ? 'claude' : 'local');
+// Reads the saved positions: the last view and each scene's caret and scroll.
 function posGet() {
   try {
     const o = JSON.parse(localStorage.getItem(posKey()) || '{}');
@@ -320,6 +337,7 @@ function posGet() {
     return {};
   }
 }
+// Saves part of the positions.
 function posPut(f) {
   try {
     const o = posGet();
@@ -330,11 +348,14 @@ function posPut(f) {
     localStorage.setItem(posKey(), JSON.stringify(o));
   } catch (e) {}
 }
+// The kinds of view worth reopening when the project opens again.
 const POS_KINDS = ['scene', 'ent', 'tl', 'ol', 'nt', 'rm', 'ft', 'cork'];
+// The view to open with: the last one used, if it still exists.
 function startView() {
   const v = posGet().last;
   return v && POS_KINDS.includes(v.k) && viewValid(v) ? { k: v.k, id: v.id } : firstView();
 }
+// Saves the open scene's caret and scroll position.
 function posSaveScene() {
   const v = ui.view,
     ed = $('#ed'),
@@ -351,6 +372,7 @@ function posSaveScene() {
     o.sc[v.id] = p;
   });
 }
+// Puts the caret and scroll back where they were in a scene.
 function posRestore(id) {
   const p = (posGet().sc || {})[id],
     ed = $('#ed'),
@@ -430,6 +452,7 @@ function qsScore(q, s) {
   }
   return i === q.length ? sc : 0;
 }
+// Opens a quick-switcher result (side by side with Alt+Enter).
 function qsOpen(o, side) {
   closeQs();
   const v = o.v;
@@ -444,10 +467,12 @@ function qsOpen(o, side) {
   }
   go(v);
 }
+// Closes the quick switcher.
 function closeQs() {
   const x = $('#qs');
   if (x) x.remove();
 }
+// Opens the quick switcher (Ctrl+P): type a few letters, use the arrow keys and Enter.
 function openQs() {
   closeQs();
   const all = qsItems(),
@@ -548,6 +573,7 @@ function openQs() {
     else if (e.target === ov) closeQs();
   });
 }
+// Opens the next (d = 1) or previous (d = -1) scene in book order.
 function sceneStep(d) {
   const all = orderedScenes();
   if (!all.length) return;
@@ -560,6 +586,7 @@ function sceneStep(d) {
   }
   go({ k: 'scene', id: all[j].id });
 }
+// Forward to the view Back left.
 function goFwd() {
   let v = (ui.fwd || []).pop();
   while (v && !viewValid(v)) v = ui.fwd.pop();

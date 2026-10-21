@@ -1,4 +1,9 @@
-/* ---------- search everything ---------- */
+/*
+ * 15-search.js: Search everything
+ *
+ * One search box (Ctrl+K, or the binder's search) over the whole project, with match case and whole words, and a
+ * filter by kind. Each result knows how to open its own place.
+ */
 // One search over scenes (text, titles, synopses, notes, sticky notes), chapters, story pages, notes and
 // brainstorms, outlines, timelines, maps and trees. Each hit knows how to open its place (saOpen): a scene selects
 // the match (ui.findSel), others open the item and flash the line, card, idea or bubble.
@@ -10,6 +15,7 @@ const SA_AREAS = [
   ['tl', 'Timelines'],
   ['cv', 'Maps and trees']
 ];
+// The search as a regular expression: the words escaped, with match case and whole words as asked.
 function saRegex(q, o) {
   const e = q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
   try {
@@ -18,6 +24,8 @@ function saRegex(q, o) {
     return null;
   }
 }
+// Searches the whole project. Returns hits {area, label, where, n (matches), snip (the words around the first), open
+// (how to go there)}; scenes come first.
 function searchAll(q, o) {
   const out = [],
     re = q && q.trim() ? saRegex(q.trim(), o) : null;
@@ -159,6 +167,8 @@ function searchAll(q, o) {
     .sort((a, b) => a[0].pri - b[0].pri || a[1] - b[1])
     .map(x => x[0]); // what is written first, then titles and names
 }
+// Opens a search result at its place: selects the words in a scene, opens a timeline card, a map pin, a bubble, or
+// flashes the line.
 function saOpen(o) {
   if (o.k === 'cork') {
     ui.cork = o.ch;
@@ -194,6 +204,7 @@ function saOpen(o) {
     if (o.field && x.focus) x.focus();
   }, 80);
 }
+// The Search screen: the box, filters and results.
 function renderSearch(el) {
   const sa = (ui.sa = ui.sa || { q: '', mc: false, ww: false, area: '' });
   el.innerHTML =

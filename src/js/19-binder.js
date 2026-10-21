@@ -1,4 +1,11 @@
-/* ---------- binder ---------- */
+/*
+ * 19-binder.js: The binder: the left-hand pane
+ *
+ * renderBinder() draws the whole binder: the manuscript (chapters and scenes with word counts, targets and status),
+ * then the planning sections (outlines, notes, timelines, maps, trees) and the story pages by kind, plus the
+ * Customize binder options. bindBinder() handles every click, rename, drag and right-click in it, once.
+ */
+// The small form for renaming a binder section (plural and singular).
 function relabelForm(t) {
   if (ui.relabel !== t) return '';
   return (
@@ -17,6 +24,7 @@ function relabelForm(t) {
     '</button></div></div>'
   );
 }
+// Saves (or cancels) a section's new name.
 function saveRelabel(ok) {
   const t = ui.relabel;
   if (!t) return;
@@ -32,10 +40,12 @@ function saveRelabel(ok) {
   dirty('meta');
   renderAll();
 }
+// Redraws the binder, then marks who else is in which scene on a shared project.
 function renderBinder() {
   renderBinder0();
   if (ui.others && ui.others.length) paintHere();
 }
+// Draws the binder: manuscript, planning sections, story pages and Customize binder.
 function renderBinder0() {
   const m = S.meta,
     cur = ui.view,
@@ -520,6 +530,7 @@ function renderBinder0() {
     rn.addEventListener('blur', () => done(true));
   }
 }
+// Handles everything in the binder (clicks, renames, drags, right-clicks), set up once.
 function bindBinder() {
   $('#binder').addEventListener('contextmenu', binderMenu);
   $('#binder').addEventListener('click', e => {

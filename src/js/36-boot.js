@@ -1,4 +1,10 @@
-/* ---------- boot ---------- */
+/*
+ * 36-boot.js: Start-up
+ *
+ * init() loads the project (from localStorage, the Claude artifact or the desktop), sets up every part of the screen
+ * once, then draws it all (renderAll). This is the last file, so everything it uses is defined by now.
+ */
+// Draws everything: binder, main pane, Inkling panel, tabs and stats.
 function renderAll() {
   trashPurge();
   $('#projTitle').value = S.meta.title;
@@ -9,6 +15,7 @@ function renderAll() {
   syncTab();
   renderSplit();
 }
+// Starts Inkling: loads the project, sets up the screen and its handlers, and draws everything.
 function init() {
   try {
     const f = +localStorage.getItem('inkling:fs');

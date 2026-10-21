@@ -1,23 +1,46 @@
-/* ---------- helpers ---------- */
+/*
+ * 01-core.js: Shared helpers, constants and the app's state
+ *
+ * Everything else builds on this file: small helpers ($ to find an element, esc to make text safe inside HTML, uid
+ * for new ids, wc to count words, fmt for numbers), the icon set (ICO and ico()), the kinds of story page (TYPES),
+ * the binder's section names, Inky's ranks, and the state itself.
+ *
+ * The state: S is the open project, { meta, sc, en, tl, ch, nt, ol, rm, ft, ss, sn, tr } (see CLAUDE.md for every
+ * field). ui holds what is on screen right now and is never saved. P holds the saving machinery's own state. DESK is
+ * the desktop app's bridge (null in a browser), PJ the desktop project that is open, ME the writer's name on shared
+ * projects.
+ */
+// The first element matching a CSS selector, inside r (the whole page by default).
 const $ = (s, r) => (r || document).querySelector(s);
+// Makes any value safe to put inside HTML: escapes & < > " and '.
 const esc = s =>
   String(s == null ? '' : s).replace(
     /[&<>"']/g,
     c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]
   );
+// A new random id with a prefix, like "s_k3j9x1ab": random letters plus the time, so two devices never clash.
 const uid = p => p + Math.random().toString(36).slice(2, 7) + Date.now().toString(36).slice(-3);
+// Counts the words in a piece of text (runs of non-space characters).
 const wc = t => {
   const m = String(t || '').match(/\S+/g);
   return m ? m.length : 0;
 };
+// A number rounded and written with thousands separators: 12,345.
 const fmt = n => Math.round(n).toLocaleString('en-US');
+// Two digits with a leading zero, for dates: 7 → "07".
 const pad = n => String(n).padStart(2, '0');
+// A date as the "YYYY-MM-DD" key used for daily word counts.
 const keyOf = d => d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate());
+// Today's "YYYY-MM-DD" key.
 const todayKey = () => keyOf(new Date());
+// One random item from a list.
 const pick = a => a[Math.floor(Math.random() * a.length)];
+// True when the computer asks for reduced motion; animations are then kept to a minimum.
 const RM = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+// The length of the progress ring's arc in the top bar (its circumference in SVG units).
 const RING = 66;
 
+// The icon set: each icon is one SVG path, drawn by ico().
 const ICO = {
   plus: 'M12 5v14M5 12h14',
   map: 'M9 4L3 6v14l6-2 6 2 6-2V4l-6 2-6-2zM9 4v14M15 6v14',
@@ -71,6 +94,7 @@ const ICO = {
   swap: 'M7 7h13l-4-4M17 17H4l4 4',
   split: 'M4 4h16v16H4zM12 4v16'
 };
+// An icon as inline SVG markup, in the current text colour; s is its size in pixels (16 by default).
 const ico = (n, s) =>
   '<svg class="ico" width="' +
   (s || 16) +
@@ -80,6 +104,8 @@ const ico = (n, s) =>
   ICO[n] +
   '"/></svg>';
 
+// The kinds of story page, with their default fields ([key, label]). Writers can change the fields per project
+// (entFields).
 const TYPES = {
   char: {
     label: 'Character',
@@ -145,7 +171,9 @@ const TYPES = {
     ]
   }
 };
+// The order story page kinds are listed in, in the binder and in menus.
 const TYPE_ORDER = ['char', 'place', 'thing', 'rule', 'term'];
+// The binder's sections and their default names, plural and singular. Writers can rename them (LP, LS).
 const SEC_DEF = {
   ol: ['Outlines', 'Outline'],
   nt: ['Notes & ideas', 'Note'],
@@ -159,10 +187,13 @@ const SEC_DEF = {
   term: ['Glossary', 'Term']
 };
 const OPT_SECS = ['ol', 'nt', 'tl', 'rm', 'ft', 'place', 'thing', 'rule', 'term']; // binder sections a writer can switch off ('char' always stays)
+// Whether an optional binder section is switched on for this project.
 const secOn = k => !S.meta.secs || S.meta.secs[k] !== false;
 const LP = t => ((S && S.meta.labels[t]) || {}).p || SEC_DEF[t][0]; // section title, user-renamable
 const LS = t => ((S && S.meta.labels[t]) || {}).s || SEC_DEF[t][1]; // one item of that section
+// Scene statuses and how they are shown.
 const STATUS = { draft: 'Draft', revised: 'Revised', final: 'Final' };
+// Inky's ranks, from a blot of ink to a laureate. The words each one needs come from stageAt().
 const STAGES = [
   { n: 'Blot', at: 0 },
   { n: 'Inkling', at: 1000 },
@@ -173,21 +204,26 @@ const STAGES = [
 // Ranks follow the novel length goal: Inkling at 5%, Scribe at 25%, Bard at 50%, Laureate at 100% of meta.target
 // (words written in this project). A rank once reached is kept in pet.rank, so raising the goal never shrinks Inky.
 const STAGE_FR = [0, 0.05, 0.25, 0.5, 1];
+// Words needed for rank i: a share (STAGE_FR) of this project's novel length goal.
 const stageAt = i =>
   i
     ? Math.max(i * 50, Math.round(((typeof S !== 'undefined' && S && S.meta && S.meta.target) || 80000) * STAGE_FR[i]))
     : 0;
+// The highest rank a word total has reached.
 const stageOf = t => {
   let i = 0;
   for (let j = 1; j < STAGES.length; j++) if (t >= stageAt(j)) i = j;
   return i;
 };
+// Inky's rank now: the rank the words reach, or a higher one already earned (ranks are never lost).
 const petStage = () => Math.max(stageOf(S.meta.pet.total), S.meta.pet.rank || 0);
 
 /* ---------- state ---------- */
 let S = null; // {meta, sc:{id:{text,synopsis,notes}}, en:{id:{fields,pic}}, tl:{id:timeline}, ch:{id:{notes}}, nt:{id:{text,ideas}}, ol:{id:{num,showNotes,items}}}
+// The record maps of S that are saved one record per document, named "<prefix>_<id>".
 const DOCS = ['sc', 'en', 'tl', 'ch', 'nt', 'ol', 'rm', 'ft', 'ss', 'sn', 'tr']; // each record of these maps is its own saved doc, '<prefix>_<id>'
 const ADD_DOCS = []; // (raw, out) => out.<prefix> = normalized records, for doc types added after normalize() was written
+// The whole project as one plain object (meta plus every record map), ready to save or back up.
 const snapshot = st => {
   if (!st) stampMine(S);
   st = st || S;
@@ -203,9 +239,11 @@ const APP_VERSION = '1.10.1'; // the desktop build replaces this with desktop/pa
 // Saved-format version. When the shape of saved data changes: bump FORMAT and add MIGRATE[old] that upgrades a raw
 // project one step (it runs before normalize()). A project from a newer FORMAT is never loaded or overwritten.
 const FORMAT = 2;
+// Steps that upgrade a project saved in an older format, keyed by the old format number.
 const MIGRATE = {
   1: o => o // 1 → 2: records gain change stamps (_m, _dev) and meta.gone; nothing to convert
 };
+// Runs MIGRATE steps until a raw project is in the current format; refuses a project from a newer Inkling.
 function migrate(o) {
   const v = Math.max(1, Math.round(+(o.meta || {}).v || 1));
   if (v > FORMAT) {
@@ -238,14 +276,20 @@ const ME = { name: '' };
 try {
   ME.name = String(JSON.parse(localStorage.getItem('inkling:me') || '{}').name || '').slice(0, 60);
 } catch (e) {}
+// A writer's name as a key: trimmed and lower-cased, so "Sam" and "sam " are the same writer.
 const nameKey = n =>
   String(n || '')
     .trim()
     .toLowerCase();
+// This writer's key on a shared project.
 const myKey = () => nameKey(ME.name);
+// The meta fields that belong to each writer rather than to the book (word history, Inky, goals, timer, to-do,
+// layout, plan).
 const PERSONAL = ['days', 'pet', 'mark', 'goal', 'pomo', 'todo', 'layout', 'plan'];
 const PJ = { id: null, base: null }; // the desktop project that is open, and the version of it last read from or written to disk
+// The compiled name-link matcher (buildLinker()), rebuilt whenever story page names change.
 let linker = null;
+// What is on screen right now: the current view, history, open sections, selections, dialogs. Never saved.
 const ui = {
   view: null,
   hist: [],
@@ -293,6 +337,7 @@ const ui = {
   tlR: null,
   tlDragged: false
 };
+// The saving machinery: which records changed and wait to be saved, the active storage, the save timer.
 const P = {
   db: null,
   base: null,

@@ -1,4 +1,10 @@
-/* ---------- drag to reorder ---------- */
+/*
+ * 08-drag.js: Drag to reorder
+ *
+ * One small engine for every list that can be rearranged by dragging: scenes and chapters in the binder, planning
+ * lists, corkboard cards, outline lines and brainstorm ideas. Mouse drags start after a few pixels; touch needs a
+ * short press and hold so lists still scroll. moveSceneTo() and moveInList() apply the result.
+ */
 // dragSort(root, {item, handle?, zones?, grid?, drop(el, beforeEl|null, zoneEl)}): mouse drags after a few pixels,
 // touch after a short press and hold, so lists still scroll. A bar shows where the item will land.
 function dragSort(root, o) {
@@ -148,6 +154,7 @@ function dragSort(root, o) {
     document.addEventListener('touchmove', tm, { passive: false });
   });
 }
+// Moves a scene into a chapter, before another scene (or to the end).
 function moveSceneTo(id, chId, beforeId) {
   const cs = S.meta.chapters,
     to = cs.find(c => c.id === chId);
@@ -163,6 +170,7 @@ function moveSceneTo(id, chId, beforeId) {
   renderBinder();
   if (ui.view.k === 'cork') renderMain();
 }
+// Moves the item with this id in a list to just before another item (or to the end).
 function moveInList(arr, id, beforeId, key) {
   key = key || (x => x.id);
   const i = arr.findIndex(x => key(x) === id);

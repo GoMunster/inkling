@@ -1,4 +1,15 @@
-/* ---------- story page pictures ---------- */
+/*
+ * 03-pictures.js: Pictures on story pages and world maps
+ *
+ * A picture can live in three places, depending on where Inkling runs: in the Claude artifact it is uploaded as an
+ * asset and only its id is saved (pic.a); in the desktop app it is a file in the project's pictures folder (pic.f);
+ * in a plain browser a resized copy is kept in localStorage under its own key (pic.l). picSrc() turns any of these
+ * into an image address, setPic() stores a new picture wherever it belongs, and backups carry every picture inside
+ * the file (collectImages, adoptImages) so they move between all three.
+ *
+ * The rest is the picture block on a story page: shape, size, framing (which part shows, and how far zoomed in), and
+ * the full-size lightbox.
+ */
 // In the Claude artifact a picture is uploaded with the `assets` capability and only its id is saved.
 // In the desktop app it is a file in the project's pictures folder (`f`). In a plain browser a resized copy lives
 // in localStorage under its own key, outside the project record.
@@ -9,12 +20,15 @@ const PIC_SHAPES = [
   ['wide', 'Wide'],
   ['natural', 'Original']
 ];
+// Sizes a story page picture can be shown at.
 const PIC_SIZES = [
   ['s', 'Small'],
   ['m', 'Medium'],
   ['l', 'Banner']
 ];
+// The frame shape each kind of page starts with.
 const PIC_DEF_SHAPE = { char: 'portrait', place: 'wide', thing: 'square' };
+// Checks a picture record, keeping only valid values.
 function normPic(p) {
   p = p && typeof p === 'object' ? p : {};
   return {
@@ -30,6 +44,7 @@ function normPic(p) {
     zoom: clamp(num(p.zoom, 1), 1, 4)
   };
 }
+// The localStorage key prefix for pictures kept in a plain browser.
 const LOCAL_PIC = 'inkling:img:';
 // Framing: which part of the picture shows in its frame (px/py, % from left/top) and how far it is zoomed in.
 function picStyle(eid) {
@@ -65,6 +80,7 @@ function picSvg(eid, x, y, w, h) {
 const picRec = id => (S.en[id] || S.nt[id] || {}).pic || null,
   picKey = id => (S.en[id] ? 'en_' + id : 'nt_' + id),
   isMapPic = id => !S.en[id] && !!S.nt[id];
+// The address to show a page's or map's picture from, wherever it is stored ('' when there is none).
 function picSrc(eid) {
   const p = picRec(eid);
   if (!p) return '';
@@ -79,6 +95,7 @@ function picSrc(eid) {
   }
   return '';
 }
+// The Claude artifact's picture storage (the assets capability), or null outside the artifact.
 async function getAssets() {
   try {
     return window.claude && window.claude.use ? await window.claude.use('assets') : null;
@@ -106,6 +123,7 @@ async function collectImages() {
   }
   return o;
 }
+// After a restore or import: puts each picture from a backup where this environment keeps pictures.
 async function adoptImages(np, imgs, deskId) {
   imgs = imgs && typeof imgs === 'object' ? imgs : {};
   const inClaude = !!(window.claude && window.claude.use);
@@ -137,6 +155,7 @@ async function adoptImages(np, imgs, deskId) {
     } else if (!inClaude) p.a = '';
   }
 }
+// Deletes a picture's stored file or data (used when its page or map is gone for good, or the picture is replaced).
 async function dropPic(eid, pic) {
   const p = pic || picRec(eid);
   if (!p) return;
@@ -154,6 +173,7 @@ async function dropPic(eid, pic) {
       } catch (e) {}
   }
 }
+// Loads an image file into an <img> so it can be measured and resized.
 function loadImg(file) {
   return new Promise((ok, bad) => {
     const u = URL.createObjectURL(file),
@@ -169,6 +189,8 @@ function loadImg(file) {
     im.src = u;
   });
 }
+// Makes a picture smaller before storing it: at most max pixels on its longest side, as WebP (or JPEG) of quality q.
+// GIFs and SVGs are kept as they are.
 async function shrink(file, max, q) {
   if (/gif|svg/.test(file.type) && file.size < 6e6) return file; // keep animation and vectors as they are
   const im = await loadImg(file),
@@ -181,12 +203,14 @@ async function shrink(file, max, q) {
   const out = await new Promise(r => c.toBlob(r, 'image/webp', q));
   return out && out.type === 'image/webp' ? out : await new Promise(r => c.toBlob(r, 'image/jpeg', q));
 }
+// Reads a file or blob as a data: URL.
 const toDataUrl = b =>
   new Promise(r => {
     const f = new FileReader();
     f.onload = () => r(f.result);
     f.readAsDataURL(b);
   });
+// Stores a new picture for a story page or map, wherever this environment keeps pictures, and removes the old one.
 async function setPic(eid, file) {
   if (!file || !/^image\/(png|jpeg|gif|webp|svg\+xml|avif|bmp)$/.test(file.type)) {
     toast('Choose an image file: JPG, PNG, WebP or GIF.', { plain: true });
@@ -254,6 +278,7 @@ async function setPic(eid, file) {
   renderBinder();
   if (big && ui.view.k === 'nt' && ui.view.id === eid) renderMain();
 }
+// Removes a page's or map's picture.
 async function removePic(eid) {
   await dropPic(eid);
   const p = picRec(eid);
@@ -265,6 +290,7 @@ async function removePic(eid) {
   refreshPic();
   renderBinder();
 }
+// The picture block at the top of a story page: the picture (or a drop zone), its caption, and the layout options.
 function picHtml(e) {
   const p = S.en[e.id].pic,
     src = picSrc(e.id),
@@ -367,6 +393,7 @@ function picHtml(e) {
   }
   return h + '<input type="file" id="entFile" accept="image/*" hidden></figure>';
 }
+// Re-applies the framing to the page's picture while it is being dragged or zoomed.
 function applyFrame(eid) {
   const im = $('#entImg img');
   if (im) im.setAttribute('style', picStyle(eid));
@@ -376,10 +403,12 @@ function applyFrame(eid) {
     r.disabled = p.px === 50 && p.py === 50 && p.zoom === 1;
   }
 }
+// The CSS classes for a story page's top block: picture size, shape and fit.
 function picClass(e) {
   const p = S.en[e.id].pic;
   return 'ent-top pz-' + p.size + ' sh-' + (p.shape || PIC_DEF_SHAPE[e.type]) + ' fit-' + p.fit;
 }
+// Redraws just the picture block on the open story page.
 function refreshPic() {
   const v = ui.view;
   if (!v || v.k !== 'ent') return;
@@ -390,6 +419,7 @@ function refreshPic() {
   const f = $('.ent-fig', top);
   f.outerHTML = picHtml(e);
 }
+// Makes the picture block work: upload, remove, layout options, and dragging or zooming to frame it.
 function bindPic(el, e) {
   if (ui.framePage !== e.id) {
     ui.frame = false;
@@ -524,6 +554,7 @@ function bindPic(el, e) {
     }
   });
 }
+// Shows a picture full size over the page; a click or Escape closes it.
 function lightbox(src, cap) {
   const d = document.createElement('div');
   d.className = 'lightbox';

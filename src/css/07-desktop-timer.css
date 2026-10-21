@@ -1,3 +1,10 @@
+/*
+ * 07-desktop-timer.css: Projects window, focus timer and writing sessions
+ *
+ * The desktop app's Projects window, the focus timer, and the Writing sessions screen with its word history chart.
+ *
+ * Styles apply in file-name order, so a later file can refine an earlier one.
+ */
 /* desktop projects */
 .pj-ov {
   position: fixed;

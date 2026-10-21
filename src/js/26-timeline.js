@@ -1,16 +1,36 @@
-/* ---------- main: timeline ---------- */
+/*
+ * 26-timeline.js: Timelines
+ *
+ * A timeline has lanes (rows) and cards placed along a time scale (axis) in its own units: days, years, chapters or
+ * an invented calendar. Positions are kept in those units, never in pixels, so zooming and changing the scale never
+ * move anything. Cards that overlap in a lane stack into rows. Marks are labelled spans across all lanes (an era, a
+ * war).
+ *
+ * drawTl() redraws only the board and drawSide() only the side panel (a card's details or the timeline's settings),
+ * so typing in the panel never loses focus while the board updates. Mouse drags a whole card; on touch screens only
+ * its grip or resize edge drags, so the board still scrolls.
+ */
+// Whether this is a touch screen without a mouse.
 const TOUCH = !!(window.matchMedia && matchMedia('(hover: none)').matches);
+// The height of the time scale at the top, in pixels.
 const AXH = 48;
+// The width of the lane names column, narrower on phones.
 const lw = () => (window.innerWidth < 600 ? 108 : 156);
 let D = null; // card being dragged or resized
+// The timeline that is open.
 const curTl = () => (ui.view && ui.view.k === 'tl' ? S.tl[ui.view.id] : null);
+// The open timeline's save key.
 const tlKey = () => 'tl_' + ui.view.id;
+// The timeline's list of names for its ticks (months, seasons…).
 const tlNames = t =>
   t.axis.names
     .split(/[,\n]/)
     .map(s => s.trim())
     .filter(Boolean);
+// The column (tick) a time value falls in.
 const tlIdx = (t, v) => Math.floor((v - t.axis.start) / t.axis.step + 1e-9);
+// The label for a time value: the column's own label if the writer renamed it, else the template ({n}, {name},
+// {cycle}, {i}).
 function tlLabel(t, v, auto) {
   const a = t.axis,
     idx = tlIdx(t, v),
@@ -29,13 +49,17 @@ function tlLabel(t, v, auto) {
           : nfmt((L ? Math.floor(idx / L) : idx) + a.cycle)
   );
 }
+// A span of time as words: "Day 3 – Day 5".
 const tlSpan = (t, at, len) => tlLabel(t, at) + (len ? ' – ' + tlLabel(t, at + len) : '');
+// When a card happens: its own words, or its span on the scale.
 const tlWhen = (t, c) => c.when || tlSpan(t, c.at, c.len);
+// Rounds a time value to the timeline's snap setting.
 function tlSnap(t, v) {
   const a = t.axis,
     u = a.step * (a.snap || 0);
   return +(u ? a.start + Math.round((v - a.start) / u) * u : v).toFixed(4);
 }
+// The span of time the board shows: everything on it, with room around, and at least the width of the window.
 function tlRange(t, vw) {
   const a = t.axis;
   let lo = a.start,
@@ -56,6 +80,7 @@ function tlRange(t, vw) {
   );
   return { from, n, w: n * a.px };
 }
+// Places cards in rows within each lane so overlapping cards stack.
 function tlLayout(t, R) {
   const a = t.axis,
     out = {},
@@ -81,6 +106,7 @@ function tlLayout(t, R) {
     });
   return out;
 }
+// One card on the board.
 function tlCardHtml(t, it, l, H, hit) {
   const c = it.c,
     col = c.color || l.color,
@@ -135,6 +161,7 @@ function tlCardHtml(t, it, l, H, hit) {
     '</span></div>'
   );
 }
+// Redraws the board: time scale, marks, lanes and cards.
 function drawTl() {
   const sc = $('#tlScroll'),
     t = curTl();
@@ -271,6 +298,7 @@ function drawTl() {
   sc.scrollTop = kt;
   ui.tlR = R;
 }
+// The lane buttons above the board (click to show or hide a lane).
 function drawLaneChips() {
   const b = $('#tlLanes'),
     t = curTl();
@@ -292,6 +320,7 @@ function drawLaneChips() {
     )
     .join('');
 }
+// Colour choices for a card, lane or mark.
 function swatches(cur, kind, id, laneCol, defLabel) {
   let h = '<div class="sws">';
   defLabel = defLabel || 'Same as its lane';
@@ -343,6 +372,7 @@ function swatches(cur, kind, id, laneCol, defLabel) {
     '" aria-label="Pick any colour"></label></div>'
   );
 }
+// The story pages named on a card, as chips in the side panel.
 function tsNames(c) {
   const box = $('#tsNames');
   if (!box) return;
@@ -367,6 +397,7 @@ function tsNames(c) {
         .join('')
     : '<span class="muted" style="font-size:12.5px">Write the name of any story page in the title or notes to link it.</span>';
 }
+// The side panel for a card: title, notes, when, lane, length, look, linked scene, duplicate, delete.
 function sideCard(t, c) {
   const l = t.lanes.find(x => x.id === c.lane) || t.lanes[0],
     cf = ui.confirm,
@@ -469,6 +500,7 @@ function sideCard(t, c) {
     '</span></button></div>'
   );
 }
+// The side panel with the timeline's settings: time scale, lanes, marks, look.
 function sideSet(t) {
   const a = t.axis,
     cf = ui.confirm,
@@ -646,6 +678,7 @@ function sideSet(t) {
     '</span></button></div>';
   return h;
 }
+// Redraws the side panel (keeping its scroll position).
 function drawSide() {
   const box = $('#tlSide'),
     t = curTl();
@@ -670,11 +703,13 @@ function drawSide() {
   } else box.innerHTML = sideSet(t);
   box.scrollTop = keep;
 }
+// Scrolls the board so the start of time is in view.
 function tlCenter(t) {
   const sc = $('#tlScroll'),
     R = ui.tlR;
   return R.from + ((sc.scrollLeft + (sc.clientWidth - lw()) / 2) / t.axis.px) * t.axis.step;
 }
+// Scrolls a card into view and focuses it.
 function tlRefocus(id) {
   const el = $('#tlScroll [data-card="' + id + '"]');
   if (el) {
@@ -682,6 +717,7 @@ function tlRefocus(id) {
     el.scrollIntoView({ block: 'nearest', inline: 'nearest' });
   }
 }
+// Selects a card and opens it in the side panel.
 function tlOpenCard(id, focus) {
   ui.tlSel = id;
   ui.tlSide = { k: 'card', id };
@@ -690,6 +726,7 @@ function tlOpenCard(id, focus) {
   drawTl();
   if (focus) tlRefocus(id);
 }
+// Adds a card in a lane at a time value, and opens it.
 function tlNewCard(lane, at) {
   const t = curTl(),
     vis = t.lanes.filter(l => !l.hide);
@@ -720,6 +757,7 @@ function tlNewCard(lane, at) {
   const ti = $('#tlSide [data-cf="title"]');
   if (ti) ti.focus();
 }
+// Zooms the time scale by factor f, keeping the middle in place.
 function tlZoom(f) {
   const t = curTl(),
     a = t.axis,
@@ -732,6 +770,7 @@ function tlZoom(f) {
   const z = $('#tlSide [data-sf="px"]');
   if (z) z.value = a.px;
 }
+// Zooms and scrolls so every card fits.
 function tlFit() {
   const t = curTl(),
     a = t.axis,
@@ -749,6 +788,7 @@ function tlFit() {
   const z = $('#tlSide [data-sf="px"]');
   if (z) z.value = a.px;
 }
+// Saves a card field edited in the side panel.
 function tlCardField(t, x) {
   const c = ui.tlSide && t.cards[ui.tlSide.id];
   if (!c) return;
@@ -766,6 +806,7 @@ function tlCardField(t, x) {
   if (w) w.textContent = tlSpan(t, c.at, c.len);
   if (k === 'title' || k === 'body') tsNames(c);
 }
+// Saves a timeline setting edited in the side panel (time scale, lanes, look).
 function tlSetField(t, x) {
   const k = x.dataset.sf,
     a = t.axis,
@@ -806,6 +847,7 @@ function tlSetField(t, x) {
   dirty(tlKey());
   drawTl();
 }
+// Sets the colour of a card, lane or mark.
 function tlColor(t, kind, id, val, full) {
   const o = kind === 'ccol' ? t.cards[id] : (kind === 'lcol' ? t.lanes : t.marks).find(x => x.id === id);
   if (!o) return;
@@ -816,6 +858,7 @@ function tlColor(t, kind, id, val, full) {
   if (kind === 'lcol') drawLaneChips();
   if (full) drawSide();
 }
+// Timeline buttons: add, delete, move and edit lanes, marks and cards; presets; zoom.
 function tlAction(act, b) {
   const t = curTl(),
     a = t.axis,
@@ -1009,6 +1052,7 @@ function tlAction(act, b) {
     confirmDo('tl' + tid, () => delTimeline(tid), side);
   }
 }
+// Renames a lane in place.
 function tlEditLane(b) {
   const t = curTl(),
     l = t.lanes.find(x => x.id === b.dataset.id);
@@ -1045,6 +1089,7 @@ function tlEditLane(b) {
   });
   inp.addEventListener('blur', () => fin(true));
 }
+// Renames a column of the time scale (or the corner label) in place.
 function tlEditHead(b) {
   const t = curTl(),
     corner = b.dataset.tl === 'corner',
@@ -1085,6 +1130,7 @@ function tlEditHead(b) {
   });
   inp.addEventListener('blur', () => fin(true));
 }
+// While dragging a card or its edge: moves or resizes it.
 function tlMove(e) {
   const t = curTl(),
     sc = $('#tlScroll');
@@ -1141,6 +1187,7 @@ function tlMove(e) {
     if (lbl) lbl.textContent = tlWhen(t, { when: D.c.when, at: D.nat, len: D.len });
   }
 }
+// The end of a drag: snaps and saves.
 function tlUp(e) {
   window.removeEventListener('pointermove', tlMove);
   window.removeEventListener('pointerup', tlUp);
@@ -1166,6 +1213,7 @@ function tlUp(e) {
   }
   drawTl();
 }
+// Handles everything on the timeline screen: clicks, double-clicks, drags and keys.
 function bindTl(tv) {
   tv.addEventListener('click', e => {
     if (ui.tlDragged) {
@@ -1308,6 +1356,7 @@ function bindTl(tv) {
     else if (x.dataset.hex) drawSide();
   });
 }
+// The timeline screen: name, toolbar, search and lane filters, the board and the side panel.
 function renderTl(el, v) {
   const name = S.meta.tls.find(x => x.id === v.id).name;
   if (ui.tlFor !== v.id) {

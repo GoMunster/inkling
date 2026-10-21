@@ -1,13 +1,26 @@
-/* ---------- main: relationship maps and family trees ---------- */
+/*
+ * 25-relationships-trees.js: Relationship maps and family trees
+ *
+ * Both draw into one pan-and-zoom SVG canvas (the cv* functions). A relationship map is free-form: bubbles (a story
+ * page or a free label) joined by lines of different kinds (family, romance, rivals…), each with a direction, a label
+ * and a note. A family tree lays itself out (ftLayout): the writer only says who are partners and whose children are
+ * whose, and generations, rows and order follow.
+ *
+ * Selecting a bubble, line, person or partnership opens the side panel (cvSide) to edit it; cvBar is the toolbar.
+ * Deleting a story page leaves its bubbles and people in place, unlinked (unlinkEnt).
+ */
 // Both draw into one pan-and-zoom SVG (cv*). A map is free-form bubbles and lines; a tree lays itself out
 // from parents and partnerships (ftLayout), so a writer only says who is related to whom.
 const RM_R = { s: 22, m: 30, l: 40 };
+// Line dash patterns.
 const DASH = { solid: '', dashed: '7 5', dotted: '1.5 5' };
+// Line styles a kind of relationship can use.
 const LINE_STYLES = [
   ['solid', 'Solid'],
   ['dashed', 'Dashed'],
   ['dotted', 'Dotted']
 ];
+// How a child is related to their parents (by birth, adopted…), shown by the line's style.
 const PTYPES = [
   ['bio', 'By birth'],
   ['adopted', 'Adopted'],
@@ -15,9 +28,13 @@ const PTYPES = [
   ['step', 'Step-child'],
   ['rumoured', 'Rumoured']
 ];
+// The line style for each kind of parentage.
 const PT_DASH = { bio: '', adopted: '7 5', fostered: '7 5', step: '2 5', rumoured: '1 6' };
+// Family tree spacing (between people, between generations) for each setting.
 const FT_GAP = { compact: [18, 56], normal: [36, 84], roomy: [64, 120] };
+// A value as text, cut to n characters.
 const str = (v, n) => String(v == null ? '' : v).slice(0, n || 200);
+// The kinds of relationship a new map starts with.
 function rmKindsDef() {
   return [
     ['Family', 'place', 'solid'],
@@ -29,6 +46,7 @@ function rmKindsDef() {
     ['Secret', 'muted', 'dotted']
   ].map(k => ({ id: uid('r_'), name: k[0], color: k[1], dash: k[2], hide: false }));
 }
+// The kinds of partnership a new family tree starts with.
 function ftKindsDef() {
   return [
     ['Married', 'char', 'solid', '♥'],
@@ -38,6 +56,7 @@ function ftKindsDef() {
     ['Separated', 'muted', 'dashed', '✕']
   ].map(k => ({ id: uid('u_'), name: k[0], color: k[1], dash: k[2], sym: k[3] }));
 }
+// A new, empty relationship map.
 function newRm() {
   return {
     kinds: rmKindsDef(),
@@ -50,6 +69,7 @@ function newRm() {
     def: ''
   };
 }
+// A new, empty family tree.
 function newFt() {
   return {
     kinds: ftKindsDef(),
@@ -63,6 +83,7 @@ function newFt() {
     pics: true
   };
 }
+// Checks a list of relationship or partnership kinds.
 function normKinds(a, def, sym) {
   const out = (Array.isArray(a) ? a : [])
     .filter(k => k && k.id)
@@ -79,10 +100,12 @@ function normKinds(a, def, sym) {
     });
   return out.length ? out : def();
 }
+// Checks a saved pan and zoom.
 const normView = (v, d) => {
   v = v || {};
   return { x: num(v.x, d.x), y: num(v.y, d.y), k: clamp(num(v.k, 1), 0.2, 3) };
 };
+// Checks a relationship map: kinds, bubbles, lines and settings, dropping lines to missing bubbles.
 function normRm(m, ents) {
   m = m && typeof m === 'object' ? m : {};
   const kinds = normKinds(m.kinds, rmKindsDef, false),
@@ -122,6 +145,7 @@ function normRm(m, ents) {
     def: ks.has(m.def) ? m.def : ''
   };
 }
+// Checks a family tree: kinds, people, partnerships and settings, dropping broken links.
 function normFt(f, ents) {
   f = f && typeof f === 'object' ? f : {};
   const kinds = normKinds(f.kinds, ftKindsDef, true),
@@ -203,26 +227,32 @@ function unlinkEnt(id) {
     if (ch) dirty('ft_' + k);
   });
 }
+// A bubble's name: its story page's name or its own label.
 const rmName = n => {
   const e = n.ent && S.meta.ents[n.ent];
   return e ? e.name : n.name || 'Unnamed';
 };
+// A person's name in a tree: their story page's name or their own.
 const ftName = p => {
   const e = p.ent && S.meta.ents[p.ent];
   return e ? e.name : p.name || 'Unnamed';
 };
+// A bubble's colour: its own, or its page kind's.
 const rmCol = n => {
   if (n.color) return cssCol(n.color);
   const e = n.ent && S.meta.ents[n.ent];
   return e ? 'var(--' + e.type + ')' : 'var(--muted)';
 };
+// Up to two initials from a name, for bubbles without a picture.
 const initials = s =>
   (s.match(/\p{L}[\p{L}'’-]*/gu) || ['?'])
     .slice(0, 2)
     .map(w => w[0])
     .join('')
     .toUpperCase();
+// Shortens text to n characters with an ellipsis.
 const trunc = (s, n) => (s.length > n ? s.slice(0, Math.max(1, n - 1)) + '…' : s);
+// A story page's relationships and family, from every map and tree, as a list on the page.
 function relHtml(e) {
   const rows = [];
   S.meta.rms.forEach(x => {
@@ -296,7 +326,9 @@ function relHtml(e) {
 
 /* canvas: pan, zoom, fit */
 const cvDoc = () => S[ui.view.k][ui.view.id];
+// The open map or tree's save key.
 const cvKey = () => ui.view.k + '_' + ui.view.id;
+// Applies the saved pan and zoom to the canvas.
 function cvApply() {
   const v = cvDoc().view,
     t = 'translate(' + v.x + ' ' + v.y + ') scale(' + v.k + ')';
@@ -310,11 +342,13 @@ function cvApply() {
     w.style.backgroundPosition = v.x + 'px ' + v.y + 'px';
   }
 }
+// A mouse position as a point on the canvas (before pan and zoom).
 function cvWorld(e) {
   const r = $('#cv').getBoundingClientRect(),
     v = cvDoc().view;
   return { x: (e.clientX - r.left - v.x) / v.k, y: (e.clientY - r.top - v.y) / v.k };
 }
+// Zooms by factor f around a point on the screen.
 function cvZoom(f, cx, cy) {
   const v = cvDoc().view,
     r = $('#cv').getBoundingClientRect();
@@ -329,6 +363,7 @@ function cvZoom(f, cx, cy) {
   cvApply();
   dirty(cvKey());
 }
+// Pans and zooms so everything is in view.
 function cvFit() {
   const g = $('#cvRoot'),
     svg = $('#cv');
@@ -349,16 +384,19 @@ function cvFit() {
   cvApply();
   dirty(cvKey());
 }
+// Redraws the open map or tree.
 function cvDraw() {
   if (ui.view.k === 'rm') drawRm();
   else if (ui.view.k === 'ft') drawFt();
   cvApply();
 }
+// Redraws the canvas, the side panel and the toolbar.
 function cvRefresh() {
   cvDraw();
   cvSide();
   cvBar();
 }
+// Selects a bubble, line, person or partnership (k, id): opens the side panel and keeps it in view.
 function cvSelect(k, id, focus) {
   ui.cvSel = k ? { k, id } : null;
   ui.confirm = null;
@@ -700,6 +738,7 @@ function ftLayout(f) {
   ui.ftGen = gen;
   return { pos, W, H, gy };
 }
+// Draws a family tree: people as cards in generations, partnerships, and lines to their children.
 function drawFt() {
   const f = cvDoc(),
     g = $('#cvRoot');
@@ -884,14 +923,17 @@ function ftPerson(f, o, after) {
   else f.people.push(p);
   return p;
 }
+// Adds a partnership between two people (or a single parent).
 function ftUnion(f, a, b) {
   const u = { id: uid('u_'), a, b: b || '', kind: f.kinds[0].id, label: '', note: '' };
   f.unions.push(u);
   return u;
 }
+// A person's single-parent "partnership", created if needed, so they can have children on their own.
 function ftSoloUnion(f, pid) {
   return f.unions.find(u => u.a === pid && !u.b) || ftUnion(f, pid, '');
 }
+// Removes partnerships left with nobody, or with one parent and no children.
 function ftTidy(f) {
   const live = new Set(f.people.map(p => p.id));
   f.unions.forEach(u => {
@@ -908,6 +950,7 @@ function ftTidy(f) {
     if (!us.has(p.of)) p.of = '';
   });
 }
+// Family tree actions: add a person, partner, parent or child, move, link to a page, delete.
 function ftAct(a, b) {
   const f = cvDoc(),
     sel = ui.cvSel || {},
@@ -1028,6 +1071,7 @@ function ftAct(a, b) {
     cvSelect('person', n.id);
   }
 }
+// Relationship map actions: add a bubble, link to a page, change kind or direction, delete.
 function rmAct(a, b) {
   const m = cvDoc(),
     sel = ui.cvSel || {},
@@ -1154,6 +1198,7 @@ function rmAct(a, b) {
       cvSide
     );
 }
+// Joins two bubbles with a line of the last-used kind (or selects the line if they are joined already).
 function rmConnect(m, a, b2) {
   if (a === b2) return;
   const k = (m.def && m.kinds.find(x => x.id === m.def && !x.hide)) || m.kinds.find(x => !x.hide) || m.kinds[0];
@@ -1642,6 +1687,7 @@ function cvSide() {
   box.scrollTop = keep;
   box.querySelectorAll('textarea').forEach(ag);
 }
+// The toolbar above a map or tree.
 function cvBar() {
   const bar = $('#cvBar');
   if (!bar) return;
@@ -1739,6 +1785,8 @@ function cvBar() {
     }
   }
 }
+// The relationship map or family tree screen: toolbar, canvas and side panel, with dragging, panning, zooming and
+// keys.
 function renderCv(el, v) {
   const rm = v.k === 'rm',
     x = S.meta[v.k + 's'].find(y => y.id === v.id),

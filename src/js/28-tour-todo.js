@@ -1,4 +1,10 @@
-/* ---------- first-run tour ---------- */
+/*
+ * 28-tour-todo.js: The first-run tour and today's to-do list
+ *
+ * The tour: a few coach marks pointing at the main parts of the screen, shown once per device. The to-do list
+ * (meta.todo, personal): tasks for today in the Inkling panel. Some tick themselves (reach the daily goal, finish a
+ * focus sprint, mark a scene Final); unfinished tasks carry over to the next day.
+ */
 // A few coach marks, shown once per device (localStorage 'inkling:tour'); Show the tour replays them.
 const TOUR = [
   [
@@ -32,6 +38,7 @@ const TOUR = [
     'Export to Word, PDF or EPUB, find and replace, settings, writing history and backups.'
   ]
 ];
+// Starts the tour (once per device unless force).
 function startTour(force) {
   try {
     if (!force && localStorage.getItem('inkling:tour')) return;
@@ -120,6 +127,7 @@ function startTour(force) {
   addEventListener('resize', ui.tourResize);
   show();
 }
+// Ends the tour and remembers it was seen.
 function endTour() {
   ['#tour', '#tourRing'].forEach(q => {
     const x = $(q);
@@ -141,6 +149,7 @@ const TODO_AUTO = {
   sprint: 'Ticks itself when a focus session ends',
   fin: 'Ticks itself when the scene is marked Final'
 };
+// Checks today's to-do list.
 function normTodo(t) {
   t = t && typeof t === 'object' ? t : {};
   return {
@@ -158,6 +167,7 @@ function normTodo(t) {
       })
   };
 }
+// On a new day: clears finished tasks and marks the ones carried over.
 function todoRoll() {
   const t = S.meta.todo,
     k = todayKey();
@@ -170,6 +180,7 @@ function todoRoll() {
   dirty('meta');
   return true;
 }
+// Ticks a task off and counts it for Inky.
 function todoDone(x) {
   x.done = true;
   if (!x.c) {
@@ -203,6 +214,7 @@ function todoTick(kind, sc) {
     drawTodo(n);
   }
 }
+// Suggested tasks to add with one click (only the ones not already on the list).
 function todoIdeas() {
   const m = S.meta,
     it = m.todo.items,
@@ -225,6 +237,7 @@ function todoIdeas() {
   });
   return out.slice(0, 4);
 }
+// Draws the to-do list in the Inkling panel.
 function drawTodo(justTicked) {
   const box = $('#tdBox');
   if (!box) return;
@@ -289,6 +302,7 @@ function drawTodo(justTicked) {
   box._ideas = ideas;
   if (justTicked) box.querySelectorAll('.td.done').forEach(li => li.classList.add('just'));
 }
+// Makes the to-do list work: add, tick, edit, delete, drag to reorder, add a suggestion.
 function bindTodo() {
   const box = $('#tdBox');
   if (!box) return;

@@ -1,4 +1,10 @@
-/* ---------- world: calendars and money ---------- */
+/*
+ * 11-world.js: Calendars and money for invented worlds
+ *
+ * The Calendars & money screen ({k:'world'}): calendars with their own months, weekdays and era, with a converter
+ * from a day number to a date (and back, calDay), and currencies with any number of coins and a converter between
+ * them. A calendar can also be used as a timeline's time scale. Kept in meta.world.
+ */
 // meta.world.cals: invented calendars {id,name,months[[name,days]],week (comma list),era,first (number of the first year)};
 // meta.world.coins: currencies {id,name,units[[name,per]],note}: units from largest to smallest, per = how many of the
 // next unit make one of this. View {k:'world'} (renderWorld). A calendar can set a timeline's scale (TL presets).
@@ -38,7 +44,9 @@ function normWorld(w) {
       }))
   };
 }
+// Days in one year of a calendar.
 const calYear = c => c.months.reduce((a, x) => a + x[1], 0) || 1;
+// A calendar's weekday names.
 const calWeek = c =>
   c.week
     .split(',')
@@ -58,13 +66,16 @@ function calDate(c, n) {
   const wk = calWeek(c);
   return { y: c.first + yi, mi, d: r + 1, wd: wk.length ? wk[(((n - 1) % wk.length) + wk.length) % wk.length] : '' };
 }
+// The day number of a date (year, month index, day).
 function calDay(c, y, mi, d) {
   let n = (y - c.first) * calYear(c);
   for (let i = 0; i < mi; i++) n += c.months[i][1];
   return n + d;
 }
+// A date as words: "Moonday, 10 Ebb, year 3 AR".
 const calFmt = (c, o) =>
   (o.wd ? o.wd + ', ' : '') + o.d + ' ' + (c.months[o.mi] || ['?'])[0] + ', year ' + o.y + (c.era ? ' ' + c.era : '');
+// An amount in the smallest coin, broken into coins: "2 Crowns, 3 Shillings".
 function coinBreak(c, total) {
   // an amount in the smallest unit → "2 Crowns, 3 Shillings"
   const vals = coinVals(c),
@@ -79,17 +90,20 @@ function coinBreak(c, total) {
   });
   return out.join(', ') || '0 ' + (c.units[c.units.length - 1] || ['coins'])[0];
 }
+// The converter's result line: the total in the smallest coin and broken into coins.
 const coinOut = (c, tot) =>
   '= ' +
   fmt(tot) +
   ' ' +
   (c.units[c.units.length - 1] || [''])[0] +
   (c.units.length > 1 ? ' · ' + coinBreak(c, tot) : '');
+// What each coin is worth in the smallest coin.
 function coinVals(c) {
   const v = new Array(c.units.length).fill(1);
   for (let i = c.units.length - 2; i >= 0; i--) v[i] = v[i + 1] * c.units[i][1];
   return v;
 }
+// A new calendar to start from: twelve months and a six-day week.
 function worldDefCal() {
   return {
     id: uid('cal'),
@@ -113,6 +127,7 @@ function worldDefCal() {
     first: 1
   };
 }
+// A new currency to start from: crowns, shillings and pennies.
 function worldDefCoin() {
   return {
     id: uid('cn'),
@@ -125,6 +140,7 @@ function worldDefCoin() {
     note: ''
   };
 }
+// The Calendars & money screen.
 function renderWorld(el) {
   const W = S.meta.world,
     f = ui.wf || (ui.wf = {});

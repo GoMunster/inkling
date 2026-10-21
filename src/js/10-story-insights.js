@@ -1,13 +1,29 @@
-/* ---------- story insights: scene details, pacing, point of view, plot threads ---------- */
+/*
+ * 10-story-insights.js: Story insights, scene details, setups and payoffs, and character arcs
+ *
+ * Scene details: each scene can name its point-of-view character, its place, its tension (1–5) and the plot threads
+ * it moves on. They are kept in meta.scenes[id] and edited in the Inkling panel (sceneDetailsHtml, bindSceneDetails).
+ * Setups and payoffs (foreshadowing) are kept in meta.setups.
+ *
+ * The Story insights screen ({k:'story'}) reads the book through storyRows(): one row per scene, in order, with its
+ * words, tension (set by the writer, or estimated from the words), dialogue, action and reflection, and who is named.
+ * Its tabs: Pacing (a chart across the book), Point of view (who gets the page, and screen time by chapter), Arcs,
+ * Plot threads (a grid by chapter, with warnings) and Setups & payoffs.
+ *
+ * Character arcs live on each character's story page (S.en[id].arc): the kind of arc, goal, wound, lie and truth, and
+ * how far along the change they are in each chapter.
+ */
 // Each scene can name its point-of-view character (meta.scenes[id].pov), where it happens (place), how tense it is
 // (tension 1–5) and the plot threads it moves on (threads: ids from meta.threads). The Story insights view
 // ({k:'story'}, tabs in ui.stTab) draws pacing across the book, who gets the page, and threads by chapter.
 const THREAD_GAP = 3; // chapters a thread may go missing before it is flagged
+// Words that suggest a character thinking or remembering (reflection rather than action).
 const REFLECT = new Set(
   'thought thoughts think thinks thinking wondered wonder wonders wondering remembered remember remembers remembering memory memories realised realized realise realize knew felt feel feels feeling feelings wished wish hoped hope hopes considered imagined believed supposed perhaps maybe somehow regret regretted'.split(
     ' '
   )
 );
+// Checks the list of plot threads.
 function normThreads(x) {
   const seen = new Set();
   return (Array.isArray(x) ? x : [])
@@ -21,6 +37,8 @@ function normThreads(x) {
       done: typeof t.done === 'string' ? t.done : ''
     }));
 }
+// Checks every scene's details: drops a point of view, place or thread that no longer exists, and keeps tension
+// between 1 and 5.
 function normSceneDetails(meta) {
   const ids = new Set(meta.threads.map(t => t.id));
   Object.values(meta.scenes).forEach(s => {
@@ -55,12 +73,14 @@ function normSetups(x) {
       pay: typeof t.pay === 'string' ? t.pay : ''
     }));
 }
+// Adds a setup (a clue or promise to pay off later) planted in a scene.
 function setupAdd(text, scene) {
   const x = { id: uid('fs'), text: String(text).trim().slice(0, 300), note: '', scene: scene || '', pay: '' };
   S.meta.setups.push(x);
   dirty('meta');
   return x;
 }
+// Each scene's position in the book: {sceneId: index}.
 function sceneOrder() {
   const o = {};
   orderedScenes().forEach((x, i) => {
@@ -68,6 +88,7 @@ function sceneOrder() {
   });
   return o;
 }
+// Setups to check: never paid off, paid off before they are set up or in the same scene, or with no scene.
 function setupWarnings() {
   const ord = sceneOrder(),
     m = S.meta,
@@ -165,7 +186,9 @@ function storyRows() {
   ui.stRows = { v: m.saved, n: Object.keys(m.scenes).length, at: Date.now(), rows };
   return rows;
 }
+// A scene's tension: the writer's own, or the estimate.
 const stTen = r => r.tension || r.est;
+// "Chapter › Scene", for lists and tooltips.
 function stLabel(r) {
   return r.ch.title + ' › ' + r.title;
 }
@@ -239,6 +262,8 @@ function sceneDetailsHtml(id) {
     '<span>Story insights</span></button></div>'
   );
 }
+// The Setups and payoffs part of the scene panel: what is set up and paid off here, a box to plant a new one, and a
+// list to pay off an earlier one.
 function sceneSetupsHtml(id) {
   const m = S.meta,
     ord = sceneOrder(),
@@ -276,6 +301,7 @@ function sceneSetupsHtml(id) {
     '</div></div>'
   );
 }
+// Makes the scene details panel work: point of view, place, tension, threads (and new ones), and setups.
 function bindSceneDetails(id) {
   const box = $('#sceneDet');
   if (!box) return;
@@ -360,6 +386,7 @@ function bindSceneDetails(id) {
     });
   });
 }
+// Adds a plot thread with the next colour.
 function threadAdd(name) {
   const m = S.meta,
     t = {
@@ -530,9 +557,12 @@ function renderStory(el, v) {
     renderStory(el, v);
   };
 }
+// What Story insights shows before there is any writing.
 function stEmpty() {
   return '<section class="pf"><p class="ct-none">Write a scene or two first. Story insights reads your scenes in order.</p></section>';
 }
+// The Pacing tab: a chart of tension, length and the mix of each scene, and what stands out (quiet stretches, where
+// the most intense scene falls).
 function stPaceHtml() {
   const rows = storyRows();
   if (!rows.some(r => r.words)) return stEmpty();
@@ -782,10 +812,12 @@ function stPaceHtml() {
       : '')
   );
 }
+// Shortens a label to n characters with an ellipsis.
 function stClip(s, n) {
   s = String(s);
   return n < 4 ? '' : s.length > n ? s.slice(0, n - 1) + '…' : s;
 }
+// The Point of view tab: words per point-of-view character, and a grid of mentions by chapter.
 function stCastHtml() {
   const rows = storyRows(),
     m = S.meta;
@@ -896,6 +928,7 @@ function stCastHtml() {
     : '<p class="ct-none">No characters are mentioned yet. Add character pages and use their names in your scenes.</p>';
   return pov + '<section class="pf"><h2>Screen time</h2>' + grid + '</section>';
 }
+// Plot threads to check: missing for THREAD_GAP or more chapters, never resolved, or in no scene.
 function threadWarnings() {
   const m = S.meta,
     chs = m.chapters.filter(c => c.scenes.length),
@@ -944,6 +977,7 @@ function threadWarnings() {
   });
   return out;
 }
+// The Setups & payoffs tab: add setups, see what to check, and edit every setup in book order.
 function stSetupsHtml() {
   const m = S.meta,
     ord = sceneOrder(),
@@ -1060,12 +1094,14 @@ const ARC_TYPES = [
   ['neg', 'Falls'],
   ['flat', 'Holds firm']
 ];
+// The four questions of an arc: [key, label, hint].
 const ARC_F = [
   ['goal', 'Goal', 'What they want'],
   ['wound', 'Wound', 'What hurt them before the story'],
   ['lie', 'Lie', 'What they wrongly believe'],
   ['truth', 'Truth', 'What they need to learn']
 ];
+// Checks a character's arc; returns null when there is nothing in it.
 function normArc(a) {
   if (!a || typeof a !== 'object') return null;
   const o = { type: ARC_TYPES.some(t => t[0] === a.type) ? a.type : 'pos', pts: {} };
@@ -1092,7 +1128,9 @@ function normArc(a) {
     });
   return any || (a.type && a.type !== 'pos') ? o : null;
 }
+// A character's arc, or null.
 const arcOf = id => (S.en[id] && S.en[id].arc) || null;
+// A character's arc, created empty if needed, ready to change.
 function arcEdit(id) {
   const b = S.en[id];
   if (!b.arc) b.arc = { type: 'pos', pts: {} };
@@ -1194,6 +1232,8 @@ function arcSvg(series, chs, o) {
   });
   return h + '</svg>';
 }
+// The Character arc box on a character's page: kind of arc, the four questions, the chart (click to set a chapter)
+// and a note for the selected chapter.
 function drawArcBox(e) {
   const box = $('#arcBox');
   if (!box) return;
@@ -1312,6 +1352,7 @@ function drawArcBox(e) {
     });
   }
 }
+// The Arcs tab: every charted arc on one chart, and a table of lies and truths.
 function stArcsHtml() {
   const m = S.meta,
     chs = m.chapters,
@@ -1396,5 +1437,183 @@ function stArcsHtml() {
         rows +
         '</tbody></table></div></section>'
       : '')
+  );
+}
+// The Plot threads tab: a grid of threads by chapter, warnings, and each thread's details.
+function stThreadsHtml() {
+  const m = S.meta,
+    rows = storyRows(),
+    chs = m.chapters.filter(c => c.scenes.length),
+    idx = {};
+  chs.forEach((c, i) => {
+    idx[c.id] = i;
+  });
+  const add =
+    '<div class="th-add"><input id="thName" maxlength="80" placeholder="A subplot, mystery or relationship, like “Who sank the Lantern?”" aria-label="New plot thread"><button class="btn pri" data-st="thadd">' +
+    ico('plus', 14) +
+    '<span>Add thread</span></button></div>';
+  if (!m.threads.length)
+    return (
+      '<section class="pf"><h2>Plot threads</h2><p class="fine">Plot threads are the storylines that run through your book: subplots, mysteries, relationships. Tag the scenes that move each one on (Inkling panel › This scene › Plot threads) and see where each thread goes quiet or is left hanging.</p>' +
+      add +
+      '</section>'
+    );
+  const doneAt = {};
+  m.threads.forEach(t => {
+    const r = t.done && rows.find(x => x.id === t.done);
+    if (r) doneAt[t.id] = idx[r.ch.id];
+  });
+  const grid =
+    '<div class="st-grid-wrap"><table class="st-tab th-tab"><thead><tr><th></th>' +
+    chs.map((c, i) => '<th title="' + esc(c.title) + '">' + (i + 1) + '</th>').join('') +
+    '</tr></thead><tbody>' +
+    m.threads
+      .map(t => {
+        const n = {};
+        rows.forEach(r => {
+          if (r.threads.includes(t.id)) n[idx[r.ch.id]] = (n[idx[r.ch.id]] || 0) + 1;
+        });
+        return (
+          '<tr><th><span class="th-dot" style="--c:' +
+          cssCol(t.color) +
+          '"></span>' +
+          esc(t.name) +
+          '</th>' +
+          chs
+            .map((c, i) => {
+              const k = n[i] || 0,
+                after = doneAt[t.id] != null && i > doneAt[t.id];
+              return (
+                '<td class="th-c' +
+                (k ? ' on' : '') +
+                (after ? ' after' : '') +
+                (doneAt[t.id] === i ? ' done' : '') +
+                '" style="--c:' +
+                cssCol(t.color) +
+                '" title="' +
+                esc(
+                  t.name +
+                    ' · ' +
+                    c.title +
+                    ': ' +
+                    k +
+                    ' scene' +
+                    (k === 1 ? '' : 's') +
+                    (doneAt[t.id] === i ? ' · resolved here' : '')
+                ) +
+                '">' +
+                (doneAt[t.id] === i ? '✓' : k > 1 ? k : '') +
+                '</td>'
+              );
+            })
+            .join('') +
+          '</tr>'
+        );
+      })
+      .join('') +
+    '</tbody></table></div>';
+  const warn = threadWarnings();
+  const scOpts = sel =>
+    '<option value="">Not resolved yet</option>' +
+    m.chapters
+      .map(
+        ch =>
+          '<optgroup label="' +
+          esc(ch.title) +
+          '">' +
+          ch.scenes
+            .map(
+              id =>
+                '<option value="' +
+                id +
+                '"' +
+                (sel === id ? ' selected' : '') +
+                '>' +
+                esc(m.scenes[id].title) +
+                '</option>'
+            )
+            .join('') +
+          '</optgroup>'
+      )
+      .join('');
+  const cards = m.threads
+    .map(t => {
+      const sc = rows.filter(r => r.threads.includes(t.id));
+      return (
+        '<div class="th-card" style="--c:' +
+        cssCol(t.color) +
+        '"><div class="th-row"><input data-th="name" data-id="' +
+        t.id +
+        '" value="' +
+        esc(t.name) +
+        '" maxlength="80" aria-label="Thread name">' +
+        '<span class="sws mini">' +
+        TL_COLORS.map(
+          c =>
+            '<button class="sw' +
+            (c[0] === t.color ? ' on' : '') +
+            '" data-st="thcol" data-id="' +
+            t.id +
+            '" data-c="' +
+            c[0] +
+            '" style="--c:var(--' +
+            c[0] +
+            ')" title="' +
+            c[1] +
+            '" aria-label="' +
+            c[1] +
+            '"></button>'
+        ).join('') +
+        '</span>' +
+        '<button class="ibtn" data-st="thdel" data-id="' +
+        t.id +
+        '" aria-label="Delete thread" title="Delete thread">' +
+        ico('trash', 14) +
+        '</button></div>' +
+        '<textarea data-th="note" data-id="' +
+        t.id +
+        '" rows="2" placeholder="What this thread is about, and how it should end." aria-label="Thread notes">' +
+        esc(t.note) +
+        '</textarea>' +
+        '<label class="f">Resolved in<select data-th="done" data-id="' +
+        t.id +
+        '">' +
+        scOpts(t.done) +
+        '</select></label>' +
+        '<p class="fine">' +
+        (sc.length
+          ? 'In ' +
+            sc.length +
+            ' scene' +
+            (sc.length === 1 ? '' : 's') +
+            ': ' +
+            sc
+              .slice(0, 8)
+              .map(r => '<button class="lnk" data-open="' + r.id + '">' + esc(r.title) + '</button>')
+              .join(', ') +
+            (sc.length > 8 ? ' and more' : '')
+          : 'Not in any scene yet.') +
+        '</p></div>'
+      );
+    })
+    .join('');
+  return (
+    '<section class="pf"><h2>Plot threads</h2><p class="fine">Each row is a thread, each column a chapter. Tag scenes in the Inkling panel (This scene › Plot threads); mark where a thread is resolved below.</p>' +
+    grid +
+    '</section>' +
+    '<section class="pf"><h2>Threads to check <span class="muted">' +
+    warn.length +
+    '</span></h2>' +
+    (warn.length
+      ? '<ul class="st-notes">' +
+        warn.map(w => '<li class="th-w ' + w.kind + '">' + esc(w.text) + '</li>').join('') +
+        '</ul>'
+      : '<p class="ct-none">Every thread keeps turning up and is resolved.</p>') +
+    '</section>' +
+    '<section class="pf"><h2>Your threads</h2>' +
+    add +
+    '<div class="th-cards">' +
+    cards +
+    '</div></section>'
   );
 }

@@ -1,11 +1,22 @@
-/* ---------- main: outline ---------- */
+/*
+ * 24-outline.js: Outlines
+ *
+ * An outline is one flat list of lines, each with a depth (up to OL_MAX); a line's children are the lines after it
+ * with a greater depth. Indenting, outdenting, moving and deleting always carry a line's whole block. Lines can be
+ * numbered, ticked off, given notes and linked to scenes.
+ *
+ * Templates (OL_TPL: three acts, the Hero's Journey, Save the Cat and more) fill an outline with story beats.
+ * Switching template keeps what the writer typed: their notes and lines move with the matching beat.
+ */
 const OL_MAX = 5;
+// Ways an outline can be numbered.
 const OL_NUMS = [
   ['decimal', '1.2.3'],
   ['classic', 'I. A. 1. a.'],
   ['bullets', 'Bullets'],
   ['none', 'None']
 ];
+// Outline templates: each a list of [beat, hint, depth].
 const OL_TPL = {
   three: [
     'Three-act structure',
@@ -117,7 +128,9 @@ const OL_POS = {
   seven: [1, 20, 35, 50, 62, 81, 99],
   romance: [0, 1, 5, 10, 15, 20, 20, 25, 30, 37, 43, 50, 55, 55, 62, 68, 72, 75, 78, 78, 82, 88, 94, 99]
 };
+// The outline that is open.
 const curOl = () => S.ol[ui.view.id];
+// A new outline line.
 const olItem = (text, depth, o) =>
   Object.assign(
     {
@@ -141,6 +154,7 @@ const olKey = s =>
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, ' ')
     .trim();
+// Switches an outline to another template, keeping everything the writer added or changed.
 function olApplyTemplate(old, key) {
   const beats = new Map();
   Object.values(OL_TPL).forEach(t =>
@@ -247,12 +261,15 @@ function olApplyTemplate(old, key) {
   });
   return { items: out, kept };
 }
+// The index just past a line's block (the line and all its children).
 const olEnd = (it, i) => {
   let j = i + 1;
   while (j < it.length && it[j].depth > it[i].depth) j++;
   return j;
 }; // end of item i's block
+// Whether a line has children.
 const olHasKids = (it, i) => i + 1 < it.length && it[i + 1].depth > it[i].depth;
+// The lines to show: children of folded lines are hidden.
 function olVisible(it) {
   const out = [];
   let hide = 99;
@@ -264,6 +281,7 @@ function olVisible(it) {
   });
   return out;
 }
+// A number in Roman numerals, for outline numbering.
 const ROMAN = n => {
   let r = '',
     v = [
@@ -289,6 +307,7 @@ const ROMAN = n => {
   });
   return r;
 };
+// Each line's number (1.2.3, I.A.1 and so on) in the chosen style.
 function olNumbers(o) {
   const c = [],
     out = [];
@@ -314,6 +333,7 @@ function olNumbers(o) {
   });
   return out;
 }
+// Draws the outline screen: toolbar, templates and the list.
 function renderOl(el, v) {
   const x = S.meta.ols.find(y => y.id === v.id),
     o = S.ol[v.id];
@@ -555,10 +575,12 @@ function renderOl(el, v) {
     nm.select();
   }
 }
+// Shows or hides the outline's one-step Undo button.
 function olUndoBtn() {
   const b = $('#olUndo');
   if (b) b.hidden = !(ui.olUndo && ui.olUndo.id === ui.view.id);
 }
+// Puts the caret in an outline line.
 function olFocus(id, end) {
   const i = $('#olList [data-i="' + id + '"] .ol-tx');
   if (i) {
@@ -569,6 +591,7 @@ function olFocus(id, end) {
     } catch (e) {}
   }
 }
+// Deletes a line (with its block if all), with one step of undo.
 function olDelete(i, all) {
   const o = curOl(),
     it = o.items,
@@ -583,6 +606,7 @@ function olDelete(i, all) {
   drawOl();
   renderBinder();
 }
+// Outline actions from keys and buttons: add, indent, outdent, move, fold, tick.
 function olOp(a, i, keep) {
   const o = curOl(),
     it = o.items,
@@ -615,6 +639,7 @@ function olOp(a, i, keep) {
   dirty('ol_' + ui.view.id);
   drawOl(keep ? x.id : null);
 }
+// Moves a line and everything under it before another line, at that line's depth.
 function olDrop(id, beforeId) {
   // move a line and everything under it before another line, at that line's depth
   const o = curOl(),
@@ -636,6 +661,7 @@ function olDrop(id, beforeId) {
   dirty('ol_' + ui.view.id);
   drawOl();
 }
+// Redraws the outline's lines (keeps the toolbar), optionally focusing one.
 function drawOl(focusId) {
   const list = $('#olList'),
     o = curOl();

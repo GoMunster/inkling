@@ -1,5 +1,16 @@
-/* ---------- main: notes and brainstorm boards ---------- */
+/*
+ * 23-notes-maps.js: Notes pages, brainstorm boards and world maps
+ *
+ * A note (meta.nts, S.nt) is one of three kinds: a page of free text, a brainstorm board of coloured idea cards, or a
+ * world map. renderNt() draws the first two; renderMap() draws a map.
+ *
+ * World maps: an uploaded picture (or blank parchment) with pins and pen strokes on top. Pins are placed in 0–1000
+ * units across and down the map, so they stay put whatever the picture's size. The view can be panned and zoomed;
+ * pins and strokes are part of the saved note, the pan and zoom are per device.
+ */
+// Colours for brainstorm idea cards.
 const NT_COLORS = ['thing', 'pet', 'char', 'accent', 'place', 'muted'];
+// The story pages named in a note, as clickable chips.
 function namesHtml(text) {
   const seen = [];
   findLinks(text).forEach(l => {
@@ -27,7 +38,9 @@ function namesHtml(text) {
 // The view (pan and zoom) is per device in ui.mpView; ui.mpSel is the selected pin, ui.mpMode 'move'|'pin'|'draw'.
 const MP_W = 1500,
   MP_H = 1000; // the blank parchment's size
+// A pin's name: its story page's name, or its own label.
 const mpName = pn => (pn.ent && S.meta.ents[pn.ent] ? S.meta.ents[pn.ent].name : pn.name || 'Pin');
+// Checks a world map's record: picture, pins, pen strokes and pin size.
 function normMap(d, ents) {
   d = d && typeof d === 'object' ? d : {};
   const c = v => Math.max(0, Math.min(1000, Math.round(+v || 0)));
@@ -52,16 +65,20 @@ function normMap(d, ents) {
       .map(k => ({ c: colOk(k.c) ? k.c : 'ink', w: [1, 2, 4, 8].includes(k.w) ? k.w : 2, p: k.p.slice(0, 20000) }))
   };
 }
+// A pin's colour: its own, its page kind's, or red.
 const mpCol = pn =>
   pn.color
     ? cssCol(pn.color)
     : pn.ent && S.meta.ents[pn.ent]
       ? 'var(--' + S.meta.ents[pn.ent].type + ')'
       : 'var(--danger)';
+// A pen colour as CSS (the default ink is a dark brown).
 const mpInk = c => (c === 'ink' ? '#2b2118' : cssCol(c));
+// The scenes whose place is this story page, in book order.
 function mpScenesAt(entId) {
   return entId ? orderedScenes().filter(o => S.meta.scenes[o.id].place === entId) : [];
 }
+// The world map screen: tools, the map with pins and drawing, and the side panel for pins.
 function renderMap(el, v, x, d) {
   const src = picSrc(v.id),
     mode = ui.mpMode || 'move',
@@ -731,6 +748,7 @@ function mapPinsHtml(e) {
   return rows.length ? '<section class="appears"><h3>On the map</h3>' + rows.join('') + '</section>' : '';
 }
 
+// Draws a notes page or a brainstorm board (a world map goes to renderMap).
 function renderNt(el, v) {
   const x = S.meta.nts.find(y => y.id === v.id),
     d = S.nt[v.id],

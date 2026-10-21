@@ -1,0 +1,576 @@
+/*
+ * 09-room-sharing.css: Inky's room, sharing, dialogs and the update bar
+ *
+ * The room screen, everything for shared projects (presence, the share dialog), dialogs, the update bar, and
+ * Settings.
+ *
+ * Styles apply in file-name order, so a later file can refine an earlier one.
+ */
+/* Inky's room */
+.pet-stage {
+  position: relative;
+  overflow: hidden;
+  aspect-ratio: 300/190;
+  padding: 0;
+  place-items: end center;
+}
+.pet-stage .room,
+.den-stage .room {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: flex-end;
+}
+.roomsvg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+.pet-stage .pet-btn {
+  position: relative;
+  margin-bottom: 6px;
+}
+.pet-stage .pet-btn svg {
+  width: 128px;
+  height: 128px;
+}
+.den-btn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  padding: 3px 8px;
+  font-size: 11.5px;
+  background: color-mix(in srgb, var(--paper) 85%, transparent);
+}
+.dot-new {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--char);
+  display: inline-block;
+  margin-left: 2px;
+}
+.pals {
+  position: absolute;
+  left: 8px;
+  bottom: 6px;
+  display: flex;
+  gap: 4px;
+}
+.pal {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: 10px;
+  color: var(--muted);
+}
+.pal svg {
+  width: 44px;
+  height: 44px;
+}
+.roomsvg .floor {
+  fill: color-mix(in srgb, var(--line) 70%, transparent);
+}
+.roomsvg .frame {
+  fill: none;
+  stroke: var(--paper);
+  stroke-width: 3;
+}
+.roomsvg .win rect {
+  stroke: var(--line);
+  stroke-width: 1;
+}
+.roomsvg .wstar {
+  fill: var(--thing);
+  opacity: 0.9;
+}
+.roomsvg .mapf rect {
+  fill: #efe2c4;
+  stroke: #9b7a45;
+  stroke-width: 3;
+}
+.roomsvg .mapf path {
+  stroke: #9b7a45;
+  stroke-width: 1.6;
+  stroke-dasharray: 3 2;
+}
+.roomsvg .mapf circle {
+  fill: var(--char);
+}
+.roomsvg .shelf > rect:first-child {
+  fill: #9b7a45;
+}
+.roomsvg .book.b0 {
+  fill: var(--accent);
+}
+.roomsvg .book.b1 {
+  fill: var(--char);
+}
+.roomsvg .book.b2 {
+  fill: var(--place);
+}
+.roomsvg .book.b3 {
+  fill: var(--thing);
+}
+.roomsvg .hg path {
+  fill: none;
+  stroke: #9b7a45;
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+.roomsvg .rug {
+  fill: color-mix(in srgb, var(--char) 30%, transparent);
+}
+.roomsvg .chair rect {
+  fill: color-mix(in srgb, var(--accent) 55%, var(--paper));
+}
+.roomsvg .lamp .shade {
+  fill: var(--thing);
+}
+.roomsvg .lamp .pole {
+  fill: none;
+  stroke: var(--muted);
+  stroke-width: 3;
+  stroke-linecap: round;
+}
+.roomsvg .lamp .glow {
+  fill: #ffe7a0;
+  opacity: 0.28;
+}
+.roomsvg .plant .stem {
+  stroke: var(--place);
+  stroke-width: 3;
+  stroke-linecap: round;
+}
+.roomsvg .plant .leaf {
+  fill: var(--place);
+}
+.roomsvg .plant .pot {
+  fill: #b9673f;
+}
+.roomsvg .plant .bloom {
+  fill: var(--char);
+}
+.roomsvg .plant .bloomc {
+  fill: var(--thing);
+}
+.petsvg .it .c1 {
+  fill: var(--char);
+}
+.petsvg .it .c2 {
+  fill: var(--accent);
+}
+.petsvg .it .c3 {
+  fill: #f4efd8;
+  stroke: #f4efd8;
+}
+.petsvg .it .gold {
+  fill: var(--thing);
+}
+.petsvg .it .lens {
+  fill: none;
+  stroke: var(--thing);
+  stroke-width: 3;
+}
+.petsvg .it .chain {
+  fill: none;
+  stroke: var(--thing);
+  stroke-width: 2;
+}
+.petsvg .it .dark {
+  fill: var(--pet-ink);
+}
+.petsvg .it .star {
+  fill: #fff;
+}
+.petsvg .it .steam {
+  fill: none;
+  stroke: var(--muted);
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+.petsvg .it path[stroke-width] {
+  stroke: currentColor;
+}
+.petsvg .it .c3[stroke-width] {
+  stroke: #f4efd8;
+}
+.den {
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 16px 16px 48px;
+  display: grid;
+  gap: 14px;
+}
+.den-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+  gap: 16px;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 14px;
+}
+.den-stage {
+  position: relative;
+  aspect-ratio: 300/190;
+  background: var(--panel2);
+  border-radius: 12px;
+  overflow: hidden;
+  display: grid;
+  place-items: end center;
+}
+.den-pet {
+  position: relative;
+  margin-bottom: 8px;
+}
+.den-pet svg {
+  width: min(190px, 40vw);
+  height: auto;
+  display: block;
+}
+.den-name {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 20px;
+  font-family: var(--f-prose);
+}
+.den-tiles {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin: 10px 0 4px;
+}
+.den-tiles .ss-tile {
+  background: var(--bg);
+  padding: 8px 12px;
+}
+.den-tiles .ss-tile b {
+  font-size: 18px;
+}
+.swatches {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.sw {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 2px solid var(--paper);
+  background: var(--c, var(--pet));
+  box-shadow: 0 0 0 1px var(--line);
+}
+.sw.on {
+  box-shadow: 0 0 0 2px var(--ink);
+}
+.wd-row {
+  margin-top: 8px;
+}
+.wd-opts {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.wd {
+  width: 78px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--bg);
+  padding: 6px 4px 4px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+.wd svg {
+  width: 54px;
+  height: 54px;
+  overflow: visible;
+}
+.wd small {
+  font-size: 11px;
+  color: var(--muted);
+  text-align: center;
+  line-height: 1.2;
+}
+.wd.on {
+  border-color: var(--accent);
+  box-shadow: inset 0 0 0 1px var(--accent);
+}
+.wd.locked {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+.wd.locked svg {
+  filter: grayscale(1);
+}
+.wd-auto {
+  height: 54px;
+  display: grid;
+  place-items: center;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--muted);
+}
+.ach {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+  gap: 8px;
+  margin-top: 10px;
+}
+.ach-card {
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 10px 12px;
+  background: var(--bg);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 13px;
+}
+.ach-card span {
+  color: var(--muted);
+  font-size: 12.5px;
+}
+.ach-card small {
+  font-size: 11.5px;
+  color: var(--muted);
+}
+.ach-card.got {
+  border-color: color-mix(in srgb, var(--place) 50%, var(--line));
+  background: color-mix(in srgb, var(--place) 9%, var(--bg));
+}
+.ach-card.got b::before {
+  content: '✓ ';
+  color: var(--place);
+}
+.ach-card .bar {
+  height: 5px;
+}
+.here-chip.sprinting {
+  border-color: var(--accent);
+}
+.here-pop .spr {
+  color: var(--accent);
+  font-weight: 600;
+}
+@media (max-width: 760px) {
+  .den-hero {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* sharing */
+.here-chip {
+  gap: 4px;
+  padding: 3px 10px 3px 4px;
+}
+.here-chip span {
+  font-size: 12px;
+}
+.av {
+  display: inline-grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  font-style: normal;
+  font-size: 11px;
+  font-weight: 700;
+  color: #fff;
+  background: hsl(var(--h, 210) 55% 42%);
+  flex: none;
+}
+.here-chip .av + .av {
+  margin-left: -6px;
+  box-shadow: 0 0 0 2px var(--paper);
+}
+.sc-btn .here {
+  width: 16px;
+  height: 16px;
+  font-size: 9.5px;
+  margin-left: 4px;
+}
+.here-pop {
+  position: fixed;
+  z-index: 60;
+  width: 280px;
+  max-width: calc(100vw - 16px);
+  padding: 10px 12px;
+}
+.here-row {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  padding: 6px 0;
+  font-size: 13px;
+}
+.here-ban {
+  max-width: var(--ed-w, 780px);
+  margin: 12px auto 0;
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  background: color-mix(in srgb, var(--accent) 10%, var(--paper));
+  border: 1px solid color-mix(in srgb, var(--accent) 35%, var(--line));
+  border-radius: 10px;
+  padding: 8px 12px;
+  font-size: 13px;
+  color: var(--ink);
+}
+.here-ban[hidden] {
+  display: none;
+}
+.upd-bar.merge-bar {
+  left: auto;
+  right: 16px;
+  max-width: min(560px, calc(100vw - 32px));
+}
+.pj-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: 8px;
+  font-family: var(--f-ui);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--accent);
+  border: 1px solid color-mix(in srgb, var(--accent) 40%, var(--line));
+  border-radius: 999px;
+  padding: 1px 7px;
+  vertical-align: middle;
+}
+.pj-dlg.share {
+  width: min(640px, 100%);
+}
+.sh-steps {
+  margin: 14px 0;
+  padding-left: 0;
+  list-style: none;
+  counter-reset: st;
+  display: grid;
+  gap: 12px;
+}
+.sh-steps li {
+  counter-increment: st;
+  position: relative;
+  padding: 10px 12px 10px 46px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--paper);
+  font-size: 13.5px;
+}
+.sh-steps li::before {
+  content: counter(st);
+  position: absolute;
+  left: 12px;
+  top: 10px;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: var(--bg);
+  border: 1px solid var(--line);
+  font-weight: 700;
+  font-size: 12px;
+}
+.sh-steps li.done::before {
+  content: '✓';
+  background: var(--ok);
+  border-color: var(--ok);
+  color: #fff;
+}
+.sh-steps p {
+  margin: 4px 0 0;
+  line-height: 1.5;
+  color: var(--muted);
+}
+.sh-steps code {
+  font-family: var(--f-mono);
+  font-size: 12px;
+  overflow-wrap: anywhere;
+  color: var(--ink);
+}
+.sh-steps .ts-row {
+  margin-top: 8px;
+}
+.hs ul,
+.hs ol {
+  margin: 6px 0;
+  padding-left: 20px;
+  line-height: 1.55;
+  font-size: 14px;
+}
+.hs li {
+  margin: 4px 0;
+}
+.hs p {
+  line-height: 1.55;
+  font-size: 14px;
+}
+.banner-note {
+  background: color-mix(in srgb, var(--accent) 10%, var(--paper));
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 12px 14px;
+  margin: 0;
+  font-size: 14px;
+}
+
+/* dialogs, update bar, settings */
+.ask-ov {
+  z-index: 80;
+}
+.pj-dlg.ask {
+  width: min(480px, 100%);
+}
+.pj-dlg.ex {
+  width: min(620px, 100%);
+}
+.ex .seg {
+  margin-bottom: 2px;
+}
+.ask h2 {
+  margin: 0 0 8px;
+  font-family: var(--f-prose);
+  font-size: 20px;
+}
+.ask p {
+  margin: 0 0 16px;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+.ask code,
+.pf code {
+  font-family: var(--f-mono);
+  font-size: 12px;
+  overflow-wrap: anywhere;
+}
+.ask-btns {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+.upd-bar {
+  position: fixed;
+  left: 16px;
+  bottom: calc(16px + var(--tabh) + env(safe-area-inset-bottom, 0px));
+  z-index: 45;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  max-width: calc(100vw - 32px);
+  background: var(--paper);
+  border: 1px solid var(--accent);
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+  padding: 8px 10px 8px 12px;
+  font-size: 13.5px;
+  color: var(--ink);
+}
+.upd-bar > .ico {
+  color: var(--accent);
+}

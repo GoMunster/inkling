@@ -1,4 +1,12 @@
-/* ---------- header / stats ---------- */
+/*
+ * 13-navigation.js: Moving between views, and the numbers in the top bar and the Inkling panel
+ *
+ * A view is what the main pane shows: {k:'scene', id}, {k:'ent', id} for a story page, {k:'cork'}, {k:'tl', id} and
+ * so on. go() opens a view and keeps the history for Back (goBack) and Forward. updateStats() refreshes today's
+ * words, the goal ring, the manuscript total and the streak wherever they are shown.
+ */
+// Refreshes every word count on screen: today's words and goal ring, the manuscript total and bar, the streak, and
+// the deadline plan.
 function updateStats() {
   planSync();
   planPaint();
@@ -95,6 +103,7 @@ function go(v, o) {
     v.flash = null;
   }
 }
+// Back to the previous view (the current one can then be reached again with Forward).
 function goBack() {
   let v = ui.hist.pop();
   while (v && !viewValid(v)) v = ui.hist.pop();
@@ -106,6 +115,7 @@ function goBack() {
   if (v) go(v, { push: false });
   else go(firstView(), { push: false });
 }
+// On narrow screens: shows the chosen tab (binder, page or Inkling panel).
 function syncTab() {
   $('#app').dataset.tab = ui.tab;
   $('#app').classList.toggle('focus', ui.focus);
@@ -116,6 +126,7 @@ function syncTab() {
       b.setAttribute('aria-selected', b.dataset.tab === ui.tab ? 'true' : 'false')
     );
 }
+// The Back button at the top of a view, plus a Forward button when there is somewhere to go forward to.
 const backBtn = () => {
   const f = (ui.fwd || [])[(ui.fwd || []).length - 1],
     fw =
