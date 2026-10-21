@@ -18,8 +18,19 @@ The full plan, KDP requirements and best practices are in [PUBLISHING-PLAN.md](P
 - [ ] Pre-flight check before export (cover size, empty chapters, TK/TODO, straight quotes)
 - [ ] Special paragraphs: block quote, letter, verse, text message
 - [ ] Box sets (several projects in one ebook)
-- [ ] Large-print and IngramSpark presets; DOCX for print
+- [ ] IngramSpark preset; DOCX for print
 - [ ] Submission kit: query letter, synopsis and author bio templates
+
+## Story development
+
+- [ ] Series bible: characters, places and timelines shared across books in a series
+- [ ] World-building: magic/technology rules with costs and limits, languages and glossaries with pronunciation, invented calendars, currencies
+- [ ] Map maker: upload or draw a world map, pin story pages to it, see which scenes happen where
+- [ ] Character arcs: goal, wound, lie and change per character across chapters, as a line chart
+- [ ] Pacing graph: tension, action vs reflection and scene length across the book
+- [ ] POV and screen-time balance: words per character and viewpoint, chapter by chapter
+- [ ] Subplot tracker: warns when a thread disappears for too long or never resolves
+- [ ] Foreshadowing log: setups linked to payoffs, unresolved setups listed
 
 ## Writing and revising
 
@@ -31,6 +42,12 @@ The full plan, KDP requirements and best practices are in [PUBLISHING-PLAN.md](P
 - [ ] Paste from Word or Google Docs keeping italics and bold
 - [ ] "First draft" mode that won't let you delete
 - [ ] Typewriter sounds (key clacks and the carriage-return ding)
+- [ ] Beta reader links: read-only copy readers can highlight and comment on, with questions and a "where readers stopped" heat map
+- [ ] Editor handoff: export to Word with comments, import tracked changes back
+- [ ] Readability and style report: sentence variety, dialogue tags, clichés, crutch phrases, compared with genre averages
+- [ ] Personal sensitivity and consistency checklist per book
+- [ ] Compare whole drafts (Draft 1 vs Draft 2) side by side
+- [ ] Proofread by listening to the whole book read aloud
 
 ## Planning and structure
 
@@ -52,6 +69,19 @@ The full plan, KDP requirements and best practices are in [PUBLISHING-PLAN.md](P
 - [ ] Phone notes inbox (text files saved into the project folder become notes)
 - [ ] Live collaboration through a hosted server, with roles (editor, beta reader)
 - [ ] Export and import your settings
+
+## Audio and other editions
+
+- [ ] Audiobook prep: script with character voice notes and pronunciation guide, estimated finished hours, narrator brief
+- [ ] Translation workspace: original and translation side by side, scene by scene
+- [ ] Large-print and dyslexia-friendly editions of the formatted book
+
+## Daily writing life
+
+- [ ] Research clippings: save web pages, images and PDFs into the project and link them to scenes
+- [ ] Dictation: speak a scene with the computer's speech recognition
+- [ ] Writing retreat mode: full-screen timer and goal, no menus, summary at the end
+- [ ] Accountability buddies: share streaks and goals with writing friends without sharing the book
 
 ## Easier to learn
 
