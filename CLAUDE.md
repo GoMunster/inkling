@@ -65,6 +65,8 @@ Co-writers share a project folder through Dropbox/Drive/OneDrive/iCloud (user gu
 
 ## Ideas not built yet
 
+The full list of offered ideas is in ROADMAP.md; tick items there when they ship and add new ones.
+
 Book formatting to rival Vellum and Atticus (store-ready EPUB for Kindle and other stores, KDP paperback and hardcover PDFs, book styles, front and back matter, live preview): the full plan, KDP requirements and test findings are in PUBLISHING-PLAN.md. Read it before starting that work.
 
 Desktop: code signing (then macOS can update itself). Live collaboration through a hosted store (Stage 2: a `STORES` adapter reusing `mergeProjects`), comments and suggested edits, roles (editor, beta reader). Drag-and-drop in the binder and on the brainstorm board, several pictures per story page, linking timeline cards to each other, a vertical timeline layout, comments and revision marks, characters' ages from the timeline, Word/Scrivener import, character name generator.
