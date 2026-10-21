@@ -239,7 +239,7 @@ const snapshot = st => {
 };
 // The desktop app (desktop/) provides window.inklingDesktop: each project is a folder on the computer. Elsewhere it is null.
 const DESK = window.inklingDesktop || null;
-const APP_VERSION = '1.14.0'; // the desktop build replaces this with desktop/package.json's version
+const APP_VERSION = '1.15.0'; // the desktop build replaces this with desktop/package.json's version
 // Saved-format version. When the shape of saved data changes: bump FORMAT and add MIGRATE[old] that upgrades a raw
 // project one step (it runs before normalize()). A project from a newer FORMAT is never loaded or overwritten.
 const FORMAT = 2;
