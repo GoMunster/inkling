@@ -784,6 +784,7 @@ function buildMenu() {
         { label: 'Story insights', click: () => send('story') },
         { label: 'Calendars & money', click: () => send('world') },
         { label: 'Series bible', click: () => send('series') },
+        { label: 'Book details', click: () => send('book') },
         { label: 'Start or pause the focus timer', accelerator: 'CmdOrCtrl+Shift+T', click: () => send('timer') },
         { type: 'separator' },
         { role: 'zoomIn' },

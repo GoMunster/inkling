@@ -41,6 +41,7 @@ function renderMain() {
   else if (v.k === 'story') renderStory(el, v);
   else if (v.k === 'world') renderWorld(el);
   else if (v.k === 'series') renderSeries(el);
+  else if (v.k === 'book') renderBook(el);
   else renderScene(el, v);
   el.scrollTop = reset ? 0 : keep;
   if (reset && v.k === 'scene') posRestore(v.id);

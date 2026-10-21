@@ -300,7 +300,8 @@ function viewValid(v) {
     v.k === 'search' ||
     v.k === 'story' ||
     v.k === 'world' ||
-    v.k === 'series'
+    v.k === 'series' ||
+    v.k === 'book'
   );
 }
 // A view's name, as shown in history, the quick switcher and the back button.
@@ -324,6 +325,7 @@ function viewName(v) {
   if (v.k === 'story') return 'Story insights';
   if (v.k === 'world') return 'Calendars & money';
   if (v.k === 'series') return 'Series bible';
+  if (v.k === 'book') return 'Book details';
   if (v.k === 'snap') return 'Snapshots: ' + S.meta.scenes[v.id].title;
   return 'Corkboard';
 }

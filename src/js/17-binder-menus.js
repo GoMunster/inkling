@@ -181,6 +181,7 @@ function dupChapter(id) {
   if (!c) return;
   const nc = { id: uid('c_'), title: c.title + ' (copy)', open: true, scenes: [] };
   if (c.goal) nc.goal = c.goal;
+  if (c.kind) nc.kind = c.kind;
   m.chapters.splice(m.chapters.indexOf(c) + 1, 0, nc);
   S.ch[nc.id] = bare(S.ch[id] || { notes: '' });
   dirty('ch_' + nc.id);
@@ -320,6 +321,23 @@ function binderMenu(e) {
         ],
         ['Duplicate', () => dupChapter(id)],
         ['Word target…', () => setTarget('chapter', id)],
+        [
+          'Kind of chapter',
+          null,
+          {
+            sub: CH_KINDS.map(k => [
+              k[1],
+              () => {
+                if (k[0]) c.kind = k[0];
+                else delete c.kind;
+                dirty('meta');
+                renderBinder();
+                if (ui.view.k === 'book') renderMain();
+              },
+              { on: (c.kind || '') === k[0] }
+            ])
+          }
+        ],
         '-',
         fold,
         '-',

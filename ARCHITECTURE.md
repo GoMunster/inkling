@@ -45,8 +45,9 @@ build.js              joins them into index.html (node build.js; no dependencies
 | `20-scene-editor` … `26-timeline` | The main pane's views: scene editor, story pages, corkboard, notes and world maps, outlines, relationship maps and family trees, timelines |
 | `27-snapshots-find` … `32-inspector` | Snapshots, find and replace, tour, to-do list, sidebar widths, deadline planner, layout and settings, focus timer, the Inkling panel |
 | `33-export` | The ⋯ menu, backups, Word/PDF/EPUB/Markdown export |
-| `34-sharing`, `35-desktop` | Shared projects (merging, presence) and the desktop app's projects |
-| `36-boot` | Start-up: `init()` and `renderAll()` |
+| `34-book` | Book details, front and back matter, chapter kinds and headings (Publishing) |
+| `35-sharing`, `36-desktop` | Shared projects (merging, presence) and the desktop app's projects |
+| `37-boot` | Start-up: `init()` and `renderAll()` |
 
 ## Data
 

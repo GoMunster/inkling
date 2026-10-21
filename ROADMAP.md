@@ -6,10 +6,11 @@ Ideas offered for Inkling that are not built yet. Tick them off (`[x]`) as they 
 
 The full plan, KDP requirements and best practices are in [PUBLISHING-PLAN.md](PUBLISHING-PLAN.md).
 
-- [ ] Book details: subtitle, series, imprint, ISBNs, edition, description, keywords
-- [ ] Front matter: half title, title page, copyright page generator, dedication, epigraph, table of contents
-- [ ] Back matter: acknowledgments, about the author, also by, newsletter/store links, reading-group guide, cast list from story pages
-- [ ] Chapter types: numbered, unnumbered (prologue, epilogue), part dividers, front/back matter
+- [x] Book details: subtitle, series, imprint, ISBNs, edition, description, keywords
+- [x] Front matter: half title, title page, copyright page generator, dedication, epigraph, table of contents
+- [x] Back matter: acknowledgments, about the author, also by, newsletter/store links
+- [ ] Back matter extras: about-the-author photo, reading-group guide, cast list from story pages
+- [x] Chapter types: numbered, unnumbered (prologue, epilogue), part dividers, with chapter numbering in words or digits
 - [ ] Book styles: chapter heading layouts, ornaments, drop caps, small caps, scene-break ornaments; copy and tweak a style
 - [ ] Store-ready ebook (EPUB for Kindle, Apple Books, Kobo, Google Play, Nook): cover, landmarks, NCX, embedded fonts, store-specific links
 - [ ] Print-ready paperback and hardcover PDFs: KDP trim sizes, gutter by page count, chapters on right-hand pages, running heads, page numbers, even page count

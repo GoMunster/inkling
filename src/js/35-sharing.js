@@ -1,5 +1,5 @@
 /*
- * 34-sharing.js: Shared projects: merging two writers' work, presence, and setting up sharing
+ * 35-sharing.js: Shared projects: merging two writers' work, presence, and setting up sharing
  *
  * Two computers can save one project through a sync folder (Dropbox, Google Drive, OneDrive, iCloud). Saves are
  * compare-and-swap: if the file changed since this computer last read it, the two versions are merged record by
@@ -173,7 +173,12 @@ function mergeMeta(b, o, t) {
       id,
       title: newer ? pick3(z && z.title, x.title, y.title) : x.title,
       open: x.open,
-      scenes: mergeOrder(z && z.scenes, x.scenes, y.scenes)
+      scenes: mergeOrder(z && z.scenes, x.scenes, y.scenes),
+      ...['goal', 'kind'].reduce((o, f) => {
+        const v = newer ? pick3(z && z[f], x[f], y[f]) : x[f];
+        if (v != null) o[f] = v;
+        return o;
+      }, {})
     };
   });
   return out;

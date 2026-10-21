@@ -288,6 +288,27 @@ test('exports a manuscript PDF', async () => {
   await win.click('[data-x="go"]');
   expect(await until(() => fs.existsSync(out) && fs.statSync(out).size > 1000)).toBe(true);
   expect(fs.readFileSync(out).subarray(0, 5).toString()).toBe('%PDF-');
+  // with front and back matter: a dedication and an about-the-author page add pages
+  const pages = f =>
+    (
+      fs
+        .readFileSync(f)
+        .toString('latin1')
+        .match(/\/Type\s*\/Page\b/g) || []
+    ).length;
+  const before = pages(out);
+  fs.unlinkSync(out);
+  await win.click('#menuBtn');
+  await win.click('[data-m="book"]');
+  await win.fill('[data-bk="ded"]', 'For the tide-watchers.');
+  await win.fill('[data-bk="about"]', 'The author lives by the sea.');
+  await win.click('#menuBtn');
+  await win.click('[data-m="export"]');
+  await win.click('[data-fmt="pdf"]');
+  await win.check('[data-mat]');
+  await win.click('[data-x="go"]');
+  expect(await until(() => fs.existsSync(out) && fs.statSync(out).size > 1000)).toBe(true);
+  expect(pages(out)).toBeGreaterThan(before + 2);
   await app.close();
 });
 

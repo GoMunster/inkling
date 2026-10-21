@@ -78,15 +78,28 @@ function normExp(x) {
     title: x.title !== false,
     chNew: x.chNew !== false,
     brk: String(x.brk == null ? '#' : x.brk).slice(0, 12),
+    // whether whole-book exports include the front and back matter, per format (on for EPUB unless switched off)
+    matter: Object.fromEntries(
+      ['docx', 'pdf', 'epub', 'md'].map(f => [
+        f,
+        x.matter && typeof x.matter === 'object' && f in x.matter ? !!x.matter[f] : f === 'epub'
+      ])
+    ),
     uid: /^[\w-]{8,64}$/.test(x.uid || '') ? x.uid : ''
   };
 }
-// The book to export: chapters with their scenes as paragraphs (one chapter, or all).
+// The book to export: chapters with their scenes as paragraphs (one chapter, or all). Each chapter carries its heading
+// from chHeads(): kind ('' numbered, 'un' unnumbered, 'part'), label ("Chapter Three", "Part One" or '') and title.
 function expBook(scope) {
+  const H = chHeads();
   return S.meta.chapters
     .filter(c => scope === 'all' || c.id === scope)
     .map(c => ({
-      title: c.title,
+      id: c.id,
+      kind: H[c.id].kind,
+      label: H[c.id].label,
+      title: H[c.id].title,
+      name: c.title,
       scenes: c.scenes
         .map(id =>
           String(S.sc[id].text || '')
@@ -151,7 +164,9 @@ function expInfo(scope) {
       m.title.toUpperCase().split(/\s+/).slice(0, 4).join(' ')
     ).replace(/^ \/ /, ''),
     font: o.font === 'courier' ? 'Courier New' : 'Times New Roman',
-    full: scope === 'all'
+    full: scope === 'all',
+    // the contents list for front matter: each chapter's heading as one line
+    toc: book.map(c => ({ id: c.id, text: chHeadText(c) || c.name }))
   };
 }
 // A minimal zip writer (stored, no compression), enough for .docx and .epub.
@@ -254,6 +269,7 @@ function expDocx(scope) {
     '</w:p>';
   const flat = '<w:spacing w:line="240" w:lineRule="auto"/><w:ind w:firstLine="0"/>',
     mid = '<w:jc w:val="center"/><w:ind w:firstLine="0"/>';
+  let hasFirst = false; // a first section (title page, front matter) without the running header comes before the story
   const sect = first =>
     '<w:sectPr>' +
     (first ? '' : '<w:headerReference w:type="default" r:id="rIdH"/>') +
@@ -262,7 +278,7 @@ function expDocx(scope) {
     '" w:h="' +
     ph +
     '"/><w:pgMar w:top="1440" w:right="1440" w:bottom="1440" w:left="1440" w:header="720" w:footer="720" w:gutter="0"/>' +
-    (first ? '' : o.title ? '<w:pgNumType w:start="1"/>' : '') +
+    (first ? '' : hasFirst ? '<w:pgNumType w:start="1"/>' : '') +
     '</w:sectPr>';
   let body = '';
   if (o.title) {
@@ -289,15 +305,65 @@ function expDocx(scope) {
       run(I.title) +
       '</w:p>';
     if (I.byline) body += para('by ' + I.byline, mid);
+    hasFirst = true;
+  }
+  const mat = I.full && o.matter.docx;
+  // A run with extra character formatting (size, italic, small capitals) on top of the text's own styles.
+  const runX = (t, f, extra) =>
+    '<w:r><w:rPr>' +
+    (f & 1 ? '<w:b/>' : '') +
+    (f & 2 ? '<w:i/>' : '') +
+    (f & 4 ? '<w:u w:val="single"/>' : '') +
+    (extra || '') +
+    '</w:rPr><w:t xml:space="preserve">' +
+    xe(t) +
+    '</w:t></w:r>';
+  // One page of front or back matter: each block a single-spaced paragraph, the first starting a new page.
+  const matterDocx = (pg, brk) =>
+    pg.blocks
+      .map((bk, i) => {
+        const single = '<w:spacing w:line="276" w:lineRule="auto" w:before="0" w:after="120"/>',
+          center = '<w:jc w:val="center"/><w:ind w:firstLine="0"/>',
+          pb = i === 0 && brk ? '<w:pageBreakBefore/>' : '';
+        const P = (pp, t, extra) =>
+          '<w:p><w:pPr>' +
+          pb +
+          pp +
+          '</w:pPr>' +
+          runs(t || '')
+            .map(r => runX(r[0], r[1], extra))
+            .join('') +
+          '</w:p>';
+        const t = bk[1];
+        if (bk[0] === 'title') return P(center + '<w:spacing w:before="2880" w:after="240"/>', t, '<w:sz w:val="48"/>');
+        if (bk[0] === 'sub') return P(center + single, t, '<w:i/><w:sz w:val="28"/>');
+        if (bk[0] === 'h') return P(center + '<w:spacing w:before="1440" w:after="480"/>', t, '<w:sz w:val="32"/>');
+        if (bk[0] === 'sh') return P(center + single, t, '<w:smallCaps/>');
+        if (bk[0] === 'c' || bk[0] === 'toc') return P(center + single, t);
+        if (bk[0] === 'i') return P(center + single, t, '<w:i/>');
+        if (bk[0] === 'small') return P('<w:ind w:firstLine="0"/>' + single, t, '<w:sz w:val="20"/>');
+        if (bk[0] === 'p') return P(single, t);
+        if (bk[0] === 'link') return P(center + single, [t, bk[2]].filter(Boolean).join(': '));
+        return P(single, '');
+      })
+      .join('');
+  if (mat)
+    bookPages('front', I.toc).forEach(pg => {
+      body += matterDocx(pg, hasFirst);
+      hasFirst = true;
+    });
+  if (hasFirst)
     body +=
       '<w:p><w:pPr>' + sect(true).replace('<w:sectPr>', '<w:sectPr><w:type w:val="nextPage"/>') + '</w:pPr></w:p>';
-  }
   I.book.forEach((c, ci) => {
+    const part = c.kind === 'part';
     body +=
       '<w:p><w:pPr><w:pStyle w:val="Heading1"/>' +
-      (ci > 0 && o.chNew ? '<w:pageBreakBefore/>' : '') +
+      ((ci > 0 && o.chNew) || (ci > 0 && part) ? '<w:pageBreakBefore/>' : '') +
+      (part ? '<w:spacing w:before="4320" w:after="720"/>' : '') +
       '</w:pPr>' +
-      run(c.title) +
+      (c.label ? run(c.label) + (c.title ? '<w:r><w:br/></w:r>' : '') : '') +
+      (c.title ? run(c.title) : '') +
       '</w:p>';
     c.scenes.forEach((x, si) => {
       if (si) body += para(o.brk || ' ', mid);
@@ -306,7 +372,8 @@ function expDocx(scope) {
       });
     });
   });
-  if (I.full) body += para('END', '<w:jc w:val="center"/><w:ind w:firstLine="0"/><w:spacing w:before="480"/>');
+  if (mat) bookPages('back', I.toc).forEach(pg => (body += matterDocx(pg, true)));
+  else if (I.full) body += para('END', '<w:jc w:val="center"/><w:ind w:firstLine="0"/><w:spacing w:before="480"/>');
   const doc =
     '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:document ' +
     W +
@@ -395,7 +462,10 @@ function expPdfHtml(scope) {
     fam +
     ';font-size:12pt;line-height:2}p{margin:0;text-indent:.5in;orphans:2;widows:2}' +
     '.c{text-align:center;text-indent:0}.tp{page-break-after:always;line-height:1.15}.tp .wc{float:right}.tp .t{margin-top:3.2in;text-align:center;line-height:2}' +
-    'h1{font-size:12pt;font-weight:normal;text-align:center;margin:2in 0 .35in;break-after:avoid}h1.nb{page-break-before:always}</style></head><body>';
+    'h1{font-size:12pt;font-weight:normal;text-align:center;margin:2in 0 .35in;break-after:avoid}h1.nb{page-break-before:always}' +
+    'h1.part{margin-top:3in}h1 .cn{display:block}' +
+    MATTER_CSS +
+    '.bk-page{page-break-before:always;line-height:1.5}.bk-page p{orphans:1;widows:1}</style></head><body>';
   if (o.title) {
     const lines = I.contact.length ? I.contact : [I.author || I.byline || ''];
     h +=
@@ -408,14 +478,30 @@ function expPdfHtml(scope) {
       (I.byline ? '<br>by ' + xe(I.byline) : '') +
       '</div></div>';
   }
+  const mat = I.full && o.matter.pdf,
+    pageOf = pg => '<section class="bk-page bk-' + pg.key + '">' + matterHtml(pg, null) + '</section>';
+  if (mat) h += bookPages('front', I.toc).map(pageOf).join('');
   I.book.forEach((c, ci) => {
-    h += '<h1' + (ci > 0 && o.chNew ? ' class="nb"' : '') + '>' + xe(c.title) + '</h1>';
+    const cls = [
+      (ci > 0 && o.chNew) || (mat && ci === 0) || c.kind === 'part' ? 'nb' : '',
+      c.kind === 'part' ? 'part' : ''
+    ]
+      .filter(Boolean)
+      .join(' ');
+    h +=
+      '<h1' +
+      (cls ? ' class="' + cls + '"' : '') +
+      '>' +
+      (c.label ? '<span class="cn">' + xe(c.label) + '</span>' : '') +
+      xe(c.title) +
+      '</h1>';
     c.scenes.forEach((x, si) => {
       if (si) h += '<p class="c">' + xe(o.brk || ' ') + '</p>';
       h += x.map(l => '<p>' + htmlRuns(l) + '</p>').join('');
     });
   });
-  if (I.full) h += '<p class="c" style="margin-top:1em">END</p>';
+  if (mat) h += bookPages('back', I.toc).map(pageOf).join('');
+  else if (I.full) h += '<p class="c" style="margin-top:1em">END</p>';
   return { html: h + '</body></html>', I };
 }
 // The manuscript as an EPUB ebook.
@@ -423,7 +509,9 @@ function expEpub(scope) {
   const I = expInfo(scope),
     o = I.o,
     m = S.meta,
-    lang = xe((navigator.language || 'en').split(',')[0]);
+    b = m.book,
+    lang = xe(bookLang()),
+    mat = I.full && o.matter.epub;
   if (!o.uid) {
     o.uid = uid('bk') + uid('');
     dirty('meta');
@@ -446,12 +534,38 @@ function expEpub(scope) {
     ],
     [
       'OEBPS/style.css',
-      'body{margin:0 5%;line-height:1.5}p{margin:0;text-indent:1.5em}h1+p,p.brk+p,p.first{text-indent:0}p.brk{text-align:center;text-indent:0;margin:1em 0}h1{text-align:center;font-weight:normal;margin:3em 0 2em;page-break-before:always}.title{text-align:center;margin-top:30%}.title h1{font-size:2em;margin:0 0 1em}.title p{text-indent:0}'
+      'body{margin:0 5%;line-height:1.5}p{margin:0;text-indent:1.5em}h1+p,p.brk+p,p.first{text-indent:0}p.brk{text-align:center;text-indent:0;margin:1em 0}h1{text-align:center;font-weight:normal;margin:3em 0 2em;page-break-before:always}.title{text-align:center;margin-top:30%}.title h1{font-size:2em;margin:0 0 1em}.title p{text-indent:0}' +
+        'h1 .cn{display:block;font-size:.75em;letter-spacing:.08em;text-transform:uppercase;margin-bottom:.5em}h1.part{margin-top:35%;font-size:1.6em}' +
+        MATTER_CSS
     ]
   ];
   const items = [],
-    nav = [];
-  if (o.title) {
+    nav = [],
+    marks = [], // landmarks: where the contents and the story start, for the reader's Go to menu
+    chHref = id => 'ch' + (I.book.findIndex(c => c.id === id) + 1) + '.xhtml',
+    addMatter = side =>
+      bookPages(side, I.toc).forEach(pg => {
+        const fid = side[0] + '-' + pg.key;
+        files.push([
+          'OEBPS/' + fid + '.xhtml',
+          page(
+            pg.name,
+            '<section epub:type="' +
+              pg.type +
+              '" class="bk-page bk-' +
+              pg.key +
+              '">' +
+              matterHtml(pg, chHref) +
+              '</section>'
+          )
+        ]);
+        items.push(fid);
+        if (pg.key === 'toc') marks.push(['toc', fid, 'Contents']);
+        if (side === 'back')
+          nav.push('<li><a href="' + fid + '.xhtml">' + xe(pg.blocks[0][1] || pg.name) + '</a></li>');
+      });
+  if (mat) addMatter('front');
+  else if (o.title) {
     files.push([
       'OEBPS/title.xhtml',
       page(
@@ -470,10 +584,18 @@ function expEpub(scope) {
     files.push([
       'OEBPS/' + id + '.xhtml',
       page(
-        c.title,
-        '<section epub:type="chapter"><h1>' +
-          xe(c.title) +
-          '</h1>' +
+        chHeadText(c) || c.name,
+        '<section epub:type="' +
+          (c.kind === 'part' ? 'part' : 'chapter') +
+          '">' +
+          (c.label || c.title
+            ? '<h1' +
+              (c.kind === 'part' ? ' class="part"' : '') +
+              '>' +
+              (c.label ? '<span class="cn">' + xe(c.label) + '</span>' : '') +
+              xe(c.title) +
+              '</h1>'
+            : '') +
           c.scenes
             .map(x => x.map(l => '<p>' + htmlRuns(l) + '</p>').join(''))
             .join('<p class="brk">' + xe(o.brk || '*') + '</p>') +
@@ -481,11 +603,20 @@ function expEpub(scope) {
       )
     ]);
     items.push(id);
-    nav.push('<li><a href="' + id + '.xhtml">' + xe(c.title) + '</a></li>');
+    if (!i) marks.push(['bodymatter', id, 'Start reading']);
+    nav.push('<li><a href="' + id + '.xhtml">' + xe(chHeadText(c) || c.name) + '</a></li>');
   });
+  if (mat) addMatter('back');
   files.push([
     'OEBPS/nav.xhtml',
-    page('Contents', '<nav epub:type="toc" id="toc"><h1>Contents</h1><ol>' + nav.join('') + '</ol></nav>')
+    page(
+      'Contents',
+      '<nav epub:type="toc" id="toc"><h1>Contents</h1><ol>' +
+        nav.join('') +
+        '</ol></nav><nav epub:type="landmarks" hidden=""><ol>' +
+        marks.map(([t, f, l]) => '<li><a epub:type="' + t + '" href="' + f + '.xhtml">' + l + '</a></li>').join('') +
+        '</ol></nav>'
+    )
   ]);
   const mod = new Date().toISOString().replace(/\.\d+Z$/, 'Z');
   files.push([
@@ -499,6 +630,20 @@ function expEpub(scope) {
       xe(I.title) +
       '</dc:title>' +
       (I.byline ? '<dc:creator>' + xe(I.byline) + '</dc:creator>' : '') +
+      (b.desc.trim() ? '<dc:description>' + xe(b.desc.trim()) + '</dc:description>' : '') +
+      (b.imprint.trim() ? '<dc:publisher>' + xe(b.imprint.trim()) + '</dc:publisher>' : '') +
+      b.keys
+        .split(',')
+        .map(k => k.trim())
+        .filter(Boolean)
+        .map(k => '<dc:subject>' + xe(k) + '</dc:subject>')
+        .join('') +
+      (m.series.name.trim()
+        ? '<meta property="belongs-to-collection" id="series">' +
+          xe(m.series.name.trim()) +
+          '</meta><meta refines="#series" property="collection-type">series</meta>' +
+          (m.series.num ? '<meta refines="#series" property="group-position">' + m.series.num + '</meta>' : '')
+        : '') +
       '<dc:language>' +
       lang +
       '</dc:language><meta property="dcterms:modified">' +
@@ -514,16 +659,20 @@ function expEpub(scope) {
 }
 // The manuscript as Markdown.
 function manuscriptMd(scope) {
-  const I = expInfo(scope || 'all');
-  let out = '# ' + I.title + '\n\n' + (I.byline ? 'by ' + I.byline + '\n\n' : '');
+  const I = expInfo(scope || 'all'),
+    mat = I.full && I.o.matter.md;
+  let out = mat
+    ? bookPages('front', I.toc).map(matterMd).join('\n\n---\n\n') + '\n\n---\n\n'
+    : '# ' + I.title + '\n\n' + (I.byline ? 'by ' + I.byline + '\n\n' : '');
   I.book.forEach(c => {
     out +=
       '## ' +
-      c.title +
+      (chHeadText(c) || c.name) +
       '\n\n' +
       c.scenes.map(x => x.join('\n\n')).join('\n\n' + (I.o.brk || '* * *') + '\n\n') +
       '\n\n';
   });
+  if (mat) out += '---\n\n' + bookPages('back', I.toc).map(matterMd).join('\n\n---\n\n');
   return out.trim() + '\n';
 }
 // The manuscript as plain text.
@@ -532,7 +681,7 @@ function manuscriptTxt(scope) {
   let out = I.title + '\n' + (I.byline ? 'by ' + I.byline + '\n' : '') + '\n\n';
   I.book.forEach(c => {
     out +=
-      c.title +
+      (chHeadText(c, '\n') || c.name) +
       '\n\n' +
       c.scenes.map(x => x.map(plainText).join('\n\n')).join('\n\n' + (I.o.brk || '#') + '\n\n') +
       '\n\n\n';
@@ -673,6 +822,15 @@ function openExport() {
           (o.chNew ? ' checked' : '') +
           '>Start each chapter on a new page</label>'
         : '') +
+      (o.fmt in o.matter
+        ? '<label class="ck"><input type="checkbox" data-mat="1"' +
+          (o.matter[o.fmt] ? ' checked' : '') +
+          (scope !== 'all' ? ' disabled' : '') +
+          '>Front and back matter (copyright, dedication, about the author…)' +
+          (scope !== 'all' ? ' <span class="muted">whole book only</span>' : '') +
+          '</label>'
+        : '') +
+      '<p class="fine">Chapter headings, front and back matter come from <button class="lnk" data-x="book">Book details</button>.</p>' +
       '<p class="fine">Bold, italics and underlining from your scenes come through in Word, PDF and EPUB. Each line you type is a paragraph.</p>' +
       '<div class="ask-btns" style="margin-top:14px"><button class="btn" data-x="close">Cancel</button><button class="btn pri" data-x="go">' +
       ico('down', 14) +
@@ -693,7 +851,10 @@ function openExport() {
       dirty('meta');
       draw();
     } else if (b.dataset.x === 'close') close();
-    else if (b.dataset.x === 'go') {
+    else if (b.dataset.x === 'book') {
+      close();
+      go({ k: 'book' });
+    } else if (b.dataset.x === 'go') {
       close();
       doExport(o.fmt, scope);
     }
@@ -706,6 +867,11 @@ function openExport() {
     dirty('meta');
   });
   ov.addEventListener('change', e => {
+    if (e.target.dataset.mat) {
+      o.matter[o.fmt] = e.target.checked;
+      dirty('meta');
+      return;
+    }
     const k = e.target.dataset.e;
     if (!k) return;
     if (k === 'scope') {
@@ -752,6 +918,7 @@ function renderMenu() {
       item('story', 'Story insights') +
       item('world', 'Calendars & money') +
       item('series', 'Series bible') +
+      item('book', 'Book details…') +
       item('qs', 'Go to… (' + MODK + '+P)') +
       item('search', 'Search everything…') +
       item('sessions', 'Writing sessions') +
@@ -779,6 +946,7 @@ function renderMenu() {
     item('story', 'Story insights') +
     item('world', 'Calendars & money') +
     item('series', 'Series bible') +
+    item('book', 'Book details…') +
     item('qs', 'Go to… (' + MODK + '+P)') +
     item('search', 'Search everything…') +
     item('sessions', 'Writing sessions') +
@@ -870,6 +1038,7 @@ function bindMenu() {
         'story',
         'world',
         'series',
+        'book',
         'search',
         'trash',
         'split',

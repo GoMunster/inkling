@@ -1542,3 +1542,88 @@ test('opening a scene only moves the binder highlight; a change still redraws th
   await expect(page.locator('.sc-row.on')).toHaveAttribute('data-sid', 's2');
   expect(errors).toEqual([]);
 });
+
+test('book details: front and back matter, chapter kinds and numbering, in EPUB, Word and Markdown', async ({
+  page
+}) => {
+  const errors = await openApp(page, { project: STORY_PROJECT });
+  const fs = require('fs');
+  await page.click('#menuBtn');
+  await page.click('[data-m="book"]');
+  await expect(page.locator('.mh-title')).toHaveText('Book details');
+  await page.fill('[data-bk="subtitle"]', 'A Tide Book');
+  await page.fill('[data-bk="author"]', 'Jane Writer');
+  await page.fill('[data-bk="imprint"]', 'Gull Press');
+  await page.fill('[data-bk="isbnE"]', '978-1-23456-789-0');
+  await page.fill('[data-bk="keys"]', 'fantasy, sea');
+  await expect(page.locator('.bk-preview')).toContainText('ISBN 978-1-23456-789-0 (ebook)');
+  await expect(page.locator('.bk-preview')).toContainText('Copyright © ' + new Date().getFullYear() + ' Jane Writer');
+  await page.fill('[data-bk="ded"]', 'For the tide-watchers.');
+  await page.fill('[data-bk="about"]', 'Jane lives by the sea.');
+  await page.fill('[data-bk="also"]', '## The Tide Books\nThe Lantern Tide\nThe Salt Road');
+  await page.click('[data-bka="addlink"]');
+  await page.fill('[data-bkl="label"]', 'Join my newsletter');
+  await page.fill('[data-bkl="url"]', 'https://example.com/news');
+  await page.check('[data-bkon="front:half"]');
+  // chapter 1 is a part divider, chapter 6 an unnumbered epilogue; numbers in words
+  await page.selectOption('[data-bkk="c1"]', 'part');
+  await page.selectOption('[data-bkk="c6"]', 'un');
+  await page.selectOption('[data-bk="chNum"]', 'word');
+  await expect(page.locator('.bk-head').nth(0)).toHaveText('Part One · Chapter 1');
+  await expect(page.locator('.bk-head').nth(1)).toHaveText('Chapter One · Chapter 2');
+  await expect(page.locator('.bk-head').nth(5)).toHaveText('Chapter 6');
+  await expect(page.locator('.bk-warn')).toBeVisible();
+  await expect(page.locator('.ch-kind')).toHaveCount(2); // badges in the binder
+  const p = await waitSaved(page, p => p.meta.book?.links?.[0]?.url && p.meta.chapters[5].kind === 'un');
+  expect(p.meta.book).toMatchObject({ subtitle: 'A Tide Book', chNum: 'word', imprint: 'Gull Press' });
+  expect(p.meta.chapters[0].kind).toBe('part');
+
+  const get = async (fmt, matter) => {
+    await page.click('#menuBtn');
+    await page.click('[data-m="export"]');
+    await page.click('[data-fmt="' + fmt + '"]');
+    if (matter != null) await page.setChecked('[data-mat]', matter);
+    const [d] = await Promise.all([page.waitForEvent('download'), page.click('[data-x="go"]')]);
+    return fs.readFileSync(await d.path());
+  };
+  const e = unzip(await get('epub'));
+  const opf = e['OEBPS/content.opf'].toString();
+  expect(opf).toContain('<dc:publisher>Gull Press</dc:publisher>');
+  expect(opf).toContain('<dc:subject>sea</dc:subject>');
+  const spine = [...opf.matchAll(/<itemref idref="([^"]+)"/g)].map(x => x[1]);
+  expect(spine.slice(0, 5)).toEqual(['f-half', 'f-title', 'f-copy', 'f-ded', 'f-toc']);
+  expect(spine.slice(-3)).toEqual(['b-about', 'b-also', 'b-links']);
+  expect(e['OEBPS/f-title.xhtml'].toString()).toContain('A Tide Book');
+  expect(e['OEBPS/f-copy.xhtml'].toString()).toContain('978-1-23456-789-0');
+  expect(e['OEBPS/f-toc.xhtml'].toString()).toContain('href="ch2.xhtml">Chapter One: Chapter 2</a>');
+  expect(e['OEBPS/ch1.xhtml'].toString()).toContain('epub:type="part"');
+  expect(e['OEBPS/ch1.xhtml'].toString()).toContain('<span class="cn">Part One</span>');
+  expect(e['OEBPS/ch2.xhtml'].toString()).toContain('<span class="cn">Chapter One</span>Chapter 2');
+  expect(e['OEBPS/ch6.xhtml'].toString()).not.toContain('class="cn"');
+  expect(e['OEBPS/b-also.xhtml'].toString()).toContain('<h3 class="bk-sh">The Tide Books</h3>');
+  expect(e['OEBPS/b-links.xhtml'].toString()).toContain('<a href="https://example.com/news">Join my newsletter</a>');
+  // every file is well-formed XML, as ebook stores and Word require
+  const xmlOk = xml =>
+    page.evaluate(x => !new DOMParser().parseFromString(x, 'application/xml').querySelector('parsererror'), xml);
+  for (const f of Object.keys(e).filter(f => /\.(xhtml|opf)$/.test(f)))
+    expect([f, await xmlOk(e[f].toString())]).toEqual([f, true]);
+  const nav = e['OEBPS/nav.xhtml'].toString();
+  expect(nav).toContain('epub:type="landmarks"');
+  expect(nav).toContain('<a epub:type="bodymatter" href="ch1.xhtml">');
+
+  const w = unzip(await get('docx', true));
+  const doc = w['word/document.xml'].toString();
+  expect(doc).toContain('For the tide-watchers.');
+  expect(doc).toContain('Jane lives by the sea.');
+  expect(doc).toContain('Chapter One');
+  expect(doc).not.toContain('>END<');
+  expect(await xmlOk(doc)).toBe(true);
+  const md = (await get('md', true)).toString();
+  expect(md).toContain('## Chapter Two: Chapter 3');
+  expect(md).toContain('[Join my newsletter](https://example.com/news)');
+  // without the matter, Word is the plain manuscript again
+  const w2 = unzip(await get('docx', false))['word/document.xml'].toString();
+  expect(w2).not.toContain('For the tide-watchers.');
+  expect(w2).toContain('>END<');
+  expect(errors).toEqual([]);
+});

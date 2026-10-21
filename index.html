@@ -5706,6 +5706,148 @@ body.dnd * {
   gap: 5px;
   font-size: 12.5px;
 }
+
+/* Book details (Publishing) */
+.bk-wrap {
+  max-width: 900px;
+}
+.bk-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px 14px;
+  margin-top: 10px;
+}
+.bk-grid .bk-wide {
+  grid-column: 1 / -1;
+}
+@media (max-width: 640px) {
+  .bk-grid {
+    grid-template-columns: 1fr;
+  }
+}
+.bk-grid input:not([type='checkbox']),
+.bk-grid textarea,
+.bk-grid select,
+.bk-links input,
+.bk-ch select,
+.bk-wrap label.f textarea {
+  border: 1px solid var(--line);
+  background: var(--bg);
+  border-radius: 8px;
+  padding: 7px 10px;
+  font: inherit;
+  font-weight: 400;
+  color: var(--ink);
+  width: 100%;
+  min-width: 0;
+}
+.bk-grid textarea,
+.bk-wrap label.f textarea {
+  resize: vertical;
+  font-family: var(--f-prose);
+}
+.bk-hint {
+  font-weight: 400;
+  color: var(--muted);
+}
+.bk-list {
+  display: grid;
+  gap: 4px;
+  margin: 10px 0;
+}
+.bk-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--bg);
+}
+.bk-row .ck {
+  margin: 0;
+  min-width: 150px;
+}
+.bk-row small {
+  margin-left: auto;
+  font-size: 12px;
+}
+.bk-grip {
+  cursor: grab;
+  color: var(--muted);
+  display: inline-flex;
+}
+.bk-sub-h {
+  margin: 14px 0 6px;
+  font-size: 13px;
+}
+.bk-preview {
+  white-space: pre-wrap;
+  font-family: var(--f-prose);
+  font-size: 13px;
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 10px 12px;
+  margin: 0;
+}
+.bk-links {
+  display: grid;
+  gap: 6px;
+}
+.bk-link {
+  display: grid;
+  grid-template-columns: 1fr 1.4fr auto;
+  gap: 6px;
+  align-items: center;
+}
+.bk-links > .btn {
+  justify-self: start;
+}
+.bk-ck {
+  align-self: end;
+  padding-bottom: 8px;
+}
+.bk-chs {
+  display: grid;
+  gap: 4px;
+  margin-top: 12px;
+}
+.bk-ch {
+  display: grid;
+  grid-template-columns: 1fr minmax(160px, 260px) 1fr;
+  gap: 10px;
+  align-items: center;
+  font-size: 13px;
+}
+.bk-chn {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.bk-head {
+  color: var(--muted);
+  font-family: var(--f-prose);
+}
+.bk-head.part {
+  font-weight: 600;
+  color: var(--ink);
+}
+.ch-kind {
+  font-style: normal;
+  font-size: 10.5px;
+  font-weight: 600;
+  color: var(--muted);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 0 6px;
+  margin-left: 4px;
+  white-space: nowrap;
+  flex: none;
+}
+.bk-warn {
+  color: var(--danger);
+}
 /*
  * 11-pages-and-settings.css: Full-page screens and Settings
  *
@@ -8324,6 +8466,7 @@ function normalize(o) {
       else delete c.goal;
     }
     if (c.open == null) c.open = true;
+    if (!['un', 'part'].includes(c.kind)) delete c.kind;
   });
   Object.keys(meta.ents).forEach(id => {
     const e = meta.ents[id];
@@ -8341,6 +8484,7 @@ function normalize(o) {
     if (fr) e.from = fr;
     else delete e.from;
   });
+  meta.book = normBook(meta.book);
   meta.series = normSeries(meta.series);
   meta.world = normWorld(meta.world);
   meta.threads = normThreads(meta.threads);
@@ -9836,7 +9980,8 @@ function viewValid(v) {
     v.k === 'search' ||
     v.k === 'story' ||
     v.k === 'world' ||
-    v.k === 'series'
+    v.k === 'series' ||
+    v.k === 'book'
   );
 }
 // A view's name, as shown in history, the quick switcher and the back button.
@@ -9860,6 +10005,7 @@ function viewName(v) {
   if (v.k === 'story') return 'Story insights';
   if (v.k === 'world') return 'Calendars & money';
   if (v.k === 'series') return 'Series bible';
+  if (v.k === 'book') return 'Book details';
   if (v.k === 'snap') return 'Snapshots: ' + S.meta.scenes[v.id].title;
   return 'Corkboard';
 }
@@ -16346,6 +16492,7 @@ function qsItems() {
     [{ k: 'story' }, 'Story insights', 'chart'],
     [{ k: 'world' }, 'Calendars & money', 'cal'],
     [{ k: 'series' }, 'Series bible', 'book'],
+    [{ k: 'book' }, 'Book details', 'book'],
     [{ k: 'trash' }, 'Trash', 'trash'],
     [{ k: 'layout' }, 'Project settings', 'layout'],
     [{ k: 'prefs' }, 'Settings', 'sliders']
@@ -16694,6 +16841,7 @@ function dupChapter(id) {
   if (!c) return;
   const nc = { id: uid('c_'), title: c.title + ' (copy)', open: true, scenes: [] };
   if (c.goal) nc.goal = c.goal;
+  if (c.kind) nc.kind = c.kind;
   m.chapters.splice(m.chapters.indexOf(c) + 1, 0, nc);
   S.ch[nc.id] = bare(S.ch[id] || { notes: '' });
   dirty('ch_' + nc.id);
@@ -16833,6 +16981,23 @@ function binderMenu(e) {
         ],
         ['Duplicate', () => dupChapter(id)],
         ['Word target…', () => setTarget('chapter', id)],
+        [
+          'Kind of chapter',
+          null,
+          {
+            sub: CH_KINDS.map(k => [
+              k[1],
+              () => {
+                if (k[0]) c.kind = k[0];
+                else delete c.kind;
+                dirty('meta');
+                renderBinder();
+                if (ui.view.k === 'book') renderMain();
+              },
+              { on: (c.kind || '') === k[0] }
+            ])
+          }
+        ],
         '-',
         fold,
         '-',
@@ -17488,7 +17653,14 @@ function renderBinder0() {
         c.id +
         '" title="Open this chapter on the corkboard">' +
         esc(c.title) +
-        '</button>';
+        '</button>' +
+        (c.kind
+          ? '<i class="ch-kind" title="' +
+            esc(CH_KINDS.find(k => k[0] === c.kind)[1]) +
+            '">' +
+            (c.kind === 'part' ? 'Part' : 'No number') +
+            '</i>'
+          : '');
     h +=
       '<span class="wc" data-cwc="' +
       c.id +
@@ -18075,6 +18247,7 @@ function renderMain() {
   else if (v.k === 'story') renderStory(el, v);
   else if (v.k === 'world') renderWorld(el);
   else if (v.k === 'series') renderSeries(el);
+  else if (v.k === 'book') renderBook(el);
   else renderScene(el, v);
   el.scrollTop = reset ? 0 : keep;
   if (reset && v.k === 'scene') posRestore(v.id);
@@ -26790,6 +26963,7 @@ function winAct(a, src) {
   else if (a === 'story') go({ k: 'story' });
   else if (a === 'world') go({ k: 'world' });
   else if (a === 'series') go({ k: 'series' });
+  else if (a === 'book') go({ k: 'book' });
   else if (a === 'search') go({ k: 'search' });
   else if (a === 'qs') openQs();
   else if (a === 'next' || a === 'prev') sceneStep(a === 'next' ? 1 : -1);
@@ -28561,15 +28735,28 @@ function normExp(x) {
     title: x.title !== false,
     chNew: x.chNew !== false,
     brk: String(x.brk == null ? '#' : x.brk).slice(0, 12),
+    // whether whole-book exports include the front and back matter, per format (on for EPUB unless switched off)
+    matter: Object.fromEntries(
+      ['docx', 'pdf', 'epub', 'md'].map(f => [
+        f,
+        x.matter && typeof x.matter === 'object' && f in x.matter ? !!x.matter[f] : f === 'epub'
+      ])
+    ),
     uid: /^[\w-]{8,64}$/.test(x.uid || '') ? x.uid : ''
   };
 }
-// The book to export: chapters with their scenes as paragraphs (one chapter, or all).
+// The book to export: chapters with their scenes as paragraphs (one chapter, or all). Each chapter carries its heading
+// from chHeads(): kind ('' numbered, 'un' unnumbered, 'part'), label ("Chapter Three", "Part One" or '') and title.
 function expBook(scope) {
+  const H = chHeads();
   return S.meta.chapters
     .filter(c => scope === 'all' || c.id === scope)
     .map(c => ({
-      title: c.title,
+      id: c.id,
+      kind: H[c.id].kind,
+      label: H[c.id].label,
+      title: H[c.id].title,
+      name: c.title,
       scenes: c.scenes
         .map(id =>
           String(S.sc[id].text || '')
@@ -28634,7 +28821,9 @@ function expInfo(scope) {
       m.title.toUpperCase().split(/\s+/).slice(0, 4).join(' ')
     ).replace(/^ \/ /, ''),
     font: o.font === 'courier' ? 'Courier New' : 'Times New Roman',
-    full: scope === 'all'
+    full: scope === 'all',
+    // the contents list for front matter: each chapter's heading as one line
+    toc: book.map(c => ({ id: c.id, text: chHeadText(c) || c.name }))
   };
 }
 // A minimal zip writer (stored, no compression), enough for .docx and .epub.
@@ -28737,6 +28926,7 @@ function expDocx(scope) {
     '</w:p>';
   const flat = '<w:spacing w:line="240" w:lineRule="auto"/><w:ind w:firstLine="0"/>',
     mid = '<w:jc w:val="center"/><w:ind w:firstLine="0"/>';
+  let hasFirst = false; // a first section (title page, front matter) without the running header comes before the story
   const sect = first =>
     '<w:sectPr>' +
     (first ? '' : '<w:headerReference w:type="default" r:id="rIdH"/>') +
@@ -28745,7 +28935,7 @@ function expDocx(scope) {
     '" w:h="' +
     ph +
     '"/><w:pgMar w:top="1440" w:right="1440" w:bottom="1440" w:left="1440" w:header="720" w:footer="720" w:gutter="0"/>' +
-    (first ? '' : o.title ? '<w:pgNumType w:start="1"/>' : '') +
+    (first ? '' : hasFirst ? '<w:pgNumType w:start="1"/>' : '') +
     '</w:sectPr>';
   let body = '';
   if (o.title) {
@@ -28772,15 +28962,65 @@ function expDocx(scope) {
       run(I.title) +
       '</w:p>';
     if (I.byline) body += para('by ' + I.byline, mid);
+    hasFirst = true;
+  }
+  const mat = I.full && o.matter.docx;
+  // A run with extra character formatting (size, italic, small capitals) on top of the text's own styles.
+  const runX = (t, f, extra) =>
+    '<w:r><w:rPr>' +
+    (f & 1 ? '<w:b/>' : '') +
+    (f & 2 ? '<w:i/>' : '') +
+    (f & 4 ? '<w:u w:val="single"/>' : '') +
+    (extra || '') +
+    '</w:rPr><w:t xml:space="preserve">' +
+    xe(t) +
+    '</w:t></w:r>';
+  // One page of front or back matter: each block a single-spaced paragraph, the first starting a new page.
+  const matterDocx = (pg, brk) =>
+    pg.blocks
+      .map((bk, i) => {
+        const single = '<w:spacing w:line="276" w:lineRule="auto" w:before="0" w:after="120"/>',
+          center = '<w:jc w:val="center"/><w:ind w:firstLine="0"/>',
+          pb = i === 0 && brk ? '<w:pageBreakBefore/>' : '';
+        const P = (pp, t, extra) =>
+          '<w:p><w:pPr>' +
+          pb +
+          pp +
+          '</w:pPr>' +
+          runs(t || '')
+            .map(r => runX(r[0], r[1], extra))
+            .join('') +
+          '</w:p>';
+        const t = bk[1];
+        if (bk[0] === 'title') return P(center + '<w:spacing w:before="2880" w:after="240"/>', t, '<w:sz w:val="48"/>');
+        if (bk[0] === 'sub') return P(center + single, t, '<w:i/><w:sz w:val="28"/>');
+        if (bk[0] === 'h') return P(center + '<w:spacing w:before="1440" w:after="480"/>', t, '<w:sz w:val="32"/>');
+        if (bk[0] === 'sh') return P(center + single, t, '<w:smallCaps/>');
+        if (bk[0] === 'c' || bk[0] === 'toc') return P(center + single, t);
+        if (bk[0] === 'i') return P(center + single, t, '<w:i/>');
+        if (bk[0] === 'small') return P('<w:ind w:firstLine="0"/>' + single, t, '<w:sz w:val="20"/>');
+        if (bk[0] === 'p') return P(single, t);
+        if (bk[0] === 'link') return P(center + single, [t, bk[2]].filter(Boolean).join(': '));
+        return P(single, '');
+      })
+      .join('');
+  if (mat)
+    bookPages('front', I.toc).forEach(pg => {
+      body += matterDocx(pg, hasFirst);
+      hasFirst = true;
+    });
+  if (hasFirst)
     body +=
       '<w:p><w:pPr>' + sect(true).replace('<w:sectPr>', '<w:sectPr><w:type w:val="nextPage"/>') + '</w:pPr></w:p>';
-  }
   I.book.forEach((c, ci) => {
+    const part = c.kind === 'part';
     body +=
       '<w:p><w:pPr><w:pStyle w:val="Heading1"/>' +
-      (ci > 0 && o.chNew ? '<w:pageBreakBefore/>' : '') +
+      ((ci > 0 && o.chNew) || (ci > 0 && part) ? '<w:pageBreakBefore/>' : '') +
+      (part ? '<w:spacing w:before="4320" w:after="720"/>' : '') +
       '</w:pPr>' +
-      run(c.title) +
+      (c.label ? run(c.label) + (c.title ? '<w:r><w:br/></w:r>' : '') : '') +
+      (c.title ? run(c.title) : '') +
       '</w:p>';
     c.scenes.forEach((x, si) => {
       if (si) body += para(o.brk || ' ', mid);
@@ -28789,7 +29029,8 @@ function expDocx(scope) {
       });
     });
   });
-  if (I.full) body += para('END', '<w:jc w:val="center"/><w:ind w:firstLine="0"/><w:spacing w:before="480"/>');
+  if (mat) bookPages('back', I.toc).forEach(pg => (body += matterDocx(pg, true)));
+  else if (I.full) body += para('END', '<w:jc w:val="center"/><w:ind w:firstLine="0"/><w:spacing w:before="480"/>');
   const doc =
     '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:document ' +
     W +
@@ -28878,7 +29119,10 @@ function expPdfHtml(scope) {
     fam +
     ';font-size:12pt;line-height:2}p{margin:0;text-indent:.5in;orphans:2;widows:2}' +
     '.c{text-align:center;text-indent:0}.tp{page-break-after:always;line-height:1.15}.tp .wc{float:right}.tp .t{margin-top:3.2in;text-align:center;line-height:2}' +
-    'h1{font-size:12pt;font-weight:normal;text-align:center;margin:2in 0 .35in;break-after:avoid}h1.nb{page-break-before:always}</style></head><body>';
+    'h1{font-size:12pt;font-weight:normal;text-align:center;margin:2in 0 .35in;break-after:avoid}h1.nb{page-break-before:always}' +
+    'h1.part{margin-top:3in}h1 .cn{display:block}' +
+    MATTER_CSS +
+    '.bk-page{page-break-before:always;line-height:1.5}.bk-page p{orphans:1;widows:1}</style></head><body>';
   if (o.title) {
     const lines = I.contact.length ? I.contact : [I.author || I.byline || ''];
     h +=
@@ -28891,14 +29135,30 @@ function expPdfHtml(scope) {
       (I.byline ? '<br>by ' + xe(I.byline) : '') +
       '</div></div>';
   }
+  const mat = I.full && o.matter.pdf,
+    pageOf = pg => '<section class="bk-page bk-' + pg.key + '">' + matterHtml(pg, null) + '</section>';
+  if (mat) h += bookPages('front', I.toc).map(pageOf).join('');
   I.book.forEach((c, ci) => {
-    h += '<h1' + (ci > 0 && o.chNew ? ' class="nb"' : '') + '>' + xe(c.title) + '</h1>';
+    const cls = [
+      (ci > 0 && o.chNew) || (mat && ci === 0) || c.kind === 'part' ? 'nb' : '',
+      c.kind === 'part' ? 'part' : ''
+    ]
+      .filter(Boolean)
+      .join(' ');
+    h +=
+      '<h1' +
+      (cls ? ' class="' + cls + '"' : '') +
+      '>' +
+      (c.label ? '<span class="cn">' + xe(c.label) + '</span>' : '') +
+      xe(c.title) +
+      '</h1>';
     c.scenes.forEach((x, si) => {
       if (si) h += '<p class="c">' + xe(o.brk || ' ') + '</p>';
       h += x.map(l => '<p>' + htmlRuns(l) + '</p>').join('');
     });
   });
-  if (I.full) h += '<p class="c" style="margin-top:1em">END</p>';
+  if (mat) h += bookPages('back', I.toc).map(pageOf).join('');
+  else if (I.full) h += '<p class="c" style="margin-top:1em">END</p>';
   return { html: h + '</body></html>', I };
 }
 // The manuscript as an EPUB ebook.
@@ -28906,7 +29166,9 @@ function expEpub(scope) {
   const I = expInfo(scope),
     o = I.o,
     m = S.meta,
-    lang = xe((navigator.language || 'en').split(',')[0]);
+    b = m.book,
+    lang = xe(bookLang()),
+    mat = I.full && o.matter.epub;
   if (!o.uid) {
     o.uid = uid('bk') + uid('');
     dirty('meta');
@@ -28929,12 +29191,38 @@ function expEpub(scope) {
     ],
     [
       'OEBPS/style.css',
-      'body{margin:0 5%;line-height:1.5}p{margin:0;text-indent:1.5em}h1+p,p.brk+p,p.first{text-indent:0}p.brk{text-align:center;text-indent:0;margin:1em 0}h1{text-align:center;font-weight:normal;margin:3em 0 2em;page-break-before:always}.title{text-align:center;margin-top:30%}.title h1{font-size:2em;margin:0 0 1em}.title p{text-indent:0}'
+      'body{margin:0 5%;line-height:1.5}p{margin:0;text-indent:1.5em}h1+p,p.brk+p,p.first{text-indent:0}p.brk{text-align:center;text-indent:0;margin:1em 0}h1{text-align:center;font-weight:normal;margin:3em 0 2em;page-break-before:always}.title{text-align:center;margin-top:30%}.title h1{font-size:2em;margin:0 0 1em}.title p{text-indent:0}' +
+        'h1 .cn{display:block;font-size:.75em;letter-spacing:.08em;text-transform:uppercase;margin-bottom:.5em}h1.part{margin-top:35%;font-size:1.6em}' +
+        MATTER_CSS
     ]
   ];
   const items = [],
-    nav = [];
-  if (o.title) {
+    nav = [],
+    marks = [], // landmarks: where the contents and the story start, for the reader's Go to menu
+    chHref = id => 'ch' + (I.book.findIndex(c => c.id === id) + 1) + '.xhtml',
+    addMatter = side =>
+      bookPages(side, I.toc).forEach(pg => {
+        const fid = side[0] + '-' + pg.key;
+        files.push([
+          'OEBPS/' + fid + '.xhtml',
+          page(
+            pg.name,
+            '<section epub:type="' +
+              pg.type +
+              '" class="bk-page bk-' +
+              pg.key +
+              '">' +
+              matterHtml(pg, chHref) +
+              '</section>'
+          )
+        ]);
+        items.push(fid);
+        if (pg.key === 'toc') marks.push(['toc', fid, 'Contents']);
+        if (side === 'back')
+          nav.push('<li><a href="' + fid + '.xhtml">' + xe(pg.blocks[0][1] || pg.name) + '</a></li>');
+      });
+  if (mat) addMatter('front');
+  else if (o.title) {
     files.push([
       'OEBPS/title.xhtml',
       page(
@@ -28953,10 +29241,18 @@ function expEpub(scope) {
     files.push([
       'OEBPS/' + id + '.xhtml',
       page(
-        c.title,
-        '<section epub:type="chapter"><h1>' +
-          xe(c.title) +
-          '</h1>' +
+        chHeadText(c) || c.name,
+        '<section epub:type="' +
+          (c.kind === 'part' ? 'part' : 'chapter') +
+          '">' +
+          (c.label || c.title
+            ? '<h1' +
+              (c.kind === 'part' ? ' class="part"' : '') +
+              '>' +
+              (c.label ? '<span class="cn">' + xe(c.label) + '</span>' : '') +
+              xe(c.title) +
+              '</h1>'
+            : '') +
           c.scenes
             .map(x => x.map(l => '<p>' + htmlRuns(l) + '</p>').join(''))
             .join('<p class="brk">' + xe(o.brk || '*') + '</p>') +
@@ -28964,11 +29260,20 @@ function expEpub(scope) {
       )
     ]);
     items.push(id);
-    nav.push('<li><a href="' + id + '.xhtml">' + xe(c.title) + '</a></li>');
+    if (!i) marks.push(['bodymatter', id, 'Start reading']);
+    nav.push('<li><a href="' + id + '.xhtml">' + xe(chHeadText(c) || c.name) + '</a></li>');
   });
+  if (mat) addMatter('back');
   files.push([
     'OEBPS/nav.xhtml',
-    page('Contents', '<nav epub:type="toc" id="toc"><h1>Contents</h1><ol>' + nav.join('') + '</ol></nav>')
+    page(
+      'Contents',
+      '<nav epub:type="toc" id="toc"><h1>Contents</h1><ol>' +
+        nav.join('') +
+        '</ol></nav><nav epub:type="landmarks" hidden=""><ol>' +
+        marks.map(([t, f, l]) => '<li><a epub:type="' + t + '" href="' + f + '.xhtml">' + l + '</a></li>').join('') +
+        '</ol></nav>'
+    )
   ]);
   const mod = new Date().toISOString().replace(/\.\d+Z$/, 'Z');
   files.push([
@@ -28982,6 +29287,20 @@ function expEpub(scope) {
       xe(I.title) +
       '</dc:title>' +
       (I.byline ? '<dc:creator>' + xe(I.byline) + '</dc:creator>' : '') +
+      (b.desc.trim() ? '<dc:description>' + xe(b.desc.trim()) + '</dc:description>' : '') +
+      (b.imprint.trim() ? '<dc:publisher>' + xe(b.imprint.trim()) + '</dc:publisher>' : '') +
+      b.keys
+        .split(',')
+        .map(k => k.trim())
+        .filter(Boolean)
+        .map(k => '<dc:subject>' + xe(k) + '</dc:subject>')
+        .join('') +
+      (m.series.name.trim()
+        ? '<meta property="belongs-to-collection" id="series">' +
+          xe(m.series.name.trim()) +
+          '</meta><meta refines="#series" property="collection-type">series</meta>' +
+          (m.series.num ? '<meta refines="#series" property="group-position">' + m.series.num + '</meta>' : '')
+        : '') +
       '<dc:language>' +
       lang +
       '</dc:language><meta property="dcterms:modified">' +
@@ -28997,16 +29316,20 @@ function expEpub(scope) {
 }
 // The manuscript as Markdown.
 function manuscriptMd(scope) {
-  const I = expInfo(scope || 'all');
-  let out = '# ' + I.title + '\n\n' + (I.byline ? 'by ' + I.byline + '\n\n' : '');
+  const I = expInfo(scope || 'all'),
+    mat = I.full && I.o.matter.md;
+  let out = mat
+    ? bookPages('front', I.toc).map(matterMd).join('\n\n---\n\n') + '\n\n---\n\n'
+    : '# ' + I.title + '\n\n' + (I.byline ? 'by ' + I.byline + '\n\n' : '');
   I.book.forEach(c => {
     out +=
       '## ' +
-      c.title +
+      (chHeadText(c) || c.name) +
       '\n\n' +
       c.scenes.map(x => x.join('\n\n')).join('\n\n' + (I.o.brk || '* * *') + '\n\n') +
       '\n\n';
   });
+  if (mat) out += '---\n\n' + bookPages('back', I.toc).map(matterMd).join('\n\n---\n\n');
   return out.trim() + '\n';
 }
 // The manuscript as plain text.
@@ -29015,7 +29338,7 @@ function manuscriptTxt(scope) {
   let out = I.title + '\n' + (I.byline ? 'by ' + I.byline + '\n' : '') + '\n\n';
   I.book.forEach(c => {
     out +=
-      c.title +
+      (chHeadText(c, '\n') || c.name) +
       '\n\n' +
       c.scenes.map(x => x.map(plainText).join('\n\n')).join('\n\n' + (I.o.brk || '#') + '\n\n') +
       '\n\n\n';
@@ -29156,6 +29479,15 @@ function openExport() {
           (o.chNew ? ' checked' : '') +
           '>Start each chapter on a new page</label>'
         : '') +
+      (o.fmt in o.matter
+        ? '<label class="ck"><input type="checkbox" data-mat="1"' +
+          (o.matter[o.fmt] ? ' checked' : '') +
+          (scope !== 'all' ? ' disabled' : '') +
+          '>Front and back matter (copyright, dedication, about the author…)' +
+          (scope !== 'all' ? ' <span class="muted">whole book only</span>' : '') +
+          '</label>'
+        : '') +
+      '<p class="fine">Chapter headings, front and back matter come from <button class="lnk" data-x="book">Book details</button>.</p>' +
       '<p class="fine">Bold, italics and underlining from your scenes come through in Word, PDF and EPUB. Each line you type is a paragraph.</p>' +
       '<div class="ask-btns" style="margin-top:14px"><button class="btn" data-x="close">Cancel</button><button class="btn pri" data-x="go">' +
       ico('down', 14) +
@@ -29176,7 +29508,10 @@ function openExport() {
       dirty('meta');
       draw();
     } else if (b.dataset.x === 'close') close();
-    else if (b.dataset.x === 'go') {
+    else if (b.dataset.x === 'book') {
+      close();
+      go({ k: 'book' });
+    } else if (b.dataset.x === 'go') {
       close();
       doExport(o.fmt, scope);
     }
@@ -29189,6 +29524,11 @@ function openExport() {
     dirty('meta');
   });
   ov.addEventListener('change', e => {
+    if (e.target.dataset.mat) {
+      o.matter[o.fmt] = e.target.checked;
+      dirty('meta');
+      return;
+    }
     const k = e.target.dataset.e;
     if (!k) return;
     if (k === 'scope') {
@@ -29235,6 +29575,7 @@ function renderMenu() {
       item('story', 'Story insights') +
       item('world', 'Calendars & money') +
       item('series', 'Series bible') +
+      item('book', 'Book details…') +
       item('qs', 'Go to… (' + MODK + '+P)') +
       item('search', 'Search everything…') +
       item('sessions', 'Writing sessions') +
@@ -29262,6 +29603,7 @@ function renderMenu() {
     item('story', 'Story insights') +
     item('world', 'Calendars & money') +
     item('series', 'Series bible') +
+    item('book', 'Book details…') +
     item('qs', 'Go to… (' + MODK + '+P)') +
     item('search', 'Search everything…') +
     item('sessions', 'Writing sessions') +
@@ -29353,6 +29695,7 @@ function bindMenu() {
         'story',
         'world',
         'series',
+        'book',
         'search',
         'trash',
         'split',
@@ -29440,7 +29783,594 @@ function closeMenu() {
   $('#menu').hidden = true;
 }
 /*
- * 34-sharing.js: Shared projects: merging two writers' work, presence, and setting up sharing
+ * 34-book.js: Book details, front and back matter, and chapter types
+ *
+ * Everything a finished book needs around the story itself, kept in meta.book (normBook): details for stores and the
+ * copyright page (subtitle, imprint, ISBNs, edition, description, keywords), the front matter (half title, title page,
+ * copyright, dedication, epigraph, contents) and back matter (acknowledgments, about the author, also by, links),
+ * each switched on or off and in the writer's order, and how chapters are headed (chNum, chTitles).
+ *
+ * Chapters have a kind (meta.chapters[].kind): '' an ordinary numbered chapter, 'un' unnumbered (a prologue or
+ * epilogue: it does not take a number) or 'part' (a part divider, "Part One", whose scenes are the part's opening
+ * words). chHeads() works out every chapter's heading.
+ *
+ * bookPages() turns the front or back matter into pages of simple blocks ([type, text, extra]), which each export
+ * format draws its own way: matterHtml() for EPUB and PDF, matterMd() for Markdown, and expDocx for Word. The Book
+ * details screen ({k:'book'}, renderBook) edits all of it.
+ */
+// The pages that can come before the story, in their default order: [key, name, on at first].
+const BOOK_FRONT = [
+  ['half', 'Half title', false],
+  ['title', 'Title page', true],
+  ['copy', 'Copyright', true],
+  ['ded', 'Dedication', true],
+  ['epi', 'Epigraph', true],
+  ['toc', 'Contents', true]
+];
+// The pages that can come after the story: [key, name, on at first].
+const BOOK_BACK = [
+  ['ack', 'Acknowledgments', true],
+  ['about', 'About the author', true],
+  ['also', 'Also by', true],
+  ['links', 'Links', true]
+];
+// Kinds of chapter: [key, name]. '' is an ordinary numbered chapter.
+const CH_KINDS = [
+  ['', 'Numbered chapter'],
+  ['un', 'Unnumbered (prologue, epilogue, interlude)'],
+  ['part', 'Part divider']
+];
+// How chapters are numbered in exports: [key, name].
+const CH_NUMS = [
+  ['none', 'Titles only'],
+  ['word', 'Chapter One'],
+  ['num', 'Chapter 1'],
+  ['bare', 'One'],
+  ['digit', '1']
+];
+// Checks the book details, keeping only valid values; the front and back matter lists always hold every page once.
+function normBook(b) {
+  b = b && typeof b === 'object' ? b : {};
+  const s = (k, n) => String(b[k] || '').slice(0, n);
+  const order = (list, def) => {
+    const seen = new Set(),
+      out = [];
+    (Array.isArray(list) ? list : []).forEach(x => {
+      const k = Array.isArray(x) ? x[0] : '';
+      if (def.some(d => d[0] === k) && !seen.has(k)) {
+        seen.add(k);
+        out.push([k, !!x[1]]);
+      }
+    });
+    def.forEach(d => {
+      if (!seen.has(d[0])) out.push([d[0], d[2]]);
+    });
+    return out;
+  };
+  return {
+    subtitle: s('subtitle', 200),
+    imprint: s('imprint', 120),
+    edition: s('edition', 80),
+    year: s('year', 20),
+    lang: s('lang', 20),
+    isbnE: s('isbnE', 20),
+    isbnP: s('isbnP', 20),
+    isbnH: s('isbnH', 20),
+    desc: s('desc', 4000),
+    keys: s('keys', 500),
+    copy: s('copy', 4000),
+    ded: s('ded', 2000),
+    epi: s('epi', 2000),
+    epiBy: s('epiBy', 200),
+    ack: s('ack', 8000),
+    about: s('about', 4000),
+    also: s('also', 4000),
+    links: (Array.isArray(b.links) ? b.links : []).slice(0, 12).map(l => ({
+      label: String((l || {}).label || '').slice(0, 120),
+      url: String((l || {}).url || '').slice(0, 500)
+    })),
+    front: order(b.front, BOOK_FRONT),
+    back: order(b.back, BOOK_BACK),
+    chNum: CH_NUMS.some(x => x[0] === b.chNum) ? b.chNum : 'none',
+    chTitles: b.chTitles !== false
+  };
+}
+// Number words for chapter and part headings.
+const NUM_WORDS =
+  'Zero One Two Three Four Five Six Seven Eight Nine Ten Eleven Twelve Thirteen Fourteen Fifteen Sixteen Seventeen Eighteen Nineteen'.split(
+    ' '
+  );
+const NUM_TENS = '  Twenty Thirty Forty Fifty Sixty Seventy Eighty Ninety'.split(' ');
+// A number in words, for headings: 3 → "Three", 21 → "Twenty-One", 105 → "One Hundred and Five".
+function numWord(n) {
+  if (n < 20) return NUM_WORDS[n];
+  if (n < 100) return NUM_TENS[Math.floor(n / 10)] + (n % 10 ? '-' + NUM_WORDS[n % 10] : '');
+  if (n < 1000) return NUM_WORDS[Math.floor(n / 100)] + ' Hundred' + (n % 100 ? ' and ' + numWord(n % 100) : '');
+  return String(n);
+}
+// How each chapter is headed in exports: {chapterId: {kind, label, title}}. label is "Chapter Three", "Part One" or ''
+// (unnumbered chapters and "Titles only"); title is '' when the writer chose numbers without titles.
+function chHeads() {
+  const b = S.meta.book,
+    out = {};
+  let n = 0,
+    p = 0;
+  S.meta.chapters.forEach(c => {
+    const kind = c.kind || '';
+    let label = '';
+    if (kind === 'part') {
+      p++;
+      label = 'Part ' + numWord(p);
+    } else if (!kind) {
+      n++;
+      label =
+        b.chNum === 'word'
+          ? 'Chapter ' + numWord(n)
+          : b.chNum === 'num'
+            ? 'Chapter ' + n
+            : b.chNum === 'bare'
+              ? numWord(n)
+              : b.chNum === 'digit'
+                ? String(n)
+                : '';
+    }
+    out[c.id] = { kind, label, title: !label || b.chTitles || kind === 'part' ? c.title : '' };
+  });
+  return out;
+}
+// A chapter's heading as one line of text: "Chapter Three: The Storm".
+const chHeadText = (h, sep) => [h.label, h.title].filter(Boolean).join(sep || ': ');
+// The standard copyright page, from the book details (used unless the writer wrote their own).
+function copyrightAuto() {
+  const m = S.meta,
+    b = m.book,
+    by = (m.exp.byline || m.author || '').trim() || 'the author',
+    yr = b.year.trim() || String(new Date().getFullYear());
+  const L = [
+    'Copyright © ' + yr + ' ' + by,
+    '',
+    'All rights reserved. No part of this book may be reproduced in any form or by any electronic or mechanical means, including information storage and retrieval systems, without written permission from the author, except for the use of brief quotations in a book review.',
+    '',
+    'This is a work of fiction. Names, characters, places and incidents are the products of the author’s imagination or are used fictitiously. Any resemblance to actual persons, living or dead, events or locales is entirely coincidental.'
+  ];
+  const isbns = [
+    ['isbnE', 'ebook'],
+    ['isbnP', 'paperback'],
+    ['isbnH', 'hardcover']
+  ].filter(x => b[x[0]].trim());
+  if (isbns.length) {
+    L.push('');
+    isbns.forEach(x => L.push('ISBN ' + b[x[0]].trim() + ' (' + x[1] + ')'));
+  }
+  if (b.edition.trim()) L.push('', b.edition.trim());
+  if (b.imprint.trim()) L.push('', 'Published by ' + b.imprint.trim());
+  return L.join('\n');
+}
+// The copyright page's text: the writer's own wording, or the standard one.
+const copyrightText = () => S.meta.book.copy.trim() || copyrightAuto();
+// Text with one line per paragraph, as blocks of one type (an empty line is a gap).
+const linesAs = (t, type) =>
+  String(t || '')
+    .split('\n')
+    .map(l => l.trim())
+    .map(l => (l ? [type, l] : ['gap']));
+// The front ('front') or back ('back') matter that is switched on and has something in it, as pages of blocks:
+// [{key, name, type (the EPUB page type), blocks: [[kind, text, extra]]}]. Block kinds: title, sub, h (a heading),
+// sh (a small heading), c (centred), i (centred italic), small, p (a paragraph), gap, toc (text, chapter id), link
+// (label, url). toc lists the chapters given.
+function bookPages(side, chapters) {
+  const m = S.meta,
+    b = m.book,
+    by = (m.exp.byline || m.author || '').trim(),
+    out = [];
+  (side === 'front' ? b.front : b.back).forEach(([k, on]) => {
+    if (!on) return;
+    const pg = (type, blocks) =>
+      out.push({ key: k, name: (side === 'front' ? BOOK_FRONT : BOOK_BACK).find(d => d[0] === k)[1], type, blocks });
+    if (k === 'half') pg('halftitlepage', [['title', m.title]]);
+    else if (k === 'title')
+      pg(
+        'titlepage',
+        [['title', m.title]]
+          .concat(b.subtitle.trim() ? [['sub', b.subtitle.trim()]] : [])
+          .concat(by ? [['gap'], ['c', by]] : [])
+          .concat(b.imprint.trim() ? [['gap'], ['gap'], ['small', b.imprint.trim()]] : [])
+      );
+    else if (k === 'copy') pg('copyright-page', linesAs(copyrightText(), 'small'));
+    else if (k === 'ded' && b.ded.trim()) pg('dedication', linesAs(b.ded.trim(), 'i'));
+    else if (k === 'epi' && b.epi.trim())
+      pg('epigraph', linesAs(b.epi.trim(), 'i').concat(b.epiBy.trim() ? [['c', '— ' + b.epiBy.trim()]] : []));
+    else if (k === 'toc' && chapters && chapters.length)
+      pg('toc', [['h', 'Contents']].concat(chapters.map(c => ['toc', c.text, c.id])));
+    else if (k === 'ack' && b.ack.trim()) pg('acknowledgments', [['h', 'Acknowledgments']].concat(linesAs(b.ack, 'p')));
+    else if (k === 'about' && b.about.trim()) pg('appendix', [['h', 'About the author']].concat(linesAs(b.about, 'p')));
+    else if (k === 'also' && b.also.trim())
+      pg(
+        'appendix',
+        [['h', 'Also by ' + (by || 'the author')]].concat(
+          linesAs(b.also, 'c').map(x => (x[0] === 'c' && /^##\s*/.test(x[1]) ? ['sh', x[1].replace(/^##\s*/, '')] : x))
+        )
+      );
+    else if (k === 'links' && b.links.some(l => l.url.trim() || l.label.trim()))
+      pg(
+        'appendix',
+        [['h', 'Stay in touch']].concat(
+          b.links.filter(l => l.url.trim() || l.label.trim()).map(l => ['link', l.label.trim(), l.url.trim()])
+        )
+      );
+  });
+  return out;
+}
+// The book's language as a tag for ebook files (like "en" or "en-GB"): the writer's choice, or this computer's.
+function bookLang() {
+  const t = (S.meta.book.lang.trim() || navigator.language || 'en').match(/^[a-z]{2,3}(?:-[a-z0-9]{2,8})*/i);
+  return t ? t[0] : 'en';
+}
+// Whether a link is safe to put in an exported file (web and email addresses only).
+const okUrl = u => /^(https?:\/\/|mailto:)[^\s"<>]+$/i.test(u || '');
+// One page of front or back matter as HTML, for EPUB and PDF. href(chapterId) links a contents entry, or null.
+function matterHtml(pg, href) {
+  return pg.blocks
+    .map(b => {
+      const t = b[1];
+      if (b[0] === 'title') return '<h1 class="bk-title">' + htmlRuns(t) + '</h1>';
+      if (b[0] === 'sub') return '<p class="bk-sub">' + htmlRuns(t) + '</p>';
+      if (b[0] === 'h') return '<h2 class="bk-h">' + xe(t) + '</h2>';
+      if (b[0] === 'sh') return '<h3 class="bk-sh">' + htmlRuns(t) + '</h3>';
+      if (b[0] === 'c') return '<p class="bk-c">' + htmlRuns(t) + '</p>';
+      if (b[0] === 'i') return '<p class="bk-i">' + htmlRuns(t) + '</p>';
+      if (b[0] === 'small') return '<p class="bk-small">' + htmlRuns(t) + '</p>';
+      if (b[0] === 'p') return '<p class="bk-p">' + htmlRuns(t) + '</p>';
+      if (b[0] === 'gap') return '<p class="bk-gap">&#160;</p>';
+      if (b[0] === 'toc')
+        return '<p class="bk-toc">' + (href ? '<a href="' + href(b[2]) + '">' + xe(t) + '</a>' : xe(t)) + '</p>';
+      if (b[0] === 'link')
+        return (
+          '<p class="bk-c">' +
+          (okUrl(b[2])
+            ? '<a href="' + xe(b[2]) + '">' + xe(t || b[2]) + '</a>'
+            : xe([t, b[2]].filter(Boolean).join(': '))) +
+          '</p>'
+        );
+      return '';
+    })
+    .join('');
+}
+// The CSS for front and back matter pages, shared by EPUB and PDF.
+const MATTER_CSS =
+  '.bk-page{text-align:center}.bk-title{font-size:2em;font-weight:normal;margin:30% 0 .4em;text-indent:0}.bk-sub{font-style:italic;font-size:1.15em;text-indent:0;margin:0}' +
+  '.bk-h{font-size:1.3em;font-weight:normal;margin:2em 0 1.2em;text-indent:0}.bk-sh{font-size:1em;font-variant:small-caps;letter-spacing:.05em;margin:1.4em 0 .4em;text-indent:0}' +
+  '.bk-c,.bk-i,.bk-toc{text-indent:0;margin:.3em 0}.bk-i{font-style:italic}.bk-small{font-size:.8em;text-align:left;text-indent:0;margin:0 0 .2em}' +
+  '.bk-p{text-align:left;text-indent:1.5em;margin:0}.bk-h+.bk-p{text-indent:0}.bk-gap{margin:0;text-indent:0}' +
+  '.bk-copy{margin-top:40%}.bk-ded,.bk-epi{margin-top:30%}.bk-toc{text-align:left}';
+// One page of front or back matter as Markdown.
+function matterMd(pg) {
+  return pg.blocks
+    .map(b =>
+      b[0] === 'title'
+        ? '# ' + b[1]
+        : b[0] === 'sub' || b[0] === 'i'
+          ? '*' + b[1] + '*'
+          : b[0] === 'h'
+            ? '## ' + b[1]
+            : b[0] === 'sh'
+              ? '### ' + b[1]
+              : b[0] === 'gap'
+                ? ''
+                : b[0] === 'toc'
+                  ? '- ' + b[1]
+                  : b[0] === 'link'
+                    ? okUrl(b[2])
+                      ? '[' + (b[1] || b[2]) + '](' + b[2] + ')'
+                      : [b[1], b[2]].filter(Boolean).join(': ')
+                    : b[1]
+    )
+    .filter(x => x !== '')
+    .join('\n\n');
+}
+// The Book details screen: details for stores and the copyright page, front and back matter, and chapter headings.
+function renderBook(el) {
+  const m = S.meta,
+    b = m.book,
+    H = chHeads();
+  const fld = (k, label, ph, o) => {
+    o = o || {};
+    const v = k === 'title' ? m.title : k === 'author' ? m.author : k === 'byline' ? m.exp.byline : b[k];
+    return (
+      '<label class="f' +
+      (o.wide ? ' bk-wide' : '') +
+      '">' +
+      label +
+      (o.area
+        ? '<textarea data-bk="' +
+          k +
+          '" rows="' +
+          (o.rows || 3) +
+          '" placeholder="' +
+          esc(ph || '') +
+          '">' +
+          esc(v) +
+          '</textarea>'
+        : '<input data-bk="' +
+          k +
+          '" value="' +
+          esc(v) +
+          '" placeholder="' +
+          esc(ph || '') +
+          '" maxlength="' +
+          (o.max || 200) +
+          '">') +
+      (o.hint ? '<small class="bk-hint">' + o.hint + '</small>' : '') +
+      '</label>'
+    );
+  };
+  const list = side =>
+    '<div class="bk-list" data-side="' +
+    side +
+    '">' +
+    b[side]
+      .map(([k, on]) => {
+        const name = (side === 'front' ? BOOK_FRONT : BOOK_BACK).find(d => d[0] === k)[1];
+        return (
+          '<div class="bk-row" data-k="' +
+          k +
+          '"><span class="bk-grip" title="Drag to reorder">' +
+          ico('grip', 14) +
+          '</span><label class="ck"><input type="checkbox" data-bkon="' +
+          side +
+          ':' +
+          k +
+          '"' +
+          (on ? ' checked' : '') +
+          '>' +
+          esc(name) +
+          '</label><small class="muted">' +
+          esc(matterNote(k)) +
+          '</small></div>'
+        );
+      })
+      .join('') +
+    '</div>';
+  const own = !!b.copy.trim() || ui.bkCopyEdit;
+  el.innerHTML =
+    '<div class="main-head">' +
+    backBtn() +
+    '<span class="kind">' +
+    ico('book', 16) +
+    '</span><h1 class="mh-title">Book details</h1><button class="btn" data-bka="export">' +
+    ico('down', 14) +
+    '<span>Export…</span></button></div><div class="pf-wrap bk-wrap">' +
+    '<section class="pf"><h2>About the book</h2><p class="fine">Used on the title page, the copyright page and in ebook files. Stores ask for the same details when you publish.</p><div class="bk-grid">' +
+    fld('title', 'Title', 'The Lantern Tide', { max: 90 }) +
+    fld('subtitle', 'Subtitle', 'A novel') +
+    fld('author', 'Your name', 'Your legal name', { max: 120 }) +
+    fld('byline', 'Pen name', 'Same as your name', { max: 120 }) +
+    '<label class="f">Series<input data-bks="name" value="' +
+    esc(m.series.name) +
+    '" maxlength="120" placeholder="Not part of a series"></label><label class="f">Book number<input type="number" min="0" data-bks="num" value="' +
+    (m.series.num || '') +
+    '" placeholder="1"></label>' +
+    fld('imprint', 'Publisher or imprint', 'Your imprint, if you have one', { max: 120 }) +
+    fld('edition', 'Edition', 'First edition', { max: 80 }) +
+    fld('year', 'Year of publication', String(new Date().getFullYear()), { max: 20 }) +
+    fld('lang', 'Language', bookLang(), {
+      max: 20,
+      hint: 'A code like en, en-GB or fr.'
+    }) +
+    fld('isbnE', 'ISBN, ebook', 'Not needed for Kindle', { max: 20 }) +
+    fld('isbnP', 'ISBN, paperback', '', { max: 20 }) +
+    fld('isbnH', 'ISBN, hardcover', '', { max: 20 }) +
+    fld('keys', 'Keywords', 'cozy mystery, seaside, found family', { max: 500 }) +
+    fld('desc', 'Description', 'The blurb for the back cover and store page.', { area: true, rows: 5, wide: true }) +
+    '</div></section>' +
+    '<section class="pf"><h2>Front matter</h2><p class="fine">The pages before the story. Tick the ones to include and drag to reorder. Exports include them when “Front and back matter” is ticked (always on for EPUB).</p>' +
+    list('front') +
+    '<h3 class="bk-sub-h">Copyright page</h3>' +
+    (own
+      ? '<label class="f">Your wording<textarea data-bk="copy" rows="8">' +
+        esc(b.copy.trim() ? b.copy : copyrightAuto()) +
+        '</textarea></label><button class="lnk" data-bka="stdcopy">Use the standard wording instead</button>'
+      : '<pre class="bk-preview">' +
+        esc(copyrightAuto()) +
+        '</pre><p class="fine">Made from the details above. <button class="lnk" data-bka="owncopy">Write my own</button></p>') +
+    '<div class="bk-grid">' +
+    fld('ded', 'Dedication', 'For Mum, who read to me.', { area: true, rows: 2, wide: true }) +
+    fld('epi', 'Epigraph', 'A quotation to open the book.', { area: true, rows: 3 }) +
+    fld('epiBy', 'Epigraph by', 'Who said or wrote it', { max: 200 }) +
+    '</div></section>' +
+    '<section class="pf"><h2>Back matter</h2><p class="fine">The pages after the story.</p>' +
+    list('back') +
+    '<div class="bk-grid">' +
+    fld('ack', 'Acknowledgments', 'Thank you to…', { area: true, rows: 4, wide: true }) +
+    fld('about', 'About the author', 'A few lines about you, in the third person.', {
+      area: true,
+      rows: 4,
+      wide: true
+    }) +
+    fld('also', 'Also by', 'One title per line.', {
+      area: true,
+      rows: 4,
+      wide: true,
+      hint: 'Start a line with ## for a series name, then list its books under it.'
+    }) +
+    '</div><h3 class="bk-sub-h">Links</h3><p class="fine">Your newsletter, website or store pages. Ebooks make them clickable.</p><div class="bk-links">' +
+    b.links
+      .map(
+        (l, i) =>
+          '<div class="bk-link"><input data-bkl="label" data-i="' +
+          i +
+          '" value="' +
+          esc(l.label) +
+          '" placeholder="Join my newsletter" maxlength="120" aria-label="Link text"><input data-bkl="url" data-i="' +
+          i +
+          '" value="' +
+          esc(l.url) +
+          '" placeholder="https://…" maxlength="500" aria-label="Address"><button class="ibtn" data-bka="dellink" data-i="' +
+          i +
+          '" aria-label="Remove link">' +
+          ico('x', 14) +
+          '</button></div>'
+      )
+      .join('') +
+    '<button class="btn sm" data-bka="addlink">' +
+    ico('plus', 13) +
+    '<span>Link</span></button></div></section>' +
+    '<section class="pf"><h2>Chapters</h2><p class="fine">How chapters are headed in exports. Prologues and epilogues can be left unnumbered, and part dividers (“Part One”) group the chapters after them. The text of a part’s scenes is printed on the part’s page.</p>' +
+    '<div class="bk-grid"><label class="f">Numbering<select data-bk="chNum">' +
+    CH_NUMS.map(
+      x => '<option value="' + x[0] + '"' + (b.chNum === x[0] ? ' selected' : '') + '>' + x[1] + '</option>'
+    ).join('') +
+    '</select></label><label class="ck bk-ck"><input type="checkbox" data-bk="chTitles"' +
+    (b.chTitles ? ' checked' : '') +
+    (b.chNum === 'none' ? ' disabled' : '') +
+    '>Show chapter titles under the numbers</label></div>' +
+    (b.chNum !== 'none' && b.chTitles && m.chapters.some(c => /^(chapter|part)\b/i.test(c.title.trim()))
+      ? '<p class="fine bk-warn">Some chapter titles already start with “Chapter” or “Part”. Rename them, choose Titles only, or untick Show chapter titles, so the number isn’t written twice.</p>'
+      : '') +
+    '<div class="bk-chs">' +
+    m.chapters
+      .map(
+        c =>
+          '<div class="bk-ch"><span class="bk-chn">' +
+          esc(c.title) +
+          '</span><select data-bkk="' +
+          c.id +
+          '" aria-label="Kind of chapter">' +
+          CH_KINDS.map(
+            k =>
+              '<option value="' + k[0] + '"' + ((c.kind || '') === k[0] ? ' selected' : '') + '>' + k[1] + '</option>'
+          ).join('') +
+          '</select><span class="bk-head' +
+          (H[c.id].kind === 'part' ? ' part' : '') +
+          '">' +
+          esc(chHeadText(H[c.id], ' · ') || 'No heading') +
+          '</span></div>'
+      )
+      .join('') +
+    '</div></section></div>';
+  dragSort(el, {
+    item: '.bk-row',
+    handle: '.bk-grip',
+    zones: '.bk-list',
+    drop: (it, ref, zone) => {
+      const arr = b[zone.dataset.side],
+        from = arr.findIndex(x => x[0] === it.dataset.k);
+      if (from < 0 || it.parentElement !== zone) return;
+      const [x] = arr.splice(from, 1),
+        to = ref ? arr.findIndex(y => y[0] === ref.dataset.k) : arr.length;
+      arr.splice(to < 0 ? arr.length : to, 0, x);
+      dirty('meta');
+      renderBook(el);
+    }
+  });
+  el.oninput = e => {
+    const t = e.target,
+      k = t.dataset.bk;
+    if (k && k !== 'chNum' && k !== 'chTitles') {
+      const v = t.value;
+      if (k === 'title') {
+        m.title = v.slice(0, 90) || 'Untitled novel';
+        const pt = $('#projTitle');
+        if (pt) pt.value = m.title;
+      } else if (k === 'author') m.author = v.slice(0, 120);
+      else if (k === 'byline') m.exp.byline = v.slice(0, 120);
+      else b[k] = v;
+      dirty('meta');
+      if (
+        !own &&
+        k !== 'copy' &&
+        k !== 'ded' &&
+        k !== 'epi' &&
+        k !== 'epiBy' &&
+        k !== 'ack' &&
+        k !== 'about' &&
+        k !== 'also'
+      ) {
+        const pre = $('.bk-preview', el);
+        if (pre) pre.textContent = copyrightAuto();
+      }
+    } else if (t.dataset.bks) {
+      if (t.dataset.bks === 'name') m.series.name = t.value.slice(0, 120);
+      else m.series.num = Math.max(0, Math.min(999, Math.round(+t.value || 0)));
+      dirty('meta');
+    } else if (t.dataset.bkl) {
+      const l = b.links[+t.dataset.i];
+      if (l) {
+        l[t.dataset.bkl] = t.value;
+        dirty('meta');
+      }
+    }
+  };
+  el.onchange = e => {
+    const t = e.target;
+    if (t.dataset.bk === 'chNum' || t.dataset.bk === 'chTitles') {
+      if (t.dataset.bk === 'chNum') b.chNum = t.value;
+      else b.chTitles = t.checked;
+      dirty('meta');
+      renderBook(el);
+    } else if (t.dataset.bkk) {
+      const c = m.chapters.find(x => x.id === t.dataset.bkk);
+      if (!c) return;
+      if (t.value) c.kind = t.value;
+      else delete c.kind;
+      dirty('meta');
+      renderBinder();
+      renderBook(el);
+    } else if (t.dataset.bkon) {
+      const [side, k] = t.dataset.bkon.split(':'),
+        x = b[side].find(y => y[0] === k);
+      if (x) {
+        x[1] = t.checked;
+        dirty('meta');
+      }
+    }
+  };
+  el.onclick = e => {
+    const a = (e.target.closest('[data-bka]') || {}).dataset;
+    if (!a || !a.bka) return;
+    if (a.bka === 'export') openExport();
+    else if (a.bka === 'owncopy') {
+      ui.bkCopyEdit = true;
+      renderBook(el);
+      const ta = $('[data-bk="copy"]', el);
+      if (ta) ta.focus();
+    } else if (a.bka === 'stdcopy') {
+      b.copy = '';
+      ui.bkCopyEdit = false;
+      dirty('meta');
+      renderBook(el);
+    } else if (a.bka === 'addlink') {
+      b.links.push({ label: '', url: '' });
+      dirty('meta');
+      renderBook(el);
+      const ins = el.querySelectorAll('[data-bkl="label"]');
+      if (ins.length) ins[ins.length - 1].focus();
+    } else if (a.bka === 'dellink') {
+      b.links.splice(+a.i, 1);
+      dirty('meta');
+      renderBook(el);
+    }
+  };
+}
+// A short note beside each front or back matter page in the Book details list: what it shows, or what it still needs.
+function matterNote(k) {
+  const b = S.meta.book;
+  if (k === 'half') return 'Just the title, on a page of its own';
+  if (k === 'title') return 'Title, subtitle, your name and imprint';
+  if (k === 'copy') return b.copy.trim() ? 'Your own wording' : 'Standard wording, made from the details';
+  if (k === 'toc') return 'The chapters (and parts), linked in ebooks';
+  const has = {
+    ded: b.ded,
+    epi: b.epi,
+    ack: b.ack,
+    about: b.about,
+    also: b.also,
+    links: b.links.some(l => l.url || l.label)
+  }[k];
+  return has && String(has).trim() ? 'Written' : 'Nothing written yet: left out';
+}
+/*
+ * 35-sharing.js: Shared projects: merging two writers' work, presence, and setting up sharing
  *
  * Two computers can save one project through a sync folder (Dropbox, Google Drive, OneDrive, iCloud). Saves are
  * compare-and-swap: if the file changed since this computer last read it, the two versions are merged record by
@@ -29614,7 +30544,12 @@ function mergeMeta(b, o, t) {
       id,
       title: newer ? pick3(z && z.title, x.title, y.title) : x.title,
       open: x.open,
-      scenes: mergeOrder(z && z.scenes, x.scenes, y.scenes)
+      scenes: mergeOrder(z && z.scenes, x.scenes, y.scenes),
+      ...['goal', 'kind'].reduce((o, f) => {
+        const v = newer ? pick3(z && z[f], x[f], y[f]) : x[f];
+        if (v != null) o[f] = v;
+        return o;
+      }, {})
     };
   });
   return out;
@@ -30380,7 +31315,7 @@ function renderHelp(el) {
   };
 }
 /*
- * 35-desktop.js: Dialogs, and the desktop app's projects
+ * 36-desktop.js: Dialogs, and the desktop app's projects
  *
  * ask() is the app's dialog (use it instead of confirm()). The rest runs only in the desktop app: opening, creating
  * and importing projects (each a folder on the computer), saving through the desktop bridge (deskFlush), the Projects
@@ -30971,7 +31906,7 @@ async function pjAct(a, id, name) {
   }
 }
 /*
- * 36-boot.js: Start-up
+ * 37-boot.js: Start-up
  *
  * init() loads the project (from localStorage, the Claude artifact or the desktop), sets up every part of the screen
  * once, then draws it all (renderAll). This is the last file, so everything it uses is defined by now.

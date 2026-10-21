@@ -112,7 +112,14 @@ function renderBinder0() {
         c.id +
         '" title="Open this chapter on the corkboard">' +
         esc(c.title) +
-        '</button>';
+        '</button>' +
+        (c.kind
+          ? '<i class="ch-kind" title="' +
+            esc(CH_KINDS.find(k => k[0] === c.kind)[1]) +
+            '">' +
+            (c.kind === 'part' ? 'Part' : 'No number') +
+            '</i>'
+          : '');
     h +=
       '<span class="wc" data-cwc="' +
       c.id +

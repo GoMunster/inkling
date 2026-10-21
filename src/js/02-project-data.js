@@ -464,6 +464,7 @@ function normalize(o) {
       else delete c.goal;
     }
     if (c.open == null) c.open = true;
+    if (!['un', 'part'].includes(c.kind)) delete c.kind;
   });
   Object.keys(meta.ents).forEach(id => {
     const e = meta.ents[id];
@@ -481,6 +482,7 @@ function normalize(o) {
     if (fr) e.from = fr;
     else delete e.from;
   });
+  meta.book = normBook(meta.book);
   meta.series = normSeries(meta.series);
   meta.world = normWorld(meta.world);
   meta.threads = normThreads(meta.threads);

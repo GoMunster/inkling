@@ -872,3 +872,145 @@
   gap: 5px;
   font-size: 12.5px;
 }
+
+/* Book details (Publishing) */
+.bk-wrap {
+  max-width: 900px;
+}
+.bk-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px 14px;
+  margin-top: 10px;
+}
+.bk-grid .bk-wide {
+  grid-column: 1 / -1;
+}
+@media (max-width: 640px) {
+  .bk-grid {
+    grid-template-columns: 1fr;
+  }
+}
+.bk-grid input:not([type='checkbox']),
+.bk-grid textarea,
+.bk-grid select,
+.bk-links input,
+.bk-ch select,
+.bk-wrap label.f textarea {
+  border: 1px solid var(--line);
+  background: var(--bg);
+  border-radius: 8px;
+  padding: 7px 10px;
+  font: inherit;
+  font-weight: 400;
+  color: var(--ink);
+  width: 100%;
+  min-width: 0;
+}
+.bk-grid textarea,
+.bk-wrap label.f textarea {
+  resize: vertical;
+  font-family: var(--f-prose);
+}
+.bk-hint {
+  font-weight: 400;
+  color: var(--muted);
+}
+.bk-list {
+  display: grid;
+  gap: 4px;
+  margin: 10px 0;
+}
+.bk-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--bg);
+}
+.bk-row .ck {
+  margin: 0;
+  min-width: 150px;
+}
+.bk-row small {
+  margin-left: auto;
+  font-size: 12px;
+}
+.bk-grip {
+  cursor: grab;
+  color: var(--muted);
+  display: inline-flex;
+}
+.bk-sub-h {
+  margin: 14px 0 6px;
+  font-size: 13px;
+}
+.bk-preview {
+  white-space: pre-wrap;
+  font-family: var(--f-prose);
+  font-size: 13px;
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 10px 12px;
+  margin: 0;
+}
+.bk-links {
+  display: grid;
+  gap: 6px;
+}
+.bk-link {
+  display: grid;
+  grid-template-columns: 1fr 1.4fr auto;
+  gap: 6px;
+  align-items: center;
+}
+.bk-links > .btn {
+  justify-self: start;
+}
+.bk-ck {
+  align-self: end;
+  padding-bottom: 8px;
+}
+.bk-chs {
+  display: grid;
+  gap: 4px;
+  margin-top: 12px;
+}
+.bk-ch {
+  display: grid;
+  grid-template-columns: 1fr minmax(160px, 260px) 1fr;
+  gap: 10px;
+  align-items: center;
+  font-size: 13px;
+}
+.bk-chn {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.bk-head {
+  color: var(--muted);
+  font-family: var(--f-prose);
+}
+.bk-head.part {
+  font-weight: 600;
+  color: var(--ink);
+}
+.ch-kind {
+  font-style: normal;
+  font-size: 10.5px;
+  font-weight: 600;
+  color: var(--muted);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 0 6px;
+  margin-left: 4px;
+  white-space: nowrap;
+  flex: none;
+}
+.bk-warn {
+  color: var(--danger);
+}

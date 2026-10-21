@@ -427,6 +427,7 @@ function qsItems() {
     [{ k: 'story' }, 'Story insights', 'chart'],
     [{ k: 'world' }, 'Calendars & money', 'cal'],
     [{ k: 'series' }, 'Series bible', 'book'],
+    [{ k: 'book' }, 'Book details', 'book'],
     [{ k: 'trash' }, 'Trash', 'trash'],
     [{ k: 'layout' }, 'Project settings', 'layout'],
     [{ k: 'prefs' }, 'Settings', 'sliders']
