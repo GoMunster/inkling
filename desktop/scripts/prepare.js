@@ -45,7 +45,7 @@ if (!html.includes('Content-Security-Policy')) throw new Error('Could not add th
 // The version the page shows (Settings, backups) is the desktop package's version, set from the release tag in CI.
 const version = require(path.join(root, 'package.json')).version;
 const vBefore = html;
-html = html.replace(/const APP_VERSION='[^']*';/, "const APP_VERSION='" + version + "';");
-if (html === vBefore && !html.includes("const APP_VERSION='" + version + "'")) throw new Error('Could not set APP_VERSION in index.html');
+html = html.replace(/const APP_VERSION\s*=\s*'[^']*';/, m => m.replace(/'[^']*'/, "'" + version + "'"));
+if (html === vBefore && !html.includes("'" + version + "'")) throw new Error('Could not set APP_VERSION in index.html');
 fs.writeFileSync(path.join(out, 'index.html'), html);
 console.log('Prepared desktop/app ' + version + ' (' + fs.readdirSync(path.join(out, 'fonts')).length + ' font entries).');

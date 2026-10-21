@@ -61,20 +61,26 @@ Inkling has no accounts, ads, analytics or tracking. The desktop app keeps every
 
 ## Run it
 
-It is a single static file with no build step.
+The finished app is one static file, `index.html`, with no dependencies. It is built from the source in `src/` (the page, its styles in `src/css/` and its code in `src/js/`, split by feature):
+
+```sh
+node build.js                  # rebuild index.html after changing anything in src/
+```
+
+To try it:
 
 ```sh
 python3 -m http.server 8000   # then open http://localhost:8000
 ```
 
-Or open `index.html` directly in a browser. Projects save to `localStorage` in that browser, so use *Back up project* in the menu regularly.
+Or open `index.html` directly in a browser. Edit the files in `src/`, never `index.html` itself: the build overwrites it, and the tests check that it matches `src/`. Projects save to `localStorage` in that browser, so use *Back up project* in the menu regularly.
 
 ## Tests
 
 ```sh
 npm install
 npx playwright install chromium
-npm test                     # web and desktop tests
+npm test                     # builds index.html, then runs the web and desktop tests
 npm run test:web             # just the browser ones
 ```
 

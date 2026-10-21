@@ -1,6 +1,8 @@
 # Inkling: notes for Claude Code
 
-Single-file app: `index.html` holds markup, CSS and one IIFE of vanilla JS. No dependencies or build step. Only external requests are Google Fonts (Instrument Sans, Literata, IBM Plex Mono).
+The app ships as one file, `index.html` (markup, CSS and one IIFE of vanilla JS; no dependencies). Only external requests are Google Fonts (Instrument Sans, Literata, IBM Plex Mono).
+
+**Never edit `index.html` by hand.** It is built by `node build.js` from `src/`: `src/index.html` (head and markup, with `/* @css */` and `/* @js */` markers), `src/css/*.css` and `src/js/*.js`, each folder joined in file-name order. All JS files share the IIFE's one scope, so the numbered order is the run order: a file may call functions from any file but use top-level `const`/`let` only from earlier files. Put new code in the file for its feature (or a new numbered file), run `node build.js`, and commit `index.html` with `src/`. `npm test` builds first; CI runs `node build.js --check`. Function and constant names below are found with a search over `src/js/`.
 
 The same file runs in three places: the Claude artifact, a plain browser, and the Electron desktop app in `desktop/` (see `desktop/README.md`). Keep `index.html` working in all three; never fork it for the desktop.
 
@@ -66,7 +68,7 @@ Co-writers share a project folder through Dropbox/Drive/OneDrive/iCloud (user gu
 
 ## Tests
 
-`npm test` (Playwright) runs `tests/web.spec.js` in Chromium against `index.html` and `tests/desktop.spec.js` against Electron (needs `npm ci` in `desktop/`, and `xvfb-run -a` on a headless Linux). `.github/workflows/test.yml` runs them on every push; the desktop release workflow runs them before building. Add a test with each feature.
+`npm test` (Playwright; it runs `node build.js` first) runs `tests/web.spec.js` in Chromium against `index.html` and `tests/desktop.spec.js` against Electron (needs `npm ci` in `desktop/`, and `xvfb-run -a` on a headless Linux). `.github/workflows/test.yml` runs them on every push; the desktop release workflow runs them before building. Add a test with each feature.
 
 ## Ideas not built yet
 

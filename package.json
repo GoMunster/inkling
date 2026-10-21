@@ -1,11 +1,13 @@
 {
   "name": "inkling-tests",
   "private": true,
-  "description": "Automated tests for Inkling. The app itself (index.html) has no dependencies or build step.",
+  "description": "Inkling: the app is built from src/ into index.html by build.js (no dependencies). Tests and formatting tools only.",
   "scripts": {
-    "test": "playwright test",
-    "test:web": "playwright test --project=web",
-    "test:desktop": "playwright test --project=desktop"
+    "build": "node build.js",
+    "check": "node build.js --check",
+    "test": "node build.js && playwright test",
+    "test:web": "node build.js && playwright test --project=web",
+    "test:desktop": "node build.js && playwright test --project=desktop"
   },
   "devDependencies": {
     "@playwright/test": "1.56.1"

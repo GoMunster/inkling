@@ -1,0 +1,37 @@
+/* binder */
+.pane-head{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:12px 12px 8px 16px;position:sticky;top:0;background:var(--panel);z-index:2}
+.pane-head h2{margin:0;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.pane-head .row{display:flex;gap:6px}
+.tree{padding:0 8px 24px}
+.ch-row,.sc-row,.e-row,.bsec{display:flex;align-items:center;gap:2px;border-radius:8px;min-width:0}
+.ch-row{margin-top:8px}
+.ch-row:hover,.sc-row:hover,.e-row:hover{background:var(--panel2)}
+.tw{border:0;background:transparent;color:var(--muted);width:24px;height:28px;display:grid;place-items:center;padding:0;flex:none}
+.ch-title{flex:1;min-width:0;border:0;background:transparent;text-align:left;font-weight:600;padding:5px 4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.wc{font-family:var(--f-mono);font-size:11px;color:var(--muted);padding:0 6px;flex:none;font-variant-numeric:tabular-nums}
+.acts{display:flex;opacity:0;flex:none}
+.ch-row:hover .acts,.sc-row:hover .acts,.e-row:hover .acts,.acts:focus-within,.acts.on{opacity:1}
+@media (hover:none){.acts{opacity:1}}
+.acts .ibtn{width:24px;height:24px}
+.acts .ibtn.on{color:var(--danger);width:auto;padding:0 6px;font-size:11px;font-weight:600}
+.sc-row{margin-left:20px}
+.sc-row.on,.e-row.on{background:var(--accent-soft)}
+.sc-btn,.e-btn{flex:1;min-width:0;display:flex;align-items:center;gap:8px;border:0;background:transparent;text-align:left;padding:6px 6px;border-radius:8px}
+.sc-btn .t,.e-btn .t{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dot{width:8px;height:8px;border-radius:50%;flex:none;border:2px solid var(--muted)}
+.dot.st-draft{border-color:var(--muted)} .dot.st-revised{border-color:var(--accent);background:var(--accent)} .dot.st-final{border-color:var(--ok);background:var(--ok)}
+.rn{flex:1;min-width:0;border:1px solid var(--accent);border-radius:6px;padding:4px 6px;background:var(--paper)}
+.bsec{margin-top:16px;padding-left:4px}
+.bsec .lbl{flex:1;display:flex;align-items:center;gap:4px;border:0;background:transparent;text-align:left;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600;padding:6px 4px}
+.bsec .n{font-family:var(--f-mono);font-weight:400}
+.e-row{margin-left:8px}
+.pip{width:9px;height:9px;border-radius:3px;background:currentColor;flex:none}
+.empty-s{color:var(--muted);font-size:12px;padding:2px 14px 6px 36px}
+.bsec .ibtn{width:26px;height:26px}
+.bsec [data-a="relabel"]{opacity:0}
+.bsec:hover [data-a="relabel"],.bsec [data-a="relabel"]:focus-visible{opacity:1}
+@media (hover:none){.bsec [data-a="relabel"]{opacity:1}}
+.relabel{margin:4px 4px 10px 8px;padding:10px;border:1px solid var(--line);border-radius:10px;background:var(--paper);display:grid;gap:8px}
+.relabel label.f input{padding:5px 8px;background:var(--bg)}
+.relabel .row{display:flex;gap:6px;flex-wrap:wrap}
+

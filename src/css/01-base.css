@@ -1,0 +1,84 @@
+/* Layout concept: a three-pane writing desk. Binder (manuscript + story bible) on the left,
+   the page in the middle, the Inkling pet and goals on the right. Under 1080px the panes
+   become tabs. Ink-blue is the one UI accent; character / place / thing colours are semantic. */
+:root{
+  --bg:#E7EBF1; --panel:#F4F6F9; --panel2:#EBEFF5; --paper:#FDFEFF;
+  --ink:#17202D; --muted:#5A6678; --line:#D2DAE5;
+  --accent:#2A4ED8; --accent-ink:#FFFFFF; --accent-soft:#E1E7FA;
+  --pet:#17A08A; --pet-deep:#0E7565; --pet-ink:#0A2A26;
+  --char:#B3306C; --place:#1B8A5A; --thing:#A86E0C; --rule:#7A4FD0; --term:#0F7C8C;
+  --ok:#1B8A5A; --danger:#C0392B;
+  --shadow:0 1px 2px rgba(23,32,45,.08),0 8px 24px rgba(23,32,45,.08);
+  --tabh:0px; --fs:18px;
+  --f-ui:'Instrument Sans',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --f-prose:'Literata',Georgia,'Times New Roman',serif;
+  --f-mono:'IBM Plex Mono',ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0D121A; --panel:#141A25; --panel2:#1A2230; --paper:#18202C;
+    --ink:#E6EBF3; --muted:#98A4B6; --line:#2A3446;
+    --accent:#8FA5FF; --accent-ink:#0D121A; --accent-soft:#222C4E;
+    --pet:#3CCDB3; --pet-deep:#1F9482; --pet-ink:#06201C;
+    --char:#F083B3; --place:#5FD39B; --thing:#E8B34F; --rule:#B89CFF; --term:#5FCFDD;
+    --ok:#5FD39B; --danger:#FF8A7A;
+    --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px rgba(0,0,0,.35);
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0D121A; --panel:#141A25; --panel2:#1A2230; --paper:#18202C;
+  --ink:#E6EBF3; --muted:#98A4B6; --line:#2A3446;
+  --accent:#8FA5FF; --accent-ink:#0D121A; --accent-soft:#222C4E;
+  --pet:#3CCDB3; --pet-deep:#1F9482; --pet-ink:#06201C;
+  --char:#F083B3; --place:#5FD39B; --thing:#E8B34F; --rule:#B89CFF; --term:#5FCFDD;
+  --ok:#5FD39B; --danger:#FF8A7A;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px rgba(0,0,0,.35);
+  color-scheme:dark;
+}
+html,body{height:100%}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-ui);font-size:14px;line-height:1.45;-webkit-text-size-adjust:100%}
+*{box-sizing:border-box}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.mono{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+.muted{color:var(--muted)}
+.ico{flex:none}
+
+#app{height:100%;display:grid;grid-template-rows:auto minmax(0,1fr) auto}
+.top{position:relative;z-index:20;display:flex;align-items:center;gap:12px;padding:8px 16px;background:var(--panel);border-bottom:1px solid var(--line);min-width:0}
+.brand{display:flex;align-items:center;gap:8px;font-family:var(--f-prose);font-style:italic;font-weight:650;font-size:20px;letter-spacing:-.01em;color:var(--accent);flex:none}
+.proj{flex:1 1 140px;min-width:0;max-width:420px;border:1px solid transparent;background:transparent;border-radius:8px;padding:6px 10px;font-weight:600;font-size:15px;text-overflow:ellipsis}
+.proj:hover{border-color:var(--line)} .proj:focus{border-color:var(--accent);background:var(--paper);outline:none}
+.grow{flex:1}
+.save{display:flex;align-items:center;gap:6px;color:var(--muted);font-size:12px;white-space:nowrap}
+.save i{width:7px;height:7px;border-radius:50%;background:var(--ok)}
+.save[data-s="saving"] i{background:var(--thing)} .save[data-s="error"] i{background:var(--danger)} .save[data-s="local"] i{background:var(--muted)}
+.chip{display:flex;align-items:center;gap:8px;border:1px solid var(--line);background:var(--paper);border-radius:999px;padding:4px 12px 4px 6px;font-size:13px;white-space:nowrap}
+.chip:hover{border-color:var(--accent)}
+.ring{display:block}
+.ring circle{fill:none;stroke-width:3.5}
+.ring .bg{stroke:var(--line)} .ring .arc{stroke:var(--pet);stroke-linecap:round;transition:stroke-dasharray .4s}
+.ibtn{display:inline-grid;place-items:center;width:30px;height:30px;border-radius:8px;border:1px solid transparent;background:transparent;color:var(--muted);padding:0}
+.ibtn:hover{background:var(--panel2);color:var(--ink)}
+.btn{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:var(--paper);border-radius:8px;padding:6px 10px;font-weight:500;font-size:13px;white-space:nowrap}
+.btn:hover{border-color:var(--accent)}
+.btn.pri{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.btn.sm{padding:4px 8px;font-size:12px}
+.btn.danger{color:var(--danger)}
+.menu{position:absolute;right:12px;top:calc(100% + 6px);width:min(300px,calc(100vw - 32px));background:var(--paper);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow);padding:6px;display:flex;flex-direction:column;gap:2px}
+.menu button{text-align:left;border:0;background:transparent;border-radius:8px;padding:9px 10px;font-size:13px}
+.menu button:hover{background:var(--panel2)}
+.menu button.warn{color:var(--danger)}
+.menu hr{border:0;border-top:1px solid var(--line);margin:4px 0;width:100%}
+.menu small{color:var(--muted);padding:4px 10px 6px;font-size:12px}
+
+.cols{display:grid;grid-template-columns:var(--cols,var(--bw,272px) minmax(0,1fr) var(--iw,308px));grid-template-rows:minmax(0,1fr);min-height:0;position:relative}
+.pane{overflow:auto;min-height:0;min-width:0}
+.pane-binder{background:var(--panel);border-right:1px solid var(--line);overflow-x:hidden}
+.pane-insp{background:var(--panel);border-left:1px solid var(--line)}
+.pane-main{background:var(--bg);position:relative}
+#app.focus .pane-binder,#app.focus .pane-insp{display:none}
+.tabs{display:none}
+

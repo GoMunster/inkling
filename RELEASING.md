@@ -12,8 +12,8 @@ Releases are built by GitHub Actions. You change the version number, push a tag,
    git push
    ```
 
-   This writes the number into `desktop/package.json` and into `APP_VERSION` in `index.html` (shown in Settings and
-   saved in backups).
+   This writes the number into `desktop/package.json` and into `APP_VERSION` in `src/js/01-core.js` (shown in Settings
+   and saved in backups), then rebuilds `index.html`.
 
 2. **Tag it and push the tag.**
 
@@ -59,7 +59,7 @@ Installing over the old version keeps their projects and settings.
   private, publish the releases from a second, public repository (change `publish.repo` in `desktop/package.json`
   and `REPO` in `desktop/main.js`).
 - **Don't re-use a version number.** If a release is broken, fix it and release the next number.
-- **Project format.** `FORMAT` in `index.html` is the version of the saved project layout. Raise it only when old
+- **Project format.** `FORMAT` (in `src/js/`) is the version of the saved project layout. Raise it only when old
   projects need converting, and add the conversion to `MIGRATE` (from the old number to the next). A copy of Inkling
   that is older than a project's format opens it read-only and asks for an update, so nothing gets lost.
 - **The web version** (the Claude artifact) updates when `index.html` is republished; it has no installer.

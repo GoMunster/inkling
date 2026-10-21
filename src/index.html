@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}[hidden]{display:none!important}</style>
+<title>Inkling</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Literata:ital,opsz,wght@0,7..72,400..700;1,7..72,400..700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* @css */
+</style>
+</head>
+<body>
+<div id="app" data-tab="write">
+  <header class="top">
+    <div class="brand" aria-label="Inkling">
+      <svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.5c4.2 4.6 6.5 8 6.5 11.2a6.5 6.5 0 01-13 0C5.5 10.5 7.8 7.1 12 2.5z" fill="var(--pet)"/><circle cx="9.7" cy="13.5" r="1.2" fill="var(--pet-ink)"/><circle cx="14.3" cy="13.5" r="1.2" fill="var(--pet-ink)"/></svg>
+      <span>Inkling</span>
+    </div>
+    <input id="projTitle" class="proj" aria-label="Novel title" maxlength="90" spellcheck="false">
+    <span class="grow"></span>
+    <span id="saveSt" class="save" role="status" data-s="local"><i></i><span>Saved</span></span>
+    <button id="goalChip" class="chip" aria-label="Today's progress">
+      <svg class="ring" width="26" height="26" viewBox="0 0 26 26"><circle class="bg" cx="13" cy="13" r="10.5"/><circle class="arc" id="ringArc" cx="13" cy="13" r="10.5" transform="rotate(-90 13 13)" style="stroke-dasharray:0 66"/></svg>
+      <span class="mono" id="chipTxt">0 / 500</span>
+    </button>
+    <button id="menuBtn" class="ibtn" aria-label="Project menu" aria-haspopup="true"></button>
+    <div id="menu" class="menu" hidden></div>
+  </header>
+  <main class="cols">
+    <aside id="binder" class="pane pane-binder" aria-label="Binder"></aside>
+    <section id="main" class="pane pane-main" aria-label="Workspace"></section>
+    <aside id="split" class="pane pane-split" aria-label="Side by side" hidden></aside>
+    <aside id="insp" class="pane pane-insp" aria-label="Inkling and goals"></aside>
+    <div class="sizer" id="szL" role="separator" aria-orientation="vertical" aria-label="Binder width" tabindex="0" title="Drag to widen the binder. Double-click to reset."></div>
+    <div class="sizer" id="szR" role="separator" aria-orientation="vertical" aria-label="Inkling panel width" tabindex="0" title="Drag to widen this panel. Double-click to reset."></div>
+  </main>
+  <nav class="tabs" id="tabs" role="tablist" aria-label="Sections"></nav>
+</div>
+<div id="toast" class="toast" role="status" hidden></div>
+<div id="fx" class="fx" aria-hidden="true"></div>
+<input type="file" id="fileIn" accept=".json,application/json" hidden>
+
+<script>
+(function(){
+'use strict';
+
+/* @js */
+})();
+</script>
+</body>
+</html>
