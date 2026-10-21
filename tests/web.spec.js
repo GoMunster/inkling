@@ -993,3 +993,51 @@ test('world maps: pins linked to places, scenes set there, drawing, and an uploa
   expect(errors).toEqual([]);
 });
 
+test('series bible: bring pages, timelines and world details in from another book, update them, export the bible', async ({ page }) => {
+  const errors = await openApp(page, { project: STORY_PROJECT });
+  const book1 = JSON.parse(JSON.stringify(STORY_PROJECT));
+  book1.meta.title = 'Book One'; book1.meta.series = { name: 'The Tide Books', num: 1 };
+  book1.meta.ents = { k1: { id: 'k1', type: 'char', name: 'Captain Orla', aliases: ['Orla'], tag: 'Harbour master' },
+    k2: { id: 'k2', type: 'char', name: 'Mara', aliases: [], tag: 'From book one' }, k3: { id: 'k3', type: 'term', name: 'saltglass', aliases: [], tag: '' } };
+  book1.en = { k1: { fields: { look: 'Grey coat' } }, k2: { fields: { want: 'To leave' } }, k3: { fields: { meaning: 'Sea-made glass', say: 'SALT-glass' } } };
+  book1.meta.tls = [{ id: 'tA', name: 'History' }];
+  book1.tl = { tA: { axis: { start: 1, step: 1, px: 170, fmt: 'Year {n}', names: '', cycle: 1, snap: 1 }, lanes: [{ id: 'L1', name: 'Wars', color: 'danger' }], cards: { c1: { id: 'c1', lane: 'L1', at: 3, len: 1, title: 'The flood', scene: 's1' } }, marks: [] } };
+  book1.meta.world = { cals: [{ id: 'cA', name: 'Tide Reckoning', months: [['Ebb', 30], ['Flow', 30]], week: '', era: 'TR', first: 1 }], coins: [] };
+  const file = o => ({ name: 'book-one-backup.json', mimeType: 'application/json', buffer: Buffer.from(JSON.stringify(o)) });
+
+  await page.click('#menuBtn'); await page.click('[data-m="series"]');
+  await expect(page.locator('.mh-title')).toHaveText('Series bible');
+  await page.setInputFiles('#sbFile', file(book1));
+  await expect(page.locator('.sb-src h3')).toContainText('Book One');
+  await expect(page.locator('.sb-ck:has-text("Mara") small')).toHaveText('already here: will be updated');
+  await expect(page.locator('.sb-ck:has-text("Captain Orla") small')).toHaveText('new');
+  await page.check('[data-sb="tl"][value="tA"]');
+  await page.click('[data-sr="bring"]');
+  await expect(page.locator('.sb-linked .cl')).toHaveCount(3);
+  let p = await waitSaved(page, p => Object.values(p.meta.ents).some(e => e.name === 'Captain Orla'));
+  const orla = Object.values(p.meta.ents).find(e => e.name === 'Captain Orla');
+  expect(orla.from).toMatchObject({ book: 'Book One', id: 'k1' });
+  expect(p.en[orla.id].fields.look).toBe('Grey coat');
+  expect(p.en.e1.fields.want).toBe('To leave');   // Mara here was updated, not duplicated
+  expect(Object.values(p.meta.ents).filter(e => e.name === 'Mara')).toHaveLength(1);
+  expect(p.meta.tls.some(x => x.name === 'History (Book One)')).toBe(true);
+  expect(p.meta.world.cals[0].name).toBe('Tide Reckoning');
+  expect(p.meta.series.name).toBe('The Tide Books');
+  expect(p.meta.secs.term).toBe(true);
+  // a newer copy of book one: only the changed page is marked
+  book1.en.k1.fields.look = 'A new red coat';
+  await page.setInputFiles('#sbFile', file(book1));
+  await expect(page.locator('.sb-ck:has-text("Captain Orla") small')).toHaveText('already here: will be updated');
+  await expect(page.locator('.sb-ck:has-text("saltglass") small')).toHaveText('already here, the same');
+  await page.click('[data-sr="none"]'); await page.check('.sb-ck:has-text("Captain Orla") input');
+  await page.click('[data-sr="bring"]');
+  p = await waitSaved(page, p => p.en[orla.id].fields.look === 'A new red coat');
+  expect(Object.values(p.meta.ents).filter(e => e.name === 'Captain Orla')).toHaveLength(1);
+  // the story bible
+  const dl = page.waitForEvent('download'); await page.click('[data-sr="biblemd"]'); const md = await (await dl).path();
+  const text = require('fs').readFileSync(md, 'utf8');
+  expect(text).toContain('### Captain Orla'); expect(text).toContain('**Pronunciation:** SALT-glass'); expect(text).toContain('Tide Reckoning');
+  const dl2 = page.waitForEvent('download'); await page.click('[data-sr="bible"]'); const docx = unzip(require('fs').readFileSync(await (await dl2).path()));
+  expect(docx['word/document.xml'].toString()).toContain('Captain Orla');
+  expect(errors).toEqual([]);
+});

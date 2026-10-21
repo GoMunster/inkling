@@ -192,3 +192,29 @@ test('the Window menu and Edit › Undo', async () => {
   expect(errors).toEqual([]);
   await app.close();
 });
+
+test('series bible: bring a character and its picture in from another book on this computer', async () => {
+  const home = newHome();
+  const { app, win, errors } = await launch(home);
+  const dir = await projectsDir(app), other = path.join(dir, 'book-one-x1');
+  fs.mkdirSync(path.join(other, 'pictures'), { recursive: true });
+  fs.writeFileSync(path.join(other, 'pictures', 'orla.png'), Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAIAAABLbSncAAAAEklEQVR4nGP4z8CAFWEXHbQSACj/P8Fu7N9hAAAAAElFTkSuQmCC', 'base64'));
+  fs.writeFileSync(path.join(other, 'project.json'), JSON.stringify({ meta: { v: 2, title: 'Book One', chapters: [{ id: 'c1', title: 'One', open: true, scenes: ['s1'] }],
+    scenes: { s1: { title: 'S', status: 'draft', words: 0 } }, ents: { k1: { id: 'k1', type: 'char', name: 'Captain Orla', aliases: [], tag: '' } }, days: {}, pet: { name: 'Inky', total: 0 } },
+    sc: { s1: { text: 'Hello', synopsis: '', notes: '' } }, en: { k1: { fields: { look: 'Grey coat' }, pic: { f: 'orla.png' } } } }));
+  fs.writeFileSync(path.join(other, 'info.json'), JSON.stringify({ title: 'Book One', words: 1, saved: Date.now() }));
+  await win.click('#menuBtn'); await win.click('[data-m="series"]');
+  await win.click('[data-sr="book"]:has-text("Book One")');
+  await expect(win.locator('.sb-ck:has-text("Captain Orla") small')).toHaveText('new');
+  await win.click('[data-sr="bring"]');
+  await expect(win.locator('.sb-linked .cl')).toHaveCount(1);
+  await expect(win.locator('[data-sr="check"]')).toHaveCount(1);
+  const mine = fs.readdirSync(dir).find(d => d !== 'book-one-x1');
+  const saved = await until(() => { try { const p = JSON.parse(fs.readFileSync(path.join(dir, mine, 'project.json'), 'utf8')); const e = Object.values(p.meta.ents).find(x => x.name === 'Captain Orla'); return e && p.en[e.id].pic.f ? p : null; } catch (e) { return null; } });
+  expect(saved).toBeTruthy();
+  const e = Object.values(saved.meta.ents).find(x => x.name === 'Captain Orla');
+  expect(e.from).toMatchObject({ book: 'Book One', src: 'book-one-x1', id: 'k1' });
+  expect(fs.existsSync(path.join(dir, mine, 'pictures', saved.en[e.id].pic.f))).toBe(true);
+  expect(errors).toEqual([]);
+  await app.close();
+});
