@@ -878,3 +878,75 @@ test('setups and payoffs: plant from selected words, pay off later, and flag wha
   await expect(page.locator('.fs-card')).toHaveCount(2);
   expect(errors).toEqual([]);
 });
+
+test('character arcs: goal, wound, lie and truth, a point per chapter, and every arc together', async ({ page }) => {
+  const errors = await openApp(page, { project: STORY_PROJECT });
+  await page.click('.e-btn:has-text("Mara")');
+  await expect(page.locator('#arcBox')).toBeVisible();
+  await page.fill('[data-arc-f="lie"]', 'Running keeps you safe');
+  await page.fill('[data-arc-f="truth"]', 'Some things are worth standing for');
+  await page.click('[data-arc="type"][data-v="pos"]');
+  // click low in chapter 1 and high in chapter 6
+  const col = n => page.locator('[data-arc-ch="c' + n + '"] .arc-hit');
+  await col(1).click({ position: { x: 10, y: 150 } });
+  await col(6).click({ position: { x: 10, y: 12 } });
+  await page.fill('[data-arc="n"]', 'She stays and fights');
+  await expect(page.locator('#arcBox .arc-pt')).toHaveCount(2);
+  let p = await waitSaved(page, p => p.en.e1?.arc?.pts?.c6?.n);
+  expect(p.en.e1.arc.lie).toBe('Running keeps you safe');
+  expect(p.en.e1.arc.pts.c1.v).toBeLessThan(4); expect(p.en.e1.arc.pts.c6.v).toBeGreaterThan(8);
+  // pick a value from the list for the selected chapter
+  await col(3).click({ position: { x: 10, y: 90 } });
+  await page.selectOption('[data-arc="v"]', '5');
+  p = await waitSaved(page, p => p.en.e1?.arc?.pts?.c3?.v === 5);
+  // Story insights › Arcs
+  await page.click('#storyBtn'); await page.click('[data-st="tab"][data-v="arcs"]');
+  await expect(page.locator('.arc-svg .arc-line')).toHaveCount(1);
+  await expect(page.locator('.arc-tab tbody tr')).toHaveCount(1);
+  await expect(page.locator('.arc-tab')).toContainText('Running keeps you safe');
+  await expect(page.locator('.arc-tab')).toContainText('→');
+  expect(errors).toEqual([]);
+});
+
+test('world-building: rules and glossary pages, invented calendars and money', async ({ page }) => {
+  const errors = await openApp(page, { project: STORY_PROJECT });
+  // the new binder sections start hidden; the world screen turns them on
+  await expect(page.locator('[data-a="adde"][data-t="term"]')).toHaveCount(0);
+  await page.click('#menuBtn'); await page.click('[data-m="world"]');
+  await expect(page.locator('.mh-title')).toHaveText('Calendars & money');
+  await page.click('[data-w="secs"]');
+  await expect(page.locator('[data-a="adde"][data-t="term"]')).toHaveCount(1);
+  await expect(page.locator('[data-a="adde"][data-t="rule"]')).toHaveCount(1);
+  // a glossary term is linked in the text with its pronunciation
+  await page.click('[data-a="adde"][data-t="term"]');
+  await page.fill('#entName', 'songs');
+  await page.fill('textarea[data-k="meaning"]', 'Old tunes');
+  await page.fill('textarea[data-k="say"]', 'SONGZ');
+  await page.click('.sc-btn[data-id="s1"]');
+  await expect(page.locator('#ed .ent.t-term')).toHaveAttribute('title', 'songs /SONGZ/ · Old tunes');
+  // a calendar: day 40 of a 12 × 30(+5) day year falls in the second month
+  await page.click('#menuBtn'); await page.click('[data-m="world"]');
+  await page.click('[data-w="addcal"]');
+  await page.fill('.w-cal [data-w="name"]', 'Reckoning of Tides'); await page.press('.w-cal [data-w="name"]', 'Tab');
+  await page.fill('.w-cal [data-w="era"]', 'AT'); await page.press('.w-cal [data-w="era"]', 'Tab');
+  await page.fill('.w-cal [data-w="n"]', '40');
+  await expect(page.locator('.w-cal [data-w-out="n"]')).toHaveText('Hearthday, 10 Second Month, year 1 AT');
+  await page.fill('.w-cal [data-w="n"]', '366');
+  await expect(page.locator('.w-cal [data-w-out="n"]')).toContainText('1 First Month, year 2 AT');
+  await expect(page.locator('.w-cal .fine').first()).toContainText('365 days a year');
+  // money: 2 crowns = 480 pennies = 2 Crown
+  await page.click('[data-w="addcoin"]');
+  await page.fill('.w-coin [data-w="q"]', '2'); await page.selectOption('.w-coin [data-w="u"]', '0');
+  await expect(page.locator('.w-coin .w-out')).toHaveText('= 480 Penny · 2 Crown');
+  await page.fill('.w-coin [data-w="q"]', '30'); await page.selectOption('.w-coin [data-w="u"]', '2');
+  await expect(page.locator('.w-coin .w-out')).toHaveText('= 30 Penny · 2 Shilling, 6 Penny');
+  const p = await waitSaved(page, p => p.meta.world?.cals?.[0]?.era === 'AT' && p.meta.world.coins.length === 1);
+  expect(p.meta.secs.term).toBe(true);
+  // a timeline can use the calendar for its time scale
+  await page.click('[data-a="addtl"]');
+  if (!(await page.locator('[data-sf="preset"]').isVisible())) await page.click('#tlv [data-tl="settings"]');
+  await page.selectOption('[data-sf="preset"]', 'w:' + p.meta.world.cals[0].id);
+  const q = await waitSaved(page, q => Object.values(q.tl).some(t => t.axis.names.startsWith('First Month, Second Month')));
+  expect(Object.values(q.tl).find(t => t.axis.names).axis.fmt).toBe('{name} {cycle} AT');
+  expect(errors).toEqual([]);
+});

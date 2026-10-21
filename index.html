@@ -17,7 +17,7 @@
   --ink:#17202D; --muted:#5A6678; --line:#D2DAE5;
   --accent:#2A4ED8; --accent-ink:#FFFFFF; --accent-soft:#E1E7FA;
   --pet:#17A08A; --pet-deep:#0E7565; --pet-ink:#0A2A26;
-  --char:#B3306C; --place:#1B8A5A; --thing:#A86E0C;
+  --char:#B3306C; --place:#1B8A5A; --thing:#A86E0C; --rule:#7A4FD0; --term:#0F7C8C;
   --ok:#1B8A5A; --danger:#C0392B;
   --shadow:0 1px 2px rgba(23,32,45,.08),0 8px 24px rgba(23,32,45,.08);
   --tabh:0px; --fs:18px;
@@ -31,7 +31,7 @@
     --ink:#E6EBF3; --muted:#98A4B6; --line:#2A3446;
     --accent:#8FA5FF; --accent-ink:#0D121A; --accent-soft:#222C4E;
     --pet:#3CCDB3; --pet-deep:#1F9482; --pet-ink:#06201C;
-    --char:#F083B3; --place:#5FD39B; --thing:#E8B34F;
+    --char:#F083B3; --place:#5FD39B; --thing:#E8B34F; --rule:#B89CFF; --term:#5FCFDD;
     --ok:#5FD39B; --danger:#FF8A7A;
     --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px rgba(0,0,0,.35);
     color-scheme:dark;
@@ -42,7 +42,7 @@
   --ink:#E6EBF3; --muted:#98A4B6; --line:#2A3446;
   --accent:#8FA5FF; --accent-ink:#0D121A; --accent-soft:#222C4E;
   --pet:#3CCDB3; --pet-deep:#1F9482; --pet-ink:#06201C;
-  --char:#F083B3; --place:#5FD39B; --thing:#E8B34F;
+  --char:#F083B3; --place:#5FD39B; --thing:#E8B34F; --rule:#B89CFF; --term:#5FCFDD;
   --ok:#5FD39B; --danger:#FF8A7A;
   --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px rgba(0,0,0,.35);
   color-scheme:dark;
@@ -150,7 +150,7 @@ select{border:1px solid var(--line);background:var(--paper);border-radius:8px;pa
 .editor:empty::before{content:attr(data-ph);color:var(--muted);pointer-events:none}
 .ent{cursor:pointer;border-bottom:2px solid currentColor;border-radius:2px;background:color-mix(in srgb,currentColor 11%,transparent);padding:0 1px}
 .ent:hover{background:color-mix(in srgb,currentColor 22%,transparent)}
-.t-char{color:var(--char)} .t-place{color:var(--place)} .t-thing{color:var(--thing)}
+.t-char{color:var(--char)} .t-place{color:var(--place)} .t-thing{color:var(--thing)} .t-rule{color:var(--rule)} .t-term{color:var(--term)}
 .flash{animation:flash 1.8s ease-out}
 @keyframes flash{0%,40%{box-shadow:0 0 0 6px color-mix(in srgb,currentColor 35%,transparent)}100%{box-shadow:0 0 0 6px transparent}}
 .hint{max-width:780px;margin:-8px auto 28px;padding:0 16px;color:var(--muted);font-size:12px;text-align:center}
@@ -864,6 +864,30 @@ body.dnd,body.dnd *{cursor:grabbing!important;user-select:none}
 .fs-add select{max-width:200px}
 .fs-card{border-left-color:var(--thing)} .fs-card.paid{border-left-color:var(--place)} .fs-card.bad{border-left-color:var(--danger)}
 .th-w.fs-order::marker,.th-w.fs-open::marker{color:var(--danger)}
+.arc-box{margin:6px 0 18px;padding:12px 14px;border:1px solid var(--line);border-radius:12px;background:var(--bg)}
+.arc-box h3{margin:0 0 2px;font-size:14px} .arc-box .sub{margin:0 0 8px}
+.arc-type{margin-bottom:10px}
+.arc-fs{display:grid;grid-template-columns:1fr 1fr;gap:10px} @media (max-width:620px){.arc-fs{grid-template-columns:1fr}}
+.arc-fs textarea{min-height:52px;font-size:14px;background:var(--paper)}
+.arc-chart{margin-top:12px;overflow-x:auto}
+.arc-svg{display:block;max-width:none;font-family:var(--f-ui);touch-action:manipulation}
+.arc-hit{fill:transparent;cursor:crosshair} .arc-col:hover .arc-hit{fill:var(--accent-soft)} .arc-col.sel .arc-hit{fill:color-mix(in srgb,var(--accent) 9%,transparent)}
+.arc-pt{pointer-events:none} .arc-line{pointer-events:none}
+.arc-scale{display:flex;justify-content:space-between;font-size:11.5px;color:var(--muted);margin:2px 0 0 30px}
+.arc-sel{display:grid;grid-template-columns:auto 120px 1fr;gap:10px;align-items:end;margin-top:10px;font-size:13px} .arc-sel b{align-self:center}
+.arc-sel input,.arc-sel select{border:1px solid var(--line);background:var(--paper);border-radius:8px;padding:6px 8px;font:inherit;color:var(--ink)}
+@media (max-width:620px){.arc-sel{grid-template-columns:1fr}}
+.arc-tab{border-collapse:collapse;font-size:13px;width:100%} .arc-tab th,.arc-tab td{text-align:left;padding:6px 8px;border-bottom:1px solid var(--line);vertical-align:top} .arc-tab thead th{color:var(--muted);font-weight:600;font-size:12px}
+.w-add{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.w-h{max-width:760px;margin:10px auto 0;width:100%;font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.w-name{font-size:15px}
+.w-months{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:6px;margin:8px 0 12px;align-items:center}
+.w-m{display:grid;grid-template-columns:1fr 64px auto;gap:4px;align-items:center}
+.w-m input,.w-u input,.w-cal label.f input,.w-coin label.f input,.w-coin select,.w-coin textarea{border:1px solid var(--line);background:var(--bg);border-radius:8px;padding:6px 8px;font:inherit;color:var(--ink);min-width:0}
+.w-units{display:grid;gap:6px;margin:8px 0 12px} .w-months>.btn,.w-units>.btn{justify-self:start}
+.w-u{display:flex;gap:6px;align-items:center;flex-wrap:wrap} .w-u input[type=number]{width:80px}
+.w-tool{display:flex;flex-wrap:wrap;gap:10px;align-items:end;margin-top:10px;padding:10px;border-radius:10px;background:var(--bg)}
+.w-tool label.f{width:130px} .w-out{font-weight:600;padding-bottom:7px}
 .sd-open{justify-self:start;display:inline-flex;align-items:center;gap:5px;font-size:12.5px}
 .pf-wrap{max-width:760px;margin:0 auto;padding:16px 16px 48px;display:grid;gap:14px}
 .pf{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:16px 18px}
@@ -1200,11 +1224,13 @@ const ico=(n,s)=>'<svg class="ico" width="'+(s||16)+'" height="'+(s||16)+'" view
 const TYPES={
   char:{label:'Character',plural:'Characters',fields:[['role','Role in the story'],['look','Appearance'],['voice','Personality and voice'],['want','What they want'],['fear','Fears and flaws'],['past','Backstory'],['arc','Arc'],['ties','Relationships'],['notes','Notes']]},
   place:{label:'Place',plural:'Places',fields:[['kind','Kind of place'],['look','What it looks like'],['feel','Atmosphere'],['past','History'],['spots','Notable spots'],['who','Who is found here'],['notes','Notes']]},
-  thing:{label:'Thing',plural:'Things',fields:[['look','Description'],['origin','Origin'],['power','Why it matters'],['holder','Who has it'],['notes','Notes']]}
+  thing:{label:'Thing',plural:'Things',fields:[['look','Description'],['origin','Origin'],['power','Why it matters'],['holder','Who has it'],['notes','Notes']]},
+  rule:{label:'Rule',plural:'Rules & magic',fields:[['kind','What it is (magic, technology, law, custom)'],['how','How it works'],['cost','What it costs'],['limits','Limits and weaknesses'],['who','Who can use it, and who can’t'],['seen','How the reader first sees it'],['notes','Notes']]},
+  term:{label:'Term',plural:'Glossary',fields:[['meaning','Meaning'],['say','Pronunciation'],['lang','Language or origin'],['use','Used in a sentence'],['notes','Notes']]}
 };
-const TYPE_ORDER=['char','place','thing'];
-const SEC_DEF={ol:['Outlines','Outline'],nt:['Notes & ideas','Note'],tl:['Timelines','Timeline'],rm:['Relationship maps','Relationship map'],ft:['Family trees','Family tree'],char:['Characters','Character'],place:['Places','Place'],thing:['Things','Thing']};
-const OPT_SECS=['ol','nt','tl','rm','ft','place','thing'];   // binder sections a writer can switch off ('char' always stays)
+const TYPE_ORDER=['char','place','thing','rule','term'];
+const SEC_DEF={ol:['Outlines','Outline'],nt:['Notes & ideas','Note'],tl:['Timelines','Timeline'],rm:['Relationship maps','Relationship map'],ft:['Family trees','Family tree'],char:['Characters','Character'],place:['Places','Place'],thing:['Things','Thing'],rule:['Rules & magic','Rule'],term:['Glossary','Term']};
+const OPT_SECS=['ol','nt','tl','rm','ft','place','thing','rule','term'];   // binder sections a writer can switch off ('char' always stays)
 const secOn=k=>!S.meta.secs||S.meta.secs[k]!==false;
 const LP=t=>((S&&S.meta.labels[t])||{}).p||SEC_DEF[t][0];   // section title, user-renamable
 const LS=t=>((S&&S.meta.labels[t])||{}).s||SEC_DEF[t][1];   // one item of that section
@@ -1248,7 +1274,7 @@ const myKey=()=>nameKey(ME.name);
 const PERSONAL=['days','pet','mark','goal','pomo','todo','layout','plan'];
 const PJ={id:null,base:null};   // the desktop project that is open, and the version of it last read from or written to disk
 let linker=null;
-const ui={view:null,hist:[],cork:'all',rename:null,confirm:null,menu:false,tab:'write',focus:false,openSec:{ol:true,nt:true,tl:true,rm:true,ft:true,char:true,place:true,thing:true},say:'',sayAt:0,mood:'',touched:false,sel:'',focusName:false,fs:18,
+const ui={view:null,hist:[],cork:'all',rename:null,confirm:null,menu:false,tab:'write',focus:false,openSec:{ol:true,nt:true,tl:true,rm:true,ft:true,char:true,place:true,thing:true,rule:true,term:true},say:'',sayAt:0,mood:'',touched:false,sel:'',focusName:false,fs:18,
   relabel:null,ntAdd:false,olUndo:null,binderCfg:false,cvFor:null,cvSel:null,cvPop:false,ftGen:{},imgOpts:false,imgBusy:null,tlFor:null,tlSel:null,tlSide:null,tlSideKey:'',tlQ:'',tlEnt:'',tlR:null,tlDragged:false};
 const P={db:null,base:null,keys:new Set(),dirty:new Set(),gone:new Set(),timer:null,busy:false,again:false,fails:0};
 
@@ -1348,7 +1374,7 @@ function normalize(o){
     meta.writers[String(k).slice(0,60)]={name:String(w.name||'').slice(0,60),days:w.days&&typeof w.days==='object'?w.days:{},pet:normPet(w.pet),
       mark:w.mark||null,goal:+w.goal||500,pomo:normPomo(w.pomo),...(w.todo?{todo:normTodo(w.todo)}:{}),...(w.layout?{layout:normLayout(w.layout)}:{}),...(w.plan?{plan:normPlan(w.plan)}:{}),devs:(Array.isArray(w.devs)?w.devs:[]).filter(x=>typeof x==='string').slice(-10),at:+w.at||0}; });
   const sx=meta.secs&&typeof meta.secs==='object'?meta.secs:{rm:false,ft:false}; meta.secs={};
-  OPT_SECS.forEach(k=>{ meta.secs[k]=sx[k]===undefined?!(k==='rm'||k==='ft'):!!sx[k]; });
+  OPT_SECS.forEach(k=>{ meta.secs[k]=sx[k]===undefined?!['rm','ft','rule','term'].includes(k):!!sx[k]; });
   const lb=meta.labels&&typeof meta.labels==='object'?meta.labels:{}; meta.labels={};
   Object.keys(SEC_DEF).forEach(k=>{ const x=lb[k]||{}, p=String(x.p||'').trim().slice(0,40), q=String(x.s||'').trim().slice(0,40); if(p||q) meta.labels[k]={p,s:q}; });
   const sc=o.sc||{}, en=o.en||{};
@@ -1358,8 +1384,8 @@ function normalize(o){
     { const g=Math.round(+c.goal||0); if(g>0) c.goal=Math.min(1000000,g); else delete c.goal; }
     if(c.open==null) c.open=true;
   });
-  Object.keys(meta.ents).forEach(id=>{const e=meta.ents[id]; e.id=id; e.aliases=Array.isArray(e.aliases)?e.aliases:[]; e.tag=e.tag||''; if(!TYPES[e.type]) e.type='thing'; en[id]=en[id]||{}; en[id].fields=en[id].fields||{}; en[id].pic=normPic(en[id].pic);});
-  meta.threads=normThreads(meta.threads); meta.setups=normSetups(meta.setups); normSceneDetails(meta);
+  Object.keys(meta.ents).forEach(id=>{const e=meta.ents[id]; e.id=id; e.aliases=Array.isArray(e.aliases)?e.aliases:[]; e.tag=e.tag||''; if(!TYPES[e.type]) e.type='thing'; en[id]=en[id]||{}; en[id].fields=en[id].fields||{}; en[id].pic=normPic(en[id].pic); const ar=normArc(en[id].arc); if(ar) en[id].arc=ar; else delete en[id].arc;});
+  meta.world=normWorld(meta.world); meta.threads=normThreads(meta.threads); meta.setups=normSetups(meta.setups); normSceneDetails(meta);
   if(!meta.chapters.length){const b=blankProject(); meta.chapters=b.meta.chapters; meta.scenes=Object.assign(meta.scenes,b.meta.scenes); Object.assign(sc,b.sc);}
   const tl=o.tl&&typeof o.tl==='object'?o.tl:{};
   if(!Array.isArray(meta.tls)){ meta.tls=[]; if(!Object.keys(tl).length){ const id=uid('t_'); meta.tls.push({id,name:'Story timeline'}); tl[id]=newTl(); } }
@@ -1607,6 +1633,12 @@ function makeRe(names){
   try{ return new RegExp('(?<![\\p{L}\\p{N}_])'+body+'(?![\\p{L}\\p{N}_])','gu'); }
   catch(e){ return new RegExp('\\b'+body+'\\b','g'); }
 }
+// The tooltip on a name in the text; a glossary term shows how to say it and what it means.
+function entTip(e){
+  if(e.type==='term'){ const f=(S.en[e.id]||{}).fields||{}, say=String(f.say||'').trim(), mean=String(f.meaning||'').trim().split('\n')[0];
+    if(say||mean) return e.name+(say?' /'+say.replace(/^\/|\/$/g,'')+'/':'')+(mean?' · '+mean.slice(0,140):''); }
+  return e.name+' · '+LS(e.type)+' page';
+}
 function buildLinker(){
   const map=new Map();
   Object.values(S.meta.ents).forEach(e=>{[e.name].concat(e.aliases||[]).forEach(n=>{n=(n||'').trim(); if(n.length>=2&&!map.has(n)) map.set(n,e.id);});});
@@ -1684,7 +1716,7 @@ function renderText(text){
   const P=fmtParse(text), vis=P.vis; let h='',i=0;
   findLinks(vis).forEach(l=>{
     const e=S.meta.ents[l.id]; if(!e) return;
-    h+=fmtHtml(vis,P.flags,i,l.s)+'<span class="ent t-'+e.type+'" data-ent="'+l.id+'" title="'+esc(e.name+' · '+LS(e.type)+' page')+'">'+fmtHtml(vis,P.flags,l.s,l.e)+'</span>';
+    h+=fmtHtml(vis,P.flags,i,l.s)+'<span class="ent t-'+e.type+'" data-ent="'+l.id+'" title="'+esc(entTip(e))+'">'+fmtHtml(vis,P.flags,l.s,l.e)+'</span>';
     i=l.e;
   });
   return h+fmtHtml(vis,P.flags,i,vis.length);
@@ -1841,8 +1873,8 @@ function streak(){
 function curMood(){ const w=todayWords(), g=S.meta.goal; if(w>=g) return 'party'; if(w>=g*.5) return 'hype'; if(w>0) return 'happy'; return 'sleepy'; }
 function orderedScenes(){ const out=[]; S.meta.chapters.forEach(c=>c.scenes.forEach(id=>out.push({id,ch:c}))); return out; }
 function firstView(){ const s=orderedScenes()[0]; return s?{k:'scene',id:s.id}:{k:'cork'}; }
-function viewValid(v){ if(!v) return false; if(v.k==='scene') return !!S.meta.scenes[v.id]; if(v.k==='ent') return !!S.meta.ents[v.id]; if(v.k==='tl') return !!(S.tl[v.id]&&S.meta.tls.some(x=>x.id===v.id)); if(v.k==='nt') return !!(S.nt[v.id]&&S.meta.nts.some(x=>x.id===v.id)); if(v.k==='ol') return !!(S.ol[v.id]&&S.meta.ols.some(x=>x.id===v.id)); if(v.k==='rm'||v.k==='ft') return !!(S[v.k][v.id]&&S.meta[v.k+'s'].some(x=>x.id===v.id)); if(v.k==='snap') return !!S.meta.scenes[v.id]; return v.k==='cork'||v.k==='ss'||v.k==='prefs'||v.k==='find'||v.k==='help'||v.k==='den'||v.k==='cont'||v.k==='layout'||v.k==='plan'||v.k==='trash'||v.k==='search'||v.k==='story'; }
-function viewName(v){ if(v.k==='scene') return S.meta.scenes[v.id].title; if(v.k==='ent') return S.meta.ents[v.id].name; if(v.k==='tl') return S.meta.tls.find(x=>x.id===v.id).name; if(v.k==='nt') return S.meta.nts.find(x=>x.id===v.id).name; if(v.k==='ol') return S.meta.ols.find(x=>x.id===v.id).name; if(v.k==='rm'||v.k==='ft') return S.meta[v.k+'s'].find(x=>x.id===v.id).name; if(v.k==='ss') return 'Writing sessions'; if(v.k==='prefs') return 'Settings'; if(v.k==='find') return 'Find and replace'; if(v.k==='help') return 'How sharing works'; if(v.k==='den') return S.meta.pet.name+'’s room'; if(v.k==='cont') return 'Continuity'; if(v.k==='layout') return 'Project settings'; if(v.k==='plan') return 'Deadline planner'; if(v.k==='trash') return 'Trash'; if(v.k==='search') return 'Search'; if(v.k==='story') return 'Story insights'; if(v.k==='snap') return 'Snapshots: '+S.meta.scenes[v.id].title; return 'Corkboard'; }
+function viewValid(v){ if(!v) return false; if(v.k==='scene') return !!S.meta.scenes[v.id]; if(v.k==='ent') return !!S.meta.ents[v.id]; if(v.k==='tl') return !!(S.tl[v.id]&&S.meta.tls.some(x=>x.id===v.id)); if(v.k==='nt') return !!(S.nt[v.id]&&S.meta.nts.some(x=>x.id===v.id)); if(v.k==='ol') return !!(S.ol[v.id]&&S.meta.ols.some(x=>x.id===v.id)); if(v.k==='rm'||v.k==='ft') return !!(S[v.k][v.id]&&S.meta[v.k+'s'].some(x=>x.id===v.id)); if(v.k==='snap') return !!S.meta.scenes[v.id]; return v.k==='cork'||v.k==='ss'||v.k==='prefs'||v.k==='find'||v.k==='help'||v.k==='den'||v.k==='cont'||v.k==='layout'||v.k==='plan'||v.k==='trash'||v.k==='search'||v.k==='story'||v.k==='world'; }
+function viewName(v){ if(v.k==='scene') return S.meta.scenes[v.id].title; if(v.k==='ent') return S.meta.ents[v.id].name; if(v.k==='tl') return S.meta.tls.find(x=>x.id===v.id).name; if(v.k==='nt') return S.meta.nts.find(x=>x.id===v.id).name; if(v.k==='ol') return S.meta.ols.find(x=>x.id===v.id).name; if(v.k==='rm'||v.k==='ft') return S.meta[v.k+'s'].find(x=>x.id===v.id).name; if(v.k==='ss') return 'Writing sessions'; if(v.k==='prefs') return 'Settings'; if(v.k==='find') return 'Find and replace'; if(v.k==='help') return 'How sharing works'; if(v.k==='den') return S.meta.pet.name+'’s room'; if(v.k==='cont') return 'Continuity'; if(v.k==='layout') return 'Project settings'; if(v.k==='plan') return 'Deadline planner'; if(v.k==='trash') return 'Trash'; if(v.k==='search') return 'Search'; if(v.k==='story') return 'Story insights'; if(v.k==='world') return 'Calendars & money'; if(v.k==='snap') return 'Snapshots: '+S.meta.scenes[v.id].title; return 'Corkboard'; }
 
 /* ---------- pet ---------- */
 const PET_ARMS={sleepy:['M34 108 q-10 8 -8 22','M126 108 q10 8 8 22'],happy:['M34 106 q-14 2 -16 16','M126 106 q14 2 16 16'],hype:['M34 102 q-18 -6 -18 -28','M126 106 q14 2 16 16'],party:['M34 100 q-20 -8 -18 -32','M126 100 q20 -8 18 -32'],
@@ -2745,11 +2777,11 @@ function threadAdd(name){
 }
 // The view
 function renderStory(el,v){
-  const tab=['pace','cast','threads','setups'].includes(v.tab)?v.tab:(ui.stTab||'pace'); ui.stTab=tab; v.tab=tab;
-  const tabs=[['pace','Pacing'],['cast','Point of view'],['threads','Plot threads'],['setups','Setups & payoffs']];
+  const tab=['pace','cast','arcs','threads','setups'].includes(v.tab)?v.tab:(ui.stTab||'pace'); ui.stTab=tab; v.tab=tab;
+  const tabs=[['pace','Pacing'],['cast','Point of view'],['arcs','Arcs'],['threads','Plot threads'],['setups','Setups & payoffs']];
   el.innerHTML='<div class="main-head">'+backBtn()+'<span class="kind">'+ico('chart',16)+'</span><h1 class="mh-title">Story insights</h1>'
     +'<div class="seg st-tabs" role="tablist">'+tabs.map(([k,l])=>'<button role="tab" data-st="tab" data-v="'+k+'" aria-selected="'+(k===tab)+'"'+(k===tab?' class="on"':'')+'>'+l+'</button>').join('')+'</div></div>'
-    +'<div class="pf-wrap st-wrap">'+(tab==='pace'?stPaceHtml():tab==='cast'?stCastHtml():tab==='setups'?stSetupsHtml():stThreadsHtml())+'</div>';
+    +'<div class="pf-wrap st-wrap">'+(tab==='pace'?stPaceHtml():tab==='cast'?stCastHtml():tab==='setups'?stSetupsHtml():tab==='arcs'?stArcsHtml():stThreadsHtml())+'</div>';
   el.onclick=e=>{ const b=e.target.closest('[data-st],[data-open]'); if(!b) return;
     if(b.dataset.open){ go({k:'scene',id:b.dataset.open}); return; }
     const k=b.dataset.st;
@@ -2855,6 +2887,152 @@ function stSetupsHtml(){
   return '<section class="pf"><h2>Setups &amp; payoffs <span class="muted">'+paid+' of '+list.length+' paid off</span></h2>'+intro+add+'</section>'
     +'<section class="pf"><h2>To check <span class="muted">'+warn.length+'</span></h2>'+(warn.length?'<ul class="st-notes">'+warn.map(w=>'<li class="th-w fs-'+w.kind+'">'+esc(w.text)+'</li>').join('')+'</ul>':'<p class="ct-none">Every setup pays off, in the right order.</p>')+'</section>'
     +'<section class="pf"><h2>In book order</h2><div class="th-cards">'+cards+'</div></section>';
+}
+
+/* ---------- character arcs ---------- */
+// S.en[id].arc on a character page: type (pos: grows, neg: falls, flat: holds firm and changes others), goal, wound,
+// lie, truth, and pts{chapterId:{v:1–10, n:note}}: how far along their change they are in that chapter.
+const ARC_TYPES=[['pos','Grows'],['neg','Falls'],['flat','Holds firm']];
+const ARC_F=[['goal','Goal','What they want'],['wound','Wound','What hurt them before the story'],['lie','Lie','What they wrongly believe'],['truth','Truth','What they need to learn']];
+function normArc(a){
+  if(!a||typeof a!=='object') return null;
+  const o={type:ARC_TYPES.some(t=>t[0]===a.type)?a.type:'pos',pts:{}}; let any=false;
+  ARC_F.forEach(([k])=>{ const t=String(a[k]||'').slice(0,2000); if(t){ o[k]=t; any=true; } });
+  const p=a.pts&&typeof a.pts==='object'?a.pts:{};
+  Object.keys(p).slice(0,500).forEach(k=>{ const x=p[k]||{}, v=Math.round(+x.v||0), n=String(x.n||'').slice(0,1000); if(!/^[\w-]{1,40}$/.test(k)||(!(v>=1&&v<=10)&&!n)) return; o.pts[k]={}; if(v>=1&&v<=10) o.pts[k].v=v; if(n) o.pts[k].n=n; any=true; });
+  return any||a.type&&a.type!=='pos'?o:null;
+}
+const arcOf=id=>(S.en[id]&&S.en[id].arc)||null;
+function arcEdit(id){ const b=S.en[id]; if(!b.arc) b.arc={type:'pos',pts:{}}; return b.arc; }
+// A line chart of arcs by chapter: series [{id,name,color,pts}], one column per chapter; sel = the selected chapter id.
+function arcSvg(series,chs,o){
+  o=o||{}; const n=Math.max(1,chs.length), x0=30, cw=Math.max(28,640/n), W=x0+n*cw+10, yT=18, yB=170, H=196, y=v=>yB-(v-1)/9*(yB-yT), cx=i=>x0+i*cw+cw/2;
+  let h='<svg class="arc-svg" viewBox="0 0 '+W+' '+H+'" style="width:100%;min-width:'+(cw>28?0:W)+'px" role="img" aria-label="'+esc(o.label||'Character arcs by chapter')+'">';
+  [1,4,7,10].forEach(v=>{ h+='<line x1="'+x0+'" x2="'+(W-10)+'" y1="'+y(v)+'" y2="'+y(v)+'" class="st-grid"/>'; });
+  h+='<text x="'+(x0-6)+'" y="'+(y(10)+4)+'" class="st-ax" text-anchor="end">10</text><text x="'+(x0-6)+'" y="'+(y(1)+4)+'" class="st-ax" text-anchor="end">1</text>';
+  chs.forEach((c,i)=>{ h+='<g class="arc-col'+(o.sel===c.id?' sel':'')+'" data-arc-ch="'+c.id+'"><title>'+esc(c.title)+'</title><rect x="'+(x0+i*cw)+'" y="'+(yT-8)+'" width="'+cw+'" height="'+(yB-yT+16)+'" class="arc-hit"/><text x="'+cx(i)+'" y="'+(H-6)+'" class="st-ax" text-anchor="middle">'+(i+1)+'</text></g>'; });
+  series.forEach(s=>{ const col=cssCol(s.color); let d='', pen=false;
+    chs.forEach((c,i)=>{ const p=s.pts[c.id]; if(!p||!p.v){ return; } d+=(pen?'L':'M')+cx(i).toFixed(1)+' '+y(p.v).toFixed(1); pen=true; });
+    h+='<path d="'+d+'" fill="none" stroke="'+col+'" stroke-width="2.5" stroke-linejoin="round" class="arc-line" data-who="'+s.id+'"/>';
+    chs.forEach((c,i)=>{ const p=s.pts[c.id]; if(p&&p.v) h+='<circle cx="'+cx(i).toFixed(1)+'" cy="'+y(p.v).toFixed(1)+'" r="4.5" fill="'+col+'" class="arc-pt"><title>'+esc(s.name+' · '+c.title+': '+p.v+(p.n?' · '+p.n:''))+'</title></circle>'; }); });
+  return h+'</svg>';
+}
+function drawArcBox(e){
+  const box=$('#arcBox'); if(!box) return; const a=arcOf(e.id)||{type:'pos',pts:{}}, chs=S.meta.chapters, sel=chs.some(c=>c.id===ui.arcSel)?ui.arcSel:'', p=sel&&a.pts[sel]||{};
+  box.innerHTML='<h3>Character arc</h3><p class="sub">Who they are at the start, what they must learn, and how far they’ve come in each chapter. Click the chart to set a chapter.</p>'
+    +'<div class="seg arc-type" role="group" aria-label="Kind of arc">'+ARC_TYPES.map(([k,l])=>'<button data-arc="type" data-v="'+k+'"'+(a.type===k?' class="on" aria-pressed="true"':' aria-pressed="false"')+'>'+l+'</button>').join('')+'</div>'
+    +'<div class="arc-fs">'+ARC_F.map(([k,l,h])=>'<label class="f">'+l+'<textarea data-arc-f="'+k+'" rows="2" placeholder="'+esc(h)+'">'+esc(a[k]||'')+'</textarea></label>').join('')+'</div>'
+    +'<div class="arc-chart">'+arcSvg([{id:e.id,name:e.name,color:'char',pts:a.pts}],chs,{sel,label:e.name+'’s arc by chapter'})+'</div>'
+    +'<div class="arc-scale"><span>1 · '+(a.type==='neg'?'At their best':a.type==='flat'?'Tested':'Where they start')+'</span><span>10 · '+(a.type==='neg'?'Fallen':a.type==='flat'?'Proved right':'Changed')+'</span></div>'
+    +(sel?'<div class="arc-sel"><b>'+esc(chs.find(c=>c.id===sel).title)+'</b><label class="f">Where they are<select data-arc="v"><option value="">Not set</option>'+[1,2,3,4,5,6,7,8,9,10].map(n=>'<option'+(p.v===n?' selected':'')+'>'+n+'</option>').join('')+'</select></label>'
+      +'<label class="f">What changes for them here<input data-arc="n" maxlength="1000" value="'+esc(p.n||'')+'" placeholder="A choice, a blow, a realisation…"></label></div>'
+      :'<p class="sub arc-hint">'+(Object.keys(a.pts).length?'Click a chapter to change it or add a note.':'Click above a chapter number to mark where '+esc(e.name)+' is.')+'</p>');
+  box.querySelectorAll('textarea').forEach(t=>ag(t));
+  if(!box.dataset.bound){ box.dataset.bound='1';
+    box.addEventListener('input',ev=>{ const k=ev.target.dataset.arcF; if(k){ ag(ev.target); const ar=arcEdit(e.id); if(ev.target.value) ar[k]=ev.target.value.slice(0,2000); else delete ar[k]; dirty('en_'+e.id); return; }
+      if(ev.target.dataset.arc==='n'&&ui.arcSel){ const ar=arcEdit(e.id), q=ar.pts[ui.arcSel]||(ar.pts[ui.arcSel]={}); if(ev.target.value) q.n=ev.target.value.slice(0,1000); else delete q.n; if(!q.v&&!q.n) delete ar.pts[ui.arcSel]; dirty('en_'+e.id); } });
+    box.addEventListener('change',ev=>{ if(ev.target.dataset.arc!=='v'||!ui.arcSel) return; const ar=arcEdit(e.id), q=ar.pts[ui.arcSel]||(ar.pts[ui.arcSel]={}), n=+ev.target.value;
+      if(n) q.v=n; else delete q.v; if(!q.v&&!q.n) delete ar.pts[ui.arcSel]; dirty('en_'+e.id); drawArcBox(e); });
+    box.addEventListener('click',ev=>{ const b=ev.target.closest('[data-arc="type"]'); if(b){ arcEdit(e.id).type=b.dataset.v; dirty('en_'+e.id); drawArcBox(e); } });
+    box.addEventListener('pointerdown',ev=>{ const g=ev.target.closest('[data-arc-ch]'); if(!g) return; const svg=g.ownerSVGElement, r=svg.getBoundingClientRect(), vb=svg.viewBox.baseVal, yy=(ev.clientY-r.top)/r.height*vb.height;
+      const v=Math.max(1,Math.min(10,Math.round(1+(170-yy)/(170-18)*9))), ch=g.dataset.arcCh, ar=arcEdit(e.id), q=ar.pts[ch]||(ar.pts[ch]={});
+      if(ui.arcSel===ch||!q.v) q.v=v; ui.arcSel=ch; dirty('en_'+e.id); drawArcBox(e); });
+  }
+}
+function stArcsHtml(){
+  const m=S.meta, chs=m.chapters, chars=Object.values(m.ents).filter(e=>e.type==='char'), withArc=chars.filter(e=>{ const a=arcOf(e.id); return a&&Object.values(a.pts).some(p=>p.v); });
+  const intro='<p class="fine">Track how each character changes. On a character’s page, fill in their goal, wound, lie and truth, then click the arc chart to mark how far along they are in each chapter.</p>';
+  if(!chars.length) return '<section class="pf"><h2>Character arcs</h2>'+intro+'<p class="ct-none">Add a character page first.</p></section>';
+  const series=withArc.map((e,i)=>({id:e.id,name:e.name,color:TL_COLORS[i%TL_COLORS.length][0],pts:arcOf(e.id).pts}));
+  const pov=new Set(Object.values(m.scenes).map(s=>s.pov).filter(Boolean)), miss=chars.filter(e=>pov.has(e.id)&&!withArc.includes(e));
+  const rows=chars.filter(e=>arcOf(e.id)||pov.has(e.id)).map(e=>{ const a=arcOf(e.id)||{}, pts=chs.map(c=>a.pts&&a.pts[c.id]&&a.pts[c.id].v).filter(Boolean);
+    return '<tr><th><button class="lnk" data-st="ent" data-id="'+e.id+'">'+esc(e.name)+'</button></th><td>'+esc((ARC_TYPES.find(t=>t[0]===a.type)||['',a.type?'':'—'])[1])+'</td><td>'+esc(a.lie||'')+'</td><td>'+esc(a.truth||'')+'</td><td class="mono">'+(pts.length>1?pts[0]+' → '+pts[pts.length-1]:pts[0]||'')+'</td></tr>'; }).join('');
+  return '<section class="pf"><h2>Character arcs</h2>'+intro
+    +(series.length?'<div class="st-chart">'+arcSvg(series,chs)+'</div><div class="st-key">'+series.map(s=>'<span><i class="st-k" style="background:'+cssCol(s.color)+'"></i><button class="lnk" data-st="ent" data-id="'+s.id+'">'+esc(s.name)+'</button></span>').join('')+'</div>':'<p class="ct-none">No arcs charted yet.</p>')
+    +(miss.length?'<p class="fine arc-miss">Point-of-view characters without an arc yet: '+miss.map(e=>'<button class="lnk" data-st="ent" data-id="'+e.id+'">'+esc(e.name)+'</button>').join(', ')+'.</p>':'')+'</section>'
+    +(rows?'<section class="pf"><h2>At a glance</h2><div class="st-grid-wrap"><table class="arc-tab"><thead><tr><th>Character</th><th>Arc</th><th>Lie</th><th>Truth</th><th>From → to</th></tr></thead><tbody>'+rows+'</tbody></table></div></section>':'');
+}
+/* ---------- world: calendars and money ---------- */
+// meta.world.cals: invented calendars {id,name,months[[name,days]],week (comma list),era,first (number of the first year)};
+// meta.world.coins: currencies {id,name,units[[name,per]],note}: units from largest to smallest, per = how many of the
+// next unit make one of this. View {k:'world'} (renderWorld). A calendar can set a timeline's scale (TL presets).
+function normWorld(w){
+  w=w&&typeof w==='object'?w:{}; const ok=x=>x&&typeof x==='object'&&/^[\w-]{1,40}$/.test(x.id);
+  return {cals:(Array.isArray(w.cals)?w.cals:[]).filter(ok).slice(0,20).map(c=>({id:c.id,name:String(c.name||'Calendar').slice(0,80),
+      months:(Array.isArray(c.months)?c.months:[]).slice(0,40).map(x=>[String((x||[])[0]||'Month').slice(0,40),Math.max(1,Math.min(999,Math.round(+(x||[])[1]||30)))]),
+      week:String(c.week||'').slice(0,400),era:String(c.era||'').slice(0,20),first:Math.round(+c.first||1)})),
+    coins:(Array.isArray(w.coins)?w.coins:[]).filter(ok).slice(0,20).map(c=>({id:c.id,name:String(c.name||'Currency').slice(0,80),
+      units:(Array.isArray(c.units)?c.units:[]).slice(0,12).map(x=>[String((x||[])[0]||'Coin').slice(0,40),Math.max(1,Math.min(1e6,Math.round(+(x||[])[1]||1)))]),note:String(c.note||'').slice(0,2000)}))};
+}
+const calYear=c=>c.months.reduce((a,x)=>a+x[1],0)||1;
+const calWeek=c=>c.week.split(',').map(x=>x.trim()).filter(Boolean);
+// Day 1 is the first day of the first year. Returns {y,mi,d,wd}.
+function calDate(c,n){
+  n=Math.round(n); const Y=calYear(c), yi=Math.floor((n-1)/Y); let r=n-1-yi*Y, mi=0;
+  while(mi<c.months.length&&r>=c.months[mi][1]){ r-=c.months[mi][1]; mi++; }
+  const wk=calWeek(c); return {y:c.first+yi,mi,d:r+1,wd:wk.length?wk[((n-1)%wk.length+wk.length)%wk.length]:''};
+}
+function calDay(c,y,mi,d){ let n=(y-c.first)*calYear(c); for(let i=0;i<mi;i++) n+=c.months[i][1]; return n+d; }
+const calFmt=(c,o)=>(o.wd?o.wd+', ':'')+o.d+' '+(c.months[o.mi]||['?'])[0]+', year '+o.y+(c.era?' '+c.era:'');
+function coinBreak(c,total){   // an amount in the smallest unit → "2 Crowns, 3 Shillings"
+  const vals=coinVals(c), out=[]; let r=Math.round(total);
+  c.units.forEach((u,i)=>{ const q=Math.floor(r/vals[i]); if(q){ out.push(q+' '+u[0]); r-=q*vals[i]; } });
+  return out.join(', ')||'0 '+(c.units[c.units.length-1]||['coins'])[0];
+}
+const coinOut=(c,tot)=>'= '+fmt(tot)+' '+(c.units[c.units.length-1]||[''])[0]+(c.units.length>1?' · '+coinBreak(c,tot):'');
+function coinVals(c){ const v=new Array(c.units.length).fill(1); for(let i=c.units.length-2;i>=0;i--) v[i]=v[i+1]*c.units[i][1]; return v; }
+function worldDefCal(){ return {id:uid('cal'),name:'New calendar',months:[['First Month',30],['Second Month',30],['Third Month',30],['Fourth Month',30],['Fifth Month',30],['Sixth Month',30],['Seventh Month',30],['Eighth Month',30],['Ninth Month',30],['Tenth Month',30],['Eleventh Month',30],['Twelfth Month',35]],week:'Moonday, Tidesday, Ashday, Hearthday, Starday, Restday',era:'',first:1}; }
+function worldDefCoin(){ return {id:uid('cn'),name:'New currency',units:[['Crown',20],['Shilling',12],['Penny',1]],note:''}; }
+function renderWorld(el){
+  const W=S.meta.world, f=ui.wf||(ui.wf={});
+  const cal=c=>{ const Y=calYear(c), k=f[c.id]||(f[c.id]={n:1,a:'',b:''}), o=calDate(c,k.n||1);
+    return '<section class="pf w-cal" data-cal="'+c.id+'"><div class="th-row"><input class="w-name" data-w="name" value="'+esc(c.name)+'" maxlength="80" aria-label="Calendar name"><button class="ibtn" data-w="delcal" aria-label="Delete calendar" title="Delete calendar">'+ico('trash',14)+'</button></div>'
+      +'<p class="fine">'+c.months.length+' months, '+Y+' days a year'+(calWeek(c).length?', a '+calWeek(c).length+'-day week':'')+'.</p>'
+      +'<div class="w-months">'+c.months.map((x,i)=>'<div class="w-m"><input data-w="mname" data-i="'+i+'" value="'+esc(x[0])+'" maxlength="40" aria-label="Month '+(i+1)+' name"><input type="number" min="1" max="999" data-w="mdays" data-i="'+i+'" value="'+x[1]+'" aria-label="Days in month '+(i+1)+'"><button class="ibtn" data-w="delm" data-i="'+i+'" aria-label="Remove month" title="Remove month">'+ico('x',12)+'</button></div>').join('')
+      +'<button class="btn sm" data-w="addm">'+ico('plus',13)+'<span>Month</span></button></div>'
+      +'<div class="two"><label class="f">Days of the week (separate with commas)<input data-w="week" value="'+esc(c.week)+'" maxlength="400" placeholder="Moonday, Tidesday, …"></label>'
+      +'<div class="two"><label class="f">Era<input data-w="era" value="'+esc(c.era)+'" maxlength="20" placeholder="AR"></label><label class="f">First year<input type="number" data-w="first" value="'+c.first+'"></label></div></div>'
+      +'<div class="w-tool"><label class="f">Day number<input type="number" data-w="n" value="'+(k.n||1)+'"></label><span class="w-out" data-w-out="n">'+esc(calFmt(c,o))+'</span></div>'
+      +'<p class="fine">Day 1 is the first day of year '+c.first+(c.era?' '+esc(c.era):'')+'. Use it to work out dates, ages and how long journeys take.</p></section>'; };
+  const coin=c=>{ const k=f[c.id]||(f[c.id]={q:1,u:0}), vals=coinVals(c), tot=(k.q||0)*(vals[k.u]||1);
+    return '<section class="pf w-coin" data-coin="'+c.id+'"><div class="th-row"><input class="w-name" data-w="name" value="'+esc(c.name)+'" maxlength="80" aria-label="Currency name"><button class="ibtn" data-w="delcoin" aria-label="Delete currency" title="Delete currency">'+ico('trash',14)+'</button></div>'
+      +'<div class="w-units">'+c.units.map((u,i)=>'<div class="w-u"><span>1</span><input data-w="uname" data-i="'+i+'" value="'+esc(u[0])+'" maxlength="40" aria-label="Unit name">'+(i<c.units.length-1?'<span>=</span><input type="number" min="1" data-w="uper" data-i="'+i+'" value="'+u[1]+'" aria-label="How many '+esc(c.units[i+1][0])+'"><span class="muted">'+esc(c.units[i+1][0])+'</span>':'<span class="muted">smallest coin</span>')+'<button class="ibtn" data-w="delu" data-i="'+i+'" aria-label="Remove unit" title="Remove unit">'+ico('x',12)+'</button></div>').join('')
+      +'<button class="btn sm" data-w="addu">'+ico('plus',13)+'<span>Smaller unit</span></button></div>'
+      +'<div class="w-tool"><label class="f">Amount<input type="number" min="0" data-w="q" value="'+(k.q??1)+'"></label><label class="f">of<select data-w="u">'+c.units.map((u,i)=>'<option value="'+i+'"'+(k.u===i?' selected':'')+'>'+esc(u[0])+'</option>').join('')+'</select></label>'
+      +'<span class="w-out" data-w-out="q">'+esc(coinOut(c,tot))+'</span></div>'
+      +'<label class="f">What things cost<textarea data-w="note" rows="2" placeholder="A loaf of bread: 2 pennies. A horse: 4 crowns.">'+esc(c.note)+'</textarea></label></section>'; };
+  el.innerHTML='<div class="main-head">'+backBtn()+'<span class="kind">'+ico('cal',16)+'</span><h1 class="mh-title">Calendars &amp; money</h1></div><div class="pf-wrap">'
+    +'<section class="pf"><h2>Your world</h2><p class="fine">Invent calendars and currencies for your world. Rules of magic and technology, and invented words, have their own story pages: turn on <b>'+esc(LP('rule'))+'</b> and <b>'+esc(LP('term'))+'</b> in the binder (Customize binder). Glossary words are linked in your scenes like names, with their pronunciation when you point at them.</p>'
+    +'<div class="w-add"><button class="btn" data-w="addcal">'+ico('plus',14)+'<span>Calendar</span></button><button class="btn" data-w="addcoin">'+ico('plus',14)+'<span>Currency</span></button>'
+    +(secOn('rule')&&secOn('term')?'':'<button class="btn" data-w="secs">Show '+esc(LP('rule'))+' and '+esc(LP('term'))+' in the binder</button>')+'</div></section>'
+    +(W.cals.length?'<h3 class="w-h">Calendars</h3>'+W.cals.map(cal).join(''):'')+(W.coins.length?'<h3 class="w-h">Money</h3>'+W.coins.map(coin).join(''):'')+'</div>';
+  const find=t=>{ const c=t.closest('[data-cal]'), m=t.closest('[data-coin]'); return c?{x:W.cals.find(q=>q.id===c.dataset.cal),cal:1}:m?{x:W.coins.find(q=>q.id===m.dataset.coin)}:{}; };
+  const save=()=>dirty('meta');
+  el.onclick=e=>{ const b=e.target.closest('button[data-w]'); if(!b) return; const k=b.dataset.w, {x}=find(b), i=+b.dataset.i;
+    if(k==='addcal'){ W.cals.push(worldDefCal()); save(); renderWorld(el); }
+    else if(k==='addcoin'){ W.coins.push(worldDefCoin()); save(); renderWorld(el); }
+    else if(k==='secs'){ S.meta.secs.rule=S.meta.secs.term=true; ui.openSec.rule=ui.openSec.term=true; save(); renderBinder(); renderWorld(el); }
+    else if(k==='addm'&&x){ x.months.push(['Month '+(x.months.length+1),30]); save(); renderWorld(el); }
+    else if(k==='delm'&&x&&x.months.length>1){ x.months.splice(i,1); save(); renderWorld(el); }
+    else if(k==='addu'&&x){ x.units.push(['Unit',1]); if(x.units.length>1) x.units[x.units.length-2][1]=Math.max(1,x.units[x.units.length-2][1]); save(); renderWorld(el); }
+    else if(k==='delu'&&x&&x.units.length>1){ x.units.splice(i,1); save(); renderWorld(el); }
+    else if(k==='delcal'||k==='delcoin'){ ask('Delete “'+x.name+'”?','It will be gone for good.',[['yes','Delete','danger'],['no','Cancel']]).then(r=>{ if(r!=='yes') return; const L=k==='delcal'?W.cals:W.coins; L.splice(L.indexOf(x),1); save(); renderWorld(el); }); }
+  };
+  const upd=(t,live)=>{ const k=t.dataset.w, {x,cal}=find(t); if(!x||!k) return; const i=+t.dataset.i, v=t.value, st=f[x.id]||(f[x.id]={});
+    if(k==='name') x.name=v.slice(0,80)||(cal?'Calendar':'Currency');
+    else if(k==='mname') x.months[i][0]=v.slice(0,40)||'Month';
+    else if(k==='mdays'){ if(live) return; x.months[i][1]=Math.max(1,Math.min(999,Math.round(+v||1))); }
+    else if(k==='week') x.week=v.slice(0,400);
+    else if(k==='era') x.era=v.slice(0,20);
+    else if(k==='first'){ if(live) return; x.first=Math.round(+v||1); }
+    else if(k==='uname') x.units[i][0]=v.slice(0,40)||'Coin';
+    else if(k==='uper'){ if(live) return; x.units[i][1]=Math.max(1,Math.min(1e6,Math.round(+v||1))); }
+    else if(k==='note') x.note=v.slice(0,2000);
+    else if(k==='n'){ st.n=Math.round(+v||1); const o=$('[data-w-out="n"]',t.closest('section')); if(o) o.textContent=calFmt(x,calDate(x,st.n)); return; }
+    else if(k==='q'||k==='u'){ if(live&&k==='u') return; st[k]=k==='u'?+v:Math.max(0,+v||0); const o=$('[data-w-out="q"]',t.closest('section')); if(o) o.textContent=coinOut(x,(st.q??1)*(coinVals(x)[st.u||0]||1)); return; }
+    save(); if(!live) renderWorld(el); };
+  el.oninput=e=>upd(e.target,true);
+  el.onchange=e=>upd(e.target,false);
 }
 function stThreadsHtml(){
   const m=S.meta, rows=storyRows(), chs=m.chapters.filter(c=>c.scenes.length), idx={};
@@ -3189,7 +3367,7 @@ function qsItems(){
   m.chapters.forEach(c=>{ add({k:'cork',ch:c.id},c.title,'Chapter','book'); c.scenes.forEach(id=>{ const s=m.scenes[id]; if(s) add({k:'scene',id},s.title,c.title,'pen'); }); });
   Object.values(m.ents).forEach(e=>add({k:'ent',id:e.id},e.name,LS(e.type),'note'));
   [['nt','note'],['ol','list'],['tl','time'],['rm','web'],['ft','tree']].forEach(([k,i])=>m[k+'s'].forEach(x=>add({k,id:x.id},x.name,k==='nt'&&x.kind==='board'?'Brainstorm':LS(k),i)));
-  [[{k:'cork'},'Corkboard','card'],[{k:'search'},'Search everything','search'],[{k:'ss'},'Writing sessions','timer'],[{k:'plan'},'Deadline planner','cal'],[{k:'cont'},'Continuity check','search'],[{k:'story'},'Story insights','chart'],[{k:'trash'},'Trash','trash'],[{k:'layout'},'Project settings','layout'],[{k:'prefs'},'Settings','sliders']]
+  [[{k:'cork'},'Corkboard','card'],[{k:'search'},'Search everything','search'],[{k:'ss'},'Writing sessions','timer'],[{k:'plan'},'Deadline planner','cal'],[{k:'cont'},'Continuity check','search'],[{k:'story'},'Story insights','chart'],[{k:'world'},'Calendars & money','cal'],[{k:'trash'},'Trash','trash'],[{k:'layout'},'Project settings','layout'],[{k:'prefs'},'Settings','sliders']]
     .forEach(([v,l,i])=>add(v,l,'Screen',i));
   return out;
 }
@@ -3284,7 +3462,7 @@ function dupChapter(id){
 }
 function dupEnt(id){
   const m=S.meta, e=m.ents[id]; if(!e) return; const nid=uid('e_');
-  m.ents[nid]=Object.assign(bare(e),{id:nid,name:e.name+' (copy)',aliases:[]}); S.en[nid]={fields:bare((S.en[id]||{}).fields||{}),pic:normPic()};   // the picture stays with the original
+  m.ents[nid]=Object.assign(bare(e),{id:nid,name:e.name+' (copy)',aliases:[]}); S.en[nid]={fields:bare((S.en[id]||{}).fields||{}),pic:normPic()}; if(S.en[id]&&S.en[id].arc) S.en[nid].arc=bare(S.en[id].arc);   // the picture stays with the original
   dirty('meta','en_'+nid); linker=buildLinker(); go({k:'ent',id:nid});
 }
 function dupDoc(k,id){
@@ -3395,6 +3573,7 @@ function delChapter(id){
 }
 function addEntity(type,name){
   const id=uid('e_'); S.meta.ents[id]={id,type,name,aliases:[],tag:''}; S.en[id]={fields:{},pic:normPic()};
+  if(!secOn(type)){ S.meta.secs[type]=true; ui.openSec[type]=true; }
   dirty('meta','en_'+id); linker=buildLinker();
   const fresh=/^New /.test(name);
   say(fresh?pick({char:['A new character! Give them a name and I will remember it.','Someone new is joining the story. Who are they?'],place:['A new place! Where in the world is it?','Somewhere new to explore. Name it and I will keep track.'],thing:['A new thing! Is it magic, or just important?','Something new for the story. What is it called?']}[type]||['Something new for the story!'])
@@ -3426,7 +3605,7 @@ function delDocItem(k,id){
 }
 function addTimeline(src){
   const id=uid('t_'), from=src&&S.meta.tls.find(x=>x.id===src);
-  S.tl[id]=from?normTl(JSON.parse(JSON.stringify(S.tl[src]))):newTl();
+  S.tl[id]=from?normTl(JSON.parse(JSON.stringify(S.tl[src]))):normTl(newTl());
   S.meta.tls.push({id,name:from?from.name+' (copy)':LS('tl')+' '+(S.meta.tls.length+1)});
   ui.openSec.tl=true; ui.confirm=null; dirty('meta','tl_'+id); go({k:'tl',id});
 }
@@ -3601,7 +3780,7 @@ function renderMain(){
   if(!viewValid(v)){ ui.view=firstView(); return renderMain(); }
   const key=v.k+':'+(v.id||''), reset=key!==ui.lastKey; ui.lastKey=key;
   const keep=el.scrollTop;
-  if(v.k==='ent') renderEnt(el,v); else if(v.k==='cork') renderCork(el); else if(v.k==='tl') renderTl(el,v); else if(v.k==='nt') renderNt(el,v); else if(v.k==='ol') renderOl(el,v); else if(v.k==='rm'||v.k==='ft') renderCv(el,v); else if(v.k==='ss') renderSs(el); else if(v.k==='prefs') renderPrefs(el); else if(v.k==='snap') renderSnap(el,v); else if(v.k==='find') renderFind(el); else if(v.k==='help') renderHelp(el); else if(v.k==='den') renderDen(el); else if(v.k==='cont') renderCont(el); else if(v.k==='layout') renderLayout(el); else if(v.k==='plan') renderPlan(el); else if(v.k==='trash') renderTrash(el); else if(v.k==='search') renderSearch(el); else if(v.k==='story') renderStory(el,v); else renderScene(el,v);
+  if(v.k==='ent') renderEnt(el,v); else if(v.k==='cork') renderCork(el); else if(v.k==='tl') renderTl(el,v); else if(v.k==='nt') renderNt(el,v); else if(v.k==='ol') renderOl(el,v); else if(v.k==='rm'||v.k==='ft') renderCv(el,v); else if(v.k==='ss') renderSs(el); else if(v.k==='prefs') renderPrefs(el); else if(v.k==='snap') renderSnap(el,v); else if(v.k==='find') renderFind(el); else if(v.k==='help') renderHelp(el); else if(v.k==='den') renderDen(el); else if(v.k==='cont') renderCont(el); else if(v.k==='layout') renderLayout(el); else if(v.k==='plan') renderPlan(el); else if(v.k==='trash') renderTrash(el); else if(v.k==='search') renderSearch(el); else if(v.k==='story') renderStory(el,v); else if(v.k==='world') renderWorld(el); else renderScene(el,v);
   el.scrollTop=reset?0:keep;
   if(reset&&v.k==='scene') posRestore(v.id);
 }
@@ -3945,6 +4124,7 @@ function renderEnt(el,v){
     ag(t);
     t.addEventListener('input',()=>{ ag(t); body.fields[t.dataset.k]=t.value; dirty('en_'+v.id); });
   });
+  if(e.type==='char'){ $('.fields-box',el).insertAdjacentHTML('afterend','<section class="arc-box" id="arcBox"></section>'); drawArcBox(e); }
   bindPic(el,e); bindPicDrop(el,e); bindFieldsEdit(el,e,v);
   el.onclick=ev=>{ if(ev.target.closest('.facts')) contClick(ev); };
   const fa=$('.facts textarea',el); if(fa) fa.addEventListener('change',()=>{ contCheck(true); const box=$('.facts',el); if(box){ const at=document.activeElement===fa; box.outerHTML=entContHtml(e); const nf=$('.facts textarea',el); ag(nf); nf.addEventListener('input',()=>{ ag(nf); body.fields.facts=nf.value; dirty('en_'+v.id); }); } });
@@ -4781,7 +4961,7 @@ function sideCard(t,c){
 function sideSet(t){
   const a=t.axis, cf=ui.confirm, tid=ui.view.id;
   let h='<div class="ts-head"><h3>Customize timeline</h3><button class="ibtn" data-tl="close" aria-label="Close panel">'+ico('x')+'</button></div>';
-  h+='<h4>Time scale</h4><label class="f">Start from a preset<select data-sf="preset"><option value="">Choose…</option>'+TL_PRESETS.map((p,i)=>'<option value="'+i+'">'+p[2]+'</option>').join('')+'</select></label>'
+  h+='<h4>Time scale</h4><label class="f">Start from a preset<select data-sf="preset"><option value="">Choose…</option>'+TL_PRESETS.map((p,i)=>'<option value="'+i+'">'+p[2]+'</option>').join('')+S.meta.world.cals.map(c=>'<option value="w:'+c.id+'">'+esc(c.name)+' (your world)</option>').join('')+'</select></label>'
     +'<label class="f">Tick label<input data-sf="fmt" value="'+esc(a.fmt)+'" maxlength="60"></label>'
     +'<p class="fine"><span class="mono">{n}</span> is the time value, <span class="mono">{name}</span> the next name in your list, <span class="mono">{cycle}</span> how many times the list has come round, <span class="mono">{i}</span> the column number. Try <span class="mono">{name}, year {cycle}</span>.</p>'
     +'<label class="f">Names to cycle through<textarea data-sf="names" rows="2" placeholder="Months, seasons, festivals… separated by commas">'+esc(a.names)+'</textarea></label>'
@@ -4864,6 +5044,7 @@ function tlCardField(t,x){
 }
 function tlSetField(t,x){
   const k=x.dataset.sf, a=t.axis, v=x.type==='checkbox'?x.checked:x.value;
+  if(k==='preset'&&/^w:/.test(v)){ const c=S.meta.world.cals.find(x=>x.id===v.slice(2)); if(!c) return; a.fmt='{name} {cycle}'+(c.era?' '+c.era.replace(/[{}]/g,''):''); a.names=c.months.map(x=>x[0].replace(/,/g,' ')).join(', '); a.cycle=c.first; dirty(tlKey()); drawTl(); drawSide(); return; }
   if(k==='preset'){ const p=TL_PRESETS[+v]; if(!v||!p) return; a.fmt=p[0]; a.names=p[1]; dirty(tlKey()); drawTl(); drawSide(); return; }
   if(k==='fmt') a.fmt=v.trim()?v:'{n}';
   else if(k==='names') a.names=v;
@@ -5570,6 +5751,7 @@ function winAct(a,src){
   if(a==='layout') go({k:'layout'});
   else if(a==='plan') go({k:'plan'});
   else if(a==='story') go({k:'story'});
+  else if(a==='world') go({k:'world'});
   else if(a==='search') go({k:'search'});
   else if(a==='qs') openQs();
   else if(a==='next'||a==='prev') sceneStep(a==='next'?1:-1);
@@ -6182,10 +6364,10 @@ function renderMenu(){
   const winItems=()=>'<hr><small class="m-h">Window</small>'+item('layout','Project settings…')+item('tBinder',(loHidden('binder')?'Show':'Hide')+' the binder')+item('tInsp',(loHidden('insp')?'Show':'Hide')+' the Inkling panel')+item('split',ui.split?'Close side by side':'Side by side')+item('focus',ui.focus?'Leave focus mode':'Focus mode')+'<hr>';
   const item=(m,label,cls)=>'<button data-m="'+m+'"'+(cls?' class="'+cls+'"':'')+'>'+label+'</button>';
   if(DESK){ el.innerHTML=item('save','Save')+item('projects','Projects…')+item('share','Share this project…')+'<hr>'+item('export','Export… (Word, PDF, EPUB)')+item('json','Back up this project (.json)')+item('import','Import a backup as a new project…')+'<hr>'
-    +item('find','Find and replace…')+item('cont','Continuity check')+item('story','Story insights')+item('qs','Go to… ('+MODK+'+P)')+item('search','Search everything…')+item('sessions','Writing sessions')+item('plan','Deadline planner')+item('trash','Trash')+item('prefs','Settings')+winItems()+item('help','How sharing works')+item('keys','Keyboard shortcuts')+item('tour','Show the tour')+'<hr>'+item('reveal','Show projects folder')
+    +item('find','Find and replace…')+item('cont','Continuity check')+item('story','Story insights')+item('world','Calendars & money')+item('qs','Go to… ('+MODK+'+P)')+item('search','Search everything…')+item('sessions','Writing sessions')+item('plan','Deadline planner')+item('trash','Trash')+item('prefs','Settings')+winItems()+item('help','How sharing works')+item('keys','Keyboard shortcuts')+item('tour','Show the tour')+'<hr>'+item('reveal','Show projects folder')
     +'<small>Saved on this computer as you write. Each project folder also keeps automatic backups.</small>'; return; }
   el.innerHTML=item('save','Save now')+'<hr>'+item('export','Export… (Word, PDF, EPUB)')+item('json','Back up project (.json)')+item('restore','Restore from a backup…')+'<hr>'
-    +item('find','Find and replace…')+item('cont','Continuity check')+item('story','Story insights')+item('qs','Go to… ('+MODK+'+P)')+item('search','Search everything…')+item('sessions','Writing sessions')+item('plan','Deadline planner')+item('trash','Trash')+item('prefs','Settings')+winItems()+item('help','How sharing works')+item('keys','Keyboard shortcuts')+item('tour','Show the tour')+'<hr>'
+    +item('find','Find and replace…')+item('cont','Continuity check')+item('story','Story insights')+item('world','Calendars & money')+item('qs','Go to… ('+MODK+'+P)')+item('search','Search everything…')+item('sessions','Writing sessions')+item('plan','Deadline planner')+item('trash','Trash')+item('prefs','Settings')+winItems()+item('help','How sharing works')+item('keys','Keyboard shortcuts')+item('tour','Show the tour')+'<hr>'
     +item('sample',cf==='m-sample'?'Replace everything with the sample? Click again':'Load the sample project','warn')
     +item('blank',cf==='m-blank'?'Replace everything with a blank project? Click again':'Start a blank project','warn')
     +'<small>'+(P.db?'Your project saves automatically to your Claude account, private to you. A new project comes with its own Inky; your daily goal and timer settings carry over.':'Your project saves on this device only. Back it up from here when you can.')+'</small>';
@@ -6208,7 +6390,7 @@ function bindMenu(){
     else if(a==='import'){ closeMenu(); deskImportPick(); }
     else if(a==='reveal'){ closeMenu(); DESK.reveal(); }
     else if(a==='sessions'){ closeMenu(); go({k:'ss'}); }
-    else if(['layout','tBinder','tInsp','focus','keys','plan','story','search','trash','split','qs'].includes(a)){ closeMenu(); winAct(a); }
+    else if(['layout','tBinder','tInsp','focus','keys','plan','story','world','search','trash','split','qs'].includes(a)){ closeMenu(); winAct(a); }
     else if(a==='restore'){ closeMenu(); $('#fileIn').value=''; $('#fileIn').click(); }
     else if(a==='sample') confirmDo('m-sample',()=>{ closeMenu(); replaceProject(normalize(sampleProject()),true); },renderMenu);
     else if(a==='blank') confirmDo('m-blank',()=>{ closeMenu(); replaceProject(normalize(blankProject()),true); },renderMenu);
