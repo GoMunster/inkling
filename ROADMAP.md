@@ -19,6 +19,7 @@ The full plan, KDP requirements and best practices are in [PUBLISHING-PLAN.md](P
 - [x] Spine width readout (and full cover size)
 - [ ] Cover wrap builder (front, spine and back in one PDF)
 - [ ] Hyphenation for print (Chromium only hyphenates on macOS), and lining up the last lines of a spread
+- [ ] Print: some pages still end with a stretched last line where a paragraph runs onto the next page (seen in 1.13.1 after the line-break fix); find the cause from an example page
 - [ ] Print extras: roman numerals in the front matter, chapter heading images, bleed, large-print preset
 - [ ] Live preview: ebook devices and print spreads
 - [x] Pre-flight check before export (cover size, empty chapters, TK/TODO, straight quotes), with a one-click typography tidy
