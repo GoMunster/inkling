@@ -99,7 +99,8 @@ function normBook(b) {
     style: BOOK_STYLES.some(x => x[0] === b.style) ? b.style : 'classic',
     dc: b.dc == null ? true : !!b.dc,
     sc: b.sc == null ? true : !!b.sc,
-    orn: BOOK_ORNS.includes(b.orn) ? b.orn : '* * *'
+    orn: BOOK_ORNS.includes(b.orn) ? b.orn : '* * *',
+    print: normPrint(b.print)
   };
 }
 // Number words for chapter and part headings.
@@ -265,7 +266,7 @@ function matterHtml(pg, href) {
 }
 // The CSS for front and back matter pages, shared by EPUB and PDF.
 const MATTER_CSS =
-  '.bk-page{text-align:center}.bk-title{font-size:2em;font-weight:normal;margin:30% 0 .4em;text-indent:0}.bk-sub{font-style:italic;font-size:1.15em;text-indent:0;margin:0}' +
+  '.bk-page{text-align:center}h1.bk-title{font-size:2em;font-weight:normal;margin:30% 0 .4em;text-indent:0}.bk-sub{font-style:italic;font-size:1.15em;text-indent:0;margin:0}' +
   '.bk-h{font-size:1.3em;font-weight:normal;margin:2em 0 1.2em;text-indent:0}.bk-sh{font-size:1em;font-variant:small-caps;letter-spacing:.05em;margin:1.4em 0 .4em;text-indent:0}' +
   '.bk-c,.bk-i,.bk-toc{text-indent:0;margin:.3em 0}.bk-i{font-style:italic}.bk-small{font-size:.8em;text-align:left;text-indent:0;margin:0 0 .2em}' +
   '.bk-p{text-align:left;text-indent:1.5em;margin:0}.bk-h+.bk-p{text-indent:0}.bk-gap{margin:0;text-indent:0}' +
@@ -439,6 +440,7 @@ function renderBook(el) {
     '</select></label></div><div class="bk-pv-box" aria-label="Preview">' +
     stylePreviewHtml() +
     '</div></section>' +
+    printSectionHtml() +
     '<section class="pf"><h2>Check the book</h2><p class="fine">Looks for things stores reject and readers notice: a missing cover, empty chapters, notes left in the text, straight quotes.</p>' +
     '<div id="bkCheck"><button class="btn" data-bka="check">' +
     ico('check', 14) +
@@ -603,7 +605,16 @@ function renderBook(el) {
   };
   el.onchange = e => {
     const t = e.target;
-    if (t.dataset.bkcv != null) {
+    if (t.dataset.bkp) {
+      const k = t.dataset.bkp,
+        pr = b.print;
+      pr[k] = k === 'recto' ? t.checked : k === 'size' || k === 'lead' ? +t.value : t.value;
+      if (k === 'bind' && pr.bind === 'pb') pr.paper = 'cream'; // hardcovers are white; paperback novels are usually cream
+      b.print = normPrint(pr);
+      ui.prFacts = null; // the page count changes with the settings
+      dirty('meta');
+      renderBook(el);
+    } else if (t.dataset.bkcv != null) {
       if (t.files && t.files[0]) setPic('cover', t.files[0]);
     } else if (t.dataset.bkf) {
       const f = t.dataset.bkf;
@@ -646,6 +657,7 @@ function renderBook(el) {
     if (!a || !a.bka) return;
     if (a.bka === 'export') openExport();
     else if (a.bka === 'delcover') removePic('cover');
+    else if (a.bka === 'count') printCount(el);
     else if (a.bka === 'check' || a.bka === 'tidy') {
       if (a.bka === 'tidy') {
         const n = tidyBook();
@@ -942,16 +954,17 @@ function isbnOk(s) {
   if (/^\d{9}[\dX]$/.test(d)) return [...d].reduce((a, c, i) => a + (c === 'X' ? 10 : +c) * (10 - i), 0) % 11 === 0;
   return false;
 }
-// Things to look at before publishing an ebook: [{level:'warn'|'tip', text, fix?: 'tidy', scene?}]. Reads the cover's
-// size, so it returns a Promise.
-async function preflight() {
+// Things to look at before publishing: [{level:'warn'|'tip', text, fix?: 'tidy', scene?}]. For an ebook (the default)
+// this includes the cover (reading its size, so it returns a Promise) and the store description; print leaves them out.
+async function preflight(fmt) {
   const m = S.meta,
     b = m.book,
     out = [],
-    add = (level, text, o) => out.push(Object.assign({ level, text }, o || {}));
-  const cs = await coverSize();
-  if (!cs) add('warn', 'There is no cover. Stores need one: add it in Book details › Cover.');
-  else {
+    add = (level, text, o) => out.push(Object.assign({ level, text }, o || {})),
+    ebook = fmt !== 'print';
+  const cs = ebook ? await coverSize() : null;
+  if (ebook && !cs) add('warn', 'There is no cover. Stores need one: add it in Book details › Cover.');
+  else if (cs) {
     if (cs.w < 625 || cs.h < 1000)
       add(
         'warn',
@@ -975,7 +988,7 @@ async function preflight() {
       );
   }
   if (!(m.exp.byline || m.author || '').trim())
-    add('warn', 'Your name is missing. It goes on the title page and in the ebook’s details.');
+    add('warn', 'Your name is missing. It goes on the title page and in the book’s details.');
   [
     ['isbnE', 'ebook'],
     ['isbnP', 'paperback'],
@@ -984,7 +997,7 @@ async function preflight() {
     if (b[k].trim() && !isbnOk(b[k]))
       add('warn', 'The ' + l + ' ISBN (' + b[k].trim() + ') doesn’t look right: its last digit doesn’t match.');
   });
-  if (!b.desc.trim()) add('tip', 'There is no description yet. Stores show it on your book’s page.');
+  if (ebook && !b.desc.trim()) add('tip', 'There is no description yet. Stores show it on your book’s page.');
   let straight = 0,
     doubles = 0,
     todo = [],

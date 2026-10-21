@@ -538,30 +538,44 @@ handle('openFile', async () => {
   if (st.size > 300e6) throw new Error('That file is too large.');
   return fsp.readFile(r.filePaths[0], 'utf8');
 });
-// Manuscript PDF: print the page's generated HTML in a hidden window, with the running header Chromium supports.
+// Prints a book laid out by the page (print-ready PDF) at the CSS page size, edge to edge, with no header.
+const bookPdf = pw =>
+  pw.webContents.printToPDF({ preferCSSPageSize: true, printBackground: true, margins: { marginType: 'none' } });
+// PDF: print the page's generated HTML in a hidden window. A manuscript gets the running header Chromium supports;
+// a book (opts.book) is already laid out page by page.
 handle('pdf', async (html, opts) => {
   const o = opts || {},
     tmp = path.join(app.getPath('temp'), 'inkling-print-' + process.pid + '.html');
-  await fsp.writeFile(tmp, String(html));
+  html = String(html);
+  // a book uses the app's bundled fonts; its own font link can't be reached from the temp folder, so link them by
+  // full path (loading waits for them, so the PDF has the same lines as the layout the page made)
+  if (o.book)
+    html = html.replace(
+      /<link[^>]*data-inkfonts[^>]*>/,
+      '<link rel="stylesheet" href="' + pathToFileURL(path.join(__dirname, 'app', 'fonts', 'fonts.css')).href + '">'
+    );
+  await fsp.writeFile(tmp, html);
   const pw = new BrowserWindow({ show: false, webPreferences: { javascript: false, sandbox: true } });
   try {
     await pw.loadFile(tmp);
     const esc = s =>
       String(s || '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
-    const pdf = await pw.webContents.printToPDF({
-      pageSize: o.pageSize === 'A4' ? 'A4' : 'Letter',
-      printBackground: false,
-      preferCSSPageSize: false,
-      margins: { top: 1, bottom: 1, left: 1, right: 1 },
-      displayHeaderFooter: !!o.header,
-      headerTemplate:
-        '<div style="font-family:' +
-        esc(o.font || 'Times New Roman') +
-        ',serif;font-size:11px;width:100%;text-align:right;padding:0 0.9in;color:#000">' +
-        esc(o.header) +
-        ' / <span class="pageNumber"></span></div>',
-      footerTemplate: '<span></span>'
-    });
+    const pdf = o.book
+      ? await bookPdf(pw)
+      : await pw.webContents.printToPDF({
+          pageSize: o.pageSize === 'A4' ? 'A4' : 'Letter',
+          printBackground: false,
+          preferCSSPageSize: false,
+          margins: { top: 1, bottom: 1, left: 1, right: 1 },
+          displayHeaderFooter: !!o.header,
+          headerTemplate:
+            '<div style="font-family:' +
+            esc(o.font || 'Times New Roman') +
+            ',serif;font-size:11px;width:100%;text-align:right;padding:0 0.9in;color:#000">' +
+            esc(o.header) +
+            ' / <span class="pageNumber"></span></div>',
+          footerTemplate: '<span></span>'
+        });
     const r = await dialog.showSaveDialog(win, {
       defaultPath: path.join(app.getPath('documents'), safeName(o.name || 'manuscript.pdf')),
       filters: [{ name: 'PDF', extensions: ['pdf'] }]

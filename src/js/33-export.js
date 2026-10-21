@@ -63,6 +63,7 @@ const EXP_FMTS = {
   docx: ['Word', '.docx'],
   pdf: ['PDF', '.pdf'],
   epub: ['EPUB ebook', '.epub'],
+  print: ['Print book', '.pdf'],
   md: ['Markdown', '.md'],
   txt: ['Plain text', '.txt']
 };
@@ -80,9 +81,9 @@ function normExp(x) {
     brk: String(x.brk == null ? '#' : x.brk).slice(0, 12),
     // whether whole-book exports include the front and back matter, per format (on for EPUB unless switched off)
     matter: Object.fromEntries(
-      ['docx', 'pdf', 'epub', 'md'].map(f => [
+      ['docx', 'pdf', 'epub', 'print', 'md'].map(f => [
         f,
-        x.matter && typeof x.matter === 'object' && f in x.matter ? !!x.matter[f] : f === 'epub'
+        x.matter && typeof x.matter === 'object' && f in x.matter ? !!x.matter[f] : f === 'epub' || f === 'print'
       ])
     ),
     uid: /^[\w-]{8,64}$/.test(x.uid || '') ? x.uid : ''
@@ -746,6 +747,7 @@ async function doExport(fmt, scope) {
     name = base + EXP_FMTS[fmt][1];
   if (fmt === 'docx') return saveFile(name, expDocx(scope));
   if (fmt === 'epub') return saveFile(name, await expEpub(scope));
+  if (fmt === 'print') return exportPrint(scope, base + '-print.pdf');
   if (fmt === 'md') return saveFile(name, manuscriptMd(scope));
   if (fmt === 'txt') return saveFile(name, manuscriptTxt(scope));
   const r = expPdfHtml(scope);
@@ -805,6 +807,13 @@ function openExport() {
           ? 'Standard manuscript format as a PDF.'
           : 'Standard manuscript format. Your browser’s print window opens: choose “Save as PDF”.',
         epub: 'A store-ready ebook for Kindle, Apple Books, Kobo and Google Play, with your cover and book style.',
+        print:
+          'A print-ready PDF for a KDP paperback or hardcover: ' +
+          printTrim(m.book.print)[1] +
+          ', ' +
+          printFont(m.book.print)[1] +
+          ', in your book style.' +
+          (DESK ? '' : ' Your browser’s print window opens: choose “Save as PDF”.'),
         md: 'Plain text with headings, for other writing apps.',
         txt: 'Just the words.'
       }[o.fmt] +
@@ -816,7 +825,7 @@ function openExport() {
         )
         .join('') +
       '</select></label>' +
-      (o.fmt === 'epub'
+      (o.fmt === 'epub' || o.fmt === 'print'
         ? '<label class="f">Book style<select data-bkstyle="1">' +
           BOOK_STYLES.map(
             x => '<option value="' + x[0] + '"' + (m.book.style === x[0] ? ' selected' : '') + '>' + x[1] + '</option>'
@@ -846,7 +855,7 @@ function openExport() {
           (o.page === 'a4' ? ' class="on"' : '') +
           '>A4</button></div></div></div>'
         : '') +
-      (o.fmt === 'md' || o.fmt === 'txt'
+      (o.fmt === 'md' || o.fmt === 'txt' || o.fmt === 'print'
         ? ''
         : '<label class="ck"><input type="checkbox" data-e="title"' +
           (o.title ? ' checked' : '') +
@@ -867,9 +876,13 @@ function openExport() {
           '</label>'
         : '') +
       '<p class="fine">Chapter headings, front and back matter' +
-      (o.fmt === 'epub' ? ', the cover and the book style' : '') +
+      (o.fmt === 'epub'
+        ? ', the cover and the book style'
+        : o.fmt === 'print'
+          ? ', the book style, trim size and font'
+          : '') +
       ' come from <button class="lnk" data-x="book">Book details</button>.</p>' +
-      (o.fmt === 'epub' && scope === 'all' ? '<div class="ex-check" id="exCheck"></div>' : '') +
+      ((o.fmt === 'epub' || o.fmt === 'print') && scope === 'all' ? '<div class="ex-check" id="exCheck"></div>' : '') +
       '<p class="fine">Bold, italics and underlining from your scenes come through in Word, PDF and EPUB. Each line you type is a paragraph.</p>' +
       '<div class="ask-btns" style="margin-top:14px"><button class="btn" data-x="close">Cancel</button><button class="btn pri" data-x="go">' +
       ico('down', 14) +
@@ -879,7 +892,7 @@ function openExport() {
     // the check before publishing, for a whole-book ebook (warnings only; tips are in Book details)
     const ck = $('#exCheck', ov);
     if (ck)
-      preflight().then(list => {
+      preflight(o.fmt).then(list => {
         const w = list.filter(x => x.level === 'warn');
         if (ck.isConnected && w.length)
           ck.innerHTML = '<span class="sec-l">Before you publish</span>' + preflightHtml(w);

@@ -9,8 +9,12 @@
   "main": "main.js",
   "devDependencies": {
     "@fontsource-variable/literata": "^5.3.0",
+    "@fontsource/crimson-pro": "^5.3.0",
+    "@fontsource/eb-garamond": "^5.3.0",
     "@fontsource/ibm-plex-mono": "^5.3.0",
     "@fontsource/instrument-sans": "^5.3.0",
+    "@fontsource/libre-baskerville": "^5.3.0",
+    "@fontsource/literata": "^5.3.0",
     "electron": "^44.9.0",
     "electron-builder": "^26.15.3"
   },

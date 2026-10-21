@@ -15,8 +15,11 @@ The full plan, KDP requirements and best practices are in [PUBLISHING-PLAN.md](P
 - [ ] Copy and tweak a book style (own fonts, sizes and heading images)
 - [x] Store-ready ebook (EPUB for Kindle, Apple Books, Kobo, Google Play, Nook): cover, landmarks, NCX, checked by EPUBCheck
 - [ ] Ebook extras: embedded fonts, store-specific links (a different link list per store)
-- [ ] Print-ready paperback and hardcover PDFs: KDP trim sizes, gutter by page count, chapters on right-hand pages, running heads, page numbers, even page count
-- [ ] Spine width readout, and later a cover wrap builder
+- [x] Print-ready paperback and hardcover PDFs: KDP trim sizes, gutter by page count, chapters on right-hand pages, running heads, page numbers, even page count
+- [x] Spine width readout (and full cover size)
+- [ ] Cover wrap builder (front, spine and back in one PDF)
+- [ ] Hyphenation for print (Chromium only hyphenates on macOS), and lining up the last lines of a spread
+- [ ] Print extras: roman numerals in the front matter, chapter heading images, bleed, large-print preset
 - [ ] Live preview: ebook devices and print spreads
 - [x] Pre-flight check before export (cover size, empty chapters, TK/TODO, straight quotes), with a one-click typography tidy
 - [ ] Special paragraphs: block quote, letter, verse, text message

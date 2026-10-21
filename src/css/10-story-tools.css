@@ -1134,3 +1134,19 @@
 .ex-check .bk-pf {
   margin-top: 4px;
 }
+.bk-print {
+  margin-top: 12px;
+}
+.bk-facts {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 4px 14px;
+  margin: 0 0 10px;
+  font-size: 13.5px;
+}
+.bk-facts dt {
+  color: var(--muted);
+}
+.bk-facts dd {
+  margin: 0;
+}

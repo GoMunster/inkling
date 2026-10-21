@@ -884,9 +884,10 @@ test('Trash: deleted things can be undone, restored with their snapshots and lin
   const errors = await openApp(page);
   const sid = await page.locator('.sc-btn >> nth=1').getAttribute('data-id');
   const title = (await page.locator('.sc-btn').nth(1).locator('.t').textContent()).trim();
+  // delete buttons ask "Delete?" first (for about 3 seconds): wait for that, then confirm
   const del = async sel => {
     await page.click(sel, { force: true });
-    await page.click(sel, { force: true });
+    await page.click(sel + '.on', { force: true });
   };
   await del('[data-a="delsc"][data-id="' + sid + '"]');
   await expect(page.locator('.sc-btn[data-id="' + sid + '"]')).toHaveCount(0);
@@ -1728,5 +1729,85 @@ test('store-ready ebook: cover, book style, the check before publishing and tidy
     const r = require('child_process').spawnSync('java', ['-jar', process.env.EPUBCHECK_JAR, f], { encoding: 'utf8' });
     expect(r.stdout + r.stderr).toContain('0 fatals / 0 errors');
   }
+  expect(errors).toEqual([]);
+});
+
+test('print book: KDP page layout with right-hand chapter starts, running heads, page numbers and contents', async ({
+  page
+}) => {
+  const errors = await openApp(page, { project: STORY_PROJECT });
+  await page.click('#menuBtn');
+  await page.click('[data-m="book"]');
+  await page.fill('[data-bk="author"]', 'Jane Writer');
+  await page.fill('[data-bk="ded"]', 'For the tide-watchers.');
+  await page.selectOption('[data-bk="chNum"]', 'word');
+  await page.selectOption('[data-bkp="trim"]', '6x9');
+  await page.selectOption('[data-bkp="font"]', 'crimson');
+  await page.click('[data-bka="count"]');
+  await expect(page.locator('.bk-facts')).toContainText('Spine width');
+  const facts = await page.locator('.bk-facts').textContent();
+  const pages = +facts.match(/Pages(\d+)/)[1];
+  expect(pages % 2).toBe(0);
+  // hardcovers: fewer trims, white paper only, and the spine comes from KDP's calculator
+  await page.selectOption('[data-bkp="bind"]', 'hc');
+  await expect(page.locator('[data-bkp="trim"] option')).toHaveCount(4);
+  await expect(page.locator('[data-bkp="paper"]')).toHaveCount(0);
+  await page.selectOption('[data-bkp="bind"]', 'pb');
+  await page.selectOption('[data-bkp="trim"]', '6x9');
+  const p = await waitSaved(page, p => p.meta.book?.print?.trim === '6x9' && p.meta.book.print.font === 'crimson');
+  expect(p.meta.book.print).toMatchObject({ bind: 'pb', paper: 'cream', recto: true, heads: 'at' });
+
+  // export: the browser path lays the pages out in a frame and opens its print window
+  await page.click('#menuBtn');
+  await page.click('[data-m="export"]');
+  await page.click('[data-fmt="print"]');
+  await expect(page.locator('.pj-dlg .fine').first()).toContainText('6 × 9 in');
+  await page.click('[data-x="go"]');
+  const frame = await (await page.waitForSelector('iframe.ink-print', { state: 'attached' })).contentFrame();
+  await frame.waitForSelector('.pg.end');
+  const r = await frame.evaluate(() => {
+    const pgs = [...document.querySelectorAll('.pg')],
+      front = document.querySelectorAll('#front .pg').length,
+      main = [...document.querySelectorAll('#main .pg')];
+    const over = [...document.querySelectorAll('.pb')].filter(pb => {
+      const l = pb.lastElementChild;
+      return l && l.offsetTop + l.offsetHeight > pb.clientHeight + 1;
+    }).length;
+    return {
+      total: pgs.length,
+      front,
+      width: getComputedStyle(pgs[0]).width,
+      over,
+      // per story page: right-hand?, opens a chapter?, running head, page number
+      body: main.map(x => ({
+        r: x.classList.contains('r'),
+        open: !!x.querySelector('.pb > h1:first-child'),
+        head: (x.querySelector('.ph') || {}).textContent || '',
+        num: (x.querySelector('.pf') || {}).textContent || '',
+        blank: !x.querySelector('.pb')
+      })),
+      toc: [...document.querySelectorAll('.bk-toc')].map(t => t.textContent),
+      title: (document.querySelector('h1.bk-title') || {}).textContent
+    };
+  });
+  expect(r.total).toBe(pages);
+  expect(r.front % 2).toBe(0); // the story starts on a right-hand page
+  expect(r.width).toBe('576px'); // 6 in
+  expect(r.over).toBe(0);
+  expect(r.title).toBe('Story Test');
+  const opens = r.body.map((x, i) => (x.open ? i : -1)).filter(i => i >= 0);
+  expect(opens.length).toBe(6);
+  opens.forEach(i => {
+    expect(r.body[i].r).toBe(true); // chapters open on right-hand pages
+    expect(r.body[i].head).toBe(''); // with no running head
+  });
+  expect(r.body[0].num).toBe('1');
+  r.body.forEach((x, i) => {
+    if (x.blank) expect(x.num + x.head).toBe('');
+    else if (!x.open) expect(x.head).toBe(x.r ? 'Story Test' : 'Jane Writer');
+    if (!x.blank) expect(x.num).toBe(String(i + 1));
+  });
+  // the contents page gives each chapter's first page
+  expect(r.toc[1]).toMatch(new RegExp('^Chapter Two.*' + (opens[1] + 1) + '$'));
   expect(errors).toEqual([]);
 });

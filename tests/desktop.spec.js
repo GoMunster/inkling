@@ -462,3 +462,34 @@ test('store-ready ebook: the cover is saved as a file and goes into the EPUB', a
   expect(errors).toEqual([]);
   await app.close();
 });
+
+test('print book: a print-ready PDF at the trim size, with an even page count', async () => {
+  const home = newHome();
+  const { app, win, errors } = await launch(home);
+  const out = path.join(home, 'book-print.pdf');
+  await app.evaluate(({ dialog }, f) => {
+    dialog.showSaveDialog = async () => ({ canceled: false, filePath: f });
+  }, out);
+  await win.click('#menuBtn');
+  await win.click('[data-m="book"]');
+  await win.fill('[data-bk="author"]', 'Jane Writer');
+  await win.selectOption('[data-bkp="trim"]', '6x9');
+  await win.click('[data-bka="count"]');
+  await expect(win.locator('.bk-facts')).toContainText('Spine width');
+  const pages = +(await win.locator('.bk-facts').textContent()).match(/Pages(\d+)/)[1];
+  await win.click('#menuBtn');
+  await win.click('[data-m="export"]');
+  await win.click('[data-fmt="print"]');
+  await win.click('[data-x="go"]');
+  expect(await until(() => fs.existsSync(out) && fs.statSync(out).size > 1000, 20000)).toBe(true);
+  const pdf = fs.readFileSync(out).toString('latin1');
+  const boxes = [...pdf.matchAll(/\/MediaBox\s*\[\s*0 0 ([\d.]+) ([\d.]+)\s*\]/g)].map(m => [+m[1], +m[2]]);
+  expect(boxes.length).toBe(pages);
+  boxes.forEach(([w, h]) => {
+    expect(Math.round(w)).toBe(432); // 6 in at 72 points per inch
+    expect(Math.round(h)).toBe(648); // 9 in
+  });
+  expect(pdf).toContain('EBGaramond'); // the bundled book font is embedded
+  expect(errors).toEqual([]);
+  await app.close();
+});

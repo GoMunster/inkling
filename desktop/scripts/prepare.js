@@ -9,11 +9,18 @@ const mods = path.join(root, 'node_modules');
 fs.rmSync(out, { recursive: true, force: true });
 fs.mkdirSync(path.join(out, 'fonts'), { recursive: true });
 
+const BOOK_FILES = ['400.css', '400-italic.css', '700.css', '700-italic.css'];
 // [package, css files to take, family name the page uses]
 const FONTS = [
   ['@fontsource/instrument-sans', ['400.css', '500.css', '600.css', '700.css'], 'Instrument Sans'],
   ['@fontsource-variable/literata', ['opsz.css', 'opsz-italic.css'], 'Literata'],
-  ['@fontsource/ibm-plex-mono', ['400.css', '500.css'], 'IBM Plex Mono']
+  ['@fontsource/ibm-plex-mono', ['400.css', '500.css'], 'IBM Plex Mono'],
+  // book fonts for print-ready PDFs (Book details › Print book): fixed weights, not variable fonts, because
+  // Chromium writes variable fonts into a PDF as Type 3 fonts, which some printers reject
+  ['@fontsource/eb-garamond', BOOK_FILES, 'EB Garamond'],
+  ['@fontsource/crimson-pro', BOOK_FILES, 'Crimson Pro'],
+  ['@fontsource/libre-baskerville', BOOK_FILES, 'Libre Baskerville'],
+  ['@fontsource/literata', BOOK_FILES, 'Literata Book']
 ];
 let css =
   '/* Bundled from Fontsource. Fonts are under the SIL Open Font License, see the LICENSE files in this folder. */\n';
@@ -43,7 +50,8 @@ html = html
     /<link rel="stylesheet" href="https:\/\/fonts\.googleapis\.com[^"]*">/,
     '<link rel="stylesheet" href="fonts/fonts.css">'
   );
-if (html === before || /fonts\.googleapis/.test(html))
+// (the page's code may name Google Fonts for the browser's print window; the desktop never uses that)
+if (html === before || /<link[^>]+fonts\.googleapis/.test(html))
   throw new Error('Could not swap the Google Fonts link in index.html');
 // The desktop app loads nothing from the internet: only its own files, its pictures, and data: URLs.
 const CSP =
