@@ -47,10 +47,11 @@ build.js              joins them into index.html (node build.js; no dependencies
 | `33-export` | The ⋯ menu, backups, Word/PDF/EPUB/Markdown export |
 | `34-import` | Word (.docx) import: reads the file, finds chapters, parts and scenes, and makes a project or adds to this one |
 | `35-book` | Book details, front and back matter, chapter kinds and headings, the cover, ebook styles and the check before publishing (Publishing) |
-| `36-print` | Print-ready paperback and hardcover PDFs: trim sizes, our own page layout, running heads, page numbers, spine width |
-| `37-preview` | Book preview: the ebook on a phone, tablet or Kindle screen, and the print book as spreads; live beside the writing |
-| `38-sharing`, `39-desktop` | Shared projects (merging, presence) and the desktop app's projects |
-| `40-boot` | Start-up: `init()` and `renderAll()` |
+| `36-hyphenate` | English hyphenation for print books (Liang’s patterns from TeX), with book rules: no names, no short words, no more than two hyphens in a row |
+| `37-print` | Print-ready paperback and hardcover PDFs: trim sizes, our own page layout, running heads, page numbers, spine width |
+| `38-preview` | Book preview: the ebook on a phone, tablet or Kindle screen, and the print book as spreads; live beside the writing |
+| `39-sharing`, `40-desktop` | Shared projects (merging, presence) and the desktop app's projects |
+| `41-boot` | Start-up: `init()` and `renderAll()` |
 
 ## Data
 

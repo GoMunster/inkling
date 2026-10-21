@@ -1863,7 +1863,7 @@ test('print book: a paragraph split across pages breaks exactly where the line d
   expect(r.cuts).toBeGreaterThan(5);
   r.fills.forEach(f => expect(f).toBeGreaterThan(0.8));
   // every word comes through once, in order
-  const squash = s => s.replace(/[\s-]/g, '');
+  const squash = s => s.replace(/[\s\u00AD-]/g, ''); // (soft hyphens from hyphenation are invisible)
   expect(squash(r.story)).toBe(squash(text));
   expect(errors).toEqual([]);
 });
@@ -2071,5 +2071,87 @@ test('import from Word: a book exported from Inkling comes back with the same ch
     expect(c.scenes.length).toBe(a[i].scenes.length);
     expect(words(c)).toBe(words(a[i]));
   });
+  expect(errors).toEqual([]);
+});
+
+test('print book: English hyphenation with book rules, and none across a page turn', async ({ page }) => {
+  // long words in a narrow measure, so many lines end in a hyphen
+  const words =
+    'hyphenation responsibility characteristically remembered the lighthouse keeper Constantinople incomprehensibility table extraordinary'.split(
+      ' '
+    );
+  const para = n => Array.from({ length: n }, (_, i) => words[(i * 5) % words.length]).join(' ') + '.';
+  const text = Array.from({ length: 30 }, (_, i) => para(50 + (i % 4) * 20)).join('\n');
+  const project = {
+    meta: {
+      v: 2,
+      title: 'Hyphens',
+      author: 'Jane Writer',
+      chapters: [{ id: 'c1', title: 'One', open: true, scenes: ['s1'] }],
+      scenes: { s1: { title: 'S', status: 'draft', words: 0 } },
+      ents: {},
+      days: {},
+      pet: { name: 'Inky', total: 0 },
+      book: { print: { trim: '5x8', size: 13 } }
+    },
+    sc: { s1: { text, synopsis: '', notes: '' } },
+    en: {}
+  };
+  const errors = await openApp(page, { project });
+  const layout = async () => {
+    await page.evaluate(() => document.querySelectorAll('iframe.ink-print').forEach(f => f.remove()));
+    await page.click('#menuBtn');
+    await page.click('[data-m="export"]');
+    await page.click('[data-fmt="print"]');
+    await page.click('[data-x="go"]');
+    const frame = await (await page.waitForSelector('iframe.ink-print', { state: 'attached' })).contentFrame();
+    await frame.waitForSelector('.pg.end');
+    return frame.evaluate(() => {
+      const ps = [...document.querySelectorAll('#main .pb p:not(.brk)')],
+        text = ps.map(p => p.textContent).join(' ');
+      // the longest run of lines ending in a hyphen, in any paragraph
+      let worst = 0;
+      ps.forEach(p => {
+        const r = document.createRange(),
+          ends = new Set(),
+          top = p.getBoundingClientRect().top,
+          lh = parseFloat(getComputedStyle(p).lineHeight);
+        const tw = document.createTreeWalker(p, NodeFilter.SHOW_TEXT);
+        let n;
+        while ((n = tw.nextNode()))
+          for (let i = n.data.indexOf('­'); i > 0 && i < n.data.length - 1; i = n.data.indexOf('­', i + 1)) {
+            // where the line breaks, the soft hyphen is drawn as a hyphen: one of its boxes has a width
+            r.setStart(n, i);
+            r.setEnd(n, i + 1);
+            const a = [...r.getClientRects()].find(x => x.width > 0.5);
+            if (a) ends.add(Math.floor((a.top - top + lh * 0.3) / lh));
+          }
+        let run = 0;
+        for (let l = 0; l < 400; l++) {
+          run = ends.has(l) ? run + 1 : 0;
+          worst = Math.max(worst, run);
+        }
+      });
+      return {
+        text,
+        hyphenated: worst,
+        pageTurn: [...document.querySelectorAll('#main p.cut')].filter(p => /­$/.test(p.textContent)).length
+      };
+    });
+  };
+  const r = await layout();
+  expect(r.text).toContain('hy­phen­ation');
+  expect(r.text).toContain('char­ac­ter­is­ti­cally');
+  expect(r.text).toContain(' Constantinople '); // names stay whole
+  expect(r.text).toContain(' table '); // so do short words
+  expect(r.hyphenated).toBeGreaterThan(0);
+  expect(r.hyphenated).toBeLessThanOrEqual(2); // never more than two hyphens in a row
+  expect(r.pageTurn).toBe(0); // and never a word split across a page turn
+  expect(r.text.replace(/[\s­]/g, '')).toBe(text.replace(/\s/g, '')); // every letter is still there
+  // switched off in Book details › Print book
+  await page.click('#menuBtn');
+  await page.click('[data-m="book"]');
+  await page.uncheck('[data-bkp="hyph"]');
+  expect((await layout()).text).not.toContain('­');
   expect(errors).toEqual([]);
 });

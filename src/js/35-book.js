@@ -610,7 +610,7 @@ function renderBook(el) {
     if (t.dataset.bkp) {
       const k = t.dataset.bkp,
         pr = b.print;
-      pr[k] = k === 'recto' ? t.checked : k === 'size' || k === 'lead' ? +t.value : t.value;
+      pr[k] = k === 'recto' || k === 'hyph' ? t.checked : k === 'size' || k === 'lead' ? +t.value : t.value;
       if (k === 'bind' && pr.bind === 'pb') pr.paper = 'cream'; // hardcovers are white; paperback novels are usually cream
       b.print = normPrint(pr);
       ui.prFacts = null; // the page count changes with the settings

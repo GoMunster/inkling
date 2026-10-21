@@ -18,8 +18,9 @@ The full plan, KDP requirements and best practices are in [PUBLISHING-PLAN.md](P
 - [x] Print-ready paperback and hardcover PDFs: KDP trim sizes, gutter by page count, chapters on right-hand pages, running heads, page numbers, even page count
 - [x] Spine width readout (and full cover size)
 - [ ] Cover wrap builder (front, spine and back in one PDF)
-- [ ] Hyphenation for print (Chromium only hyphenates on macOS), and lining up the last lines of a spread
-- [ ] Print: some pages still end with a stretched last line where a paragraph runs onto the next page (seen in 1.13.1 after the line-break fix); find the cause from an example page
+- [x] Hyphenation for print (English, TeX patterns; at most two hyphens in a row, none across a page turn)
+- [ ] Hyphenation for other languages, and lining up the last lines of a spread
+- [ ] Print: some pages still ended with a stretched last line where a paragraph runs onto the next page (seen in 1.13.1). Likely fixed in 1.16 (pages were sometimes measured before the book font had loaded, and hyphenation now fills lines); confirm on a real book
 - [ ] Print extras: roman numerals in the front matter, chapter heading images, bleed, large-print preset
 - [x] Live preview: ebook devices and print spreads, and beside the writing as you type
 - [x] Pre-flight check before export (cover size, empty chapters, TK/TODO, straight quotes), with a one-click typography tidy

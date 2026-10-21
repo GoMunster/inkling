@@ -1,11 +1,11 @@
 /*
- * 37-preview.js: Book preview, the ebook on a reading device and the print book as spreads
+ * 38-preview.js: Book preview, the ebook on a reading device and the print book as spreads
  *
  * The Book preview view ({k:'preview'}, renderPreview) has two tabs. Ebook shows one part of the book (the cover, the
  * front matter, a chapter or the back matter, pvContent) in the chosen book style on a phone, tablet or Kindle screen
  * (PV_DEVICES), page by page as a reader would turn them: the text is set in columns one screen wide inside a frame
  * (pvEbook), with the reader's text size and a white, sepia or night page (PV_THEMES). Print lays the whole book out
- * with printLayout() (36-print.js) and shows its pages as two-page spreads, the first page on the right, with a jump to
+ * with printLayout() (37-print.js) and shows its pages as two-page spreads, the first page on the right, with a jump to
  * any chapter and a zoom.
  *
  * The preview can also sit beside the writing (side by side, {k:'preview'} in ui.split, pvSideHtml/pvSide): it shows

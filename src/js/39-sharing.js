@@ -1,5 +1,5 @@
 /*
- * 38-sharing.js: Shared projects: merging two writers' work, presence, and setting up sharing
+ * 39-sharing.js: Shared projects: merging two writers' work, presence, and setting up sharing
  *
  * Two computers can save one project through a sync folder (Dropbox, Google Drive, OneDrive, iCloud). Saves are
  * compare-and-swap: if the file changed since this computer last read it, the two versions are merged record by

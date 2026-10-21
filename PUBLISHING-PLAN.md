@@ -161,7 +161,7 @@ Today Inkling's export makes a submission manuscript (Word/PDF in standard manus
    - ISBN and store variants
    - a pre-flight check
    - test the result with EPUBCheck in CI if possible
-3. **Print PDF** (done: own paginator, KDP trims, paperback/hardcover, gutter by page count, recto starts, running heads and folios, spine width, bundled static book fonts; to do: hyphenation, cover wrap):
+3. **Print PDF** (done: own paginator, KDP trims, paperback/hardcover, gutter by page count, recto starts, running heads and folios, spine width, bundled static book fonts; hyphenation for English books; to do: other languages, cover wrap):
    - our own paginator, with trim size and paperback/hardcover presets
    - KDP gutter by page count, recto starts, running heads and folios
    - spine width readout

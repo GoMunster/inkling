@@ -1,5 +1,5 @@
 /*
- * 40-boot.js: Start-up
+ * 41-boot.js: Start-up
  *
  * init() loads the project (from localStorage, the Claude artifact or the desktop), sets up every part of the screen
  * once, then draws it all (renderAll). This is the last file, so everything it uses is defined by now.

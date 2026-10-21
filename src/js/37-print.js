@@ -1,5 +1,5 @@
 /*
- * 36-print.js: Print-ready paperback and hardcover PDFs
+ * 37-print.js: Print-ready paperback and hardcover PDFs
  *
  * The print settings live in meta.book.print (normPrint): binding (paperback or hardcover), trim size (PRINT_TRIMS,
  * the sizes KDP prints), paper, book font (PRINT_FONTS, bundled in the desktop app and loaded from Google Fonts in a
@@ -64,7 +64,8 @@ function normPrint(p) {
     lead: [1.3, 1.4, 1.5, 1.6].includes(+p.lead) ? +p.lead : 1.4,
     recto: p.recto !== false,
     heads: ['at', 'tc', 'none'].includes(p.heads) ? p.heads : 'at',
-    nums: p.nums === 'top' ? 'top' : 'bottom'
+    nums: p.nums === 'top' ? 'top' : 'bottom',
+    hyph: p.hyph !== false // hyphenate long words (English books)
   };
 }
 const printFont = pr => PRINT_FONTS.find(f => f[0] === pr.font) || PRINT_FONTS[0];
@@ -82,8 +83,9 @@ function printMargins(pr, pages) {
 
 // Splits a laid-out paragraph after its k-th line, exactly where the browser broke the line (at a space, after a
 // dash or a hyphen, or at a hyphenation point, which then gets its hyphen). The paragraph keeps the first k lines;
-// returns the rest as a new paragraph, or null if there is nothing after line k. Ranges clone the formatting around
-// each half, so both stay well formed.
+// returns the rest as a new paragraph, null if there is nothing after line k, or 'again' when line k ended in a soft
+// hyphen, which it removes so the caller lays the paragraph out again (no hyphenated word across a page turn).
+// Ranges clone the formatting around each half, so both stay well formed.
 function splitAtLine(x, k, lh) {
   const D = x.ownerDocument,
     texts = [],
@@ -107,7 +109,9 @@ function splitAtLine(x, k, lh) {
     if (/\s/.test(node.data[off])) return -1;
     r.setStart(node, off);
     r.setEnd(node, off + 1);
-    const b = r.getClientRects()[0];
+    // the last box: a letter just after a hyphenated line break also reports an empty box at the end of the line before
+    const rs = r.getClientRects(),
+      b = rs[rs.length - 1];
     return b ? Math.floor((b.top - top + lh * 0.3) / lh) : -1;
   };
   // the first visible character on line k or later
@@ -129,8 +133,13 @@ function splitAtLine(x, k, lh) {
   }
   if (cut <= 0) return null;
   const [cn, co] = at(cut),
-    [pn, po] = at(cut - 1),
-    hyph = /\p{L}/u.test(pn.data[po]) && /\p{L}/u.test(cn.data[co]); // broken inside a word: a hyphenation point
+    [pn, po] = at(cut - 1);
+  // never a hyphenated word across a page turn: take that soft hyphen out and let the caller lay out again
+  if (pn.data[po] === '\u00AD') {
+    pn.deleteData(po, 1);
+    return 'again';
+  }
+  const hyph = /\p{L}/u.test(pn.data[po]) && /\p{L}/u.test(cn.data[co]); // broken inside a word: a hyphenation point
   // the break's own spaces go with neither half
   let end = cut;
   while (end > 0 && /\s/.test(at(end - 1)[0].data[at(end - 1)[1]])) end--;
@@ -244,11 +253,19 @@ async function printFonts(frame, pr) {
   const D = frame.contentDocument,
     fam = printFamily(pr),
     size = printSize(pr);
-  await new Promise(r => {
-    if (D.readyState === 'complete') return r();
-    frame.contentWindow.addEventListener('load', r, { once: true });
-    setTimeout(r, 8000);
-  });
+  // the font stylesheets themselves first: until they are in, the fonts they describe aren't known, a font check
+  // passes at once and the pages would be measured in a fallback font
+  await Promise.all(
+    [...D.querySelectorAll('link[rel="stylesheet"]')].map(l =>
+      l.sheet
+        ? null
+        : new Promise(r => {
+            l.addEventListener('load', r, { once: true });
+            l.addEventListener('error', r, { once: true });
+            setTimeout(r, 8000);
+          })
+    )
+  );
   await Promise.race([
     Promise.all(['', 'italic ', 'bold '].map(s => D.fonts.load(s + size + "pt '" + fam + "'").catch(() => null))).then(
       () => D.fonts.ready
@@ -275,7 +292,8 @@ async function printPass(I, pr, gutterPages, matter) {
   D.write(printDocHtml(pr, M, bodyPx, lh, I.title));
   D.close();
   await printFonts(frame, pr);
-  const verso = pr.heads === 'tc' ? I.title : I.byline || I.title;
+  const verso = pr.heads === 'tc' ? I.title : I.byline || I.title,
+    hy = pr.hyph && /^en\b/i.test(bookLang()); // hyphenation patterns are English
   let list, // the pages of the part being laid out (front matter or the story)
     cur, // the current page: {el, pb}
     sec, // the section being laid out: {head, num, rhead}
@@ -319,6 +337,7 @@ async function printPass(I, pr, gutterPages, matter) {
   const place = async (x, into, moved) => {
     if (++work % 40 === 0) await new Promise(r => setTimeout(r));
     cur.pb.appendChild(x);
+    if (hy && x.tagName === 'P' && x.offsetHeight > lh * 2.5) hyphLimit(x, lh); // at most two hyphens in a row
     if (fits(x)) return;
     const splittable = x.tagName === 'P' && !x.matches('.brk,.deco,.bk-gap,.bk-toc');
     if (splittable) {
@@ -327,6 +346,11 @@ async function printPass(I, pr, gutterPages, matter) {
         k = Math.min(room, total - 2); // at least two lines on each page
       if (k >= 2) {
         const rest = splitAtLine(x, k, lh);
+        if (rest === 'again') {
+          // the page would have turned inside a hyphenated word: that hyphen is gone, so lay the paragraph out again
+          x.remove();
+          return place(x, into, moved);
+        }
         if (rest) {
           x.classList.add('cut');
           rest.classList.remove('cut', 'first');
@@ -351,6 +375,7 @@ async function printPass(I, pr, gutterPages, matter) {
     const first = cur.n,
       tmp = D.createElement('div');
     tmp.innerHTML = html;
+    if (hy) hyphenateEl(tmp);
     for (const x of [...tmp.children]) await place(x, into);
     return first;
   };
@@ -530,7 +555,9 @@ function printSectionHtml() {
     ) +
     '<label class="ck bk-ck"><input type="checkbox" data-bkp="recto"' +
     (pr.recto ? ' checked' : '') +
-    '>Start chapters on a right-hand page</label></div>' +
+    '>Start chapters on a right-hand page</label><label class="ck bk-ck"><input type="checkbox" data-bkp="hyph"' +
+    (pr.hyph ? ' checked' : '') +
+    '>Hyphenate long words (English books)</label></div>' +
     '<div class="bk-print" id="bkPrint">' +
     (f
       ? printFactsHtml(f)
