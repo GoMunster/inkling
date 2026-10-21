@@ -1,0 +1,9 @@
+# The built app: it is made from src/ by build.js.
+index.html
+# The page shell has build markers inside its <style> and <script>; it is kept as written.
+src/index.html
+desktop/app/
+desktop/dist/
+node_modules/
+test-results/
+playwright-report/

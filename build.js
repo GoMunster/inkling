@@ -36,7 +36,9 @@ function build() {
     if (page.split(marker).length !== 2) throw new Error('src/index.html must contain ' + marker.trim() + ' once');
   }
   // A function as the replacement, so "$" in the code is never read as a replacement pattern.
-  return page.replace('/* @css */\n', () => joinFolder('css', '.css')).replace('/* @js */\n', () => joinFolder('js', '.js'));
+  return page
+    .replace('/* @css */\n', () => joinFolder('css', '.css'))
+    .replace('/* @js */\n', () => joinFolder('js', '.js'));
 }
 
 const out = path.join(root, 'index.html');

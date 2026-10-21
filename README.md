@@ -64,7 +64,8 @@ Inkling has no accounts, ads, analytics or tracking. The desktop app keeps every
 The finished app is one static file, `index.html`, with no dependencies. It is built from the source in `src/` (the page, its styles in `src/css/` and its code in `src/js/`, split by feature):
 
 ```sh
-node build.js                  # rebuild index.html after changing anything in src/
+npm run format                 # tidy the code with Prettier and rebuild index.html
+node build.js                  # or just rebuild index.html after changing anything in src/
 ```
 
 To try it:

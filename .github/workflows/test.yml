@@ -19,8 +19,8 @@ jobs:
             package-lock.json
             desktop/package-lock.json
       - run: npm ci
-      - name: Check that index.html is built from src/ (run "node build.js" and commit it)
-        run: node build.js --check
+      - name: Check that index.html is built from src/ and the code is formatted (run "npm run format" and commit)
+        run: npm run check
       - run: npx playwright install --with-deps chromium
       - name: Install the desktop app's dependencies (Electron)
         run: npm ci

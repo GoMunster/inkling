@@ -1,15 +1,17 @@
 {
   "name": "inkling-tests",
   "private": true,
-  "description": "Inkling: the app is built from src/ into index.html by build.js (no dependencies). Tests and formatting tools only.",
+  "description": "Inkling: the app is built from src/ into index.html by build.js (no runtime dependencies). These are the build, test and formatting tools.",
   "scripts": {
     "build": "node build.js",
-    "check": "node build.js --check",
+    "check": "node build.js --check && prettier --check src build.js desktop/main.js desktop/preload.js desktop/scripts tests playwright.config.js",
     "test": "node build.js && playwright test",
     "test:web": "node build.js && playwright test --project=web",
-    "test:desktop": "node build.js && playwright test --project=desktop"
+    "test:desktop": "node build.js && playwright test --project=desktop",
+    "format": "prettier --write src build.js desktop/main.js desktop/preload.js desktop/scripts tests playwright.config.js && node build.js"
   },
   "devDependencies": {
-    "@playwright/test": "1.56.1"
+    "@playwright/test": "1.56.1",
+    "prettier": "3.6.2"
   }
 }
