@@ -80,40 +80,80 @@ function printMargins(pr, pages) {
   return { inner: printGutter(pages) + 0.25, outer: w <= 5.5 ? 0.6 : 0.7, top: 0.7, bot: 0.75 };
 }
 
-// Splits a paragraph's HTML after its n-th space: [first part, rest], each with its formatting tags balanced.
-function splitHtml(html, n) {
-  const re = /(<[^>]+>)|([^<]+)/g,
-    open = [];
-  let m,
-    seen = 0;
-  while ((m = re.exec(html))) {
-    if (m[1]) {
-      if (/^<\//.test(m[1])) open.pop();
-      else if (!/\/>$/.test(m[1])) open.push(m[1]);
+// Splits a laid-out paragraph after its k-th line, exactly where the browser broke the line (at a space, after a
+// dash or a hyphen, or at a hyphenation point, which then gets its hyphen). The paragraph keeps the first k lines;
+// returns the rest as a new paragraph, or null if there is nothing after line k. Ranges clone the formatting around
+// each half, so both stay well formed.
+function splitAtLine(x, k, lh) {
+  const D = x.ownerDocument,
+    texts = [],
+    w = D.createTreeWalker(x, NodeFilter.SHOW_TEXT);
+  let n,
+    total = 0;
+  while ((n = w.nextNode())) {
+    texts.push([n, total]);
+    total += n.data.length;
+  }
+  const at = i => {
+      let a = 0;
+      while (a < texts.length - 1 && texts[a + 1][1] <= i) a++;
+      return [texts[a][0], i - texts[a][1]];
+    },
+    top = x.getBoundingClientRect().top,
+    r = D.createRange();
+  // which line a character is on, or -1 for a space (a space at a line end has no reliable position)
+  const lineOf = i => {
+    const [node, off] = at(i);
+    if (/\s/.test(node.data[off])) return -1;
+    r.setStart(node, off);
+    r.setEnd(node, off + 1);
+    const b = r.getClientRects()[0];
+    return b ? Math.floor((b.top - top + lh * 0.3) / lh) : -1;
+  };
+  // the first visible character on line k or later
+  let lo = 0,
+    hi = total - 1,
+    cut = -1;
+  while (lo <= hi) {
+    const mid = (lo + hi) >> 1;
+    let j = mid;
+    while (j <= hi && lineOf(j) < 0) j++;
+    if (j > hi) {
+      hi = mid - 1;
       continue;
     }
-    const sp = /[ \t\n]+/g;
-    let s;
-    while ((s = sp.exec(m[2]))) {
-      if (m.index + s.index === 0) continue; // a space at the very start is not a break
-      if (++seen < n) continue;
-      const at = m.index + s.index,
-        close = open
-          .slice()
-          .reverse()
-          .map(t => '</' + t.match(/^<(\w+)/)[1] + '>')
-          .join('');
-      return [html.slice(0, at) + close, open.join('') + html.slice(at + s[0].length)];
-    }
+    if (lineOf(j) >= k) {
+      cut = j;
+      hi = mid - 1;
+    } else lo = j + 1;
   }
-  return [html, ''];
+  if (cut <= 0) return null;
+  const [cn, co] = at(cut),
+    [pn, po] = at(cut - 1),
+    hyph = /\p{L}/u.test(pn.data[po]) && /\p{L}/u.test(cn.data[co]); // broken inside a word: a hyphenation point
+  // the break's own spaces go with neither half
+  let end = cut;
+  while (end > 0 && /\s/.test(at(end - 1)[0].data[at(end - 1)[1]])) end--;
+  const [en, eo] = at(end);
+  r.setStart(x, 0);
+  r.setEnd(en, eo);
+  const first = r.cloneContents();
+  r.setStart(cn, co);
+  r.setEnd(x, x.childNodes.length);
+  const rest = x.cloneNode(false);
+  rest.appendChild(r.cloneContents());
+  x.textContent = '';
+  x.appendChild(first);
+  if (hyph) {
+    const tw = D.createTreeWalker(x, NodeFilter.SHOW_TEXT);
+    let last = null;
+    while ((n = tw.nextNode())) last = n;
+    if (last) last.data += '-';
+  }
+  // the drop cap stays with the first half only
+  rest.querySelectorAll('.dc').forEach(d => d.replaceWith(...d.childNodes));
+  return rest;
 }
-// How many places a paragraph's HTML could be split (its spaces between words).
-const splitCount = html =>
-  html
-    .replace(/<[^>]+>/g, '')
-    .trim()
-    .split(/[ \t\n]+/).length - 1;
 
 // The frame's page HTML: the trim size, the book font and the styles for pages, heads, numbers and the text.
 function printDocHtml(pr, M, bodyPx, lh, title) {
@@ -280,37 +320,20 @@ async function printPass(I, pr, gutterPages, matter) {
     if (++work % 40 === 0) await new Promise(r => setTimeout(r));
     cur.pb.appendChild(x);
     if (fits(x)) return;
-    const splittable = x.tagName === 'P' && !x.matches('.brk,.deco,.bk-gap,.bk-toc') && splitCount(x.innerHTML) > 0;
+    const splittable = x.tagName === 'P' && !x.matches('.brk,.deco,.bk-gap,.bk-toc');
     if (splittable) {
       const room = Math.floor((bodyPx - x.offsetTop + 1) / lh),
         total = Math.round(x.offsetHeight / lh),
         k = Math.min(room, total - 2); // at least two lines on each page
       if (k >= 2) {
-        const html = x.innerHTML;
-        x.classList.add('cut');
-        let lo = 1,
-          hi = splitCount(html),
-          best = 0;
-        while (lo <= hi) {
-          const mid = (lo + hi) >> 1;
-          x.innerHTML = splitHtml(html, mid)[0];
-          if (Math.round(x.offsetHeight / lh) <= k && fits(x)) {
-            best = mid;
-            lo = mid + 1;
-          } else hi = mid - 1;
-        }
-        if (best) {
-          const [a, b] = splitHtml(html, best),
-            rest = x.cloneNode(false);
-          x.innerHTML = a;
+        const rest = splitAtLine(x, k, lh);
+        if (rest) {
+          x.classList.add('cut');
           rest.classList.remove('cut', 'first');
           rest.classList.add('cont');
-          rest.innerHTML = b;
           cur = page(into);
           return place(rest, into);
         }
-        x.innerHTML = html;
-        x.classList.remove('cut');
       }
     }
     // taller than a page on its own (or with the heading it was moved with): leave it here, cut off

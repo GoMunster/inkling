@@ -1811,3 +1811,59 @@ test('print book: KDP page layout with right-hand chapter starts, running heads,
   expect(r.toc[1]).toMatch(new RegExp('^Chapter Two.*' + (opens[1] + 1) + '$'));
   expect(errors).toEqual([]);
 });
+
+test('print book: a paragraph split across pages breaks exactly where the line did, so no line is stretched', async ({
+  page
+}) => {
+  // fiction is full of dashes ("ground—and"): the browser breaks lines after them, not only at spaces
+  const words = 'the hilt struck the ruined ground—and then silence—only the long-forgotten echo of steel'.split(' ');
+  const para = n =>
+    Array.from({ length: n }, (_, i) => words[(i * 7) % words.length] + (i % 9 === 8 ? '—half-remembered' : '')).join(
+      ' '
+    );
+  const text = Array.from({ length: 40 }, (_, i) => para(60 + (i % 5) * 25)).join('\n');
+  const project = {
+    meta: {
+      v: 2,
+      title: 'Dashes',
+      author: 'Jane Writer',
+      chapters: [{ id: 'c1', title: 'One', open: true, scenes: ['s1'] }],
+      scenes: { s1: { title: 'S', status: 'draft', words: 0 } },
+      ents: {},
+      days: {},
+      pet: { name: 'Inky', total: 0 }
+    },
+    sc: { s1: { text, synopsis: '', notes: '' } },
+    en: {}
+  };
+  const errors = await openApp(page, { project });
+  await page.click('#menuBtn');
+  await page.click('[data-m="export"]');
+  await page.click('[data-fmt="print"]');
+  await page.click('[data-x="go"]');
+  const frame = await (await page.waitForSelector('iframe.ink-print', { state: 'attached' })).contentFrame();
+  await frame.waitForSelector('.pg.end');
+  const r = await frame.evaluate(() => {
+    const cuts = [...document.querySelectorAll('#main p.cut')];
+    // how full each split paragraph's last line is when not stretched
+    const fills = cuts.map(p => {
+      p.classList.remove('cut');
+      const rg = document.createRange();
+      rg.selectNodeContents(p);
+      const rects = [...rg.getClientRects()].filter(b => b.width),
+        low = Math.max(...rects.map(b => b.top)),
+        right = Math.max(...rects.filter(b => b.top > low - 3).map(b => b.right)),
+        box = p.getBoundingClientRect();
+      p.classList.add('cut');
+      return (right - box.left) / box.width;
+    });
+    const story = [...document.querySelectorAll('#main .pb p')].map(p => p.textContent).join(' ');
+    return { cuts: cuts.length, fills, story };
+  });
+  expect(r.cuts).toBeGreaterThan(5);
+  r.fills.forEach(f => expect(f).toBeGreaterThan(0.8));
+  // every word comes through once, in order
+  const squash = s => s.replace(/[\s-]/g, '');
+  expect(squash(r.story)).toBe(squash(text));
+  expect(errors).toEqual([]);
+});
