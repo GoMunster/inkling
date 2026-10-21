@@ -981,6 +981,7 @@ function renderMenu() {
       item('export', 'Export… (Word, PDF, EPUB)') +
       item('json', 'Back up this project (.json)') +
       item('import', 'Import a backup as a new project…') +
+      item('docx', 'Import from Word (.docx)…') +
       '<hr>' +
       item('find', 'Find and replace…') +
       item('cont', 'Continuity check') +
@@ -1010,6 +1011,7 @@ function renderMenu() {
     item('export', 'Export… (Word, PDF, EPUB)') +
     item('json', 'Back up project (.json)') +
     item('restore', 'Restore from a backup…') +
+    item('docx', 'Import from Word (.docx)…') +
     '<hr>' +
     item('find', 'Find and replace…') +
     item('cont', 'Continuity check') +
@@ -1092,6 +1094,9 @@ function bindMenu() {
     } else if (a === 'import') {
       closeMenu();
       deskImportPick();
+    } else if (a === 'docx') {
+      closeMenu();
+      docxPick();
     } else if (a === 'reveal') {
       closeMenu();
       DESK.reveal();

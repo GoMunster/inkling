@@ -45,11 +45,12 @@ build.js              joins them into index.html (node build.js; no dependencies
 | `20-scene-editor` … `26-timeline` | The main pane's views: scene editor, story pages, corkboard, notes and world maps, outlines, relationship maps and family trees, timelines |
 | `27-snapshots-find` … `32-inspector` | Snapshots, find and replace, tour, to-do list, sidebar widths, deadline planner, layout and settings, focus timer, the Inkling panel |
 | `33-export` | The ⋯ menu, backups, Word/PDF/EPUB/Markdown export |
-| `34-book` | Book details, front and back matter, chapter kinds and headings, the cover, ebook styles and the check before publishing (Publishing) |
-| `35-print` | Print-ready paperback and hardcover PDFs: trim sizes, our own page layout, running heads, page numbers, spine width |
-| `36-preview` | Book preview: the ebook on a phone, tablet or Kindle screen, and the print book as spreads; live beside the writing |
-| `37-sharing`, `38-desktop` | Shared projects (merging, presence) and the desktop app's projects |
-| `39-boot` | Start-up: `init()` and `renderAll()` |
+| `34-import` | Word (.docx) import: reads the file, finds chapters, parts and scenes, and makes a project or adds to this one |
+| `35-book` | Book details, front and back matter, chapter kinds and headings, the cover, ebook styles and the check before publishing (Publishing) |
+| `36-print` | Print-ready paperback and hardcover PDFs: trim sizes, our own page layout, running heads, page numbers, spine width |
+| `37-preview` | Book preview: the ebook on a phone, tablet or Kindle screen, and the print book as spreads; live beside the writing |
+| `38-sharing`, `39-desktop` | Shared projects (merging, presence) and the desktop app's projects |
+| `40-boot` | Start-up: `init()` and `renderAll()` |
 
 ## Data
 

@@ -515,3 +515,42 @@ test('book preview works under the desktop app’s security policy, with its bun
   expect(errors).toEqual([]);
   await app.close();
 });
+
+test('import from Word makes a new project beside the others', async () => {
+  const home = newHome();
+  const { app, win, errors } = await launch(home);
+  const { makeDocx } = require('./helpers');
+  const dir = await projectsDir(app);
+  const before = fs.readdirSync(dir).length;
+  await win.click('#menuBtn');
+  const [chooser] = await Promise.all([win.waitForEvent('filechooser'), win.click('[data-m="docx"]')]);
+  await chooser.setFiles({
+    name: 'my-novel.docx',
+    mimeType: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+    buffer: makeDocx([
+      { style: 'Heading1', runs: [['Chapter One']] },
+      { runs: [['It began '], ['quietly', 'i'], ['.']] },
+      { style: 'Heading1', runs: [['Chapter Two']] },
+      'It ended loudly.'
+    ])
+  });
+  await expect(win.locator('[data-dx="title"]')).toHaveValue('my novel');
+  await win.fill('[data-dx="title"]', 'My Novel');
+  await win.click('[data-x="go"]');
+  await expect(win.locator('#projTitle')).toHaveValue('My Novel');
+  const pj = await until(() => {
+    const d = fs.readdirSync(dir).find(x => {
+      try {
+        return JSON.parse(fs.readFileSync(path.join(dir, x, 'project.json'), 'utf8')).meta.title === 'My Novel';
+      } catch (e) {
+        return false;
+      }
+    });
+    return d && JSON.parse(fs.readFileSync(path.join(dir, d, 'project.json'), 'utf8'));
+  });
+  expect(pj.meta.chapters.map(c => c.title)).toEqual(['Chapter One', 'Chapter Two']);
+  expect(pj.sc[pj.meta.chapters[0].scenes[0]].text).toBe('It began *quietly*.');
+  expect(fs.readdirSync(dir).length).toBe(before + 1); // the first project is still there
+  expect(errors).toEqual([]);
+  await app.close();
+});

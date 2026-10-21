@@ -1,6 +1,6 @@
 // The app in a plain browser: saving, the save format, writing tools and exports.
 const { test, expect } = require('@playwright/test');
-const { openApp, saved, waitSaved, unzip } = require('./helpers');
+const { openApp, saved, waitSaved, unzip, makeDocx } = require('./helpers');
 
 const OLD_PROJECT = {
   // a project saved before format 2 (no version stamps, no tombstones)
@@ -1925,5 +1925,151 @@ test('book preview: ebook pages on reading devices, print spreads, and a live pr
     return p.meta.chapters[p.meta.chapters.length - 1].title;
   });
   await expect(page.locator('#pvSideSub')).toContainText(lastCh);
+  expect(errors).toEqual([]);
+});
+
+// Picks a Word file through the menu's Import from Word.
+async function importDocx(page, name, buffer) {
+  await page.click('#menuBtn');
+  const [chooser] = await Promise.all([page.waitForEvent('filechooser'), page.click('[data-m="docx"]')]);
+  await chooser.setFiles({
+    name,
+    mimeType: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+    buffer
+  });
+  await expect(page.locator('.pj-dlg.dx')).toBeVisible();
+}
+
+test('import from Word: headings become chapters, parts and scenes, with italics, bold and underlining', async ({
+  page
+}) => {
+  const errors = await openApp(page);
+  const doc = makeDocx(
+    [
+      { style: 'Title', runs: [['The Glass Tide']] },
+      'Copyright 2026 Jane Writer',
+      { style: 'Heading1', runs: [['Prologue']] },
+      { runs: [['The sea was '], ['very', 'i'], [' cold and '], ['loud', 'b'], [' and '], ['grey', 'u'], ['.']] },
+      '* * *',
+      { runs: [['A gull cried '], ['twice', 'e'], ['.']] },
+      { style: 'Heading1', runs: [['Part One']] },
+      { style: 'Heading1', runs: [['Chapter 1']] },
+      { style: 'Heading2', runs: [['Into the Fog']] },
+      {
+        runs: [['Ilsa stepped off the ferry.']],
+        xml: '<w:del><w:r><w:delText>DELETED WORDS</w:delText></w:r></w:del><w:ins><w:r><w:t xml:space="preserve"> She waited.</w:t></w:r></w:ins><w:r><w:br/><w:t>A new line.</w:t></w:r>'
+      },
+      {
+        style: 'raw',
+        xml: '<w:tbl><w:tr><w:tc><w:p><w:r><w:t>Inside a table.</w:t></w:r></w:p></w:tc></w:tr></w:tbl>'
+      },
+      { style: 'Heading1', runs: [['Chapter 2: Lanterns']] },
+      { style: 'Heading2', runs: [['Night market']] },
+      'The lamps came on one by one.',
+      { style: 'Heading2', runs: [['Morning']] },
+      'By morning the fog had lifted.',
+      // a horizontal line on its own (as Word and pandoc draw one) is a scene break
+      {
+        style: 'raw',
+        xml: '<w:p><w:r><w:pict><v:rect xmlns:v="urn:schemas-microsoft-com:vml" style="width:0;height:1.5pt"/></w:pict></w:r></w:p>'
+      },
+      'Then the tide came in.'
+    ],
+    { title: 'Core title' }
+  );
+  await importDocx(page, 'the-glass-tide.docx', doc);
+  await expect(page.locator('[data-dx="title"]')).toHaveValue('The Glass Tide');
+  await expect(page.locator('[data-dx="author"]')).toHaveValue('Jane Writer');
+  await expect(page.locator('.dx-sum')).toContainText('4 chapters');
+  await expect(page.locator('.dx-sum')).toContainText('found at heading 1');
+  await expect(page.locator('.dx-list li')).toHaveText([
+    /^Prologue Unnumbered/,
+    /^Part One Part/,
+    /^Chapter 1: Into the Fog/,
+    /^Chapter 2: Lanterns/
+  ]);
+  await page.click('[data-x="go"]');
+  // in a browser the import takes the place of the open project, after asking
+  await page.click('.ask [data-v="go"]');
+  const p = await waitSaved(page, p => p.meta.title === 'The Glass Tide');
+  const ch = p.meta.chapters;
+  expect(ch.map(c => [c.title, c.kind || ''])).toEqual([
+    ['Prologue', 'un'],
+    ['Part One', 'part'],
+    ['Chapter 1: Into the Fog', ''],
+    ['Chapter 2: Lanterns', '']
+  ]);
+  const text = c => c.scenes.map(id => p.sc[id].text);
+  expect(text(ch[0])).toEqual(['The sea was *very* cold and **loud** and __grey__.', 'A gull cried *twice*.']);
+  expect(text(ch[2])).toEqual(['Ilsa stepped off the ferry. She waited.\nA new line.\nInside a table.']);
+  expect(ch[3].scenes.map(id => p.meta.scenes[id].title)).toEqual(['Night market', 'Morning', 'Scene 3']);
+  expect(p.sc[ch[3].scenes[2]].text).toBe('Then the tide came in.');
+  expect(p.meta.author).toBe('Jane Writer');
+  expect(JSON.stringify(p)).not.toContain('DELETED WORDS');
+  expect(JSON.stringify(p)).not.toContain('Copyright 2026'); // a short title page is left out
+  // imported words are the project's, not today's writing
+  expect(Object.values(p.meta.scenes).reduce((a, x) => a + x.words, 0)).toBeGreaterThan(30);
+  expect(Object.values(p.meta.days || {}).reduce((a, x) => a + x, 0)).toBe(0);
+  expect(errors).toEqual([]);
+});
+
+test('import from Word: a plain manuscript with “Chapter” lines and # breaks, added to this project', async ({
+  page
+}) => {
+  const errors = await openApp(page);
+  const before = await page.locator('#binder [data-a="delch"]').count();
+  const doc = makeDocx([
+    'CHAPTER ONE',
+    'The Salt Road',
+    'She walked a long way.',
+    '#',
+    'Later, the rain began.',
+    'Chapter Two',
+    '"Where were you?" he asked.',
+    { pageBreak: true, runs: [['Epilogue']] },
+    'It ended well.'
+  ]);
+  await importDocx(page, 'manuscript.docx', doc);
+  await expect(page.locator('.dx-sum')).toContainText('3 chapters');
+  await expect(page.locator('.dx-list li')).toHaveText([/^CHAPTER ONE: The Salt Road/, /^Chapter Two/, /^Epilogue/]);
+  // chapters can be found another way: at page breaks there is only one
+  await page.selectOption('[data-dx="mode"]', 'page');
+  await expect(page.locator('.dx-sum')).toContainText('1 chapter,');
+  await page.selectOption('[data-dx="mode"]', 'auto');
+  await page.selectOption('[data-dx="where"]', 'add');
+  await page.click('[data-x="go"]');
+  const p = await waitSaved(page, p => p.meta.chapters.length === before + 3);
+  const added = p.meta.chapters.slice(before);
+  expect(added.map(c => c.title)).toEqual(['CHAPTER ONE: The Salt Road', 'Chapter Two', 'Epilogue']);
+  expect(added[0].scenes.map(id => p.sc[id].text)).toEqual(['She walked a long way.', 'Later, the rain began.']);
+  // the title line wasn't merged into a chapter whose next line is dialogue
+  expect(p.sc[added[1].scenes[0]].text).toBe('"Where were you?" he asked.');
+  expect(added[2].kind).toBe('un');
+  expect(p.meta.title).toContain('Lantern'); // still the same project
+  await expect(page.locator('#ed')).toContainText('She walked a long way.');
+  expect(errors).toEqual([]);
+});
+
+test('import from Word: a book exported from Inkling comes back with the same chapters and text', async ({ page }) => {
+  const errors = await openApp(page);
+  const fs = require('fs');
+  await page.click('#menuBtn');
+  await page.click('[data-m="export"]');
+  await page.click('[data-fmt="docx"]');
+  const [d] = await Promise.all([page.waitForEvent('download'), page.click('[data-x="go"]')]);
+  const buf = fs.readFileSync(await d.path());
+  const n = await page.locator('#binder [data-a="delch"]').count();
+  await importDocx(page, 'round-trip.docx', buf);
+  await page.selectOption('[data-dx="where"]', 'add');
+  await page.click('[data-x="go"]');
+  const p = await waitSaved(page, p => p.meta.chapters.length >= n * 2);
+  const words = c => c.scenes.reduce((a, id) => a + p.meta.scenes[id].words, 0);
+  const a = p.meta.chapters.slice(0, n),
+    b = p.meta.chapters.slice(n);
+  expect(b.length).toBe(n);
+  b.forEach((c, i) => {
+    expect(c.scenes.length).toBe(a[i].scenes.length);
+    expect(words(c)).toBe(words(a[i]));
+  });
   expect(errors).toEqual([]);
 });

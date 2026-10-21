@@ -757,6 +757,7 @@ function buildMenu() {
         { label: 'Export…', accelerator: 'CmdOrCtrl+E', click: () => send('export') },
         { label: 'Back up this project…', accelerator: 'CmdOrCtrl+Shift+S', click: () => send('backup') },
         { label: 'Import a backup as a new project…', click: () => send('import') },
+        { label: 'Import from Word (.docx)…', click: () => send('docx') },
         { type: 'separator' },
         { label: 'Share this project…', click: () => send('share') },
         { label: 'Open a shared project…', click: () => send('openShared') },

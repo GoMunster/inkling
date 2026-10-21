@@ -1262,3 +1262,28 @@
   height: calc(100vh - 190px);
   border-radius: 8px;
 }
+/* Import from Word */
+.pj-dlg.dx {
+  width: min(640px, 94vw);
+}
+.dx-found {
+  margin: 10px 0 4px;
+}
+.dx-sum {
+  margin: 0 0 6px;
+}
+.dx-list {
+  max-height: 240px;
+  overflow: auto;
+  margin: 0;
+  padding: 6px 10px 6px 34px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  font-size: 13.5px;
+}
+.dx-list li {
+  padding: 2px 0;
+}
+.dx-list li small {
+  margin-left: 8px;
+}

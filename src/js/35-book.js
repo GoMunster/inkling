@@ -1,5 +1,5 @@
 /*
- * 34-book.js: Book details, front and back matter, and chapter types
+ * 35-book.js: Book details, front and back matter, and chapter types
  *
  * Everything a finished book needs around the story itself, kept in meta.book (normBook): details for stores and the
  * copyright page (subtitle, imprint, ISBNs, edition, description, keywords), the front matter (half title, title page,

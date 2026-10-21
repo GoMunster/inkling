@@ -71,7 +71,8 @@ The full plan, KDP requirements and best practices are in [PUBLISHING-PLAN.md](P
 
 ## Import and other devices
 
-- [ ] Word (.docx) import with chapters and scene breaks detected; Scrivener import
+- [x] Word (.docx) import with chapters, parts and scene breaks detected
+- [ ] Scrivener import
 - [ ] iPhone access: Option 1 web app + Dropbox/Drive/OneDrive; Option 2 App Store app with iCloud Drive; Option 3 Inkling accounts and a sync server
 - [ ] "Make this project available on my phone" button
 - [ ] Phone notes inbox (text files saved into the project folder become notes)

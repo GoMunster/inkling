@@ -1,5 +1,5 @@
 /*
- * 35-print.js: Print-ready paperback and hardcover PDFs
+ * 36-print.js: Print-ready paperback and hardcover PDFs
  *
  * The print settings live in meta.book.print (normPrint): binding (paperback or hardcover), trim size (PRINT_TRIMS,
  * the sizes KDP prints), paper, book font (PRINT_FONTS, bundled in the desktop app and loaded from Google Fonts in a
