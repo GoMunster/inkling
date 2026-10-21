@@ -6,7 +6,8 @@ const root = path.join(__dirname, '..');
 const out = path.join(root, 'app');
 const mods = path.join(root, 'node_modules');
 
-fs.rmSync(out, { recursive: true, force: true });
+// (retried: deleting a folder tree can briefly fail with "not empty" while the file system catches up)
+fs.rmSync(out, { recursive: true, force: true, maxRetries: 10, retryDelay: 100 });
 fs.mkdirSync(path.join(out, 'fonts'), { recursive: true });
 
 const BOOK_FILES = ['400.css', '400-italic.css', '700.css', '700-italic.css'];
