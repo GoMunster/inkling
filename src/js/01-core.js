@@ -44,6 +44,9 @@ const RING = 66;
 // The icon set: each icon is one SVG path, drawn by ico().
 const ICO = {
   plus: 'M12 5v14M5 12h14',
+  check: 'M5 12l5 5L20 7',
+  alert: 'M12 4L2 20h20L12 4zM12 10v4M12 17h.01',
+  info: 'M12 3a9 9 0 100 18 9 9 0 000-18zM12 11v5M12 8h.01',
   map: 'M9 4L3 6v14l6-2 6 2 6-2V4l-6 2-6-2zM9 4v14M15 6v14',
   pin: 'M12 21s-6-5.5-6-11a6 6 0 0112 0c0 5.5-6 11-6 11zM12 12.5a2.5 2.5 0 100-5 2.5 2.5 0 000 5z',
   pen2: 'M4 20l4-1L19 8l-3-3L5 16zM14 6l3 3',

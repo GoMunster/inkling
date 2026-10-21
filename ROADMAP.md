@@ -11,12 +11,14 @@ The full plan, KDP requirements and best practices are in [PUBLISHING-PLAN.md](P
 - [x] Back matter: acknowledgments, about the author, also by, newsletter/store links
 - [ ] Back matter extras: about-the-author photo, reading-group guide, cast list from story pages
 - [x] Chapter types: numbered, unnumbered (prologue, epilogue), part dividers, with chapter numbering in words or digits
-- [ ] Book styles: chapter heading layouts, ornaments, drop caps, small caps, scene-break ornaments; copy and tweak a style
-- [ ] Store-ready ebook (EPUB for Kindle, Apple Books, Kobo, Google Play, Nook): cover, landmarks, NCX, embedded fonts, store-specific links
+- [x] Book styles: chapter heading layouts, ornaments, drop caps, small caps, scene-break ornaments
+- [ ] Copy and tweak a book style (own fonts, sizes and heading images)
+- [x] Store-ready ebook (EPUB for Kindle, Apple Books, Kobo, Google Play, Nook): cover, landmarks, NCX, checked by EPUBCheck
+- [ ] Ebook extras: embedded fonts, store-specific links (a different link list per store)
 - [ ] Print-ready paperback and hardcover PDFs: KDP trim sizes, gutter by page count, chapters on right-hand pages, running heads, page numbers, even page count
 - [ ] Spine width readout, and later a cover wrap builder
 - [ ] Live preview: ebook devices and print spreads
-- [ ] Pre-flight check before export (cover size, empty chapters, TK/TODO, straight quotes)
+- [x] Pre-flight check before export (cover size, empty chapters, TK/TODO, straight quotes), with a one-click typography tidy
 - [ ] Special paragraphs: block quote, letter, verse, text message
 - [ ] Box sets (several projects in one ebook)
 - [ ] IngramSpark preset; DOCX for print

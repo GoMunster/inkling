@@ -45,7 +45,7 @@ build.js              joins them into index.html (node build.js; no dependencies
 | `20-scene-editor` … `26-timeline` | The main pane's views: scene editor, story pages, corkboard, notes and world maps, outlines, relationship maps and family trees, timelines |
 | `27-snapshots-find` … `32-inspector` | Snapshots, find and replace, tour, to-do list, sidebar widths, deadline planner, layout and settings, focus timer, the Inkling panel |
 | `33-export` | The ⋯ menu, backups, Word/PDF/EPUB/Markdown export |
-| `34-book` | Book details, front and back matter, chapter kinds and headings (Publishing) |
+| `34-book` | Book details, front and back matter, chapter kinds and headings, the cover, ebook styles and the check before publishing (Publishing) |
 | `35-sharing`, `36-desktop` | Shared projects (merging, presence) and the desktop app's projects |
 | `37-boot` | Start-up: `init()` and `renderAll()` |
 
@@ -107,3 +107,4 @@ Inkling is meant to stay quick with very large manuscripts. On a 126,000-word te
 
 - **What runs:** `npm test` builds, then runs Playwright: `tests/web.spec.js` in Chromium against `index.html`, and `tests/desktop.spec.js` against the Electron app (needs `npm ci` in `desktop/`, and `xvfb-run -a` on a Linux server).
 - **Every feature gets a test:** add one with each feature.
+- **Ebooks are validated:** CI downloads EPUBCheck (the validator ebook stores use) and sets `EPUBCHECK_JAR`, and the ebook test runs it on an exported book. Locally the test skips that step unless you set the variable.

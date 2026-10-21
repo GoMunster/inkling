@@ -22,6 +22,16 @@ jobs:
       - name: Check that index.html is built from src/ and the code is formatted (run "npm run format" and commit)
         run: npm run check
       - run: npx playwright install --with-deps chromium
+      - name: Get EPUBCheck, the validator ebook stores use, so the tests can check exported EPUBs
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+      - run: |
+          curl -sSfL -o "$RUNNER_TEMP/epubcheck.zip" https://github.com/w3c/epubcheck/releases/download/v5.1.0/epubcheck-5.1.0.zip
+          unzip -q "$RUNNER_TEMP/epubcheck.zip" -d "$RUNNER_TEMP"
+          test -f "$RUNNER_TEMP/epubcheck-5.1.0/epubcheck.jar"
+          echo "EPUBCHECK_JAR=$RUNNER_TEMP/epubcheck-5.1.0/epubcheck.jar" >> "$GITHUB_ENV"
       - name: Install the desktop app's dependencies (Electron)
         run: npm ci
         working-directory: desktop

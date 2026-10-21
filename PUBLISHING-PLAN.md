@@ -155,7 +155,7 @@ Today Inkling's export makes a submission manuscript (Word/PDF in standard manus
 ## Suggested order
 
 1. **Book details and front/back matter:** metadata, copyright generator, dedication, about the author, and chapter types.
-2. **Store-ready EPUB:**
+2. **Store-ready EPUB** (done: cover, styles, NCX, pre-flight check, EPUBCheck in CI; store variants still to do):
    - cover, landmarks, NCX
    - styles (heading layouts, ornaments, drop caps)
    - ISBN and store variants

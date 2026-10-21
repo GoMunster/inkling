@@ -136,7 +136,7 @@ test('exports a Word manuscript and an EPUB', async ({ page }) => {
   expect(e.mimetype.toString()).toBe('application/epub+zip');
   expect(e.mimetype.firstOffset).toBe(0);
   expect(e['OEBPS/content.opf'].toString()).toContain('<dc:creator>Jane Writer</dc:creator>');
-  expect(e['OEBPS/ch1.xhtml'].toString()).toContain('<h1>');
+  expect(e['OEBPS/ch1.xhtml'].toString()).toContain('<h1 class="ch">');
 });
 
 test('settings change the look and are remembered', async ({ page }) => {
@@ -1598,7 +1598,9 @@ test('book details: front and back matter, chapter kinds and numbering, in EPUB,
   expect(e['OEBPS/f-toc.xhtml'].toString()).toContain('href="ch2.xhtml">Chapter One: Chapter 2</a>');
   expect(e['OEBPS/ch1.xhtml'].toString()).toContain('epub:type="part"');
   expect(e['OEBPS/ch1.xhtml'].toString()).toContain('<span class="cn">Part One</span>');
-  expect(e['OEBPS/ch2.xhtml'].toString()).toContain('<span class="cn">Chapter One</span>Chapter 2');
+  expect(e['OEBPS/ch2.xhtml'].toString()).toContain(
+    '<span class="cn">Chapter One</span><span class="ct">Chapter 2</span>'
+  );
   expect(e['OEBPS/ch6.xhtml'].toString()).not.toContain('class="cn"');
   expect(e['OEBPS/b-also.xhtml'].toString()).toContain('<h3 class="bk-sh">The Tide Books</h3>');
   expect(e['OEBPS/b-links.xhtml'].toString()).toContain('<a href="https://example.com/news">Join my newsletter</a>');
@@ -1625,5 +1627,106 @@ test('book details: front and back matter, chapter kinds and numbering, in EPUB,
   const w2 = unzip(await get('docx', false))['word/document.xml'].toString();
   expect(w2).not.toContain('For the tide-watchers.');
   expect(w2).toContain('>END<');
+  expect(errors).toEqual([]);
+});
+
+test('store-ready ebook: cover, book style, the check before publishing and tidy typography', async ({ page }) => {
+  const project = JSON.parse(JSON.stringify(OLD_PROJECT));
+  project.meta.chapters.push({ id: 'c2', title: 'Empty', open: true, scenes: ['s2'] });
+  project.meta.scenes.s2 = { title: 'Blank', status: 'draft', words: 0 };
+  project.sc.s1.text = '"*Go*," she said -- "now..."  \'Twas late. TODO fix';
+  project.sc.s2 = { text: '', synopsis: '', notes: '' };
+  project.meta.chapters[0].scenes.push('s3');
+  project.meta.scenes.s3 = { title: 'Next', status: 'draft', words: 2 };
+  project.sc.s3 = { text: 'Morning came.', synopsis: '', notes: '' };
+  const errors = await openApp(page, { project });
+  const fs = require('fs');
+  await page.click('#menuBtn');
+  await page.click('[data-m="book"]');
+  // a cover the size stores ask for, made in the page
+  const png = await page.evaluate(() => {
+    const c = document.createElement('canvas');
+    c.width = 1600;
+    c.height = 2560;
+    const g = c.getContext('2d');
+    g.fillStyle = '#246';
+    g.fillRect(0, 0, 1600, 2560);
+    return c.toDataURL('image/png').split(',')[1];
+  });
+  await page.setInputFiles('[data-bkcv]', {
+    name: 'cover.png',
+    mimeType: 'image/png',
+    buffer: Buffer.from(png, 'base64')
+  });
+  await expect(page.locator('#bkCvSize')).toHaveText('1600 × 2560 pixels');
+  // a style brings its own drop cap, ornament and heading flourish; each can be changed after
+  await page.click('[data-bkst="storybook"]');
+  await expect(page.locator('.bk-st.on')).toContainText('Storybook');
+  await expect(page.locator('.bk-pv .dc')).toHaveCount(1);
+  await expect(page.locator('.bk-pv p.deco')).toHaveCount(1);
+  await page.uncheck('[data-bkf="sc"]');
+  await expect(page.locator('.bk-pv .sc')).toHaveCount(0);
+  await page.selectOption('[data-bkf="orn"]', '⁂');
+  await expect(page.locator('.bk-pv p.brk').first()).toHaveText('⁂');
+  await page.fill('[data-bk="isbnP"]', '978-1-23456-789-0'); // wrong check digit
+  await page.fill('[data-bk="isbnE"]', '978-1-23456-789-7');
+
+  // the Export dialog warns before publishing
+  await page.click('#menuBtn');
+  await page.click('[data-m="export"]');
+  await page.click('[data-fmt="epub"]');
+  await expect(page.locator('#exCheck')).toContainText('Your name is missing');
+  await expect(page.locator('[data-bkstyle]')).toHaveValue('storybook');
+  await page.click('[data-x="close"]');
+
+  await page.click('[data-bka="check"]');
+  const check = page.locator('#bkCheck');
+  await expect(check).toContainText('Your name is missing');
+  await expect(check).toContainText('paperback ISBN');
+  await expect(check).not.toContainText('ebook ISBN');
+  await expect(check).not.toContainText('no cover');
+  await expect(check).toContainText('straight quote');
+  await expect(check).toContainText('“Empty” has no text yet.');
+  await expect(check).toContainText('“First” has a TODO');
+  await page.fill('[data-bk="author"]', 'Jane Writer');
+  await page.fill('[data-bk="isbnP"]', '');
+  await page.click('[data-bka="tidy"]');
+  await expect(check).not.toContainText('straight quote');
+  await expect(check).not.toContainText('Your name is missing');
+  const p = await waitSaved(
+    page,
+    p => p.sc.s1.text.includes('“') && Object.values(p.sn || {}).some(x => x.auto === 'replace')
+  );
+  // quotes around formatting markers, dashes, ellipses and double spaces
+  expect(p.sc.s1.text).toBe('“*Go*,” she said — “now…” ‘Twas late. TODO fix');
+  expect(p.meta.book).toMatchObject({ style: 'storybook', dc: true, sc: false, orn: '⁂' });
+
+  await page.click('#menuBtn');
+  await page.click('[data-m="export"]');
+  await page.click('[data-fmt="epub"]');
+  const [d] = await Promise.all([page.waitForEvent('download'), page.click('[data-x="go"]')]);
+  const buf = fs.readFileSync(await d.path());
+  const e = unzip(buf);
+  const opf = e['OEBPS/content.opf'].toString();
+  expect([...e['OEBPS/cover.jpg'].slice(0, 2)]).toEqual([0xff, 0xd8]);
+  expect(opf).toContain('properties="cover-image"');
+  expect(opf).toContain('<meta name="cover" content="cover-img"/>');
+  expect(opf.match(/<itemref idref="([^"]+)"/)[1]).toBe('cover');
+  expect(opf).toContain('<spine toc="ncx">');
+  expect(e['OEBPS/toc.ncx'].toString()).toContain('<content src="ch1.xhtml"/>');
+  expect(e['OEBPS/nav.xhtml'].toString()).toContain('<a epub:type="cover" href="cover.xhtml">');
+  const ch1 = e['OEBPS/ch1.xhtml'].toString();
+  expect(ch1).toContain('<span class="dc">');
+  expect(ch1).not.toContain('class="sc"');
+  expect(ch1).toContain('<p class="deco">✦</p>');
+  expect(ch1).toContain('<p class="brk">⁂</p>');
+  expect(e['OEBPS/style.css'].toString()).toContain('.dc{float:left');
+  // the ebook passes the stores' own validator, EPUBCheck (CI sets EPUBCHECK_JAR)
+  if (process.env.EPUBCHECK_JAR) {
+    const f = test.info().outputPath('book.epub');
+    fs.writeFileSync(f, buf);
+    const r = require('child_process').spawnSync('java', ['-jar', process.env.EPUBCHECK_JAR, f], { encoding: 'utf8' });
+    expect(r.stdout + r.stderr).toContain('0 fatals / 0 errors');
+  }
   expect(errors).toEqual([]);
 });

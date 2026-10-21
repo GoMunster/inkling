@@ -5848,6 +5848,126 @@ body.dnd * {
 .bk-warn {
   color: var(--danger);
 }
+/* Book details: cover, ebook style and the check before publishing */
+.bk-cover {
+  display: flex;
+  gap: 18px;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  border-radius: 10px;
+}
+.bk-cover.over {
+  outline: 2px dashed var(--accent);
+  outline-offset: 4px;
+}
+.bk-cv-img,
+.bk-cv-drop {
+  width: 150px;
+  aspect-ratio: 10 / 16;
+  border-radius: 4px;
+  object-fit: cover;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.18);
+}
+.bk-cv-drop {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  box-shadow: none;
+  border: 2px dashed var(--line);
+  color: var(--muted);
+  font-size: 12.5px;
+  text-align: center;
+  padding: 10px;
+}
+.bk-cv-side {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+}
+.bk-styles {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+  gap: 8px;
+  margin-bottom: 12px;
+}
+.bk-st {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  text-align: left;
+  padding: 9px 11px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: none;
+  color: var(--ink);
+  font: inherit;
+  cursor: pointer;
+}
+.bk-st small {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.35;
+}
+.bk-st.on {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px var(--accent);
+}
+.bk-pv-box {
+  margin-top: 12px;
+  padding: 4px 28px 22px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fbf9f4;
+  color: #1d1b17;
+  font-family: Literata, Georgia, serif;
+  font-size: 15px;
+  line-height: 1.55;
+  max-height: 340px;
+  overflow: hidden;
+}
+.bk-pv-box h1 {
+  font-size: 22px;
+  margin-top: 1.4em !important;
+}
+.bk-pf {
+  list-style: none;
+  margin: 0 0 10px;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.bk-pf li {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  font-size: 13.5px;
+}
+.bk-pf li .ico {
+  flex: none;
+  margin-top: 2px;
+}
+.bk-pf li.warn .ico {
+  color: var(--danger);
+}
+.bk-pf li.tip .ico {
+  color: var(--muted);
+}
+.bk-pf-ok {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  color: var(--ok, var(--accent));
+}
+.ex-check {
+  margin-top: 10px;
+}
+.ex-check .bk-pf {
+  margin-top: 4px;
+}
 /*
  * 11-pages-and-settings.css: Full-page screens and Settings
  *
@@ -7694,6 +7814,9 @@ const RING = 66;
 // The icon set: each icon is one SVG path, drawn by ico().
 const ICO = {
   plus: 'M12 5v14M5 12h14',
+  check: 'M5 12l5 5L20 7',
+  alert: 'M12 4L2 20h20L12 4zM12 10v4M12 17h.01',
+  info: 'M12 3a9 9 0 100 18 9 9 0 000-18zM12 11v5M12 8h.01',
   map: 'M9 4L3 6v14l6-2 6 2 6-2V4l-6 2-6-2zM9 4v14M15 6v14',
   pin: 'M12 21s-6-5.5-6-11a6 6 0 0112 0c0 5.5-6 11-6 11zM12 12.5a2.5 2.5 0 100-5 2.5 2.5 0 000 5z',
   pen2: 'M4 20l4-1L19 8l-3-3L5 16zM14 6l3 3',
@@ -8782,6 +8905,8 @@ function normTl(t) {
  * into an image address, setPic() stores a new picture wherever it belongs, and backups carry every picture inside
  * the file (collectImages, adoptImages) so they move between all three.
  *
+ * The book's cover (meta.book.cover, id 'cover') is stored the same way and kept large, like a map.
+ *
  * The rest is the picture block on a story page: shape, size, framing (which part shows, and how far zoomed in), and
  * the full-size lightbox.
  */
@@ -8851,10 +8976,13 @@ function picSvg(eid, x, y, w, h) {
     ' slice"'
   );
 }
-// A picture belongs to a story page (S.en[id].pic) or a world map (S.nt[id].pic, a note of kind 'map').
-const picRec = id => (S.en[id] || S.nt[id] || {}).pic || null,
-  picKey = id => (S.en[id] ? 'en_' + id : 'nt_' + id),
-  isMapPic = id => !S.en[id] && !!S.nt[id];
+// A picture belongs to a story page (S.en[id].pic), a world map (S.nt[id].pic, a note of kind 'map') or is the
+// book's cover (id 'cover': S.meta.book.cover).
+const picRec = id => (id === 'cover' ? S.meta.book.cover : (S.en[id] || S.nt[id] || {}).pic || null),
+  picKey = id => (id === 'cover' ? 'meta' : S.en[id] ? 'en_' + id : 'nt_' + id),
+  isMapPic = id => id === 'cover' || (!S.en[id] && !!S.nt[id]);
+// Whether a picture record holds a picture.
+const hasPic = p => !!(p && (p.a || p.l || p.f));
 // The address to show a page's or map's picture from, wherever it is stored ('' when there is none).
 function picSrc(eid) {
   const p = picRec(eid);
@@ -8882,7 +9010,9 @@ async function getAssets() {
 // Claude artifact, a browser and the desktop app with its pictures.
 async function collectImages() {
   const o = {};
-  for (const id of Object.keys(S.en).concat(Object.keys(S.nt).filter(k => S.nt[k].pic))) {
+  for (const id of Object.keys(S.en)
+    .concat(Object.keys(S.nt).filter(k => S.nt[k].pic))
+    .concat(hasPic(S.meta.book.cover) ? ['cover'] : [])) {
     const p = picRec(id);
     if (!p) continue;
     try {
@@ -8902,8 +9032,10 @@ async function collectImages() {
 async function adoptImages(np, imgs, deskId) {
   imgs = imgs && typeof imgs === 'object' ? imgs : {};
   const inClaude = !!(window.claude && window.claude.use);
-  for (const id of Object.keys(np.en).concat(Object.keys(np.nt || {}).filter(k => np.nt[k].pic))) {
-    const p = (np.en[id] || np.nt[id]).pic,
+  for (const id of Object.keys(np.en)
+    .concat(Object.keys(np.nt || {}).filter(k => np.nt[k].pic))
+    .concat(np.meta.book && hasPic(np.meta.book.cover) ? ['cover'] : [])) {
+    const p = id === 'cover' ? np.meta.book.cover : (np.en[id] || np.nt[id]).pic,
       d = imgs[id],
       ok = typeof d === 'string' && /^data:image\/[\w+.-]+;base64,/.test(d);
     if (deskId) {
@@ -9016,7 +9148,8 @@ async function setPic(eid, file) {
         } catch (e) {}
       if (old.a && old.a !== r.id) as.delete(old.a).catch(() => {});
     } else {
-      const b = await shrink(file, big ? 1800 : 1000, 0.82),
+      // a cover keeps the size stores ask for (2560 pixels tall); other pictures stay small in the browser's storage
+      const b = await shrink(file, eid === 'cover' ? 2560 : big ? 1800 : 1000, 0.82),
         url = await toDataUrl(b);
       try {
         localStorage.setItem(LOCAL_PIC + eid, url);
@@ -9051,6 +9184,7 @@ async function setPic(eid, file) {
   ui.imgBusy = null;
   refreshPic();
   renderBinder();
+  if (eid === 'cover' && ui.view.k === 'book') renderMain();
   if (big && ui.view.k === 'nt' && ui.view.id === eid) renderMain();
 }
 // Removes a page's or map's picture.
@@ -9064,6 +9198,7 @@ async function removePic(eid) {
   dirty(picKey(eid));
   refreshPic();
   renderBinder();
+  if (eid === 'cover' && ui.view.k === 'book') renderMain();
 }
 // The picture block at the top of a story page: the picture (or a drop zone), its caption, and the layout options.
 function picHtml(e) {
@@ -29161,14 +29296,16 @@ function expPdfHtml(scope) {
   else if (I.full) h += '<p class="c" style="margin-top:1em">END</p>';
   return { html: h + '</body></html>', I };
 }
-// The manuscript as an EPUB ebook.
-function expEpub(scope) {
+// The manuscript as an EPUB ebook, in the book style chosen in Book details, with the cover when there is one.
+// Async, because the cover picture is read and turned into a JPEG.
+async function expEpub(scope) {
   const I = expInfo(scope),
     o = I.o,
     m = S.meta,
     b = m.book,
     lang = xe(bookLang()),
-    mat = I.full && o.matter.epub;
+    mat = I.full && o.matter.epub,
+    cover = I.full ? await coverJpeg() : null;
   if (!o.uid) {
     o.uid = uid('bk') + uid('');
     dirty('meta');
@@ -29191,13 +29328,12 @@ function expEpub(scope) {
     ],
     [
       'OEBPS/style.css',
-      'body{margin:0 5%;line-height:1.5}p{margin:0;text-indent:1.5em}h1+p,p.brk+p,p.first{text-indent:0}p.brk{text-align:center;text-indent:0;margin:1em 0}h1{text-align:center;font-weight:normal;margin:3em 0 2em;page-break-before:always}.title{text-align:center;margin-top:30%}.title h1{font-size:2em;margin:0 0 1em}.title p{text-indent:0}' +
-        'h1 .cn{display:block;font-size:.75em;letter-spacing:.08em;text-transform:uppercase;margin-bottom:.5em}h1.part{margin-top:35%;font-size:1.6em}' +
-        MATTER_CSS
+      'body{margin:0 5%;line-height:1.5}h1+p{text-indent:0}.title{text-align:center;margin-top:30%}.title h1{font-size:2em;font-weight:normal;margin:0 0 1em}.title p{text-indent:0}' +
+        bookCss()
     ]
   ];
   const items = [],
-    nav = [],
+    nav = [], // the contents: [file, label], for nav.xhtml and the older toc.ncx
     marks = [], // landmarks: where the contents and the story start, for the reader's Go to menu
     chHref = id => 'ch' + (I.book.findIndex(c => c.id === id) + 1) + '.xhtml',
     addMatter = side =>
@@ -29218,9 +29354,20 @@ function expEpub(scope) {
         ]);
         items.push(fid);
         if (pg.key === 'toc') marks.push(['toc', fid, 'Contents']);
-        if (side === 'back')
-          nav.push('<li><a href="' + fid + '.xhtml">' + xe(pg.blocks[0][1] || pg.name) + '</a></li>');
+        if (side === 'back') nav.push([fid, pg.blocks[0][1] || pg.name]);
       });
+  if (cover) {
+    files.push(['OEBPS/cover.jpg', cover.bytes]);
+    files.push([
+      'OEBPS/cover.xhtml',
+      page(
+        'Cover',
+        '<section class="cover" epub:type="cover"><img src="cover.jpg" alt="' + xe(I.title) + '"/></section>'
+      )
+    ]);
+    items.push('cover');
+    marks.push(['cover', 'cover', 'Cover']);
+  }
   if (mat) addMatter('front');
   else if (o.title) {
     files.push([
@@ -29245,23 +29392,14 @@ function expEpub(scope) {
         '<section epub:type="' +
           (c.kind === 'part' ? 'part' : 'chapter') +
           '">' +
-          (c.label || c.title
-            ? '<h1' +
-              (c.kind === 'part' ? ' class="part"' : '') +
-              '>' +
-              (c.label ? '<span class="cn">' + xe(c.label) + '</span>' : '') +
-              xe(c.title) +
-              '</h1>'
-            : '') +
-          c.scenes
-            .map(x => x.map(l => '<p>' + htmlRuns(l) + '</p>').join(''))
-            .join('<p class="brk">' + xe(o.brk || '*') + '</p>') +
+          chapterHead(c) +
+          chapterHtml(c.scenes) +
           '</section>'
       )
     ]);
     items.push(id);
     if (!i) marks.push(['bodymatter', id, 'Start reading']);
-    nav.push('<li><a href="' + id + '.xhtml">' + xe(chHeadText(c) || c.name) + '</a></li>');
+    nav.push([id, chHeadText(c) || c.name]);
   });
   if (mat) addMatter('back');
   files.push([
@@ -29269,11 +29407,35 @@ function expEpub(scope) {
     page(
       'Contents',
       '<nav epub:type="toc" id="toc"><h1>Contents</h1><ol>' +
-        nav.join('') +
+        nav.map(([f, l]) => '<li><a href="' + f + '.xhtml">' + xe(l) + '</a></li>').join('') +
         '</ol></nav><nav epub:type="landmarks" hidden=""><ol>' +
         marks.map(([t, f, l]) => '<li><a epub:type="' + t + '" href="' + f + '.xhtml">' + l + '</a></li>').join('') +
         '</ol></nav>'
     )
+  ]);
+  // the EPUB 2 table of contents, for older e-readers
+  files.push([
+    'OEBPS/toc.ncx',
+    '<?xml version="1.0" encoding="UTF-8"?><ncx xmlns="http://www.daisy.org/z3986/2005/ncx/" version="2005-1"><head><meta name="dtb:uid" content="urn:inkling:' +
+      xe(o.uid) +
+      '"/></head><docTitle><text>' +
+      xe(I.title) +
+      '</text></docTitle><navMap>' +
+      nav
+        .map(
+          ([f, l], i) =>
+            '<navPoint id="np' +
+            (i + 1) +
+            '" playOrder="' +
+            (i + 1) +
+            '"><navLabel><text>' +
+            xe(l) +
+            '</text></navLabel><content src="' +
+            f +
+            '.xhtml"/></navPoint>'
+        )
+        .join('') +
+      '</navMap></ncx>'
   ]);
   const mod = new Date().toISOString().replace(/\.\d+Z$/, 'Z');
   files.push([
@@ -29305,10 +29467,13 @@ function expEpub(scope) {
       lang +
       '</dc:language><meta property="dcterms:modified">' +
       mod +
-      '</meta></metadata><manifest>' +
-      '<item id="nav" href="nav.xhtml" media-type="application/xhtml+xml" properties="nav"/><item id="css" href="style.css" media-type="text/css"/>' +
+      '</meta>' +
+      (cover ? '<meta name="cover" content="cover-img"/>' : '') +
+      '</metadata><manifest>' +
+      (cover ? '<item id="cover-img" href="cover.jpg" media-type="image/jpeg" properties="cover-image"/>' : '') +
+      '<item id="nav" href="nav.xhtml" media-type="application/xhtml+xml" properties="nav"/><item id="css" href="style.css" media-type="text/css"/><item id="ncx" href="toc.ncx" media-type="application/x-dtbncx+xml"/>' +
       items.map(id => '<item id="' + id + '" href="' + id + '.xhtml" media-type="application/xhtml+xml"/>').join('') +
-      '</manifest><spine>' +
+      '</manifest><spine toc="ncx">' +
       items.map(id => '<itemref idref="' + id + '"/>').join('') +
       '</spine></package>'
   ]);
@@ -29372,7 +29537,7 @@ async function doExport(fmt, scope) {
     base = slug(m.title) + (ch ? '-' + slug(ch.title) : ''),
     name = base + EXP_FMTS[fmt][1];
   if (fmt === 'docx') return saveFile(name, expDocx(scope));
-  if (fmt === 'epub') return saveFile(name, expEpub(scope));
+  if (fmt === 'epub') return saveFile(name, await expEpub(scope));
   if (fmt === 'md') return saveFile(name, manuscriptMd(scope));
   if (fmt === 'txt') return saveFile(name, manuscriptTxt(scope));
   const r = expPdfHtml(scope);
@@ -29431,7 +29596,7 @@ function openExport() {
         pdf: DESK
           ? 'Standard manuscript format as a PDF.'
           : 'Standard manuscript format. Your browser’s print window opens: choose “Save as PDF”.',
-        epub: 'An ebook for Kindle, Apple Books and other readers, to read your draft like a book.',
+        epub: 'A store-ready ebook for Kindle, Apple Books, Kobo and Google Play, with your cover and book style.',
         md: 'Plain text with headings, for other writing apps.',
         txt: 'Just the words.'
       }[o.fmt] +
@@ -29443,9 +29608,15 @@ function openExport() {
         )
         .join('') +
       '</select></label>' +
-      '<label class="f">Scene break<input data-e="brk" value="' +
-      esc(o.brk) +
-      '" maxlength="12" placeholder="#"></label></div>' +
+      (o.fmt === 'epub'
+        ? '<label class="f">Book style<select data-bkstyle="1">' +
+          BOOK_STYLES.map(
+            x => '<option value="' + x[0] + '"' + (m.book.style === x[0] ? ' selected' : '') + '>' + x[1] + '</option>'
+          ).join('') +
+          '</select></label></div>'
+        : '<label class="f">Scene break<input data-e="brk" value="' +
+          esc(o.brk) +
+          '" maxlength="12" placeholder="#"></label></div>') +
       '<div class="two"><label class="f">Your name<input data-e="author" value="' +
       esc(m.author || '') +
       '" maxlength="120" placeholder="Your legal name"></label>' +
@@ -29487,19 +29658,33 @@ function openExport() {
           (scope !== 'all' ? ' <span class="muted">whole book only</span>' : '') +
           '</label>'
         : '') +
-      '<p class="fine">Chapter headings, front and back matter come from <button class="lnk" data-x="book">Book details</button>.</p>' +
+      '<p class="fine">Chapter headings, front and back matter' +
+      (o.fmt === 'epub' ? ', the cover and the book style' : '') +
+      ' come from <button class="lnk" data-x="book">Book details</button>.</p>' +
+      (o.fmt === 'epub' && scope === 'all' ? '<div class="ex-check" id="exCheck"></div>' : '') +
       '<p class="fine">Bold, italics and underlining from your scenes come through in Word, PDF and EPUB. Each line you type is a paragraph.</p>' +
       '<div class="ask-btns" style="margin-top:14px"><button class="btn" data-x="close">Cancel</button><button class="btn pri" data-x="go">' +
       ico('down', 14) +
       '<span>Export ' +
       EXP_FMTS[o.fmt][0] +
       '</span></button></div></div>';
+    // the check before publishing, for a whole-book ebook (warnings only; tips are in Book details)
+    const ck = $('#exCheck', ov);
+    if (ck)
+      preflight().then(list => {
+        const w = list.filter(x => x.level === 'warn');
+        if (ck.isConnected && w.length)
+          ck.innerHTML = '<span class="sec-l">Before you publish</span>' + preflightHtml(w);
+      });
   };
   ov.addEventListener('click', e => {
     if (e.target === ov) return close();
-    const b = e.target.closest('[data-fmt],[data-o],[data-x]');
+    const b = e.target.closest('[data-fmt],[data-o],[data-x],[data-bka]');
     if (!b) return;
-    if (b.dataset.fmt) {
+    if (b.dataset.bka === 'pfgo') {
+      close();
+      go({ k: 'scene', id: b.dataset.id });
+    } else if (b.dataset.fmt) {
       o.fmt = b.dataset.fmt;
       dirty('meta');
       draw();
@@ -29524,6 +29709,12 @@ function openExport() {
     dirty('meta');
   });
   ov.addEventListener('change', e => {
+    if (e.target.dataset.bkstyle) {
+      const x = BOOK_STYLES.find(y => y[0] === e.target.value)[3];
+      Object.assign(m.book, { style: e.target.value, dc: x.dc, sc: x.sc, orn: x.orn });
+      dirty('meta');
+      return;
+    }
     if (e.target.dataset.mat) {
       o.matter[o.fmt] = e.target.checked;
       dirty('meta');
@@ -29797,6 +29988,12 @@ function closeMenu() {
  * bookPages() turns the front or back matter into pages of simple blocks ([type, text, extra]), which each export
  * format draws its own way: matterHtml() for EPUB and PDF, matterMd() for Markdown, and expDocx for Word. The Book
  * details screen ({k:'book'}, renderBook) edits all of it.
+ *
+ * The store-ready ebook: the cover (meta.book.cover, a picture stored like a map's, under the id 'cover'; coverJpeg()
+ * turns it into the JPEG the EPUB carries), the book style (BOOK_STYLES: chapter heading design, drop cap, small
+ * capitals and scene-break ornament, BOOK_ORNS; bookCss(), chapterHead(), chapterHtml(), previewed by
+ * stylePreviewHtml()) and the check before publishing (preflight(), preflightHtml(); tidyBook() fixes quotes, dashes,
+ * ellipses and double spaces, after a snapshot of each scene it changes).
  */
 // The pages that can come before the story, in their default order: [key, name, on at first].
 const BOOK_FRONT = [
@@ -29872,7 +30069,12 @@ function normBook(b) {
     front: order(b.front, BOOK_FRONT),
     back: order(b.back, BOOK_BACK),
     chNum: CH_NUMS.some(x => x[0] === b.chNum) ? b.chNum : 'none',
-    chTitles: b.chTitles !== false
+    chTitles: b.chTitles !== false,
+    cover: normPic(b.cover),
+    style: BOOK_STYLES.some(x => x[0] === b.style) ? b.style : 'classic',
+    dc: b.dc == null ? true : !!b.dc,
+    sc: b.sc == null ? true : !!b.sc,
+    orn: BOOK_ORNS.includes(b.orn) ? b.orn : '* * *'
   };
 }
 // Number words for chapter and part headings.
@@ -30131,7 +30333,8 @@ function renderBook(el) {
       })
       .join('') +
     '</div>';
-  const own = !!b.copy.trim() || ui.bkCopyEdit;
+  const own = !!b.copy.trim() || ui.bkCopyEdit,
+    src = picSrc('cover');
   el.innerHTML =
     '<div class="main-head">' +
     backBtn() +
@@ -30163,6 +30366,58 @@ function renderBook(el) {
     fld('keys', 'Keywords', 'cozy mystery, seaside, found family', { max: 500 }) +
     fld('desc', 'Description', 'The blurb for the back cover and store page.', { area: true, rows: 5, wide: true }) +
     '</div></section>' +
+    '<section class="pf"><h2>Cover</h2><p class="fine">The front cover for your ebook. Stores ask for a JPEG about 1600 × 2560 pixels (at least 625 × 1000, about 1.6 times taller than wide). Inkling puts it at the front of the EPUB.</p>' +
+    '<div class="bk-cover">' +
+    (src
+      ? '<img class="bk-cv-img" src="' + esc(src) + '" alt="The cover">'
+      : '<div class="bk-cv-drop">' + ico('image', 28) + '<span>Drop your cover here</span></div>') +
+    '<div class="bk-cv-side"><p class="fine" id="bkCvSize">' +
+    (ui.imgBusy === 'cover' ? 'Saving…' : src ? 'Checking the size…' : 'No cover yet.') +
+    '</p><label class="btn">' +
+    ico('upload', 14) +
+    '<span>' +
+    (src ? 'Replace' : 'Choose a picture') +
+    '…</span><input type="file" accept="image/*" data-bkcv hidden></label>' +
+    (src ? '<button class="btn" data-bka="delcover">' + ico('trash', 14) + '<span>Remove</span></button>' : '') +
+    '</div></div></section>' +
+    '<section class="pf"><h2>Ebook style</h2><p class="fine">How chapters open in the ebook. Every style works on Kindle, Apple Books, Kobo and the rest.</p>' +
+    '<div class="bk-styles" role="radiogroup" aria-label="Book style">' +
+    BOOK_STYLES.map(
+      ([k, name, desc]) =>
+        '<button class="bk-st' +
+        (b.style === k ? ' on' : '') +
+        '" role="radio" aria-checked="' +
+        (b.style === k) +
+        '" data-bkst="' +
+        k +
+        '"><b>' +
+        name +
+        '</b><small>' +
+        desc +
+        '</small></button>'
+    ).join('') +
+    '</div><div class="bk-grid"><label class="ck bk-ck"><input type="checkbox" data-bkf="dc"' +
+    (b.dc ? ' checked' : '') +
+    '>Drop cap: a large first letter</label><label class="ck bk-ck"><input type="checkbox" data-bkf="sc"' +
+    (b.sc ? ' checked' : '') +
+    '>The first words in small capitals</label><label class="f">Scene break<select data-bkf="orn">' +
+    BOOK_ORNS.map(
+      x =>
+        '<option value="' +
+        esc(x) +
+        '"' +
+        (b.orn === x ? ' selected' : '') +
+        '>' +
+        (x ? esc(x) : 'A blank line') +
+        '</option>'
+    ).join('') +
+    '</select></label></div><div class="bk-pv-box" aria-label="Preview">' +
+    stylePreviewHtml() +
+    '</div></section>' +
+    '<section class="pf"><h2>Check the book</h2><p class="fine">Looks for things stores reject and readers notice: a missing cover, empty chapters, notes left in the text, straight quotes.</p>' +
+    '<div id="bkCheck"><button class="btn" data-bka="check">' +
+    ico('check', 14) +
+    '<span>Check the book</span></button></div></section>' +
     '<section class="pf"><h2>Front matter</h2><p class="fine">The pages before the story. Tick the ones to include and drag to reorder. Exports include them when “Front and back matter” is ticked (always on for EPUB).</p>' +
     list('front') +
     '<h3 class="bk-sub-h">Copyright page</h3>' +
@@ -30248,6 +30503,26 @@ function renderBook(el) {
       )
       .join('') +
     '</div></section></div>';
+  if (src)
+    coverSize().then(cs => {
+      const p = $('#bkCvSize', el);
+      if (p)
+        p.textContent = cs
+          ? cs.w + ' × ' + cs.h + ' pixels' + (cs.w < 625 || cs.h < 1000 ? ': too small for stores' : '')
+          : '';
+    });
+  const cvBox = $('.bk-cover', el);
+  cvBox.ondragover = e => {
+    e.preventDefault();
+    cvBox.classList.add('over');
+  };
+  cvBox.ondragleave = () => cvBox.classList.remove('over');
+  cvBox.ondrop = e => {
+    e.preventDefault();
+    cvBox.classList.remove('over');
+    const f = [...(e.dataTransfer.files || [])].find(x => /^image\//.test(x.type));
+    if (f) setPic('cover', f);
+  };
   dragSort(el, {
     item: '.bk-row',
     handle: '.bk-grip',
@@ -30303,7 +30578,14 @@ function renderBook(el) {
   };
   el.onchange = e => {
     const t = e.target;
-    if (t.dataset.bk === 'chNum' || t.dataset.bk === 'chTitles') {
+    if (t.dataset.bkcv != null) {
+      if (t.files && t.files[0]) setPic('cover', t.files[0]);
+    } else if (t.dataset.bkf) {
+      const f = t.dataset.bkf;
+      b[f] = f === 'orn' ? t.value : t.checked;
+      dirty('meta');
+      $('.bk-pv-box', el).innerHTML = stylePreviewHtml();
+    } else if (t.dataset.bk === 'chNum' || t.dataset.bk === 'chTitles') {
       if (t.dataset.bk === 'chNum') b.chNum = t.value;
       else b.chTitles = t.checked;
       dirty('meta');
@@ -30326,9 +30608,40 @@ function renderBook(el) {
     }
   };
   el.onclick = e => {
+    const st = e.target.closest('[data-bkst]');
+    if (st) {
+      // a style also brings its own drop cap, small capitals and ornament; the writer can change them after
+      const x = BOOK_STYLES.find(y => y[0] === st.dataset.bkst)[3];
+      Object.assign(b, { style: st.dataset.bkst, dc: x.dc, sc: x.sc, orn: x.orn });
+      dirty('meta');
+      renderBook(el);
+      return;
+    }
     const a = (e.target.closest('[data-bka]') || {}).dataset;
     if (!a || !a.bka) return;
     if (a.bka === 'export') openExport();
+    else if (a.bka === 'delcover') removePic('cover');
+    else if (a.bka === 'check' || a.bka === 'tidy') {
+      if (a.bka === 'tidy') {
+        const n = tidyBook();
+        toast(
+          n
+            ? 'Tidied ' + n + ' scene' + (n === 1 ? '' : 's') + '. Each one has a snapshot from before.'
+            : 'Nothing to tidy.',
+          {
+            plain: true
+          }
+        );
+      }
+      const box = $('#bkCheck', el);
+      preflight().then(list => {
+        box.innerHTML =
+          preflightHtml(list) +
+          '<button class="btn sm" data-bka="check">' +
+          ico('check', 13) +
+          '<span>Check again</span></button>';
+      });
+    } else if (a.bka === 'pfgo') go({ k: 'scene', id: a.id });
     else if (a.bka === 'owncopy') {
       ui.bkCopyEdit = true;
       renderBook(el);
@@ -30368,6 +30681,379 @@ function matterNote(k) {
     links: b.links.some(l => l.url || l.label)
   }[k];
   return has && String(has).trim() ? 'Written' : 'Nothing written yet: left out';
+}
+
+/* ---------- book styles: how the ebook looks ---------- */
+// Book styles for the EPUB (and, later, print): [key, name, description, settings]. Settings: dc (drop cap) and sc
+// (small capitals for the first words) are the style's starting choice, orn its scene-break ornament, head the CSS for
+// chapter headings (h1.ch with .cn, the number, and .ct, the title), and deco an ornament printed under the heading.
+const BOOK_STYLES = [
+  [
+    'classic',
+    'Classic',
+    'Centred serif headings with the number in spaced capitals. Timeless for any genre.',
+    {
+      dc: true,
+      sc: true,
+      orn: '* * *',
+      head: 'h1.ch{font-family:serif;font-weight:normal;text-align:center;margin:3em 0 2.2em}h1.ch .cn{display:block;font-size:.62em;letter-spacing:.22em;text-transform:uppercase;margin-bottom:.8em}h1.ch .ct{display:block;font-size:1.25em}'
+    }
+  ],
+  [
+    'elegant',
+    'Elegant',
+    'Italic titles with a flourish underneath. Lovely for romance and historical fiction.',
+    {
+      dc: true,
+      sc: true,
+      orn: '❧',
+      deco: '❦',
+      head: 'h1.ch{font-family:serif;font-weight:normal;text-align:center;margin:3em 0 .6em}h1.ch .cn{display:block;font-size:.6em;letter-spacing:.3em;text-transform:uppercase;margin-bottom:.6em}h1.ch .ct{display:block;font-style:italic;font-size:1.35em}p.deco{text-align:center;text-indent:0;margin:0 0 2em;font-size:1.3em}'
+    }
+  ],
+  [
+    'modern',
+    'Modern',
+    'Left-aligned sans-serif headings with a large number and a thin rule. Clean and contemporary.',
+    {
+      dc: false,
+      sc: false,
+      orn: '• • •',
+      head: 'h1.ch{font-family:sans-serif;font-weight:bold;text-align:left;margin:3em 0 2em;padding-bottom:.4em;border-bottom:1px solid currentColor}h1.ch .cn{display:block;font-size:1.8em;font-weight:300;line-height:1}h1.ch .ct{display:block;font-size:.9em;letter-spacing:.04em;margin-top:.3em}'
+    }
+  ],
+  [
+    'thriller',
+    'Thriller',
+    'Bold capital headings with a heavy rule. Punchy for crime, thrillers and action.',
+    {
+      dc: false,
+      sc: false,
+      orn: '■',
+      head: 'h1.ch{font-family:sans-serif;font-weight:bold;text-transform:uppercase;text-align:center;letter-spacing:.06em;margin:3em 0 2em}h1.ch .cn{display:block;font-size:2.2em;line-height:1;border-bottom:3px solid currentColor;padding-bottom:.15em;margin:0 auto .4em;width:2.2em}h1.ch .ct{display:block;font-size:.85em}'
+    }
+  ],
+  [
+    'storybook',
+    'Storybook',
+    'A star under each heading and a large drop cap. Made for fantasy and children’s books.',
+    {
+      dc: true,
+      sc: true,
+      orn: '✦ ✦ ✦',
+      deco: '✦',
+      head: 'h1.ch{font-family:serif;font-weight:normal;text-align:center;margin:3em 0 .5em}h1.ch .cn{display:block;font-size:.7em;letter-spacing:.15em;text-transform:uppercase;margin-bottom:.5em}h1.ch .ct{display:block;font-size:1.4em}p.deco{text-align:center;text-indent:0;margin:0 0 2em}'
+    }
+  ],
+  [
+    'simple',
+    'Simple',
+    'Plain centred headings and nothing else. Lets the words speak.',
+    {
+      dc: false,
+      sc: false,
+      orn: '* * *',
+      head: 'h1.ch{font-weight:normal;text-align:center;margin:3em 0 2em}h1.ch .cn,h1.ch .ct{display:block}h1.ch .cn{margin-bottom:.4em}'
+    }
+  ],
+  [
+    'typewriter',
+    'Typewriter',
+    'Monospaced headings, like a manuscript on the desk. Fun for literary and quirky books.',
+    {
+      dc: false,
+      sc: false,
+      orn: '#',
+      head: 'h1.ch{font-family:monospace;font-weight:normal;text-align:left;margin:3em 0 2em}h1.ch .cn{display:block;font-size:.8em;margin-bottom:.6em}h1.ch .cn:before{content:"— "}h1.ch .ct{display:block}'
+    }
+  ]
+];
+// Scene-break ornaments the writer can choose. Plain characters show on every e-reader; fancier ones on most.
+const BOOK_ORNS = ['* * *', '#', '• • •', '~', '⁂', '❧', '❦', '✦ ✦ ✦', '◆', '■', ''];
+const bookStyle = () => (BOOK_STYLES.find(x => x[0] === S.meta.book.style) || BOOK_STYLES[0])[3];
+// The ebook's CSS for the chosen style: body text, headings, drop caps, small capitals, scene breaks, part pages and
+// front and back matter. scope prefixes every rule, so the same CSS can preview a style inside the Book details screen.
+function bookCss(scope) {
+  const st = bookStyle(),
+    css =
+      'p{margin:0;text-indent:1.5em}p.first,p.brk+p,p.deco+p{text-indent:0}p.brk{text-align:center;text-indent:0;margin:1em 0}' +
+      'h1{page-break-before:always}h1.part{text-align:center;font-weight:normal;margin-top:35%;font-size:1.6em}h1.part .cn{display:block;font-size:.55em;letter-spacing:.2em;text-transform:uppercase;margin-bottom:.6em}' +
+      '.dc{float:left;font-size:3.2em;line-height:.85;margin:.05em .08em 0 0}.sc{font-variant:small-caps;letter-spacing:.03em}' +
+      st.head +
+      '.cover{margin:0;padding:0;text-align:center}.cover img{max-width:100%;max-height:100%}' +
+      MATTER_CSS;
+  if (!scope) return css;
+  // add the scope in front of every selector (rules are simple "selectors{declarations}" pairs)
+  return css.replace(
+    /(^|})([^{}]+)\{/g,
+    (m, end, sel) =>
+      end +
+      sel
+        .split(',')
+        .map(x => scope + ' ' + x.trim())
+        .join(',') +
+      '{'
+  );
+}
+// One chapter's text as ebook HTML: scenes joined by the style's ornament, the first paragraph without an indent,
+// and, if chosen, a drop cap and the first words in small capitals.
+function chapterHtml(scenes) {
+  const b = S.meta.book,
+    orn = b.orn;
+  return scenes
+    .map((x, si) =>
+      x
+        .map((l, li) => {
+          if (li) return '<p>' + htmlRuns(l) + '</p>';
+          let h = htmlRuns(l);
+          if (si === 0 && (b.dc || b.sc)) {
+            // the opening letter (after any quotes or opening formatting tags) and the words after it, up to the next
+            // tag, so the spans always nest inside the formatting
+            const m = h.match(
+              /^((?:&quot;|[“‘'(]|<(?:em|strong|u)>)*)(\p{L})((?:[^\s<&]|&amp;)*(?:\s+[^\s<&]+){0,3})/u
+            );
+            if (m)
+              h =
+                m[1] +
+                (b.dc ? '<span class="dc">' + m[2] + '</span>' : m[2]) +
+                (b.sc ? '<span class="sc">' + m[3] + '</span>' : m[3]) +
+                h.slice(m[0].length);
+          }
+          return '<p class="first">' + h + '</p>';
+        })
+        .join('')
+    )
+    .join(orn ? '<p class="brk">' + xe(orn) + '</p>' : '<p class="brk">&#160;</p>');
+}
+// The ebook heading for a chapter or part, with the style's ornament under it.
+function chapterHead(c) {
+  if (!c.label && !c.title) return '';
+  const deco = bookStyle().deco;
+  return (
+    '<h1 class="' +
+    (c.kind === 'part' ? 'part' : 'ch') +
+    '">' +
+    (c.label ? '<span class="cn">' + xe(c.label) + '</span>' : '') +
+    (c.title ? '<span class="ct">' + xe(c.title) + '</span>' : '') +
+    '</h1>' +
+    (deco && c.kind !== 'part' ? '<p class="deco">' + xe(deco) + '</p>' : '')
+  );
+}
+// A sample of the first chapter in the chosen style, for the Book details screen.
+function stylePreviewHtml() {
+  const H = chHeads(),
+    c = S.meta.chapters.find(x => !x.kind && x.scenes.some(id => S.sc[id].text.trim())) || S.meta.chapters[0],
+    h = c ? H[c.id] : { kind: '', label: 'Chapter One', title: 'A Beginning' };
+  const lines = c
+    ? c.scenes
+        .map(id =>
+          String(S.sc[id].text || '')
+            .split('\n')
+            .map(l => l.trim())
+            .filter(Boolean)
+        )
+        .filter(x => x.length)
+        .slice(0, 2)
+        .map((x, i) => (i ? x.slice(0, 1) : x.slice(0, 2)))
+    : [['It was a dark and stormy night.']];
+  return (
+    '<style>' +
+    bookCss('.bk-pv') +
+    '</style><div class="bk-pv">' +
+    chapterHead({
+      kind: h.kind,
+      label: h.label || (S.meta.book.chNum === 'none' ? '' : 'Chapter One'),
+      title: h.title
+    }) +
+    chapterHtml(lines) +
+    '</div>'
+  );
+}
+
+/* ---------- the cover ---------- */
+// The cover's size in pixels, read from the picture itself (null when there is none or it can't be read).
+function coverSize() {
+  return new Promise(res => {
+    const src = picSrc('cover');
+    if (!src) return res(null);
+    const im = new Image();
+    im.onload = () => res({ w: im.naturalWidth, h: im.naturalHeight });
+    im.onerror = () => res(null);
+    im.src = src;
+  });
+}
+// The cover as JPEG bytes for the ebook (every e-reader shows JPEG), or null. Desktop pictures are read through the
+// desktop app, so the canvas is never "tainted" by a picture from another origin.
+async function coverJpeg() {
+  const p = S.meta.book.cover;
+  if (!hasPic(p)) return null;
+  try {
+    const src = p.f && DESK && PJ.id ? await DESK.picRead(PJ.id, p.f) : picSrc('cover');
+    const im = await new Promise((ok, bad) => {
+      const i = new Image();
+      i.onload = () => ok(i);
+      i.onerror = bad;
+      i.src = src;
+    });
+    const c = document.createElement('canvas');
+    c.width = im.naturalWidth;
+    c.height = im.naturalHeight;
+    const g = c.getContext('2d');
+    g.fillStyle = '#fff';
+    g.fillRect(0, 0, c.width, c.height);
+    g.drawImage(im, 0, 0);
+    const blob = await new Promise(r => c.toBlob(r, 'image/jpeg', 0.92));
+    return blob ? { bytes: new Uint8Array(await blob.arrayBuffer()), w: c.width, h: c.height } : null;
+  } catch (e) {
+    return null;
+  }
+}
+
+/* ---------- the check before publishing ---------- */
+// An ISBN-13 (or ISBN-10) with a correct check digit; spaces and hyphens are ignored.
+function isbnOk(s) {
+  const d = String(s).replace(/[\s-]/g, '').toUpperCase();
+  if (/^\d{13}$/.test(d)) return [...d].reduce((a, c, i) => a + +c * (i % 2 ? 3 : 1), 0) % 10 === 0;
+  if (/^\d{9}[\dX]$/.test(d)) return [...d].reduce((a, c, i) => a + (c === 'X' ? 10 : +c) * (10 - i), 0) % 11 === 0;
+  return false;
+}
+// Things to look at before publishing an ebook: [{level:'warn'|'tip', text, fix?: 'tidy', scene?}]. Reads the cover's
+// size, so it returns a Promise.
+async function preflight() {
+  const m = S.meta,
+    b = m.book,
+    out = [],
+    add = (level, text, o) => out.push(Object.assign({ level, text }, o || {}));
+  const cs = await coverSize();
+  if (!cs) add('warn', 'There is no cover. Stores need one: add it in Book details › Cover.');
+  else {
+    if (cs.w < 625 || cs.h < 1000)
+      add(
+        'warn',
+        'The cover is small (' +
+          cs.w +
+          ' × ' +
+          cs.h +
+          ' pixels). Kindle asks for at least 625 × 1000; 1600 × 2560 is ideal.'
+      );
+    const r = cs.h / cs.w;
+    if (r < 1.3 || r > 1.8)
+      add(
+        'tip',
+        'The cover is ' +
+          (r < 1.3 ? 'wide' : 'tall') +
+          ' for a book (' +
+          cs.w +
+          ' × ' +
+          cs.h +
+          '). Most ebook covers are 1.6 times taller than wide.'
+      );
+  }
+  if (!(m.exp.byline || m.author || '').trim())
+    add('warn', 'Your name is missing. It goes on the title page and in the ebook’s details.');
+  [
+    ['isbnE', 'ebook'],
+    ['isbnP', 'paperback'],
+    ['isbnH', 'hardcover']
+  ].forEach(([k, l]) => {
+    if (b[k].trim() && !isbnOk(b[k]))
+      add('warn', 'The ' + l + ' ISBN (' + b[k].trim() + ') doesn’t look right: its last digit doesn’t match.');
+  });
+  if (!b.desc.trim()) add('tip', 'There is no description yet. Stores show it on your book’s page.');
+  let straight = 0,
+    doubles = 0,
+    todo = [],
+    long = 0;
+  m.chapters.forEach(c => {
+    const txt = c.scenes.map(id => S.sc[id].text).join('\n');
+    if (c.kind !== 'part' && !txt.trim()) add('warn', '“' + c.title + '” has no text yet.');
+    c.scenes.forEach(id => {
+      const t = S.sc[id].text;
+      straight += (t.match(/["']/g) || []).length;
+      doubles += (t.match(/\S {2,}\S/g) || []).length;
+      if (/\b(TODO|TK|XXX|FIXME)\b|\[\[/.test(t)) todo.push(id);
+      long += t.split('\n').filter(l => wc(l) > 400).length;
+    });
+  });
+  todo
+    .slice(0, 5)
+    .forEach(id => add('warn', '“' + m.scenes[id].title + '” has a TODO, TK or [[note]] left in it.', { scene: id }));
+  if (todo.length > 5) add('warn', todo.length - 5 + ' more scenes have notes left in them.');
+  if (straight || doubles)
+    add(
+      'tip',
+      [
+        straight ? straight + ' straight quote' + (straight === 1 ? '' : 's') : '',
+        doubles ? doubles + ' double space' + (doubles === 1 ? '' : 's') : ''
+      ]
+        .filter(Boolean)
+        .join(' and ') + ' in the text. Books use curly quotes and single spaces.',
+      { fix: 'tidy' }
+    );
+  if (long)
+    add(
+      'tip',
+      long +
+        ' very long paragraph' +
+        (long === 1 ? '' : 's') +
+        ' (over 400 words). Long paragraphs are hard to read on a phone.'
+    );
+  return out;
+}
+// Curly quotes, single spaces, em dashes and ellipses in one scene's stored text. Formatting markers (* and _) are
+// skipped over when deciding whether a quote opens or closes.
+function tidyText(t) {
+  let out = '';
+  for (let i = 0; i < t.length; i++) {
+    const ch = t[i];
+    if (ch === '"' || ch === "'") {
+      let j = out.length - 1;
+      while (j >= 0 && (out[j] === '*' || out[j] === '_')) j--;
+      const before = j < 0 ? '' : out[j],
+        opening = !before || /[\s(\[{—–-]/.test(before);
+      out += ch === '"' ? (opening ? '“' : '”') : opening ? '‘' : '’';
+    } else out += ch;
+  }
+  return out
+    .replace(/(\S) {2,}(?=\S)/g, '$1 ')
+    .replace(/(^|[^-])--(?!-)/g, '$1—')
+    .replace(/\.\.\./g, '…');
+}
+// Tidies the typography of every scene (after a snapshot of each one changed). Returns how many scenes changed.
+function tidyBook() {
+  let n = 0;
+  orderedScenes().forEach(o => {
+    const t = S.sc[o.id].text,
+      nt = tidyText(t);
+    if (nt === t) return;
+    snTake(o.id, '', 'replace');
+    setSceneText(o.id, nt);
+    n++;
+  });
+  return n;
+}
+
+// The results of the check before publishing, as a list (with a Tidy button for typography and links to scenes).
+function preflightHtml(list) {
+  if (!list.length) return '<p class="bk-pf-ok">' + ico('check', 15) + ' Everything looks ready.</p>';
+  return (
+    '<ul class="bk-pf">' +
+    list
+      .map(
+        x =>
+          '<li class="' +
+          x.level +
+          '">' +
+          ico(x.level === 'warn' ? 'alert' : 'info', 14) +
+          '<span>' +
+          esc(x.text) +
+          (x.fix === 'tidy' ? ' <button class="lnk" data-bka="tidy">Tidy typography</button>' : '') +
+          (x.scene ? ' <button class="lnk" data-bka="pfgo" data-id="' + x.scene + '">Open</button>' : '') +
+          '</span></li>'
+      )
+      .join('') +
+    '</ul>'
+  );
 }
 /*
  * 35-sharing.js: Shared projects: merging two writers' work, presence, and setting up sharing

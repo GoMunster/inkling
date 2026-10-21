@@ -504,14 +504,16 @@ function expPdfHtml(scope) {
   else if (I.full) h += '<p class="c" style="margin-top:1em">END</p>';
   return { html: h + '</body></html>', I };
 }
-// The manuscript as an EPUB ebook.
-function expEpub(scope) {
+// The manuscript as an EPUB ebook, in the book style chosen in Book details, with the cover when there is one.
+// Async, because the cover picture is read and turned into a JPEG.
+async function expEpub(scope) {
   const I = expInfo(scope),
     o = I.o,
     m = S.meta,
     b = m.book,
     lang = xe(bookLang()),
-    mat = I.full && o.matter.epub;
+    mat = I.full && o.matter.epub,
+    cover = I.full ? await coverJpeg() : null;
   if (!o.uid) {
     o.uid = uid('bk') + uid('');
     dirty('meta');
@@ -534,13 +536,12 @@ function expEpub(scope) {
     ],
     [
       'OEBPS/style.css',
-      'body{margin:0 5%;line-height:1.5}p{margin:0;text-indent:1.5em}h1+p,p.brk+p,p.first{text-indent:0}p.brk{text-align:center;text-indent:0;margin:1em 0}h1{text-align:center;font-weight:normal;margin:3em 0 2em;page-break-before:always}.title{text-align:center;margin-top:30%}.title h1{font-size:2em;margin:0 0 1em}.title p{text-indent:0}' +
-        'h1 .cn{display:block;font-size:.75em;letter-spacing:.08em;text-transform:uppercase;margin-bottom:.5em}h1.part{margin-top:35%;font-size:1.6em}' +
-        MATTER_CSS
+      'body{margin:0 5%;line-height:1.5}h1+p{text-indent:0}.title{text-align:center;margin-top:30%}.title h1{font-size:2em;font-weight:normal;margin:0 0 1em}.title p{text-indent:0}' +
+        bookCss()
     ]
   ];
   const items = [],
-    nav = [],
+    nav = [], // the contents: [file, label], for nav.xhtml and the older toc.ncx
     marks = [], // landmarks: where the contents and the story start, for the reader's Go to menu
     chHref = id => 'ch' + (I.book.findIndex(c => c.id === id) + 1) + '.xhtml',
     addMatter = side =>
@@ -561,9 +562,20 @@ function expEpub(scope) {
         ]);
         items.push(fid);
         if (pg.key === 'toc') marks.push(['toc', fid, 'Contents']);
-        if (side === 'back')
-          nav.push('<li><a href="' + fid + '.xhtml">' + xe(pg.blocks[0][1] || pg.name) + '</a></li>');
+        if (side === 'back') nav.push([fid, pg.blocks[0][1] || pg.name]);
       });
+  if (cover) {
+    files.push(['OEBPS/cover.jpg', cover.bytes]);
+    files.push([
+      'OEBPS/cover.xhtml',
+      page(
+        'Cover',
+        '<section class="cover" epub:type="cover"><img src="cover.jpg" alt="' + xe(I.title) + '"/></section>'
+      )
+    ]);
+    items.push('cover');
+    marks.push(['cover', 'cover', 'Cover']);
+  }
   if (mat) addMatter('front');
   else if (o.title) {
     files.push([
@@ -588,23 +600,14 @@ function expEpub(scope) {
         '<section epub:type="' +
           (c.kind === 'part' ? 'part' : 'chapter') +
           '">' +
-          (c.label || c.title
-            ? '<h1' +
-              (c.kind === 'part' ? ' class="part"' : '') +
-              '>' +
-              (c.label ? '<span class="cn">' + xe(c.label) + '</span>' : '') +
-              xe(c.title) +
-              '</h1>'
-            : '') +
-          c.scenes
-            .map(x => x.map(l => '<p>' + htmlRuns(l) + '</p>').join(''))
-            .join('<p class="brk">' + xe(o.brk || '*') + '</p>') +
+          chapterHead(c) +
+          chapterHtml(c.scenes) +
           '</section>'
       )
     ]);
     items.push(id);
     if (!i) marks.push(['bodymatter', id, 'Start reading']);
-    nav.push('<li><a href="' + id + '.xhtml">' + xe(chHeadText(c) || c.name) + '</a></li>');
+    nav.push([id, chHeadText(c) || c.name]);
   });
   if (mat) addMatter('back');
   files.push([
@@ -612,11 +615,35 @@ function expEpub(scope) {
     page(
       'Contents',
       '<nav epub:type="toc" id="toc"><h1>Contents</h1><ol>' +
-        nav.join('') +
+        nav.map(([f, l]) => '<li><a href="' + f + '.xhtml">' + xe(l) + '</a></li>').join('') +
         '</ol></nav><nav epub:type="landmarks" hidden=""><ol>' +
         marks.map(([t, f, l]) => '<li><a epub:type="' + t + '" href="' + f + '.xhtml">' + l + '</a></li>').join('') +
         '</ol></nav>'
     )
+  ]);
+  // the EPUB 2 table of contents, for older e-readers
+  files.push([
+    'OEBPS/toc.ncx',
+    '<?xml version="1.0" encoding="UTF-8"?><ncx xmlns="http://www.daisy.org/z3986/2005/ncx/" version="2005-1"><head><meta name="dtb:uid" content="urn:inkling:' +
+      xe(o.uid) +
+      '"/></head><docTitle><text>' +
+      xe(I.title) +
+      '</text></docTitle><navMap>' +
+      nav
+        .map(
+          ([f, l], i) =>
+            '<navPoint id="np' +
+            (i + 1) +
+            '" playOrder="' +
+            (i + 1) +
+            '"><navLabel><text>' +
+            xe(l) +
+            '</text></navLabel><content src="' +
+            f +
+            '.xhtml"/></navPoint>'
+        )
+        .join('') +
+      '</navMap></ncx>'
   ]);
   const mod = new Date().toISOString().replace(/\.\d+Z$/, 'Z');
   files.push([
@@ -648,10 +675,13 @@ function expEpub(scope) {
       lang +
       '</dc:language><meta property="dcterms:modified">' +
       mod +
-      '</meta></metadata><manifest>' +
-      '<item id="nav" href="nav.xhtml" media-type="application/xhtml+xml" properties="nav"/><item id="css" href="style.css" media-type="text/css"/>' +
+      '</meta>' +
+      (cover ? '<meta name="cover" content="cover-img"/>' : '') +
+      '</metadata><manifest>' +
+      (cover ? '<item id="cover-img" href="cover.jpg" media-type="image/jpeg" properties="cover-image"/>' : '') +
+      '<item id="nav" href="nav.xhtml" media-type="application/xhtml+xml" properties="nav"/><item id="css" href="style.css" media-type="text/css"/><item id="ncx" href="toc.ncx" media-type="application/x-dtbncx+xml"/>' +
       items.map(id => '<item id="' + id + '" href="' + id + '.xhtml" media-type="application/xhtml+xml"/>').join('') +
-      '</manifest><spine>' +
+      '</manifest><spine toc="ncx">' +
       items.map(id => '<itemref idref="' + id + '"/>').join('') +
       '</spine></package>'
   ]);
@@ -715,7 +745,7 @@ async function doExport(fmt, scope) {
     base = slug(m.title) + (ch ? '-' + slug(ch.title) : ''),
     name = base + EXP_FMTS[fmt][1];
   if (fmt === 'docx') return saveFile(name, expDocx(scope));
-  if (fmt === 'epub') return saveFile(name, expEpub(scope));
+  if (fmt === 'epub') return saveFile(name, await expEpub(scope));
   if (fmt === 'md') return saveFile(name, manuscriptMd(scope));
   if (fmt === 'txt') return saveFile(name, manuscriptTxt(scope));
   const r = expPdfHtml(scope);
@@ -774,7 +804,7 @@ function openExport() {
         pdf: DESK
           ? 'Standard manuscript format as a PDF.'
           : 'Standard manuscript format. Your browser’s print window opens: choose “Save as PDF”.',
-        epub: 'An ebook for Kindle, Apple Books and other readers, to read your draft like a book.',
+        epub: 'A store-ready ebook for Kindle, Apple Books, Kobo and Google Play, with your cover and book style.',
         md: 'Plain text with headings, for other writing apps.',
         txt: 'Just the words.'
       }[o.fmt] +
@@ -786,9 +816,15 @@ function openExport() {
         )
         .join('') +
       '</select></label>' +
-      '<label class="f">Scene break<input data-e="brk" value="' +
-      esc(o.brk) +
-      '" maxlength="12" placeholder="#"></label></div>' +
+      (o.fmt === 'epub'
+        ? '<label class="f">Book style<select data-bkstyle="1">' +
+          BOOK_STYLES.map(
+            x => '<option value="' + x[0] + '"' + (m.book.style === x[0] ? ' selected' : '') + '>' + x[1] + '</option>'
+          ).join('') +
+          '</select></label></div>'
+        : '<label class="f">Scene break<input data-e="brk" value="' +
+          esc(o.brk) +
+          '" maxlength="12" placeholder="#"></label></div>') +
       '<div class="two"><label class="f">Your name<input data-e="author" value="' +
       esc(m.author || '') +
       '" maxlength="120" placeholder="Your legal name"></label>' +
@@ -830,19 +866,33 @@ function openExport() {
           (scope !== 'all' ? ' <span class="muted">whole book only</span>' : '') +
           '</label>'
         : '') +
-      '<p class="fine">Chapter headings, front and back matter come from <button class="lnk" data-x="book">Book details</button>.</p>' +
+      '<p class="fine">Chapter headings, front and back matter' +
+      (o.fmt === 'epub' ? ', the cover and the book style' : '') +
+      ' come from <button class="lnk" data-x="book">Book details</button>.</p>' +
+      (o.fmt === 'epub' && scope === 'all' ? '<div class="ex-check" id="exCheck"></div>' : '') +
       '<p class="fine">Bold, italics and underlining from your scenes come through in Word, PDF and EPUB. Each line you type is a paragraph.</p>' +
       '<div class="ask-btns" style="margin-top:14px"><button class="btn" data-x="close">Cancel</button><button class="btn pri" data-x="go">' +
       ico('down', 14) +
       '<span>Export ' +
       EXP_FMTS[o.fmt][0] +
       '</span></button></div></div>';
+    // the check before publishing, for a whole-book ebook (warnings only; tips are in Book details)
+    const ck = $('#exCheck', ov);
+    if (ck)
+      preflight().then(list => {
+        const w = list.filter(x => x.level === 'warn');
+        if (ck.isConnected && w.length)
+          ck.innerHTML = '<span class="sec-l">Before you publish</span>' + preflightHtml(w);
+      });
   };
   ov.addEventListener('click', e => {
     if (e.target === ov) return close();
-    const b = e.target.closest('[data-fmt],[data-o],[data-x]');
+    const b = e.target.closest('[data-fmt],[data-o],[data-x],[data-bka]');
     if (!b) return;
-    if (b.dataset.fmt) {
+    if (b.dataset.bka === 'pfgo') {
+      close();
+      go({ k: 'scene', id: b.dataset.id });
+    } else if (b.dataset.fmt) {
       o.fmt = b.dataset.fmt;
       dirty('meta');
       draw();
@@ -867,6 +917,12 @@ function openExport() {
     dirty('meta');
   });
   ov.addEventListener('change', e => {
+    if (e.target.dataset.bkstyle) {
+      const x = BOOK_STYLES.find(y => y[0] === e.target.value)[3];
+      Object.assign(m.book, { style: e.target.value, dc: x.dc, sc: x.sc, orn: x.orn });
+      dirty('meta');
+      return;
+    }
     if (e.target.dataset.mat) {
       o.matter[o.fmt] = e.target.checked;
       dirty('meta');

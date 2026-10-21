@@ -7,6 +7,8 @@
  * into an image address, setPic() stores a new picture wherever it belongs, and backups carry every picture inside
  * the file (collectImages, adoptImages) so they move between all three.
  *
+ * The book's cover (meta.book.cover, id 'cover') is stored the same way and kept large, like a map.
+ *
  * The rest is the picture block on a story page: shape, size, framing (which part shows, and how far zoomed in), and
  * the full-size lightbox.
  */
@@ -76,10 +78,13 @@ function picSvg(eid, x, y, w, h) {
     ' slice"'
   );
 }
-// A picture belongs to a story page (S.en[id].pic) or a world map (S.nt[id].pic, a note of kind 'map').
-const picRec = id => (S.en[id] || S.nt[id] || {}).pic || null,
-  picKey = id => (S.en[id] ? 'en_' + id : 'nt_' + id),
-  isMapPic = id => !S.en[id] && !!S.nt[id];
+// A picture belongs to a story page (S.en[id].pic), a world map (S.nt[id].pic, a note of kind 'map') or is the
+// book's cover (id 'cover': S.meta.book.cover).
+const picRec = id => (id === 'cover' ? S.meta.book.cover : (S.en[id] || S.nt[id] || {}).pic || null),
+  picKey = id => (id === 'cover' ? 'meta' : S.en[id] ? 'en_' + id : 'nt_' + id),
+  isMapPic = id => id === 'cover' || (!S.en[id] && !!S.nt[id]);
+// Whether a picture record holds a picture.
+const hasPic = p => !!(p && (p.a || p.l || p.f));
 // The address to show a page's or map's picture from, wherever it is stored ('' when there is none).
 function picSrc(eid) {
   const p = picRec(eid);
@@ -107,7 +112,9 @@ async function getAssets() {
 // Claude artifact, a browser and the desktop app with its pictures.
 async function collectImages() {
   const o = {};
-  for (const id of Object.keys(S.en).concat(Object.keys(S.nt).filter(k => S.nt[k].pic))) {
+  for (const id of Object.keys(S.en)
+    .concat(Object.keys(S.nt).filter(k => S.nt[k].pic))
+    .concat(hasPic(S.meta.book.cover) ? ['cover'] : [])) {
     const p = picRec(id);
     if (!p) continue;
     try {
@@ -127,8 +134,10 @@ async function collectImages() {
 async function adoptImages(np, imgs, deskId) {
   imgs = imgs && typeof imgs === 'object' ? imgs : {};
   const inClaude = !!(window.claude && window.claude.use);
-  for (const id of Object.keys(np.en).concat(Object.keys(np.nt || {}).filter(k => np.nt[k].pic))) {
-    const p = (np.en[id] || np.nt[id]).pic,
+  for (const id of Object.keys(np.en)
+    .concat(Object.keys(np.nt || {}).filter(k => np.nt[k].pic))
+    .concat(np.meta.book && hasPic(np.meta.book.cover) ? ['cover'] : [])) {
+    const p = id === 'cover' ? np.meta.book.cover : (np.en[id] || np.nt[id]).pic,
       d = imgs[id],
       ok = typeof d === 'string' && /^data:image\/[\w+.-]+;base64,/.test(d);
     if (deskId) {
@@ -241,7 +250,8 @@ async function setPic(eid, file) {
         } catch (e) {}
       if (old.a && old.a !== r.id) as.delete(old.a).catch(() => {});
     } else {
-      const b = await shrink(file, big ? 1800 : 1000, 0.82),
+      // a cover keeps the size stores ask for (2560 pixels tall); other pictures stay small in the browser's storage
+      const b = await shrink(file, eid === 'cover' ? 2560 : big ? 1800 : 1000, 0.82),
         url = await toDataUrl(b);
       try {
         localStorage.setItem(LOCAL_PIC + eid, url);
@@ -276,6 +286,7 @@ async function setPic(eid, file) {
   ui.imgBusy = null;
   refreshPic();
   renderBinder();
+  if (eid === 'cover' && ui.view.k === 'book') renderMain();
   if (big && ui.view.k === 'nt' && ui.view.id === eid) renderMain();
 }
 // Removes a page's or map's picture.
@@ -289,6 +300,7 @@ async function removePic(eid) {
   dirty(picKey(eid));
   refreshPic();
   renderBinder();
+  if (eid === 'cover' && ui.view.k === 'book') renderMain();
 }
 // The picture block at the top of a story page: the picture (or a drop zone), its caption, and the layout options.
 function picHtml(e) {

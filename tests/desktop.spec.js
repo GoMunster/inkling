@@ -414,3 +414,51 @@ test('series bible: bring a character and its picture in from another book on th
   expect(errors).toEqual([]);
   await app.close();
 });
+
+test('store-ready ebook: the cover is saved as a file and goes into the EPUB', async () => {
+  const home = newHome();
+  const { app, win, errors } = await launch(home);
+  const { unzip } = require('./helpers');
+  const out = path.join(home, 'book.epub');
+  await app.evaluate(({ dialog }, f) => {
+    dialog.showSaveDialog = async () => ({ canceled: false, filePath: f });
+  }, out);
+  await win.click('#menuBtn');
+  await win.click('[data-m="book"]');
+  const png = await win.evaluate(() => {
+    const c = document.createElement('canvas');
+    c.width = 500;
+    c.height = 800;
+    c.getContext('2d').fillRect(0, 0, 500, 800);
+    return c.toDataURL('image/png').split(',')[1];
+  });
+  await win.setInputFiles('[data-bkcv]', {
+    name: 'cover.png',
+    mimeType: 'image/png',
+    buffer: Buffer.from(png, 'base64')
+  });
+  await expect(win.locator('#bkCvSize')).toHaveText('500 × 800 pixels: too small for stores');
+  const dir = await projectsDir(app);
+  const saved = await until(() => {
+    try {
+      const d = fs.readdirSync(dir)[0],
+        p = JSON.parse(fs.readFileSync(path.join(dir, d, 'project.json'), 'utf8'));
+      return p.meta.book.cover.f && fs.existsSync(path.join(dir, d, 'pictures', p.meta.book.cover.f));
+    } catch (e) {
+      return false;
+    }
+  });
+  expect(saved).toBe(true);
+  await win.click('[data-bka="check"]');
+  await expect(win.locator('#bkCheck')).toContainText('The cover is small (500 × 800 pixels)');
+  await win.click('#menuBtn');
+  await win.click('[data-m="export"]');
+  await win.click('[data-fmt="epub"]');
+  await win.click('[data-x="go"]');
+  expect(await until(() => fs.existsSync(out) && fs.statSync(out).size > 1000)).toBe(true);
+  const e = unzip(fs.readFileSync(out));
+  expect([...e['OEBPS/cover.jpg'].subarray(0, 2)]).toEqual([0xff, 0xd8]);
+  expect(e['OEBPS/content.opf'].toString()).toContain('properties="cover-image"');
+  expect(errors).toEqual([]);
+  await app.close();
+});
