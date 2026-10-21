@@ -40,15 +40,31 @@ function saveRelabel(ok) {
   dirty('meta');
   renderAll();
 }
-// Redraws the binder, then marks who else is in which scene on a shared project.
+// Redraws the binder, marks the open item, then marks who else is in which scene on a shared project.
 function renderBinder() {
   renderBinder0();
+  paintBinderSel();
   if (ui.others && ui.others.length) paintHere();
+}
+// Highlights the open scene, page or document in the binder. Kept apart from renderBinder0 so that opening something
+// only moves the highlight instead of rebuilding thousands of elements on a long book.
+function paintBinderSel() {
+  const el = $('#binder'),
+    v = ui.view;
+  if (!el || !v) return;
+  el.querySelectorAll('.sc-row.on,.e-row.on').forEach(r => r.classList.remove('on'));
+  const row =
+    v.k === 'scene'
+      ? el.querySelector('.sc-row[data-sid="' + v.id + '"]')
+      : v.id &&
+        (el.querySelector('.e-btn[data-a="open-' + (v.k === 'ent' ? 'e' : v.k) + '"][data-id="' + v.id + '"]') || {})
+          .parentElement;
+  if (row) row.classList.add('on');
 }
 // Draws the binder: manuscript, planning sections, story pages and Customize binder.
 function renderBinder0() {
   const m = S.meta,
-    cur = ui.view,
+    cur = { k: '', id: '' }, // the open item is highlighted afterwards by paintBinderSel, so the HTML does not depend on it
     el = $('#binder'),
     cf = ui.confirm;
   let h =
@@ -448,7 +464,11 @@ function renderBinder0() {
       '<label class="ck"><input type="checkbox" checked disabled>' +
       esc(LP('char')) +
       ' <span class="muted">(always on)</span></label></div>';
-  el.innerHTML = h + '</div></div>';
+  h += '</div></div>';
+  // Nothing changed (most often: only the open item changed): keep the elements and their handlers as they are.
+  if (h === ui.binderHtml && el.firstChild) return;
+  ui.binderHtml = h;
+  el.innerHTML = h;
   dragSort(el, {
     item: '.sc-row',
     zones: '.ch-block',

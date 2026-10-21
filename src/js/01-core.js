@@ -26,7 +26,8 @@ const wc = t => {
   return m ? m.length : 0;
 };
 // A number rounded and written with thousands separators: 12,345.
-const fmt = n => Math.round(n).toLocaleString('en-US');
+const NUM_FMT = new Intl.NumberFormat('en-US'); // made once: toLocaleString() builds a new formatter on every call
+const fmt = n => NUM_FMT.format(Math.round(n));
 // Two digits with a leading zero, for dates: 7 → "07".
 const pad = n => String(n).padStart(2, '0');
 // A date as the "YYYY-MM-DD" key used for daily word counts.

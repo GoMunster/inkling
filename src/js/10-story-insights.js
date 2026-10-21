@@ -131,53 +131,22 @@ function storyRows() {
   const m = S.meta,
     c = ui.stRows;
   if (c && c.v === m.saved && c.n === Object.keys(m.scenes).length && Date.now() - c.at < 4000) return c.rows;
-  const L = pkLex(),
-    rows = [];
+  const rows = [];
   orderedScenes().forEach((o, i) => {
     const s = m.scenes[o.id],
-      vis = plainText(S.sc[o.id].text),
-      words = wc(vis),
-      per = Math.max(1, words / 100);
-    const sents = (vis.match(/[^.!?…\n]+[.!?…]*/g) || []).filter(x => /\p{L}/u.test(x)).length;
-    const toks =
-      vis
-        .toLowerCase()
-        .replace(/’/g, "'")
-        .match(/[\p{L}']+/gu) || [];
-    let act = 0,
-      refl = 0,
-      ev = 0;
-    toks.forEach(w => {
-      if (REFLECT.has(w)) refl++;
-      pkHits(L.mood, w).forEach(([k, v]) => {
-        if (k === 'action' || k === 'fear' || k === 'anger') act += v;
-      });
-    });
-    PK_EV.forEach(e => {
-      ev += (vis.match(new RegExp(e[1].source, 'gi')) || []).length * e[4];
-    });
-    const avg = sents ? words / sents : 0,
-      bangs = (vis.match(/!/g) || []).length;
-    let est = 1 + ((act + ev * 0.6) / per) * 1.1 + (bangs / per) * 0.3;
-    if (avg && avg < 10) est += 0.5;
-    else if (avg > 24) est -= 0.4;
-    const quote = (vis.match(/[“"][^”"\n]*[”"]/g) || []).join('').length,
-      cast = {};
-    findLinks(vis).forEach(l => {
-      cast[l.id] = (cast[l.id] || 0) + 1;
-    });
+      a = sceneReading(o.id);
     rows.push({
       id: o.id,
       ch: o.ch,
       i,
       title: s.title,
-      words,
+      words: a.words,
       tension: s.tension || 0,
-      est: words ? Math.round(Math.max(1, Math.min(5, est)) * 10) / 10 : 0,
-      dlg: vis.length ? Math.min(1, quote / vis.length) : 0,
-      act: act / per,
-      refl: refl / per,
-      cast,
+      est: a.est,
+      dlg: a.dlg,
+      act: a.act,
+      refl: a.refl,
+      cast: a.cast,
       pov: s.pov || '',
       place: s.place || '',
       threads: s.threads || []
@@ -185,6 +154,61 @@ function storyRows() {
   });
   ui.stRows = { v: m.saved, n: Object.keys(m.scenes).length, at: Date.now(), rows };
   return rows;
+}
+// What Story insights reads from one scene's text: words, estimated tension, the share of dialogue, action and
+// reflection, and who is named. Kept per scene until its text (or the set of names) changes, so on a long book only
+// the scenes written since last time are read again.
+const SCENE_READ = new Map();
+let PK_EV_G = null; // PK_EV's patterns, made global (to count every match) once
+function sceneReading(id) {
+  const text = S.sc[id].text,
+    hit = SCENE_READ.get(id);
+  if (hit && hit.text === text && hit.linker === linker) return hit;
+  const L = pkLex(),
+    vis = plainText(text),
+    words = wc(vis),
+    per = Math.max(1, words / 100);
+  const sents = (vis.match(/[^.!?…\n]+[.!?…]*/g) || []).filter(x => /\p{L}/u.test(x)).length;
+  const toks =
+    vis
+      .toLowerCase()
+      .replace(/’/g, "'")
+      .match(/[\p{L}']+/gu) || [];
+  let act = 0,
+    refl = 0,
+    ev = 0;
+  toks.forEach(w => {
+    if (REFLECT.has(w)) refl++;
+    pkHits(L.mood, w).forEach(([k, v]) => {
+      if (k === 'action' || k === 'fear' || k === 'anger') act += v;
+    });
+  });
+  PK_EV_G = PK_EV_G || PK_EV.map(e => new RegExp(e[1].source, 'gi'));
+  PK_EV.forEach((e, k) => {
+    ev += (vis.match(PK_EV_G[k]) || []).length * e[4];
+  });
+  const avg = sents ? words / sents : 0,
+    bangs = (vis.match(/!/g) || []).length;
+  let est = 1 + ((act + ev * 0.6) / per) * 1.1 + (bangs / per) * 0.3;
+  if (avg && avg < 10) est += 0.5;
+  else if (avg > 24) est -= 0.4;
+  const quote = (vis.match(/[“"][^”"\n]*[”"]/g) || []).join('').length,
+    cast = {};
+  findLinks(vis).forEach(l => {
+    cast[l.id] = (cast[l.id] || 0) + 1;
+  });
+  const r = {
+    text,
+    linker,
+    words,
+    est: words ? Math.round(Math.max(1, Math.min(5, est)) * 10) / 10 : 0,
+    dlg: vis.length ? Math.min(1, quote / vis.length) : 0,
+    act: act / per,
+    refl: refl / per,
+    cast
+  };
+  SCENE_READ.set(id, r);
+  return r;
 }
 // A scene's tension: the writer's own, or the estimate.
 const stTen = r => r.tension || r.est;

@@ -1521,3 +1521,24 @@ test('series bible: bring pages, timelines and world details in from another boo
   expect(docx['word/document.xml'].toString()).toContain('Captain Orla');
   expect(errors).toEqual([]);
 });
+
+test('opening a scene only moves the binder highlight; a change still redraws the binder', async ({ page }) => {
+  const errors = await openApp(page, { project: STORY_PROJECT });
+  await page.click('.sc-btn[data-id="s1"]');
+  await page.evaluate(() => {
+    document.querySelector('.sc-row[data-sid="s4"]').dataset.keep = '1';
+  });
+  await page.click('.sc-btn[data-id="s4"]');
+  await expect(page.locator('.sc-row.on')).toHaveCount(1);
+  await expect(page.locator('.sc-row.on')).toHaveAttribute('data-sid', 's4');
+  await expect(page.locator('.sc-row[data-sid="s4"]')).toHaveAttribute('data-keep', '1'); // same element: not rebuilt
+  await page.click('.e-btn:has-text("Mara")');
+  await expect(page.locator('.e-row.on .e-btn')).toHaveText(/Mara/);
+  await expect(page.locator('.sc-row.on')).toHaveCount(0);
+  // renaming a scene changes what the binder shows, so it is rebuilt
+  await page.click('.sc-btn[data-id="s2"]');
+  await page.fill('#sceneTitle', 'The chase');
+  await expect(page.locator('.sc-btn[data-id="s2"]')).toContainText('The chase');
+  await expect(page.locator('.sc-row.on')).toHaveAttribute('data-sid', 's2');
+  expect(errors).toEqual([]);
+});

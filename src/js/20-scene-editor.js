@@ -145,9 +145,12 @@ function renderScene(el, v) {
   const ed = $('#ed');
   ed.innerHTML = renderText(d.text);
   ed.setAttribute('contenteditable', 'true');
-  try {
-    document.execCommand('styleWithCSS', false, false);
-  } catch (e) {}
+  // Bold and italic as <b>/<i>, not style attributes. A setting of the whole page, so once is enough (it costs a layout).
+  if (!ui.swcSet)
+    try {
+      document.execCommand('styleWithCSS', false, false);
+      ui.swcSet = true;
+    } catch (e) {}
   ed.style.fontSize = ui.fs + 'px';
   let comp = false;
   const typed = () => {
@@ -525,8 +528,10 @@ function paintSceneWc() {
   let n = 0;
   if (ed && s.rangeCount && !s.isCollapsed && ed.contains(s.anchorNode) && ed.contains(s.focusNode))
     n = wc(s.toString());
-  const g = S.meta.scenes[v.id].goal;
-  el.textContent = fmt(w) + (g ? ' of ' + fmt(g) : '') + ' words' + (n ? ' · ' + fmt(n) + ' selected' : '');
+  const g = S.meta.scenes[v.id].goal,
+    txt = fmt(w) + (g ? ' of ' + fmt(g) : '') + ' words' + (n ? ' · ' + fmt(n) + ' selected' : '');
+  if (el.textContent === txt) return; // runs on every keystroke: touch the page only when the count changes
+  el.textContent = txt;
   el.classList.toggle('met', !!g && w >= g);
   el.title =
     'About ' +

@@ -92,7 +92,6 @@ function contCheck(force) {
   if (!force && ui.cont && Date.now() - ui.cont.at < 4000 && ui.cont.v === S.meta.saved) return ui.cont.list;
   const m = S.meta,
     ents = Object.values(m.ents),
-    scenes = orderedScenes(),
     out = [],
     facts = {},
     ign = m.contIgnore || {};
@@ -100,7 +99,8 @@ function contCheck(force) {
     const f = parseFacts(((S.en[e.id] || {}).fields || {}).facts);
     if (Object.keys(f).length) facts[e.id] = f;
   });
-  const chIdx = {};
+  const factSig = JSON.stringify(facts),
+    chIdx = {};
   m.chapters.forEach((c, i) => (chIdx[c.id] = i));
   const seen = {},
     nameWords = new Set(),
@@ -115,122 +115,21 @@ function contCheck(force) {
         })
     )
   );
-  const cv = '(' + CONT_COLORS.join('|') + ')',
-    eyeRe = new RegExp(
-      '\\b' +
-        cv +
-        '(?:[- ]\\w+)?[- ]eyed\\b|\\b' +
-        cv +
-        '(?:[- ]\\w+)?\\s+eyes?\\b|\\beyes?\\s+(?:were|was|are|is|of|gone|now)?\\s*(?:a\\s+)?(?:\\w+\\s+)?' +
-        cv +
-        '\\b',
-      'gi'
-    );
-  const hairRe = new RegExp(
-    '\\b' +
-      cv +
-      '(?:[- ]\\w+)?[- ]haired\\b|\\b' +
-      cv +
-      '(?:[- ]\\w+)?\\s+(?:hair|curls|braids?|locks|ponytail)\\b|\\bhair\\s+(?:was|were|is|now|gone|turned)?\\s*(?:\\w+\\s+)?' +
-      cv +
-      '\\b',
-    'gi'
-  );
-  const ageRe =
-    /\b(\d{1,3}|(?:twenty|thirty|forty|fifty|sixty|seventy|eighty|ninety|one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|thirteen|fourteen|fifteen|sixteen|seventeen|eighteen|nineteen)(?:[- ](?:one|two|three|four|five|six|seven|eight|nine))?)[- ]years?[- ]old\b/gi;
-  scenes.forEach(o => {
-    const vis = plainText(S.sc[o.id].text),
-      links = findLinks(vis);
-    links.forEach(l => {
+  orderedScenes().forEach(o => {
+    const r = contScene(o.id, facts, factSig);
+    r.links.forEach(l => {
       const s2 = seen[l.id] || (seen[l.id] = { n: 0, first: null, last: null, chs: new Set() });
       s2.n++;
       if (!s2.first) s2.first = { scene: o.id, s: l.s, e: l.e };
       s2.last = { scene: o.id, s: l.s, e: l.e };
       s2.chs.add(chIdx[o.ch.id]);
     });
-    if (Object.keys(facts).length) {
-      const sre = /[^.!?\n]+[.!?]*/g;
-      let sm,
-        li = 0;
-      while ((sm = sre.exec(vis))) {
-        const s0 = sm.index,
-          e0 = s0 + sm[0].length;
-        while (li < links.length && links[li].e <= s0) li++;
-        const inS = [];
-        for (let k = li; k < links.length && links[k].s < e0; k++) inS.push(links[k]);
-        if (!inS.length) continue;
-        const owner = p => {
-          let best = null;
-          inS.forEach(l => {
-            if (l.s < p) best = l;
-          });
-          return best || inS[0];
-        };
-        [
-          ['eyes', eyeRe],
-          ['hair', hairRe]
-        ].forEach(([attr, re]) => {
-          re.lastIndex = 0;
-          let mm;
-          while ((mm = re.exec(sm[0]))) {
-            const said = (mm[1] || mm[2] || mm[3] || '').toLowerCase(),
-              p = s0 + mm.index,
-              ow = owner(p),
-              f = facts[ow.id];
-            if (
-              !f ||
-              !f[attr] ||
-              !said ||
-              f[attr].includes(said) ||
-              (said === 'grey' && f[attr].includes('gray')) ||
-              (said === 'gray' && f[attr].includes('grey'))
-            )
-              continue;
-            out.push({
-              kind: 'fact',
-              ent: ow.id,
-              scene: o.id,
-              s: p,
-              e: p + mm[0].length,
-              attr,
-              said,
-              fact: f[attr],
-              text: sm[0].trim()
-            });
-          }
-        });
-        ageRe.lastIndex = 0;
-        let am;
-        while ((am = ageRe.exec(sm[0]))) {
-          const p = s0 + am.index,
-            ow = owner(p),
-            f = facts[ow.id];
-          if (!f || !f.age) continue;
-          const a = ageNum(am[1]),
-            fa = ageNum(f.age.match(/[\w-]+/)[0]);
-          if (a && fa && a !== fa)
-            out.push({
-              kind: 'fact',
-              ent: ow.id,
-              scene: o.id,
-              s: p,
-              e: p + am[0].length,
-              attr: 'age',
-              said: String(a),
-              fact: f.age,
-              text: sm[0].trim()
-            });
-        }
-      }
-    }
-    const wre = /\b\p{Lu}[\p{Ll}'’]{3,}\b/gu;
-    let wm;
-    while ((wm = wre.exec(vis))) {
-      const w = wm[0].replace(/['’].*$/, '');
-      if (w.length < 4 || nameWords.has(w)) continue;
-      const c = cand[w] || (cand[w] = { n: 0, scene: o.id, s: wm.index, e: wm.index + w.length });
+    out.push(...r.facts);
+    r.caps.forEach(([w, s, e]) => {
+      if (nameWords.has(w)) return;
+      const c = cand[w] || (cand[w] = { n: 0, scene: o.id, s, e });
       c.n++;
-    }
+    });
   });
   Object.keys(cand).forEach(w => {
     for (const nw of nameWords) {
@@ -271,6 +170,130 @@ function contCheck(force) {
   const list = out.filter(x => !ign[contKey(x)]);
   ui.cont = { at: Date.now(), v: S.meta.saved, list, seen };
   return list;
+}
+// What the check reads from one scene: its name links, facts there that disagree with a page, and capitalised words
+// (possible misspelt names). Kept per scene until its text, the names or the pages' Key facts change, so on a long
+// book only the scenes written since last time are read again.
+const CONT_SCENE = new Map();
+let CONT_RE = null; // the eye, hair and age patterns, made once
+function contScene(id, facts, factSig) {
+  const text = S.sc[id].text,
+    hit = CONT_SCENE.get(id);
+  if (hit && hit.text === text && hit.linker === linker && hit.factSig === factSig) return hit;
+  if (!CONT_RE) {
+    const cv = '(' + CONT_COLORS.join('|') + ')';
+    CONT_RE = {
+      eyes: new RegExp(
+        '\\b' +
+          cv +
+          '(?:[- ]\\w+)?[- ]eyed\\b|\\b' +
+          cv +
+          '(?:[- ]\\w+)?\\s+eyes?\\b|\\beyes?\\s+(?:were|was|are|is|of|gone|now)?\\s*(?:a\\s+)?(?:\\w+\\s+)?' +
+          cv +
+          '\\b',
+        'gi'
+      ),
+      hair: new RegExp(
+        '\\b' +
+          cv +
+          '(?:[- ]\\w+)?[- ]haired\\b|\\b' +
+          cv +
+          '(?:[- ]\\w+)?\\s+(?:hair|curls|braids?|locks|ponytail)\\b|\\bhair\\s+(?:was|were|is|now|gone|turned)?\\s*(?:\\w+\\s+)?' +
+          cv +
+          '\\b',
+        'gi'
+      ),
+      age: /\b(\d{1,3}|(?:twenty|thirty|forty|fifty|sixty|seventy|eighty|ninety|one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|thirteen|fourteen|fifteen|sixteen|seventeen|eighteen|nineteen)(?:[- ](?:one|two|three|four|five|six|seven|eight|nine))?)[- ]years?[- ]old\b/gi
+    };
+  }
+  const vis = plainText(text),
+    links = findLinks(vis),
+    found = [],
+    caps = [];
+  if (Object.keys(facts).length) {
+    const sre = /[^.!?\n]+[.!?]*/g;
+    let sm,
+      li = 0;
+    while ((sm = sre.exec(vis))) {
+      const s0 = sm.index,
+        e0 = s0 + sm[0].length;
+      while (li < links.length && links[li].e <= s0) li++;
+      const inS = [];
+      for (let k = li; k < links.length && links[k].s < e0; k++) inS.push(links[k]);
+      if (!inS.length) continue;
+      // the name a description belongs to: the nearest one before it in the sentence, else the first
+      const owner = p => {
+        let best = null;
+        inS.forEach(l => {
+          if (l.s < p) best = l;
+        });
+        return best || inS[0];
+      };
+      ['eyes', 'hair'].forEach(attr => {
+        const re = CONT_RE[attr];
+        re.lastIndex = 0;
+        let mm;
+        while ((mm = re.exec(sm[0]))) {
+          const said = (mm[1] || mm[2] || mm[3] || '').toLowerCase(),
+            p = s0 + mm.index,
+            ow = owner(p),
+            f = facts[ow.id];
+          if (
+            !f ||
+            !f[attr] ||
+            !said ||
+            f[attr].includes(said) ||
+            (said === 'grey' && f[attr].includes('gray')) ||
+            (said === 'gray' && f[attr].includes('grey'))
+          )
+            continue;
+          found.push({
+            kind: 'fact',
+            ent: ow.id,
+            scene: id,
+            s: p,
+            e: p + mm[0].length,
+            attr,
+            said,
+            fact: f[attr],
+            text: sm[0].trim()
+          });
+        }
+      });
+      const ageRe = CONT_RE.age;
+      ageRe.lastIndex = 0;
+      let am;
+      while ((am = ageRe.exec(sm[0]))) {
+        const p = s0 + am.index,
+          ow = owner(p),
+          f = facts[ow.id];
+        if (!f || !f.age) continue;
+        const a = ageNum(am[1]),
+          fa = ageNum(f.age.match(/[\w-]+/)[0]);
+        if (a && fa && a !== fa)
+          found.push({
+            kind: 'fact',
+            ent: ow.id,
+            scene: id,
+            s: p,
+            e: p + am[0].length,
+            attr: 'age',
+            said: String(a),
+            fact: f.age,
+            text: sm[0].trim()
+          });
+      }
+    }
+  }
+  const wre = /\b\p{Lu}[\p{Ll}'’]{3,}\b/gu;
+  let wm;
+  while ((wm = wre.exec(vis))) {
+    const w = wm[0].replace(/['’].*$/, '');
+    if (w.length >= 4) caps.push([w, wm.index, wm.index + w.length]);
+  }
+  const r = { text, linker, factSig, links, facts: found, caps };
+  CONT_SCENE.set(id, r);
+  return r;
 }
 // How many issues need attention (disagreeing facts and likely typos), for the Inkling panel's button.
 const contCount = () => contCheck().filter(x => x.kind === 'fact' || x.kind === 'spell').length;

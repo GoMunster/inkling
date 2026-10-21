@@ -7443,6 +7443,32 @@ kbd {
     grid-template-columns: 1fr;
   }
 }
+
+/* Long lists on big books: the browser skips laying out and painting entries that are off screen until they
+   scroll near (content-visibility). contain-intrinsic-size is the size to assume until then. */
+.sa-hit,
+.fd-sc,
+.cork-ch,
+.ap {
+  content-visibility: auto;
+}
+.sa-hit {
+  contain-intrinsic-size: auto 72px;
+}
+.fd-sc {
+  contain-intrinsic-size: auto 160px;
+}
+.cork-ch {
+  contain-intrinsic-size: auto 320px;
+}
+.ap {
+  contain-intrinsic-size: auto 76px;
+}
+/* The binder's chapters, likewise: a long manuscript's chapters below the fold are laid out only when scrolled to. */
+.ch-block {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 120px;
+}
 </style>
 </head>
 <body>
@@ -7508,7 +7534,8 @@ const wc = t => {
   return m ? m.length : 0;
 };
 // A number rounded and written with thousands separators: 12,345.
-const fmt = n => Math.round(n).toLocaleString('en-US');
+const NUM_FMT = new Intl.NumberFormat('en-US'); // made once: toLocaleString() builds a new formatter on every call
+const fmt = n => NUM_FMT.format(Math.round(n));
 // Two digits with a leading zero, for dates: 7 → "07".
 const pad = n => String(n).padStart(2, '0');
 // A date as the "YYYY-MM-DD" key used for daily word counts.
@@ -12071,7 +12098,6 @@ function contCheck(force) {
   if (!force && ui.cont && Date.now() - ui.cont.at < 4000 && ui.cont.v === S.meta.saved) return ui.cont.list;
   const m = S.meta,
     ents = Object.values(m.ents),
-    scenes = orderedScenes(),
     out = [],
     facts = {},
     ign = m.contIgnore || {};
@@ -12079,7 +12105,8 @@ function contCheck(force) {
     const f = parseFacts(((S.en[e.id] || {}).fields || {}).facts);
     if (Object.keys(f).length) facts[e.id] = f;
   });
-  const chIdx = {};
+  const factSig = JSON.stringify(facts),
+    chIdx = {};
   m.chapters.forEach((c, i) => (chIdx[c.id] = i));
   const seen = {},
     nameWords = new Set(),
@@ -12094,122 +12121,21 @@ function contCheck(force) {
         })
     )
   );
-  const cv = '(' + CONT_COLORS.join('|') + ')',
-    eyeRe = new RegExp(
-      '\\b' +
-        cv +
-        '(?:[- ]\\w+)?[- ]eyed\\b|\\b' +
-        cv +
-        '(?:[- ]\\w+)?\\s+eyes?\\b|\\beyes?\\s+(?:were|was|are|is|of|gone|now)?\\s*(?:a\\s+)?(?:\\w+\\s+)?' +
-        cv +
-        '\\b',
-      'gi'
-    );
-  const hairRe = new RegExp(
-    '\\b' +
-      cv +
-      '(?:[- ]\\w+)?[- ]haired\\b|\\b' +
-      cv +
-      '(?:[- ]\\w+)?\\s+(?:hair|curls|braids?|locks|ponytail)\\b|\\bhair\\s+(?:was|were|is|now|gone|turned)?\\s*(?:\\w+\\s+)?' +
-      cv +
-      '\\b',
-    'gi'
-  );
-  const ageRe =
-    /\b(\d{1,3}|(?:twenty|thirty|forty|fifty|sixty|seventy|eighty|ninety|one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|thirteen|fourteen|fifteen|sixteen|seventeen|eighteen|nineteen)(?:[- ](?:one|two|three|four|five|six|seven|eight|nine))?)[- ]years?[- ]old\b/gi;
-  scenes.forEach(o => {
-    const vis = plainText(S.sc[o.id].text),
-      links = findLinks(vis);
-    links.forEach(l => {
+  orderedScenes().forEach(o => {
+    const r = contScene(o.id, facts, factSig);
+    r.links.forEach(l => {
       const s2 = seen[l.id] || (seen[l.id] = { n: 0, first: null, last: null, chs: new Set() });
       s2.n++;
       if (!s2.first) s2.first = { scene: o.id, s: l.s, e: l.e };
       s2.last = { scene: o.id, s: l.s, e: l.e };
       s2.chs.add(chIdx[o.ch.id]);
     });
-    if (Object.keys(facts).length) {
-      const sre = /[^.!?\n]+[.!?]*/g;
-      let sm,
-        li = 0;
-      while ((sm = sre.exec(vis))) {
-        const s0 = sm.index,
-          e0 = s0 + sm[0].length;
-        while (li < links.length && links[li].e <= s0) li++;
-        const inS = [];
-        for (let k = li; k < links.length && links[k].s < e0; k++) inS.push(links[k]);
-        if (!inS.length) continue;
-        const owner = p => {
-          let best = null;
-          inS.forEach(l => {
-            if (l.s < p) best = l;
-          });
-          return best || inS[0];
-        };
-        [
-          ['eyes', eyeRe],
-          ['hair', hairRe]
-        ].forEach(([attr, re]) => {
-          re.lastIndex = 0;
-          let mm;
-          while ((mm = re.exec(sm[0]))) {
-            const said = (mm[1] || mm[2] || mm[3] || '').toLowerCase(),
-              p = s0 + mm.index,
-              ow = owner(p),
-              f = facts[ow.id];
-            if (
-              !f ||
-              !f[attr] ||
-              !said ||
-              f[attr].includes(said) ||
-              (said === 'grey' && f[attr].includes('gray')) ||
-              (said === 'gray' && f[attr].includes('grey'))
-            )
-              continue;
-            out.push({
-              kind: 'fact',
-              ent: ow.id,
-              scene: o.id,
-              s: p,
-              e: p + mm[0].length,
-              attr,
-              said,
-              fact: f[attr],
-              text: sm[0].trim()
-            });
-          }
-        });
-        ageRe.lastIndex = 0;
-        let am;
-        while ((am = ageRe.exec(sm[0]))) {
-          const p = s0 + am.index,
-            ow = owner(p),
-            f = facts[ow.id];
-          if (!f || !f.age) continue;
-          const a = ageNum(am[1]),
-            fa = ageNum(f.age.match(/[\w-]+/)[0]);
-          if (a && fa && a !== fa)
-            out.push({
-              kind: 'fact',
-              ent: ow.id,
-              scene: o.id,
-              s: p,
-              e: p + am[0].length,
-              attr: 'age',
-              said: String(a),
-              fact: f.age,
-              text: sm[0].trim()
-            });
-        }
-      }
-    }
-    const wre = /\b\p{Lu}[\p{Ll}'’]{3,}\b/gu;
-    let wm;
-    while ((wm = wre.exec(vis))) {
-      const w = wm[0].replace(/['’].*$/, '');
-      if (w.length < 4 || nameWords.has(w)) continue;
-      const c = cand[w] || (cand[w] = { n: 0, scene: o.id, s: wm.index, e: wm.index + w.length });
+    out.push(...r.facts);
+    r.caps.forEach(([w, s, e]) => {
+      if (nameWords.has(w)) return;
+      const c = cand[w] || (cand[w] = { n: 0, scene: o.id, s, e });
       c.n++;
-    }
+    });
   });
   Object.keys(cand).forEach(w => {
     for (const nw of nameWords) {
@@ -12250,6 +12176,130 @@ function contCheck(force) {
   const list = out.filter(x => !ign[contKey(x)]);
   ui.cont = { at: Date.now(), v: S.meta.saved, list, seen };
   return list;
+}
+// What the check reads from one scene: its name links, facts there that disagree with a page, and capitalised words
+// (possible misspelt names). Kept per scene until its text, the names or the pages' Key facts change, so on a long
+// book only the scenes written since last time are read again.
+const CONT_SCENE = new Map();
+let CONT_RE = null; // the eye, hair and age patterns, made once
+function contScene(id, facts, factSig) {
+  const text = S.sc[id].text,
+    hit = CONT_SCENE.get(id);
+  if (hit && hit.text === text && hit.linker === linker && hit.factSig === factSig) return hit;
+  if (!CONT_RE) {
+    const cv = '(' + CONT_COLORS.join('|') + ')';
+    CONT_RE = {
+      eyes: new RegExp(
+        '\\b' +
+          cv +
+          '(?:[- ]\\w+)?[- ]eyed\\b|\\b' +
+          cv +
+          '(?:[- ]\\w+)?\\s+eyes?\\b|\\beyes?\\s+(?:were|was|are|is|of|gone|now)?\\s*(?:a\\s+)?(?:\\w+\\s+)?' +
+          cv +
+          '\\b',
+        'gi'
+      ),
+      hair: new RegExp(
+        '\\b' +
+          cv +
+          '(?:[- ]\\w+)?[- ]haired\\b|\\b' +
+          cv +
+          '(?:[- ]\\w+)?\\s+(?:hair|curls|braids?|locks|ponytail)\\b|\\bhair\\s+(?:was|were|is|now|gone|turned)?\\s*(?:\\w+\\s+)?' +
+          cv +
+          '\\b',
+        'gi'
+      ),
+      age: /\b(\d{1,3}|(?:twenty|thirty|forty|fifty|sixty|seventy|eighty|ninety|one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|thirteen|fourteen|fifteen|sixteen|seventeen|eighteen|nineteen)(?:[- ](?:one|two|three|four|five|six|seven|eight|nine))?)[- ]years?[- ]old\b/gi
+    };
+  }
+  const vis = plainText(text),
+    links = findLinks(vis),
+    found = [],
+    caps = [];
+  if (Object.keys(facts).length) {
+    const sre = /[^.!?\n]+[.!?]*/g;
+    let sm,
+      li = 0;
+    while ((sm = sre.exec(vis))) {
+      const s0 = sm.index,
+        e0 = s0 + sm[0].length;
+      while (li < links.length && links[li].e <= s0) li++;
+      const inS = [];
+      for (let k = li; k < links.length && links[k].s < e0; k++) inS.push(links[k]);
+      if (!inS.length) continue;
+      // the name a description belongs to: the nearest one before it in the sentence, else the first
+      const owner = p => {
+        let best = null;
+        inS.forEach(l => {
+          if (l.s < p) best = l;
+        });
+        return best || inS[0];
+      };
+      ['eyes', 'hair'].forEach(attr => {
+        const re = CONT_RE[attr];
+        re.lastIndex = 0;
+        let mm;
+        while ((mm = re.exec(sm[0]))) {
+          const said = (mm[1] || mm[2] || mm[3] || '').toLowerCase(),
+            p = s0 + mm.index,
+            ow = owner(p),
+            f = facts[ow.id];
+          if (
+            !f ||
+            !f[attr] ||
+            !said ||
+            f[attr].includes(said) ||
+            (said === 'grey' && f[attr].includes('gray')) ||
+            (said === 'gray' && f[attr].includes('grey'))
+          )
+            continue;
+          found.push({
+            kind: 'fact',
+            ent: ow.id,
+            scene: id,
+            s: p,
+            e: p + mm[0].length,
+            attr,
+            said,
+            fact: f[attr],
+            text: sm[0].trim()
+          });
+        }
+      });
+      const ageRe = CONT_RE.age;
+      ageRe.lastIndex = 0;
+      let am;
+      while ((am = ageRe.exec(sm[0]))) {
+        const p = s0 + am.index,
+          ow = owner(p),
+          f = facts[ow.id];
+        if (!f || !f.age) continue;
+        const a = ageNum(am[1]),
+          fa = ageNum(f.age.match(/[\w-]+/)[0]);
+        if (a && fa && a !== fa)
+          found.push({
+            kind: 'fact',
+            ent: ow.id,
+            scene: id,
+            s: p,
+            e: p + am[0].length,
+            attr: 'age',
+            said: String(a),
+            fact: f.age,
+            text: sm[0].trim()
+          });
+      }
+    }
+  }
+  const wre = /\b\p{Lu}[\p{Ll}'’]{3,}\b/gu;
+  let wm;
+  while ((wm = wre.exec(vis))) {
+    const w = wm[0].replace(/['’].*$/, '');
+    if (w.length >= 4) caps.push([w, wm.index, wm.index + w.length]);
+  }
+  const r = { text, linker, factSig, links, facts: found, caps };
+  CONT_SCENE.set(id, r);
+  return r;
 }
 // How many issues need attention (disagreeing facts and likely typos), for the Inkling panel's button.
 const contCount = () => contCheck().filter(x => x.kind === 'fact' || x.kind === 'spell').length;
@@ -12571,53 +12621,22 @@ function storyRows() {
   const m = S.meta,
     c = ui.stRows;
   if (c && c.v === m.saved && c.n === Object.keys(m.scenes).length && Date.now() - c.at < 4000) return c.rows;
-  const L = pkLex(),
-    rows = [];
+  const rows = [];
   orderedScenes().forEach((o, i) => {
     const s = m.scenes[o.id],
-      vis = plainText(S.sc[o.id].text),
-      words = wc(vis),
-      per = Math.max(1, words / 100);
-    const sents = (vis.match(/[^.!?…\n]+[.!?…]*/g) || []).filter(x => /\p{L}/u.test(x)).length;
-    const toks =
-      vis
-        .toLowerCase()
-        .replace(/’/g, "'")
-        .match(/[\p{L}']+/gu) || [];
-    let act = 0,
-      refl = 0,
-      ev = 0;
-    toks.forEach(w => {
-      if (REFLECT.has(w)) refl++;
-      pkHits(L.mood, w).forEach(([k, v]) => {
-        if (k === 'action' || k === 'fear' || k === 'anger') act += v;
-      });
-    });
-    PK_EV.forEach(e => {
-      ev += (vis.match(new RegExp(e[1].source, 'gi')) || []).length * e[4];
-    });
-    const avg = sents ? words / sents : 0,
-      bangs = (vis.match(/!/g) || []).length;
-    let est = 1 + ((act + ev * 0.6) / per) * 1.1 + (bangs / per) * 0.3;
-    if (avg && avg < 10) est += 0.5;
-    else if (avg > 24) est -= 0.4;
-    const quote = (vis.match(/[“"][^”"\n]*[”"]/g) || []).join('').length,
-      cast = {};
-    findLinks(vis).forEach(l => {
-      cast[l.id] = (cast[l.id] || 0) + 1;
-    });
+      a = sceneReading(o.id);
     rows.push({
       id: o.id,
       ch: o.ch,
       i,
       title: s.title,
-      words,
+      words: a.words,
       tension: s.tension || 0,
-      est: words ? Math.round(Math.max(1, Math.min(5, est)) * 10) / 10 : 0,
-      dlg: vis.length ? Math.min(1, quote / vis.length) : 0,
-      act: act / per,
-      refl: refl / per,
-      cast,
+      est: a.est,
+      dlg: a.dlg,
+      act: a.act,
+      refl: a.refl,
+      cast: a.cast,
       pov: s.pov || '',
       place: s.place || '',
       threads: s.threads || []
@@ -12625,6 +12644,61 @@ function storyRows() {
   });
   ui.stRows = { v: m.saved, n: Object.keys(m.scenes).length, at: Date.now(), rows };
   return rows;
+}
+// What Story insights reads from one scene's text: words, estimated tension, the share of dialogue, action and
+// reflection, and who is named. Kept per scene until its text (or the set of names) changes, so on a long book only
+// the scenes written since last time are read again.
+const SCENE_READ = new Map();
+let PK_EV_G = null; // PK_EV's patterns, made global (to count every match) once
+function sceneReading(id) {
+  const text = S.sc[id].text,
+    hit = SCENE_READ.get(id);
+  if (hit && hit.text === text && hit.linker === linker) return hit;
+  const L = pkLex(),
+    vis = plainText(text),
+    words = wc(vis),
+    per = Math.max(1, words / 100);
+  const sents = (vis.match(/[^.!?…\n]+[.!?…]*/g) || []).filter(x => /\p{L}/u.test(x)).length;
+  const toks =
+    vis
+      .toLowerCase()
+      .replace(/’/g, "'")
+      .match(/[\p{L}']+/gu) || [];
+  let act = 0,
+    refl = 0,
+    ev = 0;
+  toks.forEach(w => {
+    if (REFLECT.has(w)) refl++;
+    pkHits(L.mood, w).forEach(([k, v]) => {
+      if (k === 'action' || k === 'fear' || k === 'anger') act += v;
+    });
+  });
+  PK_EV_G = PK_EV_G || PK_EV.map(e => new RegExp(e[1].source, 'gi'));
+  PK_EV.forEach((e, k) => {
+    ev += (vis.match(PK_EV_G[k]) || []).length * e[4];
+  });
+  const avg = sents ? words / sents : 0,
+    bangs = (vis.match(/!/g) || []).length;
+  let est = 1 + ((act + ev * 0.6) / per) * 1.1 + (bangs / per) * 0.3;
+  if (avg && avg < 10) est += 0.5;
+  else if (avg > 24) est -= 0.4;
+  const quote = (vis.match(/[“"][^”"\n]*[”"]/g) || []).join('').length,
+    cast = {};
+  findLinks(vis).forEach(l => {
+    cast[l.id] = (cast[l.id] || 0) + 1;
+  });
+  const r = {
+    text,
+    linker,
+    words,
+    est: words ? Math.round(Math.max(1, Math.min(5, est)) * 10) / 10 : 0,
+    dlg: vis.length ? Math.min(1, quote / vis.length) : 0,
+    act: act / per,
+    refl: refl / per,
+    cast
+  };
+  SCENE_READ.set(id, r);
+  return r;
 }
 // A scene's tension: the writer's own, or the estimate.
 const stTen = r => r.tension || r.est;
@@ -17342,15 +17416,31 @@ function saveRelabel(ok) {
   dirty('meta');
   renderAll();
 }
-// Redraws the binder, then marks who else is in which scene on a shared project.
+// Redraws the binder, marks the open item, then marks who else is in which scene on a shared project.
 function renderBinder() {
   renderBinder0();
+  paintBinderSel();
   if (ui.others && ui.others.length) paintHere();
+}
+// Highlights the open scene, page or document in the binder. Kept apart from renderBinder0 so that opening something
+// only moves the highlight instead of rebuilding thousands of elements on a long book.
+function paintBinderSel() {
+  const el = $('#binder'),
+    v = ui.view;
+  if (!el || !v) return;
+  el.querySelectorAll('.sc-row.on,.e-row.on').forEach(r => r.classList.remove('on'));
+  const row =
+    v.k === 'scene'
+      ? el.querySelector('.sc-row[data-sid="' + v.id + '"]')
+      : v.id &&
+        (el.querySelector('.e-btn[data-a="open-' + (v.k === 'ent' ? 'e' : v.k) + '"][data-id="' + v.id + '"]') || {})
+          .parentElement;
+  if (row) row.classList.add('on');
 }
 // Draws the binder: manuscript, planning sections, story pages and Customize binder.
 function renderBinder0() {
   const m = S.meta,
-    cur = ui.view,
+    cur = { k: '', id: '' }, // the open item is highlighted afterwards by paintBinderSel, so the HTML does not depend on it
     el = $('#binder'),
     cf = ui.confirm;
   let h =
@@ -17750,7 +17840,11 @@ function renderBinder0() {
       '<label class="ck"><input type="checkbox" checked disabled>' +
       esc(LP('char')) +
       ' <span class="muted">(always on)</span></label></div>';
-  el.innerHTML = h + '</div></div>';
+  h += '</div></div>';
+  // Nothing changed (most often: only the open item changed): keep the elements and their handlers as they are.
+  if (h === ui.binderHtml && el.firstChild) return;
+  ui.binderHtml = h;
+  el.innerHTML = h;
   dragSort(el, {
     item: '.sc-row',
     zones: '.ch-block',
@@ -18085,9 +18179,12 @@ function renderScene(el, v) {
   const ed = $('#ed');
   ed.innerHTML = renderText(d.text);
   ed.setAttribute('contenteditable', 'true');
-  try {
-    document.execCommand('styleWithCSS', false, false);
-  } catch (e) {}
+  // Bold and italic as <b>/<i>, not style attributes. A setting of the whole page, so once is enough (it costs a layout).
+  if (!ui.swcSet)
+    try {
+      document.execCommand('styleWithCSS', false, false);
+      ui.swcSet = true;
+    } catch (e) {}
   ed.style.fontSize = ui.fs + 'px';
   let comp = false;
   const typed = () => {
@@ -18465,8 +18562,10 @@ function paintSceneWc() {
   let n = 0;
   if (ed && s.rangeCount && !s.isCollapsed && ed.contains(s.anchorNode) && ed.contains(s.focusNode))
     n = wc(s.toString());
-  const g = S.meta.scenes[v.id].goal;
-  el.textContent = fmt(w) + (g ? ' of ' + fmt(g) : '') + ' words' + (n ? ' · ' + fmt(n) + ' selected' : '');
+  const g = S.meta.scenes[v.id].goal,
+    txt = fmt(w) + (g ? ' of ' + fmt(g) : '') + ' words' + (n ? ' · ' + fmt(n) + ' selected' : '');
+  if (el.textContent === txt) return; // runs on every keystroke: touch the page only when the count changes
+  el.textContent = txt;
   el.classList.toggle('met', !!g && w >= g);
   el.title =
     'About ' +

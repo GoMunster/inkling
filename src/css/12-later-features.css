@@ -1677,3 +1677,29 @@ kbd {
     grid-template-columns: 1fr;
   }
 }
+
+/* Long lists on big books: the browser skips laying out and painting entries that are off screen until they
+   scroll near (content-visibility). contain-intrinsic-size is the size to assume until then. */
+.sa-hit,
+.fd-sc,
+.cork-ch,
+.ap {
+  content-visibility: auto;
+}
+.sa-hit {
+  contain-intrinsic-size: auto 72px;
+}
+.fd-sc {
+  contain-intrinsic-size: auto 160px;
+}
+.cork-ch {
+  contain-intrinsic-size: auto 320px;
+}
+.ap {
+  contain-intrinsic-size: auto 76px;
+}
+/* The binder's chapters, likewise: a long manuscript's chapters below the fold are laid out only when scrolled to. */
+.ch-block {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 120px;
+}
