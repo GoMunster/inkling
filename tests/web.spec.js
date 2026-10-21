@@ -706,9 +706,10 @@ test('quick switcher, next and previous scene, back and forward', async ({ page 
   await page.setViewportSize({ width: 1600, height: 900 });
   const errors = await openApp(page);
   await page.click('.sc-btn'); const first = await page.locator('#sceneTitle').inputValue();
-  await page.keyboard.press('Control+p'); await page.keyboard.type('crane led'); await page.keyboard.press('Enter');
+  const pick = async (q) => { await page.keyboard.press('Control+p'); await expect(page.locator('#qsQ')).toBeFocused(); await page.keyboard.type(q); await expect(page.locator('.qs-it.on')).toContainText(q === 'ilsa' ? 'Ilsa Verrin' : 'The Crane ledger'); };
+  await pick('crane led'); await page.keyboard.press('Enter');
   await expect(page.locator('#sceneTitle')).toHaveValue('The Crane ledger');
-  await page.keyboard.press('Control+p'); await page.keyboard.type('ilsa'); await page.keyboard.press('Alt+Enter');
+  await pick('ilsa'); await page.keyboard.down('Alt'); await page.keyboard.press('Enter'); await page.keyboard.up('Alt');
   await expect(page.locator('#split .sp-h')).toHaveText('Ilsa Verrin');
   await page.keyboard.press('Control+Backslash');
   await page.click('.sc-nav [data-nav="-1"]'); await expect(page.locator('#sceneTitle')).toHaveValue(first);

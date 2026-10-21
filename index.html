@@ -1162,7 +1162,7 @@ const ADD_DOCS=[];   // (raw, out) => out.<prefix> = normalized records, for doc
 const snapshot=st=>{ if(!st) stampMine(S); st=st||S; const o={meta:st.meta}; DOCS.forEach(p=>{ o[p]=st[p]; }); return o; };
 // The desktop app (desktop/) provides window.inklingDesktop: each project is a folder on the computer. Elsewhere it is null.
 const DESK=window.inklingDesktop||null;
-const APP_VERSION='1.10.0';   // the desktop build replaces this with desktop/package.json's version
+const APP_VERSION='1.10.1';   // the desktop build replaces this with desktop/package.json's version
 // Saved-format version. When the shape of saved data changes: bump FORMAT and add MIGRATE[old] that upgrades a raw
 // project one step (it runs before normalize()). A project from a newer FORMAT is never loaded or overwritten.
 const FORMAT=2;
@@ -2909,9 +2909,13 @@ function openQs(){
     const on=$('#qsList .on'); if(on) on.scrollIntoView({block:'nearest'}); };
   const q=$('#qsQ'); q.focus(); draw();
   q.addEventListener('input',()=>{ sel=0; draw(); });
+  let alt=false;   // Alt held (tracked here too: not every system reports it on the Enter key)
+  q.addEventListener('keyup',e=>{ if(e.key==='Alt') alt=false; });
+  q.addEventListener('blur',()=>{ alt=false; });
   q.addEventListener('keydown',e=>{
+    if(e.key==='Alt'){ alt=true; return; }
     if(e.key==='ArrowDown'||e.key==='ArrowUp'){ e.preventDefault(); sel=(sel+(e.key==='ArrowDown'?1:-1)+list.length)%Math.max(1,list.length); draw(); }
-    else if(e.key==='Enter'){ e.preventDefault(); if(list[sel]) qsOpen(list[sel],e.altKey); }
+    else if(e.key==='Enter'){ e.preventDefault(); if(list[sel]) qsOpen(list[sel],e.altKey||alt); }
     else if(e.key==='Escape'){ e.preventDefault(); e.stopPropagation(); closeQs(); } });
   ov.addEventListener('click',e=>{ const b=e.target.closest('[data-i]'); if(b) qsOpen(list[+b.dataset.i],e.altKey); else if(e.target===ov) closeQs(); });
 }
