@@ -923,7 +923,7 @@ test('Trash: deleted things can be undone, restored with their snapshots and lin
   await del('[data-a="dele"][data-id="e_ilsa"]');
   await page.click('[data-a="trash"]');
   await page.click('.tr-row [data-tr="drop"]');
-  await page.click('.tr-row [data-tr="drop"]');
+  await page.click('.tr-row [data-tr="drop"].danger'); // once it asks "Delete forever?"
   await expect(page.locator('.tr-row')).toHaveCount(0);
   await expect(page.locator('.ss-empty')).toContainText('empty');
   expect(errors).toEqual([]);

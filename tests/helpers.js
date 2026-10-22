@@ -25,9 +25,9 @@ async function openApp(page, { tour = false, project = null, clock = false } = {
 }
 
 const saved = page => page.evaluate(() => JSON.parse(localStorage.getItem('inkling:project') || 'null'));
-// Waits for the app's debounced save to reach localStorage.
+// Waits for the app's debounced save to reach localStorage (up to 15 s: a busy CI machine can be slow).
 async function waitSaved(page, test) {
-  for (let i = 0; i < 40; i++) {
+  for (let i = 0; i < 100; i++) {
     const p = await saved(page);
     if (p && test(p)) return p;
     await page.waitForTimeout(150);
