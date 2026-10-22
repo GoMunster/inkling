@@ -742,7 +742,7 @@ function paintPals() {
         '<span class="pal" title="' +
         esc(whoName(x)) +
         ' is sprinting">' +
-        petSVG('hype', Math.max(0, Math.min(4, +x.pet.st || 0)), { color: x.pet.c, wear: {} }) +
+        petSVG('hype', Math.max(0, Math.min(4, +x.pet.st || 0)), { color: x.pet.c, wear: {}, form: x.pet.f }) +
         '<b>' +
         esc(whoName(x)) +
         '</b></span>'
@@ -902,6 +902,7 @@ function renderDen(el) {
     '. Chattiness and confetti are set per ' +
     (DESK ? 'computer' : 'browser') +
     '.</p></div></section>' +
+    lifeDenHtml() +
     '<section class="pf"><h2>Wardrobe</h2><p class="fine">“Auto” follows ' +
     esc(p.name) +
     '’s rank. Earn more by writing.</p>' +
@@ -951,6 +952,7 @@ function renderDen(el) {
     }).join('') +
     '</div></section></div>';
   el.onclick = e => {
+    if (e.target.closest('#lifeRetire')) return lifeRetire();
     const w = e.target.closest('[data-wear]'),
       c = e.target.closest('[data-color]'),
       t = e.target.closest('[data-talk]');

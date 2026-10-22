@@ -186,6 +186,7 @@ function todoDone(x) {
   if (!x.c) {
     x.c = 1;
     S.meta.pet.tasks = (S.meta.pet.tasks || 0) + 1;
+    lifeJoy(10);
   }
   const it = S.meta.todo.items;
   if (it.length >= 2 && it.every(y => y.done))

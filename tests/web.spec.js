@@ -236,8 +236,7 @@ test('Inky earns things, wears them, and notices new characters', async ({ page 
   await page.click('.sc-btn');
   await page.click('#ed');
   await page.keyboard.press('Control+End');
-  await page.keyboard.type(' ' + 'The lanterns flickered along the quay as the tide came in. '.repeat(6));
-  await expect(page.locator('#bubble')).toContainText('Goal getter');
+  await page.keyboard.type(' ' + 'The lanterns flickered along the quay as the tide came in. '.repeat(10)); // hatches the egg too
   await page.click('[data-a="adde"][data-t="char"]');
   await expect(page.locator('#bubble')).toContainText(/character|Someone new/);
   await page.click('#denBtn');
@@ -445,6 +444,132 @@ test('Inky’s rank follows the novel length goal and never goes back', async ({
   await expect(page.locator('#stageTag')).toHaveText('Inkling');
 });
 
+// A day key n days from today (today by default), as the app writes them.
+const dayKey = (n = 0) => {
+  const d = new Date();
+  d.setDate(d.getDate() + n);
+  return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+};
+// A one-scene project with Inky in a given life.
+const lifeProject = (life, days, extra) => ({
+  meta: Object.assign(
+    {
+      v: 2,
+      title: 'Pet Book',
+      goal: 500,
+      chapters: [{ id: 'c1', title: 'One', open: true, scenes: ['s1'] }],
+      scenes: { s1: { title: 'S', status: 'draft', words: 0 } },
+      ents: {},
+      pet: { name: 'Inky', total: 0, life },
+      days: days || {}
+    },
+    extra || {}
+  ),
+  sc: { s1: { text: '', synopsis: '', notes: '' } },
+  en: {}
+});
+
+test('Inky hatches from an egg after the first 100 words', async ({ page }) => {
+  const errors = await openApp(page, { project: lifeProject(undefined) });
+  await expect(page.locator('#lifeBox')).toContainText('Ink egg');
+  await expect(page.locator('#petArt svg.egg')).toHaveCount(1);
+  await page.click('.sc-btn');
+  await page.click('#ed');
+  await page.keyboard.type('word '.repeat(105));
+  await expect(page.locator('#lifeBox')).toContainText('Droplet');
+  await expect(page.locator('#bubble')).toContainText('hatched');
+  const p = await waitSaved(page, p => p.meta.pet.life && p.meta.pet.life.form === 'drop');
+  expect(p.meta.pet.life.hist.map(h => h[0])).toEqual(['egg', 'drop']);
+  expect(p.meta.pet.life.day.w).toBeGreaterThanOrEqual(100);
+  expect(p.meta.pet.life.day.m).toBeGreaterThan(0); // typing time counts towards Focus
+  expect(errors).toEqual([]);
+});
+
+test('Inky grows overnight into a form that follows how well it was looked after', async ({ page }) => {
+  const life = {
+    form: 'drop',
+    gen: 1,
+    born: Date.now() - 4 * 864e5,
+    since: dayKey(-3),
+    last: dayKey(-3),
+    care: dayKey(-1),
+    w: 3000,
+    day: { d: dayKey(-3), w: 600, m: 40, j: 60 },
+    acc: { n: 0, ink: 0, joy: 0, foc: 0 },
+    tot: { n: 0, ink: 0, joy: 0, foc: 0 },
+    meter: { ink: 80, joy: 80, foc: 80 },
+    hist: [
+      ['egg', Date.now() - 4 * 864e5],
+      ['drop', Date.now() - 3 * 864e5]
+    ]
+  };
+  const days = { [dayKey(-3)]: 600, [dayKey(-2)]: 600, [dayKey(-1)]: 600 };
+  await openApp(page, { project: lifeProject(life, days) });
+  await expect(page.locator('#lifeBox')).toContainText('Blotling');
+  await expect(page.locator('#bubble')).toContainText('grew into a Blotling');
+});
+
+test('a Droplet left alone for most of its days grows into a Smudge', async ({ page }) => {
+  const life = {
+    form: 'drop',
+    since: dayKey(-12),
+    last: dayKey(-12),
+    care: dayKey(-1),
+    w: 300,
+    day: { d: dayKey(-12), w: 40, m: 2, j: 0 },
+    hist: [['drop', Date.now() - 12 * 864e5]]
+  };
+  await openApp(page, { project: lifeProject(life, { [dayKey(-12)]: 40, [dayKey(-1)]: 30 }) });
+  await expect(page.locator('#lifeBox')).toContainText('Smudge');
+  await expect(page.locator('#petArt svg.dull')).toHaveCount(1);
+});
+
+test('Inky runs away after 30 days alone, leaving a note, a new egg and a place in the Hall of Fame', async ({
+  page
+}) => {
+  const life = {
+    form: 'scribble',
+    gen: 1,
+    born: Date.now() - 60 * 864e5,
+    since: dayKey(-40),
+    last: dayKey(-35),
+    care: dayKey(-35),
+    w: 9000,
+    day: { d: dayKey(-35), w: 0, m: 0, j: 0 },
+    acc: { n: 5, ink: 3, joy: 3, foc: 3 },
+    tot: { n: 20, ink: 12, joy: 12, foc: 12 },
+    meter: { ink: 50, joy: 50, foc: 50 },
+    hist: [['scribble', Date.now() - 40 * 864e5]]
+  };
+  await openApp(page, { project: lifeProject(life, { [dayKey(-35)]: 500 }) });
+  await expect(page.locator('.ask h2')).toHaveText('Inky left a note');
+  await expect(page.locator('.ask')).toContainText('I waited 35 days');
+  await page.click('.ask [data-v="ok"]');
+  await expect(page.locator('#lifeBox')).toContainText('Ink egg');
+  await expect(page.locator('#lifeBox')).toContainText('generation 2');
+  const p = await waitSaved(page, p => p.meta.pet.life.form === 'egg' && p.meta.pet.past.length === 1);
+  expect(p.meta.pet.past[0]).toMatchObject({ f: 'scribble', how: 'left', words: 9000 });
+  await page.click('#denBtn');
+  await expect(page.locator('.lf-hall')).toContainText('Inky the Scribble');
+  await expect(page.locator('.lf-hall')).toContainText('Ran away');
+  await expect(page.locator('.lf-dex .lf-card:not(.unknown)')).toHaveCount(2); // the egg and the Scribble
+});
+
+test('an older project gets an Inky worked out from its writing history, and an adult can retire', async ({ page }) => {
+  const days = {};
+  for (let i = 30; i >= 1; i--) days[dayKey(-i)] = 700;
+  await openApp(page, { project: lifeProject(undefined, days, { target: 1000000 }) });
+  const p = await waitSaved(page, p => p.meta.pet.life && p.meta.pet.life.form !== 'egg');
+  expect(['wyrm', 'owl', 'sage']).toContain(p.meta.pet.life.form); // a great-care adult
+  expect(p.meta.pet.life.hist.length).toBe(5);
+  await page.click('#denBtn');
+  await expect(page.locator('.lf-path .lf-step')).toHaveCount(5);
+  await page.click('#lifeRetire');
+  await page.click('.ask [data-v="yes"]');
+  await expect(page.locator('#lifeBox')).toContainText('Ink egg');
+  await expect(page.locator('.lf-hall')).toContainText('Retired');
+});
+
 test('sticky notes beside the page: add, write, move to the other side, recolour, delete', async ({ page }) => {
   await page.setViewportSize({ width: 1900, height: 1000 }); // wide enough for notes in the margins
   const errors = await openApp(page);
@@ -564,10 +689,6 @@ test('today’s to-do list: add, tick, automatic tasks, and unfinished ones carr
   expect(errs2).toEqual([]);
 });
 
-const dayKey = () => {
-  const d = new Date();
-  return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
-};
 const READING = () => ({
   meta: {
     v: 2,
@@ -580,7 +701,7 @@ const READING = () => ({
       e_m: { id: 'e_m', type: 'char', name: 'Mara', aliases: [] },
       e_h: { id: 'e_h', type: 'place', name: 'Harrow Point', aliases: [] }
     },
-    pet: { name: 'Inky', total: 0 },
+    pet: { name: 'Inky', total: 0, life: { form: 'blotling' } }, // hatched, so it can hold things
     days: {},
     mark: { d: dayKey(), hit: { start: 1 }, over: 0 }
   },

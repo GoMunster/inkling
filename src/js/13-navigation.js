@@ -58,6 +58,7 @@ function updateStats() {
       Math.max(0, Math.min(100, ((m.pet.total - stageAt(st)) / Math.max(1, stageAt(st + 1) - stageAt(st))) * 100)) +
       '%';
   set('#stageTag', STAGES[st].n);
+  lifePaint();
   const md = curMood();
   if (md !== ui.mood || st !== ui.stage) {
     ui.mood = md;

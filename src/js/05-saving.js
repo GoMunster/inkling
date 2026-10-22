@@ -257,11 +257,13 @@ function streak() {
   }
   return n;
 }
-// Inky's mood from today's words: sleepy, happy, hype (half the goal) or party (goal met).
+// Inky's mood from today's words: sleepy, happy, hype (half the goal) or party (goal met); sad when left alone for days.
 function curMood() {
   const w = todayWords(),
-    g = S.meta.goal;
+    g = S.meta.goal,
+    l = S.meta.pet.life;
   if (w >= g) return 'party';
+  if (!w && l && l.form !== 'egg' && lifeAway(l) >= 3) return 'sad'; // lonely after days without words
   if (w >= g * 0.5) return 'hype';
   if (w > 0) return 'happy';
   return 'sleepy';

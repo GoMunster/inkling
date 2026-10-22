@@ -127,7 +127,7 @@ The full plan, KDP requirements and best practices are in [PUBLISHING-PLAN.md](P
 - [ ] Choice of pet species
 - [ ] Inky's weekly diary
 - [ ] Seasons and holidays in Inky's room
-- [ ] Hatch a new pet when you finish a book
+- [x] Hatch a new pet when you finish a book (Inky's life: an egg per book, 19 forms that follow your care, running away after 30 days alone, the Hall of Fame)
 - [ ] Prompt dice using your own characters and places
 - [ ] Boss battles for dreaded scenes
 - [ ] Daily first-line challenge

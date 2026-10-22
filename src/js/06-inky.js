@@ -65,11 +65,16 @@ const REACT_ART = {
   qmark: '<text class="mark" x="10" y="48">?</text>'
 };
 // Draws Inky as SVG: m is the mood (face and arms), stage the rank (which brings its own accessories), look the
-// colour and what Inky wears (from meta.pet unless given).
+// colour, what Inky wears and its form (look.form, or look.life.form; FORMS), from meta.pet unless given.
 function petSVG(m, stage, look) {
   look = look || (S && S.meta && S.meta.pet) || {};
+  const lf = look.life,
+    fid = look.form || (lf && lf.form) || 'blotling',
+    F = FORMS[fid] || FORMS.blotling,
+    A = F.art || {};
+  if (fid === 'egg') return eggSVG(look, lf);
   const wear = look.wear || {},
-    slot = k => (wear[k] && wear[k] !== 'auto' ? wear[k] : 'auto');
+    slot = k => (wear[k] && wear[k] !== 'auto' ? wear[k] : F.st < 2 ? 'none' : 'auto');
   const rx = look.react || [],
     has = k => rx.includes(k),
     busyR = REACT_R.some(has),
@@ -191,7 +196,8 @@ function petSVG(m, stage, look) {
     fc = slot('face'),
     hn = slot('hand'),
     nk = slot('neck');
-  const tuft = (hd === 'auto' ? stage < 3 : hd === 'none') ? '<path class="tuft" d="M80 26 C76 12 90 6 96 14"/>' : '';
+  const tuft =
+    A.tuft && (hd === 'auto' ? stage < 3 : hd === 'none') ? '<path class="tuft" d="M80 26 C76 12 90 6 96 14"/>' : '';
   let glass = (fc === 'auto' ? stage >= 2 : fc === 'glasses')
     ? '<g class="glass"><circle cx="59" cy="90" r="13"/><circle cx="101" cy="90" r="13"/><path d="M72 90 h16"/></g>'
     : fc !== 'auto' && fc !== 'none' && PET_ART[fc]
@@ -249,15 +255,24 @@ function petSVG(m, stage, look) {
       .filter(k => k !== 'umbrella' && REACT_ART[k])
       .map(k => REACT_ART[k])
       .join('') + (has('umbrella') ? REACT_ART.umbrella : '');
+  const sz = A.s || 1,
+    dusty = lf && F.st > 0 && dayGap(lf.care, todayKey()) >= 7;
   return (
     '<svg class="petsvg' +
     (has('shiver') ? ' shiver' : '') +
+    (A.dull ? ' dull' : '') +
     '"' +
     petStyle(look) +
-    ' viewBox="0 0 160 160" role="img" aria-label="Your Inkling looks ' +
+    ' viewBox="0 0 160 160" role="img" aria-label="Your Inkling, ' +
+    esc(aName(F.n)) +
+    ', looks ' +
     (PET_FEEL[m] || 'happy') +
     '">' +
-    '<ellipse class="shadow" cx="80" cy="150" rx="40" ry="6"/>' +
+    '<ellipse class="shadow" cx="80" cy="150" rx="' +
+    Math.round(40 * sz) +
+    '" ry="6"/>' +
+    (sz !== 1 ? '<g transform="translate(80 148) scale(' + sz + ') translate(-80 -148)">' : '<g>') +
+    (A.back || '') +
     '<path class="arm" d="' +
     arms[0] +
     '"/><path class="arm" d="' +
@@ -265,9 +280,16 @@ function petSVG(m, stage, look) {
     '"/>' +
     pomL +
     pomR +
-    '<ellipse class="pdeep" cx="62" cy="141" rx="13" ry="7"/><ellipse class="pdeep" cx="98" cy="141" rx="13" ry="7"/>' +
-    '<path class="pbody" d="M80 24 C112 24 134 52 134 90 C134 124 112 142 80 142 C48 142 26 124 26 90 C26 52 48 24 80 24 Z"/>' +
+    (A.feet === 0
+      ? ''
+      : '<ellipse class="pdeep" cx="62" cy="141" rx="13" ry="7"/><ellipse class="pdeep" cx="98" cy="141" rx="13" ry="7"/>') +
+    '<path class="pbody" d="' +
+    (A.body || BODY) +
+    '"/>' +
     '<path class="shine" d="M50 58 q8 -14 24 -17"/>' +
+    (A.top || '') +
+    (A.front || '') +
+    (dusty ? DUST_ART : '') +
     neck +
     tuft +
     cheeks +
@@ -280,7 +302,38 @@ function petSVG(m, stage, look) {
     quill +
     zz +
     props +
-    '</svg>'
+    '</g></svg>'
+  );
+}
+// Dust and a cobweb on an Inky left alone for a week or more.
+const DUST_ART =
+  '<g class="dust"><circle cx="58" cy="50" r="2"/><circle cx="96" cy="44" r="1.6"/><circle cx="112" cy="64" r="2.2"/><circle cx="46" cy="70" r="1.5"/><circle cx="104" cy="120" r="1.8"/><path class="web" d="M118 34 l16 -6 M118 34 l10 12 M118 34 l18 6 M124 31 q4 6 8 7 M122 40 q6 0 10 -4"/></g>';
+// Inky's egg: spots, and cracks that spread as the first words come in (look.life.w of LIFE.hatch).
+function eggSVG(look, lf) {
+  const w = lf ? lf.w : 0,
+    k = Math.min(3, Math.floor((w / LIFE.hatch) * 4)),
+    cracks = [
+      '',
+      '<path class="crack" d="M70 70 l6 8 l-4 6"/>',
+      '<path class="crack" d="M70 70 l6 8 l-4 6 l8 6 M98 92 l-6 6 l5 6"/>',
+      '<path class="crack" d="M58 88 l8 -6 l6 8 l8 -8 l6 8 l8 -6 l6 8 l8 -6 M100 60 l-4 8"/>'
+    ][k];
+  return (
+    '<svg class="petsvg egg' +
+    (k >= 2 ? ' wobble' : '') +
+    '"' +
+    petStyle(look) +
+    ' viewBox="0 0 160 160" role="img" aria-label="An ink egg' +
+    (k ? ', starting to crack' : '') +
+    '"><ellipse class="shadow" cx="80" cy="150" rx="24" ry="5"/><g transform="translate(80 148) scale(.72) translate(-80 -148)"><g class="eggg">' +
+    '<path class="eggshell" d="M80 30 C108 30 126 76 126 104 C126 132 106 148 80 148 C54 148 34 132 34 104 C34 76 52 30 80 30 Z"/>' +
+    '<ellipse class="eggspot" cx="66" cy="70" rx="9" ry="7"/><ellipse class="eggspot" cx="102" cy="104" rx="11" ry="8"/><ellipse class="eggspot" cx="62" cy="122" rx="7" ry="5"/>' +
+    '<path class="shine" d="M52 84 q4 -20 18 -30"/>' +
+    cracks +
+    (k === 3
+      ? '<g class="peeky"><circle class="eye" cx="72" cy="98" r="3.5"/><circle class="eye" cx="88" cy="98" r="3.5"/></g>'
+      : '') +
+    '</g></g></svg>'
   );
 }
 // What Inky says for each mood.
@@ -296,7 +349,8 @@ const LINES = {
     'Goal smashed! Everything from here is a bonus.',
     "Today's pages are in the bag!",
     'I am so proud I could spill.'
-  ]
+  ],
+  sad: ['I missed you. Write me a sentence?', 'It was quiet here without you.', 'A few words would cheer me right up.']
 };
 // Something Inky might say in this mood.
 const line = m => pick(LINES[m]);
@@ -413,6 +467,7 @@ function credit(delta) {
   const now = stageOf(m.pet.total);
   if (now > (m.pet.rank || 0)) m.pet.rank = now;
   const sa = petStage();
+  lifeFeed(delta);
   if (!m.mark || m.mark.d !== k) m.mark = { d: k, hit: {}, over: 0 };
   const hit = m.mark.hit,
     name = m.pet.name;
@@ -430,6 +485,7 @@ function credit(delta) {
       top = a[0];
     }
   });
+  if (top) lifeJoy(top === 'goal' ? 50 : 10);
   if (sa > sb) {
     msg = name + ' grew into a ' + STAGES[sa].n + '! ' + fmt(m.pet.total) + ' words so far.';
     big = true;
@@ -481,7 +537,7 @@ const PET_COLORS = [
   ['moss', 'Moss', ['#6FA34A', '#4C7A2E', '#14250A']],
   ['slate', 'Slate', ['#7C8BA1', '#56657A', '#121A26']]
 ];
-// Checks Inky's saved record: name, words, colour, what it wears, achievements and flags.
+// Checks Inky's saved record: name, words, colour, what it wears, achievements, flags, its life and earlier Inkys.
 function normPet(p) {
   p = p && typeof p === 'object' ? p : {};
   const wear = {};
@@ -501,6 +557,8 @@ function normPet(p) {
     got,
     flags: { early: !!(p.flags || {}).early, night: !!(p.flags || {}).night },
     tasks: Math.max(0, Math.round(+p.tasks || 0)),
+    life: normLife(p.life),
+    past: normPast(p.past),
     rank:
       p.rank != null
         ? Math.max(0, Math.min(4, Math.round(+p.rank || 0)))
@@ -645,6 +703,7 @@ function checkAch(quiet) {
     }
   });
   if (!fresh.length) return;
+  if (!quiet) lifeJoy(10 * fresh.length);
   dirty('meta');
   ui.newThings = 1;
   const d = $('#denBtn');
@@ -689,6 +748,7 @@ function sceneFinal(id) {
       pick(['“' + sc.title + '” is final. Polished to a shine!', 'Another scene done. ' + m.pet.name + ' approves.'])
     );
   todoTick('fin', id);
+  lifeJoy(15);
   checkAch();
 }
 // What Inky says when a project opens: a welcome back, the streak, or the deadline plan.

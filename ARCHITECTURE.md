@@ -38,7 +38,7 @@ build.js              joins them into index.html (node build.js; no dependencies
 | `03-pictures` | Pictures for story pages and maps, in all three storage places |
 | `04-text` | Name links, bold/italic/underline markers, the editor's caret |
 | `05-saving` | `dirty()`, `flush()`, the stores; derived numbers (today's words, streak) |
-| `06-inky`, `07-inky-reads` | Inky: drawing, talking, rewards, the room; reading over your shoulder |
+| `06-inky`, `07-inky-life`, `07-inky-reads` | Inky: drawing, talking, rewards, the room; its life (hatching, evolving, running away, the Hall of Fame); reading over your shoulder |
 | `08-drag` | Drag to reorder, for every list |
 | `09-continuity`, `10-story-insights`, `11-world`, `12-series` | Story tools: continuity check, Story insights (pacing, point of view, threads, setups, arcs), calendars and money, the series bible |
 | `13-navigation` … `19-binder` | Moving between views, Trash, search, side by side, quick switcher, right-click menus, structure operations, the binder |

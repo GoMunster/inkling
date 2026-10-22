@@ -150,7 +150,10 @@ function pmEnd() {
   hereSoon();
   if (wasFocus) {
     r = pmRecord(true);
-    if (r) todoTick('sprint');
+    if (r) {
+      todoTick('sprint');
+      lifeJoy(20);
+    }
   }
   T.running = false;
   T.left = null;

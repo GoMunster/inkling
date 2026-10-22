@@ -1040,6 +1040,7 @@ function selectRange(el, s, e) {
 // counts, name links and targets, lets Inky read, and keeps the caret in view.
 function onType(id, ed) {
   snDaily(id);
+  lifeActive();
   const text = getText(ed),
     sc = S.meta.scenes[id],
     d = S.sc[id],

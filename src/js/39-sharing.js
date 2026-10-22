@@ -581,7 +581,7 @@ async function hereTick() {
         scene: sc ? v.id : '',
         sceneTitle: sc ? sc.title : '',
         sprint: T.running && T.phase === 'focus' ? T.endAt : 0,
-        pet: { c: S.meta.pet.color, st: petStage(), n: S.meta.pet.name }
+        pet: { c: S.meta.pet.color, st: petStage(), n: S.meta.pet.name, f: life().form }
       })) || [];
   } catch (e) {
     ui.others = [];

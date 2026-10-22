@@ -127,6 +127,7 @@ async function deskOpen(id) {
   hereSoon();
   checkAch(true);
   greet();
+  lifeOpen();
   if (ui.others.length)
     toast(
       ui.others.map(whoName).join(' and ') +

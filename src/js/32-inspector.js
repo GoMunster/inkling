@@ -44,7 +44,7 @@ function renderInspector() {
         Math.max(0, Math.min(100, ((p.total - stageAt(st)) / Math.max(1, stageAt(st + 1) - stageAt(st))) * 100)) +
         '%"></i></div>'
       : '') +
-    '<small id="evoTxt"></small></div></section>';
+    '<small id="evoTxt"></small></div><div class="life" id="lifeBox"></div></section>';
   sec.timer = pomoHtml();
   sec.today =
     '<section class="psec"><h3>Today</h3><div class="big"><b class="mono" id="goalNum">0</b><span>of <span class="mono" id="goalOf">0</span> new words</span></div><div class="bar lg"><i id="goalBar" style="width:0"></i></div>' +

@@ -1703,3 +1703,270 @@ kbd {
   content-visibility: auto;
   contain-intrinsic-size: auto 120px;
 }
+
+/* ---------- Inky's life: forms, the egg, meters, the collection and the Hall of Fame ---------- */
+.petsvg.dull {
+  filter: saturate(0.55) brightness(0.96);
+}
+.petsvg .fx1 {
+  fill: var(--pet-deep);
+}
+.petsvg .fx2 {
+  fill: var(--pet-ink);
+  stroke: var(--pet-ink);
+}
+.petsvg .fxp {
+  fill: #f2a7b8;
+}
+.petsvg .fxd {
+  fill: var(--pet-deep);
+  opacity: 0.8;
+}
+.petsvg .fxs,
+.petsvg .fxl {
+  fill: none;
+  stroke: var(--pet-ink);
+  stroke-width: 4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.petsvg .fxl {
+  stroke: var(--pet-deep);
+  stroke-width: 3;
+}
+.petsvg .jar {
+  fill: #9fc3d6;
+  opacity: 0.55;
+  stroke: #5d7f93;
+  stroke-width: 2;
+}
+.petsvg .jarlip {
+  fill: #5d7f93;
+}
+.petsvg .jarhi {
+  stroke: #fff;
+  stroke-width: 3;
+  stroke-linecap: round;
+  opacity: 0.7;
+}
+.petsvg .horn {
+  fill: #f4efd8;
+  stroke: var(--pet-ink);
+  stroke-width: 1.5;
+}
+.petsvg .belly {
+  fill: color-mix(in srgb, var(--pet) 55%, #fff);
+}
+.petsvg .flame {
+  fill: #f39a3d;
+  stroke: #e2554b;
+  stroke-width: 2;
+  stroke-linejoin: round;
+}
+.petsvg .spark {
+  fill: #ffd86b;
+}
+.petsvg .rays path {
+  fill: #ffd86b;
+}
+.petsvg .beard {
+  fill: #f4efd8;
+  stroke: #cfc6a6;
+  stroke-width: 1.5;
+}
+.petsvg .whisk {
+  stroke: var(--pet-ink);
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+.petsvg .aura {
+  fill: #ffd86b;
+  opacity: 0.18;
+}
+.petsvg .lwing {
+  fill: #fff6d6;
+  stroke: #e8b84a;
+  stroke-width: 2;
+}
+.petsvg .halo {
+  fill: none;
+  stroke: #e8b84a;
+  stroke-width: 4;
+}
+.petsvg .dust circle {
+  fill: #b9ad94;
+  opacity: 0.85;
+}
+.petsvg .dust .web {
+  fill: none;
+  stroke: #d8d2c4;
+  stroke-width: 1.2;
+}
+.petsvg .eggshell {
+  fill: color-mix(in srgb, var(--pet) 30%, #f4efd8);
+  stroke: var(--pet-deep);
+  stroke-width: 3;
+}
+.petsvg .eggspot {
+  fill: var(--pet);
+  opacity: 0.75;
+}
+.petsvg .crack {
+  fill: none;
+  stroke: var(--pet-ink);
+  stroke-width: 2.5;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+.petsvg .peeky .eye {
+  fill: var(--pet-ink);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .petsvg.egg .eggg {
+    animation: eggrock 4s ease-in-out infinite;
+    transform-origin: 80px 148px;
+  }
+  .petsvg.egg.wobble .eggg {
+    animation-duration: 1.4s;
+  }
+}
+@keyframes eggrock {
+  0%,
+  70%,
+  100% {
+    transform: rotate(0);
+  }
+  78% {
+    transform: rotate(-5deg);
+  }
+  86% {
+    transform: rotate(5deg);
+  }
+  94% {
+    transform: rotate(-2deg);
+  }
+}
+.life {
+  margin-top: 10px;
+  display: grid;
+  gap: 6px;
+}
+.lf-head {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  font-size: 13px;
+}
+.lf-head small,
+.lf-next {
+  color: var(--muted);
+  font-size: 12px;
+}
+.lf-meters {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+.lf-m {
+  display: grid;
+  gap: 3px;
+}
+.lf-m small {
+  font-size: 11px;
+  color: var(--muted);
+}
+.lf-m .bar {
+  height: 6px;
+}
+.lf-m .bar i {
+  display: block;
+  height: 100%;
+}
+.lf-m .lf-ink {
+  background: var(--pet);
+}
+.lf-m .lf-joy {
+  background: var(--char);
+}
+.lf-m .lf-foc {
+  background: var(--place);
+}
+.lf-now {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr);
+  gap: 16px;
+  align-items: start;
+}
+.lf-now .stage-tag {
+  margin-left: 8px;
+}
+.lf-path {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px;
+}
+.lf-step {
+  display: grid;
+  justify-items: center;
+  font-size: 11px;
+  color: var(--muted);
+}
+.lf-step svg,
+.lf-card svg {
+  width: 56px;
+  height: 56px;
+  overflow: visible;
+}
+.lf-arr {
+  color: var(--muted);
+  font-style: normal;
+}
+.lf-dex,
+.lf-hall {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 8px;
+  margin-top: 10px;
+}
+.lf-card {
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 10px;
+  background: var(--bg);
+  display: grid;
+  justify-items: center;
+  text-align: center;
+  gap: 2px;
+  font-size: 13px;
+}
+.lf-card small {
+  color: var(--muted);
+  font-size: 11.5px;
+}
+.lf-card.unknown svg {
+  filter: brightness(0);
+  opacity: 0.25;
+}
+.life-note {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+}
+.ln-pet svg {
+  width: 72px;
+  height: 72px;
+}
+.ln-txt {
+  font-family: var(--ed-font, serif);
+  font-style: italic;
+}
+@media (max-width: 700px) {
+  .lf-now {
+    grid-template-columns: 1fr;
+  }
+}
+.ln-fine {
+  display: block;
+  margin-top: 10px;
+}

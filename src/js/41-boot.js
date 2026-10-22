@@ -233,11 +233,13 @@ function init() {
     if (S.meta.todo.d !== todayKey()) drawTodo();
     planSync();
     planPaint();
+    lifeTick();
     if (!document.hidden && Date.now() - ui.sayAt > 40000 && !(peekNow() || {}).mood) say(line(curMood()));
   }, 15000);
   renderAll();
   checkAch(true);
   greet();
+  if (!newer) lifeOpen();
   if (newer) {
     lockNewer(newer);
     return;
